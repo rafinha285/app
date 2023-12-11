@@ -1,0 +1,106 @@
+.newanime2{
+    width: 100%;
+    padding: 20px 30px;
+    height: 1015px;
+    background: #21024d;
+    background: radial-gradient(circle, #21024d 0%,#16012d 94%, #0c0011 100%);
+    margin: 40px auto;
+    justify-self: center;
+    padding-left: auto;
+    padding-right: auto;
+}
+.title{
+    /* max-width: 1822px; */
+    padding: 10px;
+    text-align: center;
+    margin-top: 68px !important;
+    margin-bottom: 20px;
+    background: radial-gradient(circle, var(--dark_purple) 0%,#16012d 90%, var(--body-purple) 100%);
+}
+.title p{
+    margin: 0;
+}
+/* .card-horizontal{
+    position: relative;
+    overflow: hidden;
+    border-radius: 3px;
+    transition: all .6s;
+    margin-bottom: 13px;
+    height: 243.5625px;
+} */
+/* .container{
+    padding-left: 0;
+    padding-right: 0;
+}
+.cont{
+    max-width: 1822px;
+}
+.card-img{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+.card-img img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.card-info{
+    position: absolute;
+    display: flex;
+    right: 8px;
+    top: 10px;
+    z-index: 2;
+}
+.card-label{
+    position: relative;
+    font-weight: 200;
+    background-color: #000;
+    padding: 2px 8px;
+    border-radius: 2px;
+    display: inline-block;
+}
+.card-label span{
+    font-size: .9rem !important;
+}
+.card-time{
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    padding-top: 10px;
+    padding-left: 10px;
+}
+.card-time span{
+    font-size: .7rem !important;
+}
+.card-title{
+    position: absolute;
+    bottom: 0;
+    padding-left: 10px;
+    padding-right: 20px;
+    padding-bottom: 10px;
+    margin-bottom: 0;
+    width: 90%;
+}
+.card-title h3{
+    font-size: .9rem !important;
+    font-weight: 300;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.card-title h4{
+    font-size: .9rem !important;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+} */
+h2, h1{
+    font-size: 18px !important;
+    margin: auto 0;
+}
+/* .header nav a h1{ */
+    /* margin-top: 0  !important; */
+/* } */

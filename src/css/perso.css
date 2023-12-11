@@ -1,0 +1,35 @@
+.perso-div{
+    background: #14022e;
+    border: 1px solid #bdbdbd;
+    cursor: pointer;
+    float: left;
+    height: 99%;
+    margin-bottom: 10px;
+    margin-left: 20px;
+    min-width: 229px;
+    overflow: hidden;
+    padding: 0!important;
+    position: relative;
+    transition: all 1s;
+}
+.perso-div:hover .perso-div-hover{
+    background-color: rgba(20,0,37,.5);
+}
+.perso-div:hover .perso-div-body{
+    display: block;
+}
+.perso-div-hover{
+    height: 100%;
+    position: absolute;
+    transition: all .6s;
+    width: 100%;
+}
+.perso-div-img{
+    height: 100%;
+}
+.perso-div-body{
+    display: none;
+    padding: 15px;
+    top: 0;
+    z-index: 3;
+}

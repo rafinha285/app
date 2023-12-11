@@ -1,0 +1,73 @@
+{
+  "name": "app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@flowplayer/player": "^3.8.1",
+    "@flowplayer/react-flowplayer": "^1.2.2",
+    "@react-native-community/netinfo": "^11.1.0",
+    "@react-native-module/pbkdf2": "^0.4.3",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/bcrypt": "^5.0.2",
+    "@types/react-router-dom": "^5.3.3",
+    "axios": "^1.6.1",
+    "bcrypt": "^5.1.1",
+    "crypto-browserify": "^3.12.0",
+    "crypto-js": "^4.2.0",
+    "jquery": "^3.7.1",
+    "mongoose": "^7.5.3",
+    "nano": "^10.1.2",
+    "path": "^0.12.7",
+    "path-browserify": "^1.0.1",
+    "plyr-react": "^5.3.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-helmet": "^6.1.0",
+    "react-native": "^0.72.7",
+    "react-native-modal": "^13.0.1",
+    "react-native-network-info": "^5.2.1",
+    "react-native-web": "^0.19.9",
+    "react-player": "^2.13.0",
+    "react-router-dom": "^6.16.0",
+    "react-scripts": "5.0.1",
+    "reflect-metadata": "^0.1.13",
+    "typeorm": "^0.3.17",
+    "uuid": "^9.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-app-rewired start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/jquery": "^3.5.20",
+    "@types/react-helmet": "^6.1.7",
+    "@types/uuid": "^9.0.7",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  },
+  "browser": {}
+}

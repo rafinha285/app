@@ -1,0 +1,29 @@
+.login{
+    background: var(--purple);
+    /* background: radial-gradient(circle, rgba(104,5,242,1) 0%, rgba(9,9,121,1) 76%, rgba(33,2,77,1) 100%); */
+    margin: auto;
+    height: 25em;
+    min-width: 30%;
+}
+/* .login p{
+    margin: 1em auto;
+    width: max-content;
+}
+.login span{
+    margin: 1em auto;
+} */
+.login div{
+    width: max-content;
+    margin: 3em auto;
+}
+.login .logBut{
+    background: none;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 1em;
+}
+.div-flex{
+    display: flex;
+    flex-direction: column;
+}

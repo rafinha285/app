@@ -1,0 +1,5 @@
+/backend
+/build
+/node_modules
+# /src/types/*.ts
+/src/types/*.js

@@ -1,0 +1,36 @@
+.search-item{
+    width:90%;
+    border-radius: 7px!important;
+    border:2px solid;
+    overflow: hidden;
+    display: flex;
+    margin: 1em auto;
+    cursor: pointer;
+    text-decoration: none;
+}
+.search-item div{
+    margin:.5em;
+}
+.search-img{
+    width: fit-content;
+    display: inline;
+    /* float: right; */
+}
+.search-img img{
+    height: 10em;
+    border-radius: 7px;
+}
+.search-prop {
+    width:80%;
+}
+.search-prop p{
+    margin: 0;
+    text-align: justify;
+}
+.search-prop h1{
+    font-size: 32px !important;
+    margin: 0.3em 0;
+}
+.search-stars{
+    margin: .5em 0!important;
+}

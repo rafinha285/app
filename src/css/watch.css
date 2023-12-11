@@ -1,0 +1,226 @@
+.card{
+    width: var(--width);
+    height: var(--height);
+    margin: auto;
+    /* padding: 10px; */
+    border: 2px solid white;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s cubic-bezier(0.42, 0.01, 0, 1.02);
+}
+.card-hover{
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0,0, 0.5);
+    position: absolute;
+    z-index: 2;
+    opacity: 0;
+    transition: all 0.3s var(--transCub);
+    display: flex;
+    justify-content: space-between;
+    padding: calc(var(--height)/2 - 20px);
+}
+.epSpan{
+    font-size: 14px !important;
+}
+.card-hover:first-child span{
+    font-size: 1.5rem;
+    text-shadow: 5px 6px 7px black;
+}
+.card:hover{
+    width: 130vmin;
+    height: 30vmin;
+}
+.card:hover .card-hover{
+    opacity: 1;
+    padding: calc((var(--height) + var(--heightM))/2 - 20px);
+}
+.card-img{
+    transition: all .2s var(--transCub);
+}
+.card:hover .card-img{
+    filter: blur(5px)
+}
+.card:hover img{
+    top: calc(var(--top) + var(--topM));
+}
+.card-img img{
+    object-fit: cover;
+    width: 101%;
+    height: 101%;
+    position: relative;
+    top: var(--top);
+    transition: all 0.2s var(--transCub2);
+}
+.aniLik{
+    background-color: var(--gray);
+    border-radius: 50px;
+    padding-top: 3px;
+    /* padding-left: 18px; */
+    width: 50px;
+    height: 50px;
+    margin-left: 10px;
+    border: 3px white outset;
+    transition: all .2s;
+    outline: none !important;
+}
+.checked{
+    color: var(--dark_purple) !important;
+}
+.aniLik:hover{
+    background-color: var(--gray-dark);
+}
+.aniLikSel{
+    background-color: var(--red);
+    border-radius: 50px;
+    padding-top: 3px;
+    /* padding-left: 18px; */
+    width: 50px;
+    height: 50px;
+    margin-left: 10px;
+    border: 4px rgb(131,0,0) outset;
+    transition: all .2s;
+    outline: none !important;
+}
+.aniLikSel:hover{
+    background-color: red;
+}
+.card-content-l{
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+.ep-sel1{
+    width: 100%;
+    padding: 2em 7em;
+    height: auto;
+    display: flex;
+    justify-content: space-between;
+}
+.ep-sel-hide{
+    height: 0;
+    overflow: hidden;
+    transition: all 0.2s;
+}
+.ep-sel-show{
+    height :210px !important;
+    overflow: auto;
+    transition: all 0.2s;
+    /* border:1px white solid !important; */
+}
+.ep-sel-dropdown{
+    margin-top: .5em;
+    background-color: var(--dark_purple);
+    aspect-ratio: 2/1;
+    border-radius: 10px;
+    transition: all .2s;
+    height: 0;
+    overflow: auto;
+}
+.inEps{
+    padding: 1em;
+}
+.inEps a{
+    border: 1px white solid;
+    border-radius: 10px;
+    padding: .5em;
+    margin: 10px 0;
+    transition: all .2s;
+    display: flex;
+}
+.inEps a:hover{
+    background-color: var(--light_blue2);
+}
+.inEps a:first-child{
+    margin-top: 0;
+}
+.inEps a:last-child{
+    margin-bottom: 0;
+}
+.inEps a{
+    text-decoration: none;
+}
+.inEps a span {
+    font-size: 14px;
+}
+.ep-sel-but{
+    background: var(--gray);
+    border: var(--light_gray) 2px solid;
+    border-radius: 10px;
+    padding: .4em;
+    aspect-ratio: 3/1;
+    transition: all 0.2s;
+    margin: 0 .2em
+}
+.ep-sel-but:disabled,
+.ep-sel-but	[disabled]{
+    background: var(--gray-dark);
+    border: var(--gray) 2px solid;
+}
+.ep-sel-but:hover{
+    background: var(--gray-dark);
+}
+
+
+
+.mainplayer *{
+    color:black !important;
+}
+.plyr{
+    width: calc(100% - 15em);
+    margin: auto;
+}
+.plyr__menu__container .plyr__control>span{
+    color: var(--orange);
+    transition: all .4s;
+}
+.plyr__menu__container .plyr__control:hover>span{
+    color: #fff;
+}
+.plyr__menu__container .plyr__control>span .plyr__menu__value{
+    color: var(--orange);
+    transition: all .6s;
+}
+.plyr__menu__container .plyr__control:hover>span .plyr__menu__value{
+    color: #fff;
+}
+/* .plyr__caption{
+    font-size: 2em;
+} */
+.plyr__caption{
+    font-size: 1em !important;
+    background: var(--plyr-captions-background,#5600ceab) !important;
+}
+.plyr__caption b{
+    font-size: 1.1em !important;
+}
+.plyr__caption i{
+    font-size: 1.1em ;
+}
+.skip-intro{
+    padding: 0!important;
+    transition: all 1s var(--transCub);
+    width: 0vmin;
+    overflow: hidden !important;
+    height: 0;
+    margin-left: 0 !important;
+}
+.skip-active{
+    margin-left: calc(var(--plyr-control-spacing,10px)/4)  !important;
+    width: 16vmin;
+    line-height:var(--plyr-line-height,1.7);
+    height:auto !important;
+}
+:root{
+    --top:-650px;
+    --topM:-200px;
+    --transCub:cubic-bezier(0.42, 0.01, 0, 1.02);
+    --transCub2:cubic-bezier(0.4, 0.01, 0.36, 0.97);
+    --width:100vmin;
+    --widthM:20vmin;
+    --height:20vmin;
+    --heightM:10vmin;
+    --plyr-color-main: var(--orange);
+}

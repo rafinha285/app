@@ -1,0 +1,8 @@
+.episodes{
+    width: 100%;
+    padding: 1em;
+}
+.episodes-link{
+    width: calc(100% / 4);
+    aspect-ratio: 16/9;
+}

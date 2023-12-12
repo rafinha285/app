@@ -42,7 +42,7 @@ const AnimePage:React.FC = ()=>{
             })
         }
         if(ani){
-            postLog(ani,false)
+            // postLog(ani,false)
         }
     },[ani,id])
     $(function(){

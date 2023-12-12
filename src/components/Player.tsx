@@ -123,7 +123,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep}) =>{
         intr.after(skEButton);
 
         const seasonEp = ani.seasons?.find((v) => v._id === seasonId)?.episodes!;
-        postLog(ani,true,ep._id,plyr.currentTime)
+        // postLog(ani,true,ep._id,plyr.currentTime)
         function handleTimeUpdate() {
             const sec = plyr.currentTime;
             console.log(sec >= opIni && sec <= opFim, sec, opIni, sec >= opIni, sec, opFim, sec <= opFim)
@@ -148,14 +148,14 @@ const Player:React.FC<prop> = ({ani,seasonId,ep}) =>{
                 // console.log("not skip-active ed")
                 skEButton.removeClass("skip-active");
             }
-            const currentTimeInSeconds = Math.floor(sec)
-            if(currentTimeInSeconds%60===0&&!lastLoggedTime.includes(currentTimeInSeconds)){
-                postLog(ani,true,ep._id,sec)
-                lastLoggedTime.push(currentTimeInSeconds);
-            }
+            // const currentTimeInSeconds = Math.floor(sec)
+            // if(currentTimeInSeconds%60===0&&!lastLoggedTime.includes(currentTimeInSeconds)){
+            //     postLog(ani,true,ep._id,sec)
+            //     lastLoggedTime.push(currentTimeInSeconds);
+            // }
         }
         plyr.elements.container?.addEventListener("timeupdate",handleTimeUpdate)
-        const lastLoggedTime:number[] = [];
+        // const lastLoggedTime:number[] = [];
     }
 
     useEffect(()=>{

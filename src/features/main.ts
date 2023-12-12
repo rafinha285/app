@@ -1,4 +1,5 @@
-export function getEpTime(e:number):string{
+export function getEpTime(ee:number):string{
+    var e = Math.round(ee)
     var h = Math.floor(e/3600).toString()
     let m:string =""
     var s = (e%60).toString()

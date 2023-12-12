@@ -35,7 +35,7 @@ const AnimePoster:React.FC<AnimePosterProps> = ({aniId,doc})=>{
                 <div className="highlight-body">
                     <div className="highlight-time">
                         <span>{getEpTime(doc!.averageEptime!)}</span>
-                        <i className="fa-solid fa-clock"></i>
+                        <i className="far fa-clock"></i>
                     </div>
                     <div className="highlight-genres">{gen(doc!.generos)}</div>
                     <div className="highlight-title">{doc!.name}</div>

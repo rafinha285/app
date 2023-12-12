@@ -12,3 +12,12 @@ export interface Log {
     duration?: number;
     ep?: string;
 }
+export interface epLog {
+    date: Date;
+    anime: string;
+    season: string;
+    ep: string;
+    name: string;
+    duration: number;
+    animename: string;
+}

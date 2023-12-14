@@ -131,7 +131,7 @@ const AnimePage:React.FC = ()=>{
                     </div>
                     <div className="eps">
                         {ani.seasons?.map((s)=>(
-                            <div id={s._id} key={s.index}>
+                            <div style={{display: s.index === 1?'block':"none"}} id={s._id} key={s.index}>
                                 {s.episodes?.map((ep,i)=>(
                                     <EpisodeLink downloadHandle={downloadHandle} ep={ep} s={s} ani={ani}></EpisodeLink>
                                 ))}
@@ -139,15 +139,19 @@ const AnimePage:React.FC = ()=>{
                         ))}
                     </div>
                     <div className="personagens">
-                        <div style={{display:"flex",justifyContent:"space-between"}}>
+                        <div style={{display:"flex",justifyContent:"space-between",marginBottom:"1em"}}>
                             <h1>Personagens: </h1>
-                            <Link to={``}><button className="persoBut">
-                                <i className="fa-solid fa-plus"></i>
-                                Ver mais
-                            </button></Link>
                         </div>
-                        <div>{ani.characters?.map((v,i)=>(
-                            <PersoCompo perso={v} key={i}></PersoCompo>
+                        <div style={{
+                            border:"1px white solid",
+                            padding:"1em",
+                            display:"flex",
+                            flexWrap:"nowrap",
+                            justifyContent:"flex-start",
+                            flexDirection:'row',
+                            overflow:"auto"
+                        }}>{ani.characters?.map((v,i)=>(
+                            <PersoCompo perso={v} aniId={ani._id} key={i}></PersoCompo>
                         ))}</div>
                     </div>
                 </div> 

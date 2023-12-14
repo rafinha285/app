@@ -9,7 +9,8 @@ interface props{
 }
 const Episode:React.FC<props> = ({ep}) =>{
 
-    console.log(ep,`/api/ep/${ep.anime}/${ep.season}/${ep.ep}/${ep.ep}.jpg`)
+    // console.log(ep,`/api/ep/${ep.anime}/${ep.season}/${ep.ep}/${ep.ep}.jpg`)
+    console.log(ep.seasonname)
     return(
         <Link className="episodes-link" to={`/Anime/${ep.anime}/watch/${ep.season}/${ep.ep}`}>
             <div className="">
@@ -25,10 +26,13 @@ const Episode:React.FC<props> = ({ep}) =>{
                         <span datatype={ep.ep}>{getEpTime(ep.duration)}</span>
                         <i datatype={ep.ep} className="far fa-clock"></i>
                     </div>
-                    <div className="ep-animetitle" datatype={ep.ep}>
+                    <div className="ep-animetitle">
                     {ep.animename}
                     </div>
-                    <div className="ep-title" datatype={ep.ep}>
+                    <div className="ep-animeseason">
+                        {ep.seasonname}
+                    </div>
+                    <div className="ep-title">
                     {ep.name}
                     </div>
                 </div>

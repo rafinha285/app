@@ -141,6 +141,7 @@ h1, h2{
     display: flex;
     align-items: center;
     justify-content: space-between;
+    margin: .2em 0;
 }
 .eps div button{
     background-color: var(--purple);

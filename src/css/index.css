@@ -256,7 +256,10 @@ nav{
     text-align: left;
     color: white;
 }
-.dropdown-content a:first-child, a:last-child{
+.dropdown-content a:first-child{
+    border-radius: 5px;
+}
+.dropdown-content a:last-child{
     border-radius: 5px;
 }
 .dropdown-content a:hover{

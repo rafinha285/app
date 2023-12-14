@@ -41,15 +41,16 @@ app.use(cors(corsOptions))
 app.use(json());
 app.use(urlencoded({ extended: true }));
 
-// app.use(helmet({
-//     contentSecurityPolicy:{
-//         directives:{
-//             defaultSrc: ["'self'"],
-//             scriptSrc:['self','https://26.223.183.92','https://kit.fontawesome.com','https://ajax.googleapis.com','https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline'],
-//             connectSrc: ["'self'", 'https://26.223.183.92', 'https://kit.fontawesome.com', 'https://ajax.googleapis.com', 'https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline']
-//         }
-//     },
-// }))
+app.use(helmet({
+    contentSecurityPolicy:{
+        directives:{
+            defaultSrc: ['self', "*.ngrok-free.app"],
+            scriptSrc:['self','https://kit.fontawesome.com','https://ajax.googleapis.com','https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline', "*.ngrok-free.app"],
+            scriptSrcElem: ['self', 'https://ajax.googleapis.com', 'https://kit.fontawesome.com',"*.ngrok-free.app"],
+            connectSrc: ['self', 'https://kit.fontawesome.com', 'https://ajax.googleapis.com', 'https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline',"*.ngrok-free.app"]
+        }
+    },
+}))
 
 
 
@@ -199,7 +200,7 @@ router.get("/g/eps",async(req,res)=>{
   try{
     var {count} = req.query
     if(count){
-      logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY _id ASC LIMIT $1',[count])
+      logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC LIMIT $1',[count])
       .then((result)=>{
         res.send(result.rows)
       })
@@ -207,7 +208,7 @@ router.get("/g/eps",async(req,res)=>{
         throw err
       })
     }else{
-      logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY _id ASC')
+      logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC')
       .then((result)=>{
         res.send(result.rows)
       })
@@ -216,6 +217,24 @@ router.get("/g/eps",async(req,res)=>{
       })
     }
     
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+})
+// router.get("/ani/char/:aniId/:charId",async(req,res)=>{
+//   try{
+//     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument;
+//     var char = doc.characters?.find((v)=>v._id == req.params.charId)
+//     res.send(char)
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
+router.get("/ani/char/:aniId/:charId/img",async(req,res)=>{
+  try{
+    var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument;
+    // var char = doc.characters?.find((v)=>v._id == req.params.charId);
+    res.sendFile(path.join(doc.path!,"characters",req.params.charId,`${req.params.charId}.jpg`))
   }catch(err){
     sendError(res,ErrorType.default,500,err)
   }

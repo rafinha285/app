@@ -23,5 +23,6 @@ export interface epLog{
     name:string;
     duration:number;
     animename:string;
-    resolution:quality
+    resolution:quality;
+    seasonname:string;
 }

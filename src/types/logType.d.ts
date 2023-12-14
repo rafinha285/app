@@ -1,3 +1,4 @@
+import { quality } from "./types";
 export declare enum page {
     ANIMEPAGE = "ANIMEPAGE",
     HOME = "HOME",
@@ -20,4 +21,6 @@ export interface epLog {
     name: string;
     duration: number;
     animename: string;
+    resolution: quality;
+    seasonname: string;
 }

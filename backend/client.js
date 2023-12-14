@@ -42,6 +42,7 @@ var path = require("path");
 var cors = require("cors");
 var fs = require("fs");
 var https = require("https");
+var helmet_1 = require("helmet");
 var body_parser_1 = require("body-parser");
 var Nano = require('nano');
 var handle_1 = require("./assets/handle");
@@ -68,15 +69,16 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.use((0, body_parser_1.json)());
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
-// app.use(helmet({
-//     contentSecurityPolicy:{
-//         directives:{
-//             defaultSrc: ["'self'"],
-//             scriptSrc:['self','https://26.223.183.92','https://kit.fontawesome.com','https://ajax.googleapis.com','https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline'],
-//             connectSrc: ["'self'", 'https://26.223.183.92', 'https://kit.fontawesome.com', 'https://ajax.googleapis.com', 'https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline']
-//         }
-//     },
-// }))
+app.use((0, helmet_1.default)({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ['self', "*.ngrok-free.app"],
+            scriptSrc: ['self', 'https://kit.fontawesome.com', 'https://ajax.googleapis.com', 'https://ka-f.fontawesome.com', "https://cdn.plyr.io", 'unsafe-inline', "*.ngrok-free.app"],
+            scriptSrcElem: ['self', 'https://ajax.googleapis.com', 'https://kit.fontawesome.com', "*.ngrok-free.app"],
+            connectSrc: ['self', 'https://kit.fontawesome.com', 'https://ajax.googleapis.com', 'https://ka-f.fontawesome.com', "https://cdn.plyr.io", 'unsafe-inline', "*.ngrok-free.app"]
+        }
+    },
+}));
 // mongoose.connect(mongoUri,{ connectTimeoutMS: 30000, bufferCommands: false, serverSelectionTimeoutMS: 300000 })
 // var db = mongoose.connection
 // const aniCol:mongoose.Collection = db.collection("anime")
@@ -288,7 +290,7 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
         try {
             count = req.query.count;
             if (count) {
-                Postgre_1.logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY _id ASC LIMIT $1', [count])
+                Postgre_1.logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC LIMIT $1', [count])
                     .then(function (result) {
                     res.send(result.rows);
                 })
@@ -297,7 +299,7 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                 });
             }
             else {
-                Postgre_1.logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY _id ASC')
+                Postgre_1.logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC')
                     .then(function (result) {
                     res.send(result.rows);
                 })
@@ -310,6 +312,35 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
             (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
         }
         return [2 /*return*/];
+    });
+}); });
+// router.get("/ani/char/:aniId/:charId",async(req,res)=>{
+//   try{
+//     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument;
+//     var char = doc.characters?.find((v)=>v._id == req.params.charId)
+//     res.send(char)
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
+router.get("/ani/char/:aniId/:charId/img", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var doc, err_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, couch.use("anime").get(req.params.aniId)];
+            case 1:
+                doc = _a.sent();
+                // var char = doc.characters?.find((v)=>v._id == req.params.charId);
+                res.sendFile(path.join(doc.path, "characters", req.params.charId, "".concat(req.params.charId, ".jpg")));
+                return [3 /*break*/, 3];
+            case 2:
+                err_5 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_5);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
     });
 }); });
 router.get("/test", function (req, res) {
@@ -338,7 +369,7 @@ router.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awai
     });
 }); });
 router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userData, user, err_5;
+    var userData, user, err_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -352,15 +383,15 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                 res.json(user);
                 return [3 /*break*/, 4];
             case 3:
-                err_5 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_5);
+                err_6 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_6);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
 router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var logData, log, err_6;
+    var logData, log, err_7;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -374,8 +405,8 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
                 res.json(log);
                 return [3 /*break*/, 4];
             case 3:
-                err_6 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_6);
+                err_7 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_7);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

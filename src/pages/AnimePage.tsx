@@ -17,6 +17,8 @@ import Loading from "../components/Loading";
 import EpisodeLink from "../assets/EpisodeLink";
 import postLog from "../functions/logFunctions"
 import PersoCompo from "../components/Perso";
+import {Box, Rating} from "@mui/material"
+import StarIcon from '@mui/icons-material/Star';
 
 
 interface seasonDate{
@@ -69,6 +71,23 @@ const AnimePage:React.FC = ()=>{
             }
         })
     }
+    const ratingLabel:{[index:string]:string} ={
+        0.5:"PUTA QUE PARIU",
+        1:"Horrivel",
+        1.5:"Muito Ruim",
+        2:"Ruim",
+        2.5:"Na Média",
+        3:"Ok",
+        3.5:"Bom",
+        4:"Muito Bom",
+        4.5:"Incrivel",
+        5:"Obra-prima"
+    }
+    function getLabelText(value: number) {
+        return `${value} Star${value !== 1 ? 's' : ''}, ${ratingLabel[value]}`;
+    }
+    const [ratingValue,setRatingValue] = useState<number|null>(2)
+    const [ratingHover,setRatingHover] = useState(-1)
     return(
         <html lang="pt-BR">
             <Helmet>
@@ -105,8 +124,8 @@ const AnimePage:React.FC = ()=>{
                         <div className="im">
                             <img src={`/api/ani/img?Id=${ani._id}`} alt={ani.name} />
                         </div>
-                        <div className="not">
-                            <select className="selectN">
+                        <Box sx={{p:"auto",border:"1px white solid"}} className="not">
+                            {/* <select className="selectN">
                                 <option value="none">Selecione sua nota</option>
                                 <option value="10">(10) Obra-prima</option>
                                 <option value="9">(9) Incrivel</option>
@@ -119,8 +138,27 @@ const AnimePage:React.FC = ()=>{
                                 <option value="2">(2) Horrivel</option>
                                 <option value="1">(1) PUTA QUE PARIU</option>
                             </select>
-                            <button className="aniSNota"><i className="fa-solid fa-star" style={{float:"none"}}></i> Submit</button>
-                        </div>
+                            <button className="aniSNota"><i className="fa-solid fa-star" style={{float:"none"}}></i> Submit</button> */}
+                            <Rating
+                                className="rating"
+                                name="rating"
+                                defaultValue={0}
+                                value={ratingValue}
+                                precision={1}
+                                getLabelText={getLabelText}
+                                onChange={(event,newValue)=>{
+                                    setRatingValue(newValue)
+                                }}
+                                onChangeActive={(event, newHover) => {
+                                    setRatingHover(newHover);
+                                }}
+                                emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
+                                size="large"
+                            />
+                            {ratingValue!== null&&(
+                                <Box sx={{ml:2,color:"white"}}>{ratingLabel[ratingHover !== -1?ratingHover:ratingValue]}</Box>
+                            )}
+                        </Box>
                     </div>
                     <div className="seasons">
                         <select onChange={seasonChangeHandle}>

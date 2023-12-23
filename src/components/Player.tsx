@@ -7,7 +7,8 @@ import 'plyr/dist/plyr.css'
 import "../css/watch.css"
 // import NetInfo from "@react-native-community/netinfo"
 import { AnimeDocument } from "../types/animeModel";
-import Flowplayer, { useFlowplayer } from "@flowplayer/react-flowplayer";
+import { handleNextEp } from "../features/main";
+// import Flowplayer, { useFlowplayer } from "@flowplayer/react-flowplayer";
 import postLog from "../functions/logFunctions";
 interface prop{
     ani:AnimeDocument;
@@ -86,12 +87,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep}) =>{
         console.log(inEnd)
         ref.current!.plyr.currentTime = inEnd
     }
-    const handleNextEp = ()=>{
-        var eps = ani.seasons?.find(s=>s._id === seasonId)?.episodes!
-        let indiceAtual=eps?.findIndex(e=>e._id === ep._id)
-        let proximoEp = eps[indiceAtual!+1]
-        window.location.href = `/Anime/${ani._id}/watch/${seasonId}/${proximoEp._id}`
-    }
+    
     const initPlyr = async()=>{
         while (!ref.current || !ref.current.plyr || !ref.current.plyr.elements) {
             await new Promise(resolve => setTimeout(resolve, 100));
@@ -115,11 +111,11 @@ const Player:React.FC<prop> = ({ani,seasonId,ep}) =>{
         skIn.children(".plyr__volume").after(skIButton);
 
         const intr = $(plyr.elements.controls!).find("#intro");
-        var buEd = (<div className="skip-intro plyr__controls__item plyr__control" onClick={handleNextEp}>
+        var buEd = (<div className="skip-intro plyr__controls__item plyr__control" onClick={()=>handleNextEp(ani,seasonId,ep)}>
             <span>Poximo episodio</span>
             <i className="fa-solid fa-chevron-right"></i>
         </div>)
-        const skEButton = $(ReactDOMServer.renderToStaticMarkup(buEd)).prop("id", "outro").on("click",handleNextEp);
+        const skEButton = $(ReactDOMServer.renderToStaticMarkup(buEd)).prop("id", "outro")
         intr.after(skEButton);
 
         const seasonEp = ani.seasons?.find((v) => v._id === seasonId)?.episodes!;

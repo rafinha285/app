@@ -47,13 +47,13 @@ h1, h2{
     float: right;
 }
 .not{
-    margin: 30px 7px;
+    margin: 30px auto;
     display: flex;
     flex-direction: column;
 }
-.not select{
+/* .not select{
     margin: 10px;
-}
+} */
 .im img{
     height: 100%;
     border-radius: 7px;
@@ -160,6 +160,9 @@ h1, h2{
 }
 .ep a button:hover i{
     color:#43005f;
+}
+.rating span{
+    font-size: 1.875em;
 }
 .seasons{
     background-color: var(--gray-dark);

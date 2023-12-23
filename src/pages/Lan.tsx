@@ -4,17 +4,20 @@ import Footer from "../components/Footer";
 import { Helmet } from "react-helmet";
 import { epLog } from "../types/logType";
 import Episode from "../assets/Episode";
+import {isMobile} from "react-device-detect"
 
 const LancamentosPage:React.FC = () =>{
     const [eps,setEps] = useState<epLog[]>()
     useEffect(()=>{
         $.ajax({
             method:"GET",
-            url:`/api/g/eps`
+            url:`/api/g/eps?count=20`
         }).done((res)=>{
             setEps(res)
         })    
+        console.log(isMobile)
     },[!eps])
+    
     return(
         <html>
             <Helmet>

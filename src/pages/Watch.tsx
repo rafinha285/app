@@ -12,6 +12,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import EpisodeDropdown from "../assets/EpisodeDropdown";
 import { Log } from "../types/logType";
+import { NextEp, handleNextEp } from "../features/main";
 
 
 
@@ -25,13 +26,14 @@ const Watch:React.FC = () =>{
     const [epIndex,setEpIndex] = useState<number>(1)
     // var prevEp = ""
     // const [prevEp,setPrevEp] = useState<string>("")
+    var nextEp:Episode|null
     useEffect(()=>{
         $.ajax({
             url:`/api/g/ep/${id}/${seasonId}/${epId}`
         }).done((res)=>{
             console.log(res)
             setEp(res)
-            setEpIndex(ep?.index!)
+            setEpIndex(ani?.seasons?.find(e=>e._id == seasonId)?.episodes.findIndex(e=>e._id==ep?._id)!)
         })
         $.ajax({
             url:`/api/ani/${id}`
@@ -41,9 +43,10 @@ const Watch:React.FC = () =>{
                 // console.log(id,ani?._id,seasonId,epIndex,ani)
                 // console.log(ep)
                 
-                console.log(ani?.seasons?.find(s=>s._id == seasonId)?.episodes[ep?.index!-1]._id!)
-                $("#before").attr("href",`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[ep?.index!-1]._id!}`)
-                $("#after").attr("href",`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[ep?.index!+1]._id!}`)
+                // console.log(`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[epIndex-1]._id}`)
+                // if(Math.min())
+                // $("#before").attr("href",`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[epIndex-1]._id}`)
+                // $("#after").attr("href",`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[ep?.index!+1]._id!}`)
             }
         })
         $("#linkAnime").css("margin","2em auto 7em auto")
@@ -54,6 +57,7 @@ const Watch:React.FC = () =>{
         $("#epSelDrop").toggleClass("ep-sel-show")
     }
     return(
+        
         <html lang="pt-BR">
             <Helmet>
                 <title>Assistir:{} {ep?.name}</title>
@@ -97,7 +101,8 @@ const Watch:React.FC = () =>{
                         <button className="ep-sel-but" onClick={handleChangeClass}>
                             <i className="fa-solid fa-bars"></i>
                         </button>
-                        <a id="after" href={`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id===seasonId)?.episodes.find(e=>e.index === epIndex+1)?._id}`}>
+                        <a id="after" onClick={()=>nextEp?handleNextEp(ani!,seasonId,ep!):null} aria-disabled={nextEp?true:false}>
+                        {/* href={`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id===seasonId)?.episodes[ep?.index!+1]._id}`} */}
                             <button className="ep-sel-but">
                                 <i className="fa-solid fa-arrow-right"></i>
                             </button>

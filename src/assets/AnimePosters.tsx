@@ -1,10 +1,11 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import mongoose,{ObjectId} from "mongoose"
-import {Anime,AnimeDocument} from "../types/animeModel";
+import {Anime} from "../types/animeModel";
 import {getEpTime, trim} from "../features/main"
 import "../css/index.css"
 import '../css/base.css'
+import {genToArray} from "../functions/animeFunctions"
 
 
 
@@ -20,10 +21,11 @@ function gen(arr:string[]):JSX.Element[]{
 
 interface AnimePosterProps {
     aniId: string;
-    doc: AnimeDocument|Anime|undefined;
+    doc: Anime;
 }
 
 const AnimePoster:React.FC<AnimePosterProps> = ({aniId,doc})=>{
+    console.log(doc.genre)
     console.log(doc)
     return(
         <Link to={`/Anime/${aniId}`}>
@@ -34,12 +36,12 @@ const AnimePoster:React.FC<AnimePosterProps> = ({aniId,doc})=>{
                 </div>
                 <div className="highlight-body">
                     <div className="highlight-time">
-                        <span>{getEpTime(doc!.averageEptime!)}</span>
+                        <span>{getEpTime(doc.averageeptime!)}</span>
                         <i className="far fa-clock"></i>
                     </div>
-                    <div className="highlight-genres">{gen(doc!.generos)}</div>
-                    <div className="highlight-title">{doc!.name}</div>
-                    <div className="highlight-desc">{trim(doc!.description)}</div>
+                    <div className="highlight-genres">{gen(doc.genre)}</div>
+                    <div className="highlight-title">{doc.name}</div>
+                    <div className="highlight-desc">{trim(doc.description)}</div>
                 </div>
             </article>
         </Link>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from "react";
-import {Anime, AnimeDocument} from "../types/animeModel";
+import {Anime} from "../types/animeModel";
 import "../css/index.css"
 import "../css/base.css"
 import "../css/anime.css"
@@ -19,6 +19,8 @@ import postLog from "../functions/logFunctions"
 import PersoCompo from "../components/Perso";
 import {Box, Rating} from "@mui/material"
 import StarIcon from '@mui/icons-material/Star';
+import { genToArray, tupleToProducer } from "../functions/animeFunctions";
+import AniProducers, { prodType } from "../assets/AnimeProd";
 
 
 interface seasonDate{
@@ -29,13 +31,13 @@ interface seasonDate{
 
 const AnimePage:React.FC = ()=>{
     const {id} = useParams()
-    const [ani,setAni] = useState<AnimeDocument |null>(null)
+    const [ani,setAni] = useState<Anime |null>(null)
     const [err,setErr] = useState<boolean>(false)
     const [seasonD,setSeasonD] = useState<seasonDate>()
     useEffect(()=>{
         if(!ani){
             $.ajax(`/api/ani/${id}`).done((res)=>{
-                const animeData:AnimeDocument = res
+                const animeData:Anime = res
                 setAni(animeData)
             }).fail((e)=>{
                 if(e.status === 400){
@@ -45,20 +47,26 @@ const AnimePage:React.FC = ()=>{
         }
         if(ani){
             // postLog(ani,false)
+            setGen(ani.genre)
         }
     },[ani,id])
-    $(function(){
-        console.log(ani?.releaseDate,ani)
-        // $.ajax({
-        //     url:`/api/ani/season/?month=${ani?.releaseDate.getMonth()}&year=${ani?.releaseDate.getFullYear()}`,
-        //     headers:{
-        //         "GetCurrentSeason":'false'
-        //     }
-        // }).done((res:seasonDate)=>{
-        //     setSeasonD(res)
-        // })
-    })
+    const [gen,setGen] = useState<string[]>([])
+    // useEffect(()=>{
+    //     console.log(ani?.releaseDate,ani)
+        
+    //     // $.ajax({
+    //     //     url:`/api/ani/season/?month=${ani?.releaseDate.getMonth()}&year=${ani?.releaseDate.getFullYear()}`,
+    //     //     headers:{
+    //     //         "GetCurrentSeason":'false'
+    //     //     }
+    //     // }).done((res:seasonDate)=>{
+    //     //     setSeasonD(res)
+    //     // })
+    // },[])
     const downloadHandle = () =>{
+        
+    }
+    const getAss = () =>{
         
     }
     const seasonChangeHandle = (e:React.ChangeEvent) =>{
@@ -88,6 +96,7 @@ const AnimePage:React.FC = ()=>{
     }
     const [ratingValue,setRatingValue] = useState<number|null>(2)
     const [ratingHover,setRatingHover] = useState(-1)
+    console.log(ani)
     return(
         <html lang="pt-BR">
             <Helmet>
@@ -96,35 +105,64 @@ const AnimePage:React.FC = ()=>{
             <Header />
             {ani?(
                 <div className="cont container" style={{padding:"100px"}}>
-                    <p style={{fontSize:".7rem !important"}}>Anime - Duração: <span style={{fontSize:".7rem !important"}} id="aniLen">{getEpTime(ani.averageEptime!)}</span><i className="fa-regular fa-clock"></i></p>
+                    <p style={{fontSize:".7rem !important"}}>Anime - Duração: <span style={{fontSize:".7rem !important"}} id="aniLen">{getEpTime(ani.averageeptime!)}</span><i className="fa-regular fa-clock"></i></p>
                     <div className="contentL">
                         <h2>{ani.name}</h2>
                         <div className="dura">
-                            <p style={{fontSize:".7rem !important",display:"inline-block"}}>Ano: {new Date(ani.releaseDate).getFullYear()} &emsp;</p>
+                            <p style={{fontSize:".7rem !important",display:"inline-block"}}>Ano: {new Date(ani.releasedate).getFullYear()} &emsp;</p>
                             <p style={{fontSize:".7rem !important",display:"inline-block"}}>Qualidade: {ani.quality}</p>
                         </div>
                         <LikeButton />
                         <div>
                             <p style={{fontSize:"0.8rem"}}>{ani.description}</p>
-                        </div><br/>
+                        </div>
                         <div style={{marginBottom:"1em"}}>
                             <p style={{display:"inline"}}>Generos:</p>
                             <div style={{display:"inline"}}>
-                                <AniGeneros genres={ani.generos}></AniGeneros>
+                                {gen.map((v,i)=>(
+                                    <AniGeneros
+                                        genre={v}
+                                        index={i}
+                                    />
+                                ))}
                             </div>
-                        </div><br></br>
+                        </div>
+                        <div style={{marginBottom:"1em"}}>
+                            <p style={{display:"inline"}}>Produtores: </p>
+                            <div style={{display:"inline"}}>
+                                {tupleToProducer(ani.producers).map((v,i)=>(
+                                    <AniProducers prod={v} index={i} typee={prodType.prod}/>
+                                ))}
+                            </div>
+                        </div>
+                        <div style={{marginBottom:"1em"}}>
+                            <p style={{display:"inline"}}>{tupleToProducer(ani.creators).length>1?"Criador: ":"Criadores: "}</p>
+                            <div style={{display:"inline"}}>
+                                {tupleToProducer(ani.creators).map((v,i)=>(
+                                    <AniProducers prod={v} index={i} typee={prodType.crea}/>
+                                ))}
+                            </div>
+                        </div>
+                        <div style={{marginBottom:"1em"}}>
+                            <p style={{display:"inline"}}>Studios: </p>
+                            <div style={{display:"inline"}}>
+                                {tupleToProducer(ani.studios).map((v,i)=>(
+                                    <AniProducers prod={v} index={i} typee={prodType.stud}/>
+                                ))}
+                            </div>
+                        </div>
                         <div className="aniContent">
                             {ani.name2?(<p>Nome Alternativo: <span style={{fontSize:"18px !important"}}>{ani.name2}</span></p>):(<></>)}
                             {/* <p>Season: <span>{seasonD?.season}</span>de <span>{seasonD?.year}</span></p> */}
                             <p>Idioma: <span>{ani.language}</span></p>
-                            <p>Data de lançamento: <span><b>{new Date(ani.releaseDate).getDate().toString()}</b> de <b>{getMonthName(new Date(ani.releaseDate),false)}</b> de <b>{new Date(ani.releaseDate).getFullYear().toString()}</b></span></p>
+                            <p>Data de lançamento: <span><b>{new Date(ani.releasedate).getDate().toString()}</b> de <b>{getMonthName(new Date(ani.releasedate),false)}</b> de <b>{new Date(ani.releasedate).getFullYear().toString()}</b></span></p>
                         </div>
                     </div>
                     <div className="contentR">
                         <div className="im">
-                            <img src={`/api/ani/img?Id=${ani._id}`} alt={ani.name} />
+                            <img src={`/api/ani/img?Id=${ani.id}`} alt={ani.name} />
                         </div>
-                        <Box sx={{p:"auto",border:"1px white solid"}} className="not">
+                        <Box sx={{p:"auto",border:"1px white solid",borderRadius:'5px'}} className="not">
                             {/* <select className="selectN">
                                 <option value="none">Selecione sua nota</option>
                                 <option value="10">(10) Obra-prima</option>
@@ -189,7 +227,7 @@ const AnimePage:React.FC = ()=>{
                             flexDirection:'row',
                             overflow:"auto"
                         }}>{ani.characters?.map((v,i)=>(
-                            <PersoCompo perso={v} aniId={ani._id} key={i}></PersoCompo>
+                            <PersoCompo perso={v} aniId={ani.id} key={i}></PersoCompo>
                         ))}</div>
                     </div>
                 </div> 

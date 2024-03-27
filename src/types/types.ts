@@ -20,3 +20,4 @@ export enum state{
 	COMPLETED="Completo",
 	CANCELED= "Cancelado"
 }
+export type StateType = "ONGOING" | "HIATUS" | "COMPLETED" | "CANCELED";

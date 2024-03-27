@@ -1,4 +1,4 @@
-import Plyr, { APITypes } from "plyr-react";
+// import Plyr from "plyr";
 import React, {useEffect, useRef, useState} from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
@@ -24,6 +24,7 @@ const Watch:React.FC = () =>{
     const [ep,setEp] = useState<Episode|null>(null)
     const [ani,setAni]= useState<AnimeDocument>()
     const [epIndex,setEpIndex] = useState<number>(1)
+    
     // var prevEp = ""
     // const [prevEp,setPrevEp] = useState<string>("")
     var nextEp:Episode|null

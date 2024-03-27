@@ -37,117 +37,191 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
-var ip = require("ip");
+// import * as ip from 'ip'
 var path = require("path");
-var cors = require("cors");
 var fs = require("fs");
 var https = require("https");
-var helmet_1 = require("helmet");
 var body_parser_1 = require("body-parser");
 var Nano = require('nano');
 var handle_1 = require("./assets/handle");
-var Postgre_1 = require("./assets/Postgre");
-var privateKey = fs.readFileSync('D:\\main\\https\\chave.pem', 'utf8');
-var certificate = fs.readFileSync('D:\\main\\https\\certificado.pem', 'utf8');
+var pool_1 = require("./assets/pool");
+var privateKey = fs.readFileSync(path.join(__dirname, "../", "../", "https", "chave.pem"), 'utf8');
+var certificate = fs.readFileSync(path.join(__dirname, "../", "../", "https", 'certificado.pem'), 'utf8');
 var credentials = { key: privateKey, cert: certificate };
 var app = e();
-var ip_1 = ip.address("Radmin VPN");
-var ip_2 = ip.address("Ethernet");
+// const ip_1 = ip.address("Radmin VPN")
+// const ip_2 = ip.address("Ethernet")
 // const mongoUri = `mongodb://${ip_1}:211/data`
-var couch = Nano('http://admin:285@127.0.0.1:5984');
-var corsOptions = {
-    origin: function (origin, callback) {
-        // Verifica se a origem da solicitação corresponde à origem esperada
-        if (origin === undefined || origin === "https://".concat(ip_1) || origin === "https://".concat(ip_2)) {
-            callback(null, true); // Permite a solicitação
-        }
-        else {
-            callback(new Error('Acesso bloqueado por política de CORS')); // Bloqueia a solicitação
-        }
-    },
-};
-app.use(cors(corsOptions));
+// const couch:nano.ServerScope = Nano('http://admin:285@127.0.0.1:5984');
+var animePath = path.join("D:", "main", "server", "Anime");
+var mangaPath = path.join("D:", "main", "server", "Manga");
+// const corsOptions = {
+//     origin: (origin, callback) => {
+//       // Verifica se a origem da solicitação corresponde à origem esperada
+//       if (origin === undefined || origin === `https://${ip_1}`|| origin === `https://${ip_2}`) {
+//         callback(null, true); // Permite a solicitação
+//       } else {
+//         callback(new Error('Acesso bloqueado por política de CORS')); // Bloqueia a solicitação
+//       }
+//     },
+//   };
+// app.use(cors(corsOptions))
 app.use((0, body_parser_1.json)());
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
-app.use((0, helmet_1.default)({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ['self', "*.ngrok-free.app"],
-            scriptSrc: ['self', 'https://kit.fontawesome.com', 'https://ajax.googleapis.com', 'https://ka-f.fontawesome.com', "https://cdn.plyr.io", 'unsafe-inline', "*.ngrok-free.app"],
-            scriptSrcElem: ['self', 'https://ajax.googleapis.com', 'https://kit.fontawesome.com', "*.ngrok-free.app"],
-            connectSrc: ['self', 'https://kit.fontawesome.com', 'https://ajax.googleapis.com', 'https://ka-f.fontawesome.com', "https://cdn.plyr.io", 'unsafe-inline', "*.ngrok-free.app"],
-            mediaSrc: ['self', "*.ngrok-free.app", "https://cdn.plyr.io"]
-        }
-    },
-}));
+// app.use(helmet({
+//     contentSecurityPolicy:{
+//         directives:{
+//             defaultSrc: ['self', "*.ngrok-free.app"],
+//             scriptSrc:['self','https://kit.fontawesome.com','https://ajax.googleapis.com','https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline', "*.ngrok-free.app"],
+//             scriptSrcElem: ['self', 'https://ajax.googleapis.com', 'https://kit.fontawesome.com',"*.ngrok-free.app"],
+//             connectSrc: ['self', 'https://kit.fontawesome.com', 'https://ajax.googleapis.com', 'https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline',"*.ngrok-free.app"],
+//             mediaSrc:['self',"*.ngrok-free.app","https://cdn.plyr.io"]
+//         }
+//     },
+// }))
 // mongoose.connect(mongoUri,{ connectTimeoutMS: 30000, bufferCommands: false, serverSelectionTimeoutMS: 300000 })
 // var db = mongoose.connection
 // const aniCol:mongoose.Collection = db.collection("anime")
 var router = e.Router();
+router.use(function (req, res, next) {
+    pool_1.client.connect()
+        .then(function () {
+        req.db = pool_1.client;
+        next();
+    })
+        .catch(function (err) {
+        handle_1.Console.error(err);
+        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, "Erro na database");
+    });
+});
 router.get('/ani/lan', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var docs, uuidv4Docs;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                (0, handle_1.setHeader)(res);
-                return [4 /*yield*/, couch.use("anime").list({ include_docs: true })];
-            case 1:
-                docs = _a.sent();
-                uuidv4Docs = docs.rows.filter(function (doc) { return /^[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}$/i.test(doc.doc._id); }).map(function (doc) { return doc.doc; });
-                res.setHeader("Cache-Control", "public, max-age:60");
-                res.send(uuidv4Docs.reverse().slice(0, 10));
-                return [2 /*return*/];
-        }
-    });
-}); });
-router.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var doc, err_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                (0, handle_1.setHeader)(res);
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 3, , 4]);
-                if (req.query.Id == null || req.query.Id == undefined) {
-                    throw 1;
-                }
-                return [4 /*yield*/, couch.use("anime").get(req.query.Id.toString())];
-            case 2:
-                doc = _a.sent();
-                (0, handle_1.sendFile)().img(res);
-                res.sendFile(path.join(doc === null || doc === void 0 ? void 0 : doc.path, "img", "".concat(doc === null || doc === void 0 ? void 0 : doc._id, ".jpg")));
-                return [3 /*break*/, 4];
-            case 3:
-                err_1 = _a.sent();
-                if (err_1 == 1) {
-                    (0, handle_1.sendError)(res, handle_1.ErrorType.undefined);
-                }
-                else if (err_1 == 2) {
-                    (0, handle_1.sendError)(res, handle_1.ErrorType.NotId);
-                }
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); });
-router.get("/ani/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var doc, err_2;
+    var query, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, couch.use("anime").get(req.params.id)
-                    // sleep.sleep(4)
-                ];
-            case 1:
-                doc = _a.sent();
-                // sleep.sleep(4)
                 (0, handle_1.setHeader)(res);
-                res.send(doc);
+                res.setHeader("Cache-Control", "public, max-age:60");
+                query = "SELECT id, name, description, genre, averageeptime FROM anime;";
+                return [4 /*yield*/, req.db.execute(query).then(function (v) {
+                        handle_1.Console.log(v.rows);
+                        res.send(v.rows);
+                    }).catch(function (err) {
+                        throw new Error(err);
+                    })];
+            case 1:
+                _a.sent();
                 return [3 /*break*/, 3];
             case 2:
+                err_1 = _a.sent();
+                handle_1.Console.error(err_1);
+                (0, handle_1.sendError)(res, handle_1.ErrorType.undefined);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        (0, handle_1.setHeader)(res);
+        try {
+            if (req.query.Id == null || req.query.Id == undefined) {
+                throw 1;
+            }
+            (0, handle_1.sendFile)().img(res);
+            res.sendFile(path.join(animePath, req.query.Id, "img", "".concat(req.query.Id, ".jpg")));
+        }
+        catch (err) {
+            if (err == 1) {
+                (0, handle_1.sendError)(res, handle_1.ErrorType.undefined);
+            }
+            else if (err == 2) {
+                (0, handle_1.sendError)(res, handle_1.ErrorType.NotId);
+            }
+        }
+        return [2 /*return*/];
+    });
+}); });
+router.get("/ani/:id/ass", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var client, query, resultProd, resultCrea, resultStu, ress, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, (0, handle_1.openConnectionAnime)()];
+            case 1:
+                client = _a.sent();
+                _a.label = 2;
+            case 2:
+                _a.trys.push([2, 6, 7, 9]);
+                if (!req.params.id) {
+                    throw handle_1.ErrorType.undefined;
+                }
+                query = {
+                    text: "\n      SELECT producer_id\n        FROM animes.anime_producers\n        WHERE anime_id = $1;\n      ",
+                    values: [req.params.id]
+                };
+                return [4 /*yield*/, animeClient.query(query)];
+            case 3:
+                resultProd = _a.sent();
+                query = {
+                    text: "\n      SELECT creator_id\n      FROM animes.anime_creators\n      WHERE anime_id = $1;\n      ",
+                    values: [req.params.id]
+                };
+                return [4 /*yield*/, animeClient.query(query)];
+            case 4:
+                resultCrea = _a.sent();
+                query = {
+                    text: "\n      SELECT studio_id\n      FROM animes.anime_studios\n      WHERE anime_id = $1;\n      ",
+                    values: [req.params.id]
+                };
+                return [4 /*yield*/, animeClient.query(query)];
+            case 5:
+                resultStu = _a.sent();
+                ress = {
+                    producers: resultProd.rows,
+                    creators: resultCrea.rows,
+                    studios: resultStu.rows
+                };
+                res.json(ress);
+                return [3 /*break*/, 9];
+            case 6:
                 err_2 = _a.sent();
+                switch (err_2) {
+                    case handle_1.ErrorType.undefined:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.undefined);
+                        break;
+                    case handle_1.ErrorType.default:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_2);
+                        break;
+                }
+                return [3 /*break*/, 9];
+            case 7: return [4 /*yield*/, (0, handle_1.endConnectionAnime)(client)];
+            case 8:
+                _a.sent();
+                return [7 /*endfinally*/];
+            case 9: return [2 /*return*/];
+        }
+    });
+}); });
+router.get("/ani/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, err_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                query = "SELECT * FROM anime WHERE id = ".concat(req.params.id, ";");
+                return [4 /*yield*/, req.db.execute(query).then(function (v) {
+                        (0, handle_1.setHeader)(res);
+                        handle_1.Console.log(v.rows[0]);
+                        res.send(v.rows[0]);
+                    }).catch(function (err) {
+                        handle_1.Console.log(err);
+                        throw new Error(err);
+                    })];
+            case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+            case 2:
+                err_3 = _a.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.NotId);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
@@ -230,7 +304,7 @@ router.get("/ani/gen/:gen", function (req, res) { return __awaiter(void 0, void 
     });
 }); });
 router.get('/search', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var search, db, _a, _b, err_3;
+    var search, db, _a, _b, err_4;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
@@ -251,15 +325,15 @@ router.get('/search', function (req, res) { return __awaiter(void 0, void 0, voi
                 });
                 return [3 /*break*/, 3];
             case 2:
-                err_3 = _c.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_3);
+                err_4 = _c.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 router.get("/g/ep/:aniId/:sId/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var doc, s, ep, err_4;
+    var doc, s, ep, err_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -274,40 +348,38 @@ router.get("/g/ep/:aniId/:sId/:id", function (req, res) { return __awaiter(void 
                 res.send(ep);
                 return [3 /*break*/, 3];
             case 2:
-                err_4 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_4);
+                err_5 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_5);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var count;
     return __generator(this, function (_a) {
         // const query = {
         //   text: 'SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL 7 days',
         //   values: ['7 days'],
         // };
         try {
-            count = req.query.count;
-            if (count) {
-                Postgre_1.logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC LIMIT $1', [count])
-                    .then(function (result) {
-                    res.send(result.rows);
-                })
-                    .catch(function (err) {
-                    throw err;
-                });
-            }
-            else {
-                Postgre_1.logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC')
-                    .then(function (result) {
-                    res.send(result.rows);
-                })
-                    .catch(function (err) {
-                    throw err;
-                });
-            }
+            // var {count} = req.query
+            // if(count){
+            //   logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC LIMIT $1',[count])
+            //   .then((result)=>{
+            //     res.send(result.rows)
+            //   })
+            //   .catch((err)=>{
+            //     throw err
+            //   })
+            // }else{
+            //   logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC')
+            //   .then((result)=>{
+            //     res.send(result.rows)
+            //   })
+            //   .catch((err)=>{
+            //     throw err
+            //   })
+            // }
         }
         catch (err) {
             (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
@@ -325,7 +397,7 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
 //   }
 // })
 router.get("/ani/char/:aniId/:charId/img", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var doc, err_5;
+    var doc, err_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -337,8 +409,8 @@ router.get("/ani/char/:aniId/:charId/img", function (req, res) { return __awaite
                 res.sendFile(path.join(doc.path, "characters", req.params.charId, "".concat(req.params.charId, ".jpg")));
                 return [3 /*break*/, 3];
             case 2:
-                err_5 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_5);
+                err_6 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_6);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -370,7 +442,7 @@ router.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awai
     });
 }); });
 router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userData, user, err_6;
+    var userData, user, err_7;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -384,15 +456,15 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                 res.json(user);
                 return [3 /*break*/, 4];
             case 3:
-                err_6 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_6);
+                err_7 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_7);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
 router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var logData, log, err_7;
+    var logData, log, err_8;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -406,8 +478,8 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
                 res.json(log);
                 return [3 /*break*/, 4];
             case 3:
-                err_7 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_7);
+                err_8 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_8);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -420,6 +492,9 @@ app.get('*', function (req, res) {
     res.sendFile(path.join("D:\\main\\app\\build", "index.html"));
 });
 var httpsServer = https.createServer(credentials, app);
+// app.listen(80,"0.0.0.0",()=>{
+//   console.log("Aberto em 0.0.0.0")
+// })
 httpsServer.listen(443, "0.0.0.0", function () {
     handle_1.Console.log("https://0.0.0.0");
 });

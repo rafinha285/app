@@ -2,8 +2,9 @@
     background: #14022e;
     border: 1px solid #bdbdbd;
     cursor: pointer;
-    float: left;
-    height: 99%;
+    /* float: left; */
+    /* height: 99%; */
+    aspect-ratio: 9/16;
     margin-bottom: 10px;
     margin-left: 20px;
     min-width: 229px;
@@ -11,6 +12,8 @@
     padding: 0!important;
     position: relative;
     transition: all 1s;
+    max-height: 367px;
+    border-radius: 10px;
 }
 .perso-div:hover .perso-div-hover{
     background-color: rgba(20,0,37,.5);
@@ -32,4 +35,16 @@
     padding: 15px;
     top: 0;
     z-index: 3;
+    height: 100%;
+    position: absolute;
+    transition: all .6s;
+    width: 100%;
+}
+.perso-div-body	p:first-child{
+    position:absolute;
+    bottom: calc(30% - 45px);
+}
+.perso-div-body p:last-child{
+    position:absolute;
+    bottom: calc(10% - 45px);
 }

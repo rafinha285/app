@@ -1,4 +1,8 @@
-export function getEpTime(e:number):string{
+import { Anime, AnimeDocument } from "../types/animeModel"
+import { Episode } from "../types/episodeModel"
+
+export function getEpTime(ee:number):string{
+    var e = Math.round(ee)
     var h = Math.floor(e/3600).toString()
     let m:string =""
     var s = (e%60).toString()
@@ -42,4 +46,14 @@ export const getMonthName = (date:Date,short:boolean,locale = "pt-br"):string =>
     }
 
     return short ? localeMonthNames[month].substring(0, 3) : localeMonthNames[month];
+}
+export function NextEp(ani:AnimeDocument,seasonId:string,ep:Episode){
+    var eps = ani.seasons?.find(s=>s._id === seasonId)?.episodes!
+    let indiceAtual=eps?.findIndex(e=>e._id === ep._id)
+    let proximoEp = eps[indiceAtual!+1]
+    return proximoEp
+}
+export const handleNextEp = (ani:AnimeDocument,seasonId:string,ep:Episode)=>{
+    var proximoEp = NextEp(ani,seasonId,ep)
+    window.location.href = `/Anime/${ani._id}/watch/${seasonId}/${proximoEp._id}`
 }

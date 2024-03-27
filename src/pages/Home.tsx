@@ -14,7 +14,7 @@ const Home = () =>{
             </Helmet>
             <body>
                 <Header></Header>
-                <Episodes></Episodes>
+                <Episodes count={8}></Episodes>
                 <AnimeLan manga={false}></AnimeLan>
                 <AnimeLan manga={true}></AnimeLan>
                 <Footer></Footer>

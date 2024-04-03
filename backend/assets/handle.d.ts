@@ -6,6 +6,8 @@ import { PoolClient } from 'pg';
 export declare const Console: {
     log(...args: any[]): void;
     error(...args: any[]): void;
+    warn(...args: any[]): void;
+    info(...args: any[]): void;
 };
 export declare function setHeader(res: express.Response): void;
 export declare function cut(string: string): string;

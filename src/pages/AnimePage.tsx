@@ -1,5 +1,5 @@
 import React, { useEffect, useState} from "react";
-import {Anime} from "../types/animeModel";
+import {Anime, Season} from "../types/animeModel";
 import "../css/index.css"
 import "../css/base.css"
 import "../css/anime.css"
@@ -19,8 +19,9 @@ import postLog from "../functions/logFunctions"
 import PersoCompo from "../components/Perso";
 import {Box, Rating} from "@mui/material"
 import StarIcon from '@mui/icons-material/Star';
-import { genToArray, tupleToProducer } from "../functions/animeFunctions";
+import { genToArray, tupleToProducer, tupleToSeason } from "../functions/animeFunctions";
 import AniProducers, { prodType } from "../assets/AnimeProd";
+import { types } from "cassandra-driver";
 
 
 interface seasonDate{
@@ -36,10 +37,10 @@ const AnimePage:React.FC = ()=>{
     const [seasonD,setSeasonD] = useState<seasonDate>()
     useEffect(()=>{
         if(!ani){
-            $.ajax(`/api/ani/${id}`).done((res)=>{
+            $.ajax(`/api/ani/${id}`).done((res:Anime)=>{
                 const animeData:Anime = res
                 setAni(animeData)
-            }).fail((e)=>{
+            }).fail((e:any)=>{
                 if(e.status === 400){
                     setErr(true)
                 }
@@ -48,6 +49,8 @@ const AnimePage:React.FC = ()=>{
         if(ani){
             // postLog(ani,false)
             setGen(ani.genre)
+            ani.seasons = tupleToSeason(ani.seasons as types.Tuple[])
+            console.log(ani.seasons)
         }
     },[ani,id])
     const [gen,setGen] = useState<string[]>([])
@@ -200,14 +203,14 @@ const AnimePage:React.FC = ()=>{
                     </div>
                     <div className="seasons">
                         <select onChange={seasonChangeHandle}>
-                            {ani.seasons?.map((s)=>(
-                                <option value={s._id} key={s.index}>{s.name}</option>
+                            {(ani.seasons! as Season[])?.map((s)=>(
+                                <option value={s.id} key={s.index}>{s.name}</option>
                             ))}
                         </select>
                     </div>
                     <div className="eps">
-                        {ani.seasons?.map((s)=>(
-                            <div style={{display: s.index === 1?'block':"none"}} id={s._id} key={s.index}>
+                        {(ani.seasons! as Season[])?.map((s)=>(
+                            <div style={{display: s.index === 1?'block':"none"}} id={s.id} key={s.index}>
                                 {s.episodes?.map((ep,i)=>(
                                     <EpisodeLink downloadHandle={downloadHandle} ep={ep} s={s} ani={ani}></EpisodeLink>
                                 ))}

@@ -1,7 +1,8 @@
 import {Client}from'cassandra-driver';
+import { IP_DATABASE } from '../consts';
 
 export const client = new Client({
-    contactPoints:['192.168.1.30'],
+    contactPoints:[IP_DATABASE],
     localDataCenter:"datacenter1",
     keyspace:"data"
 })

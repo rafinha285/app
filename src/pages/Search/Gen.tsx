@@ -2,7 +2,7 @@ import React, { useEffect ,useState} from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Searchh from "../../components/Searchh";
-import { animeType} from "../../types/AnimeType";
+import { Anime} from "../../types/animeModel";
 import "../../css/search.css"
 import $ from "jquery"
 import { useParams , Link} from "react-router-dom";
@@ -11,11 +11,11 @@ import { Helmet } from "react-helmet";
 
 const GenSearch = ()=>{
     var {gen} = useParams()
-    const [gens,setGens] = useState<animeType[]>()
+    const [gens,setGens] = useState<Anime[]>()
 
     useEffect(()=>{
         $.ajax(`/api/ani/gen/${gen}`)
-            .done((res:animeType[])=>{
+            .done((res:Anime[])=>{
                 setGens(res)
             })
     },[])

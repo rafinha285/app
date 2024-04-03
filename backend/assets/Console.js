@@ -23,6 +23,20 @@ var Cconsole = {
             args[_i] = arguments[_i];
         }
         console.error.apply(console, __spreadArray(["[ERROR:".concat(new Date(Date.now()).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }), "]:")], args, false));
+    },
+    warn: function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        console.warn.apply(console, __spreadArray(["[WARN:".concat(new Date(Date.now()).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }), "]")], args, false));
+    },
+    info: function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        console.info.apply(console, __spreadArray(["[INFO:".concat(new Date(Date.now()).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' }), "]")], args, false));
     }
 };
 exports.default = Cconsole;

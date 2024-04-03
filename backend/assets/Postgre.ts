@@ -1,4 +1,5 @@
 import {Pool} from "pg"
+import { IP_DATABASE } from "../consts"
 
 export const pool = new Pool({
     user:"server",
@@ -9,7 +10,7 @@ export const pool = new Pool({
 })
 export const animeClient = new Pool({
     user:"postgres",
-    host:"192.168.1.11",
+    host:IP_DATABASE,
     database:"anime",
     password:"285",
     port:5433

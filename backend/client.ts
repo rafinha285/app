@@ -13,11 +13,15 @@ import * as nano from "nano"
 const Nano = require('nano');
 import { Anime } from '../../app_admin/src/types/animeModel'
 import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, openConnectionAnime, endConnectionAnime} from "./assets/handle"
-import { AnimeDocument, producers } from '../src/types/animeModel'
+// import { AnimeDocument, producers } from '../src/types/animeModel'
 import { Log } from '../src/types/logType'
 // import { animeClient } from './assets/Postgre'
 import { Query, QueryConfig, QueryResult } from 'pg'
 import { client } from './assets/pool'
+import { ANIME_PATH } from './consts'
+import { types } from 'cassandra-driver'
+import { EpisodeSim } from '../src/types/episodeModel'
+import {tupleToSeason} from "../src/functions/animeFunctions"
 
 const privateKey = fs.readFileSync(path.join(__dirname,"../","../","https","chave.pem"), 'utf8');
 const certificate = fs.readFileSync(path.join(__dirname,"../","../","https",'certificado.pem'), 'utf8');
@@ -168,6 +172,25 @@ router.get('/ani/img',async(req:e.Request,res:e.Response)=>{
 //     await endConnectionAnime(client)
 //   }
 // })
+router.get("/g/eps/:animeId/:seasonId/:ep",async (req,res)=>{
+  try{
+    if(!req.params.animeId || !req.params.seasonId||!req.params.ep){
+      throw ErrorType.undefined
+    }
+
+    var ep = await req.db.execute("SELECT * FROM episodes WHERE animeid = ? AND seasonid = ? AND id = ? ALLOW FILTERING;",[req.params.animeId,req.params.seasonId,req.params.ep],{prepare:true})
+    res.send(ep.rows[0])
+  }catch(err){
+    switch(err){
+      case ErrorType.undefined:
+        sendError(res,ErrorType.undefined,400,"")
+        break
+      default:
+        sendError(res,ErrorType.default,500,err)
+    }
+    
+  }
+})
 router.get("/ani/:id",async(req:e.Request,res:e.Response)=>{
   try{
     // var doc = await couch.use("anime").get(req.params.id)
@@ -242,27 +265,29 @@ app.get("/ani/season/",(req,res)=>{
   }
 })
 router.get("/ani/gen/:gen",async(req:e.Request,res:e.Response)=>{
-  const agg:nano.MangoQuery = {
-    selector:{
-      generos:req.params.gen
-    }
+  try{
+    var docs = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE genre CONTAINS ?`,[req.params.gen],{prepare:true})
+    res.send(docs.rows)
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
   }
-  var docs =await couch.use("anime").find(agg) as nano.MangoResponse<Anime[]>;
-  res.send(docs)
+ 
 })
 router.get('/search',async (req:e.Request,res:e.Response)=>{
   try{
     var search= req.query.s
-    var db = couch.use("anime")
-    Console.log(await db.get("_design/search"))
-    db.view("anime","search",{include_docs:true,key:{search}},(err,response)=>{
-      if(err)throw err
-      Console.log(response)
-      const result = response.rows.map(row => row.doc); // Obtém os documentos da view
+    var result = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE name LIKE ? ALLOW FILTERING`,[`%${search}%`],{prepare:true})
+    res.send(result.rows)
+    // var db = couch.use("anime")
+    // Console.log(await db.get("_design/search"))
+    // db.view("anime","search",{include_docs:true,key:{search}},(err,response)=>{
+    //   if(err)throw err
+    //   Console.log(response)
+    //   const result = response.rows.map(row => row.doc); // Obtém os documentos da view
 
-      console.log(result);
-      res.send(result)
-    })
+    //   console.log(result);
+    //   res.send(result)
+    // })
     // Console.log(animeResults)
     
   }catch(err){
@@ -270,14 +295,24 @@ router.get('/search',async (req:e.Request,res:e.Response)=>{
   }
 
 })
-router.get("/g/ep/:aniId/:sId/:id",async(req,res)=>{
+// router.get("/g/ep/:aniId/:sId/:id",async(req,res)=>{
+//   try{
+//     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument
+//     var s = doc.seasons!.find((v)=>v._id === req.params.sId)
+//     var ep = s!.episodes.find((v)=>v._id===req.params.id)
+//     Console.log(doc,s,ep)
+//     Console.log(doc.seasons)
+//     res.send(ep)
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
+router.get("/g/s/eps/:animeid/:seasonid",async(req,res)=>{
   try{
-    var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument
-    var s = doc.seasons!.find((v)=>v._id === req.params.sId)
-    var ep = s!.episodes.find((v)=>v._id===req.params.id)
-    Console.log(doc,s,ep)
-    Console.log(doc.seasons)
-    res.send(ep)
+    const {animeid,seasonid} = req.params
+    var result = await req.db.execute("SELECT * FROM episodes WHERE animeid = ? AND seasonid = ? ALLOW FILTERING",[types.Uuid.fromString(animeid),types.Uuid.fromString(seasonid)])
+    Console.log(result.rows)
+    res.send(result.rows)
   }catch(err){
     sendError(res,ErrorType.default,500,err)
   }
@@ -288,6 +323,35 @@ router.get("/g/eps",async(req,res)=>{
   //   values: ['7 days'],
   // };
   try{
+    var eps:EpisodeSim[] = []
+    var semana = Math.floor(Date.now()/1000) - 1209600
+    var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution FROM episodes WHERE date_added >= ? ALLOW FILTERING",[semana],{prepare:true})
+    result.rows.forEach(async ee=>{
+      var {id,animeid,seasonid,name,duration,resolution} = ee
+      var aniS = await req.db.execute("SELECT name FROM anime WHERE id = ?",[animeid],{prepare:true})
+      // var season = tupleToSeason(aniS.rows[0].seasons).find(e=>e.id === seasonid)
+      // console.log(season)
+      
+      var ep:EpisodeSim={
+        id,
+        animeid,
+        seasonid,
+        name,
+        duration,
+        resolution,
+        animename:aniS.rows[0].name,
+        // seasonname:season?.name!
+      }
+      console.log(ep)
+      eps.push(ep)
+    })
+    setTimeout(()=>{
+      Console.log(eps)
+      res.send(eps)
+    },2)
+    
+   
+    
     // var {count} = req.query
     // if(count){
     //   logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC LIMIT $1',[count])
@@ -337,12 +401,9 @@ router.get("/css/:file",(req:e.Request,res:e.Response)=>{
 })
 router.get("/ep/:aniId/:season/:epId/:file",async(req,res)=>{
   setHeader(res)
-  var ani = await couch.use("anime").get(req.params.aniId) as AnimeDocument
-  var sea = ani.seasons?.find((v)=>v._id===req.params.season)
-  var ep = sea?.episodes.find((v)=>v._id===req.params.epId)
+  var {aniId,season,epId,file} = req.params
   res.set('Cache-Control', 'public, max-age=7200')
-  // Console.log(ani.path,sea?._id,req.params.epId,req.params.file)
-  res.sendFile(path.join(ani.path!,"seasons",sea?._id!,ep?._id!,req.params.file))
+  res.sendFile(path.join(ANIME_PATH,aniId,"seasons",season,epId,file))
 })
 router.post("/new/user",async(req:e.Request,res:e.Response)=>{
   var userData:User = req.body

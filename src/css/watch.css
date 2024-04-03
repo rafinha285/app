@@ -155,7 +155,7 @@
     margin: 0 .2em
 }
 .ep-sel-but:disabled,
-.ep-sel-but	[disabled]{
+.ep-sel-but	[aria-disabled="true"]{
     background: var(--gray-dark);
     border: var(--gray) 2px solid;
 }

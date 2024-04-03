@@ -45,6 +45,8 @@ var body_parser_1 = require("body-parser");
 var Nano = require('nano');
 var handle_1 = require("./assets/handle");
 var pool_1 = require("./assets/pool");
+var consts_1 = require("./consts");
+var cassandra_driver_1 = require("cassandra-driver");
 var privateKey = fs.readFileSync(path.join(__dirname, "../", "../", "https", "chave.pem"), 'utf8');
 var certificate = fs.readFileSync(path.join(__dirname, "../", "../", "https", 'certificado.pem'), 'utf8');
 var credentials = { key: privateKey, cert: certificate };
@@ -142,63 +144,83 @@ router.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, vo
         return [2 /*return*/];
     });
 }); });
-router.get("/ani/:id/ass", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var client, query, resultProd, resultCrea, resultStu, ress, err_2;
+// router.get("/ani/:id/ass",async(req:e.Request,res:e.Response)=>{
+//   var client= await openConnectionAnime()
+//   try{
+//     if(!req.params.id){
+//       throw ErrorType.undefined
+//     }
+//     var query:QueryConfig={
+//       text:`
+//       SELECT producer_id
+//         FROM animes.anime_producers
+//         WHERE anime_id = $1;
+//       `,
+//       values:[req.params.id]
+//     }
+//     var resultProd:QueryResult = await animeClient.query(query)
+//     query={
+//       text:`
+//       SELECT creator_id
+//       FROM animes.anime_creators
+//       WHERE anime_id = $1;
+//       `,
+//       values:[req.params.id]
+//     }
+//     var resultCrea:QueryResult = await animeClient.query(query)
+//     query={
+//       text:`
+//       SELECT studio_id
+//       FROM animes.anime_studios
+//       WHERE anime_id = $1;
+//       `,
+//       values:[req.params.id]
+//     }
+//     var resultStu:QueryResult = await animeClient.query(query)
+//     var ress = {
+//       producers:resultProd.rows,
+//       creators:resultCrea.rows,
+//       studios:resultStu.rows
+//     }
+//     res.json(ress)
+//   }catch(err:any|ErrorType){
+//     switch(err){
+//       case ErrorType.undefined:
+//         sendError(res,ErrorType.undefined)
+//         break
+//       case ErrorType.default:
+//         sendError(res,ErrorType.default,500,err)
+//         break
+//     }
+//   }finally{
+//     await endConnectionAnime(client)
+//   }
+// })
+router.get("/g/eps/:animeId/:seasonId/:ep", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var ep, err_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, (0, handle_1.openConnectionAnime)()];
-            case 1:
-                client = _a.sent();
-                _a.label = 2;
-            case 2:
-                _a.trys.push([2, 6, 7, 9]);
-                if (!req.params.id) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                if (!req.params.animeId || !req.params.seasonId || !req.params.ep) {
                     throw handle_1.ErrorType.undefined;
                 }
-                query = {
-                    text: "\n      SELECT producer_id\n        FROM animes.anime_producers\n        WHERE anime_id = $1;\n      ",
-                    values: [req.params.id]
-                };
-                return [4 /*yield*/, animeClient.query(query)];
-            case 3:
-                resultProd = _a.sent();
-                query = {
-                    text: "\n      SELECT creator_id\n      FROM animes.anime_creators\n      WHERE anime_id = $1;\n      ",
-                    values: [req.params.id]
-                };
-                return [4 /*yield*/, animeClient.query(query)];
-            case 4:
-                resultCrea = _a.sent();
-                query = {
-                    text: "\n      SELECT studio_id\n      FROM animes.anime_studios\n      WHERE anime_id = $1;\n      ",
-                    values: [req.params.id]
-                };
-                return [4 /*yield*/, animeClient.query(query)];
-            case 5:
-                resultStu = _a.sent();
-                ress = {
-                    producers: resultProd.rows,
-                    creators: resultCrea.rows,
-                    studios: resultStu.rows
-                };
-                res.json(ress);
-                return [3 /*break*/, 9];
-            case 6:
+                return [4 /*yield*/, req.db.execute("SELECT * FROM episodes WHERE animeid = ? AND seasonid = ? AND id = ? ALLOW FILTERING;", [req.params.animeId, req.params.seasonId, req.params.ep], { prepare: true })];
+            case 1:
+                ep = _a.sent();
+                res.send(ep.rows[0]);
+                return [3 /*break*/, 3];
+            case 2:
                 err_2 = _a.sent();
                 switch (err_2) {
                     case handle_1.ErrorType.undefined:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.undefined);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.undefined, 400, "");
                         break;
-                    case handle_1.ErrorType.default:
+                    default:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_2);
-                        break;
                 }
-                return [3 /*break*/, 9];
-            case 7: return [4 /*yield*/, (0, handle_1.endConnectionAnime)(client)];
-            case 8:
-                _a.sent();
-                return [7 /*endfinally*/];
-            case 9: return [2 /*return*/];
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
     });
 }); });
@@ -286,66 +308,35 @@ app.get("/ani/season/", function (req, res) {
     }
 });
 router.get("/ani/gen/:gen", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var agg, docs;
+    var docs, err_4;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                agg = {
-                    selector: {
-                        generos: req.params.gen
-                    }
-                };
-                return [4 /*yield*/, couch.use("anime").find(agg)];
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, req.db.execute("SELECT id, name, description,rating FROM anime WHERE genre CONTAINS ?", [req.params.gen], { prepare: true })];
             case 1:
                 docs = _a.sent();
-                res.send(docs);
-                return [2 /*return*/];
-        }
-    });
-}); });
-router.get('/search', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var search, db, _a, _b, err_4;
-    return __generator(this, function (_c) {
-        switch (_c.label) {
-            case 0:
-                _c.trys.push([0, 2, , 3]);
-                search = req.query.s;
-                db = couch.use("anime");
-                _b = (_a = handle_1.Console).log;
-                return [4 /*yield*/, db.get("_design/search")];
-            case 1:
-                _b.apply(_a, [_c.sent()]);
-                db.view("anime", "search", { include_docs: true, key: { search: search } }, function (err, response) {
-                    if (err)
-                        throw err;
-                    handle_1.Console.log(response);
-                    var result = response.rows.map(function (row) { return row.doc; }); // Obtém os documentos da view
-                    console.log(result);
-                    res.send(result);
-                });
+                res.send(docs.rows);
                 return [3 /*break*/, 3];
             case 2:
-                err_4 = _c.sent();
+                err_4 = _a.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
-router.get("/g/ep/:aniId/:sId/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var doc, s, ep, err_5;
+router.get('/search', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var search, result, err_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, couch.use("anime").get(req.params.aniId)];
+                search = req.query.s;
+                return [4 /*yield*/, req.db.execute("SELECT id, name, description,rating FROM anime WHERE name LIKE ? ALLOW FILTERING", ["%".concat(search, "%")], { prepare: true })];
             case 1:
-                doc = _a.sent();
-                s = doc.seasons.find(function (v) { return v._id === req.params.sId; });
-                ep = s.episodes.find(function (v) { return v._id === req.params.id; });
-                handle_1.Console.log(doc, s, ep);
-                handle_1.Console.log(doc.seasons);
-                res.send(ep);
+                result = _a.sent();
+                res.send(result.rows);
                 return [3 /*break*/, 3];
             case 2:
                 err_5 = _a.sent();
@@ -355,36 +346,89 @@ router.get("/g/ep/:aniId/:sId/:id", function (req, res) { return __awaiter(void 
         }
     });
 }); });
+// router.get("/g/ep/:aniId/:sId/:id",async(req,res)=>{
+//   try{
+//     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument
+//     var s = doc.seasons!.find((v)=>v._id === req.params.sId)
+//     var ep = s!.episodes.find((v)=>v._id===req.params.id)
+//     Console.log(doc,s,ep)
+//     Console.log(doc.seasons)
+//     res.send(ep)
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
+router.get("/g/s/eps/:animeid/:seasonid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, animeid, seasonid, result, err_6;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                _a = req.params, animeid = _a.animeid, seasonid = _a.seasonid;
+                return [4 /*yield*/, req.db.execute("SELECT * FROM episodes WHERE animeid = ? AND seasonid = ? ALLOW FILTERING", [cassandra_driver_1.types.Uuid.fromString(animeid), cassandra_driver_1.types.Uuid.fromString(seasonid)])];
+            case 1:
+                result = _b.sent();
+                handle_1.Console.log(result.rows);
+                res.send(result.rows);
+                return [3 /*break*/, 3];
+            case 2:
+                err_6 = _b.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_6);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var eps, semana, result, err_7;
     return __generator(this, function (_a) {
-        // const query = {
-        //   text: 'SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL 7 days',
-        //   values: ['7 days'],
-        // };
-        try {
-            // var {count} = req.query
-            // if(count){
-            //   logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC LIMIT $1',[count])
-            //   .then((result)=>{
-            //     res.send(result.rows)
-            //   })
-            //   .catch((err)=>{
-            //     throw err
-            //   })
-            // }else{
-            //   logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC')
-            //   .then((result)=>{
-            //     res.send(result.rows)
-            //   })
-            //   .catch((err)=>{
-            //     throw err
-            //   })
-            // }
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                eps = [];
+                semana = Math.floor(Date.now() / 1000) - 1209600;
+                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution FROM episodes WHERE date_added >= ? ALLOW FILTERING", [semana], { prepare: true })];
+            case 1:
+                result = _a.sent();
+                result.rows.forEach(function (ee) { return __awaiter(void 0, void 0, void 0, function () {
+                    var id, animeid, seasonid, name, duration, resolution, aniS, ep;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                id = ee.id, animeid = ee.animeid, seasonid = ee.seasonid, name = ee.name, duration = ee.duration, resolution = ee.resolution;
+                                return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [animeid], { prepare: true })
+                                    // var season = tupleToSeason(aniS.rows[0].seasons).find(e=>e.id === seasonid)
+                                    // console.log(season)
+                                ];
+                            case 1:
+                                aniS = _a.sent();
+                                ep = {
+                                    id: id,
+                                    animeid: animeid,
+                                    seasonid: seasonid,
+                                    name: name,
+                                    duration: duration,
+                                    resolution: resolution,
+                                    animename: aniS.rows[0].name,
+                                    // seasonname:season?.name!
+                                };
+                                console.log(ep);
+                                eps.push(ep);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
+                setTimeout(function () {
+                    handle_1.Console.log(eps);
+                    res.send(eps);
+                }, 2);
+                return [3 /*break*/, 3];
+            case 2:
+                err_7 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_7);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
-        catch (err) {
-            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
-        }
-        return [2 /*return*/];
     });
 }); });
 // router.get("/ani/char/:aniId/:charId",async(req,res)=>{
@@ -397,7 +441,7 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
 //   }
 // })
 router.get("/ani/char/:aniId/:charId/img", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var doc, err_6;
+    var doc, err_8;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -409,8 +453,8 @@ router.get("/ani/char/:aniId/:charId/img", function (req, res) { return __awaite
                 res.sendFile(path.join(doc.path, "characters", req.params.charId, "".concat(req.params.charId, ".jpg")));
                 return [3 /*break*/, 3];
             case 2:
-                err_6 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_6);
+                err_8 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_8);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -423,26 +467,17 @@ router.get("/css/:file", function (req, res) {
     res.sendFile(path.join("E:\\main\\app\\src\\css", req.params.file));
 });
 router.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var ani, sea, ep;
-    var _a;
+    var _a, aniId, season, epId, file;
     return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                (0, handle_1.setHeader)(res);
-                return [4 /*yield*/, couch.use("anime").get(req.params.aniId)];
-            case 1:
-                ani = _b.sent();
-                sea = (_a = ani.seasons) === null || _a === void 0 ? void 0 : _a.find(function (v) { return v._id === req.params.season; });
-                ep = sea === null || sea === void 0 ? void 0 : sea.episodes.find(function (v) { return v._id === req.params.epId; });
-                res.set('Cache-Control', 'public, max-age=7200');
-                // Console.log(ani.path,sea?._id,req.params.epId,req.params.file)
-                res.sendFile(path.join(ani.path, "seasons", sea === null || sea === void 0 ? void 0 : sea._id, ep === null || ep === void 0 ? void 0 : ep._id, req.params.file));
-                return [2 /*return*/];
-        }
+        (0, handle_1.setHeader)(res);
+        _a = req.params, aniId = _a.aniId, season = _a.season, epId = _a.epId, file = _a.file;
+        res.set('Cache-Control', 'public, max-age=7200');
+        res.sendFile(path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, file));
+        return [2 /*return*/];
     });
 }); });
 router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userData, user, err_7;
+    var userData, user, err_9;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -456,15 +491,15 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                 res.json(user);
                 return [3 /*break*/, 4];
             case 3:
-                err_7 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_7);
+                err_9 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_9);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
 router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var logData, log, err_8;
+    var logData, log, err_10;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -478,8 +513,8 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
                 res.json(log);
                 return [3 /*break*/, 4];
             case 3:
-                err_8 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_8);
+                err_10 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_10);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

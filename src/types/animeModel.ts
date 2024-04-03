@@ -66,11 +66,10 @@ export interface Producer{
 	name:string;
 }
 export interface Season{
-    _id:string;
+    id:string;
     name: string;
-    episodes: Episode[];
+    episodes: string[];
     index: number;
-    animeId: string;
 }
 export interface Anime{
     id:string;
@@ -85,7 +84,7 @@ export interface Anime{
 	producers:types.Tuple[]|string[][]|string[];
 	creators:types.Tuple[]|string[][]|string[];
 	genre:string[];
-	seasons?:Season[];
+	seasons?:Season[]|types.Tuple[];
 	rating?:number;
 	characters?:character[];
 	// path?:string;
@@ -97,4 +96,10 @@ export interface AnimeUser{
     name:string;
     watchedEpisodes:number;
     lastEp:EpisodeUser
+}
+export interface AnimeSearch{
+	id:string;
+	name:string;
+	description:string;
+	rating:number;
 }

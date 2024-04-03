@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.animeClient = exports.pool = void 0;
 var pg_1 = require("pg");
+var consts_1 = require("../consts");
 exports.pool = new pg_1.Pool({
     user: "server",
     host: "localhost",
@@ -11,7 +12,7 @@ exports.pool = new pg_1.Pool({
 });
 exports.animeClient = new pg_1.Pool({
     user: "postgres",
-    host: "192.168.1.11",
+    host: consts_1.IP_DATABASE,
     database: "anime",
     password: "285",
     port: 5433

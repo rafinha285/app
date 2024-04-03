@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { AnimeDocument } from "../types/animeModel";
+import { Anime } from "../types/animeModel";
 import { Season } from "../types/seasonModel";
 import { Episode } from "../types/episodeModel";
 interface prop{
-    ani:AnimeDocument,
+    ani:Anime,
     s:Season,
     ep:Episode,
     downloadHandle:()=>void

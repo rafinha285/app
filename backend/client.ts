@@ -1,5 +1,5 @@
 import * as e from 'express'
-import * as ip from 'ip'
+// import * as ip from 'ip'
 import * as path from 'path'
 import * as cors from 'cors'
 import * as fs from 'fs'
@@ -12,46 +12,50 @@ import {User} from "../src/types/userType"
 import * as nano from "nano"
 const Nano = require('nano');
 import { Anime } from '../../app_admin/src/types/animeModel'
-import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog} from "./assets/handle"
-import { AnimeDocument } from '../src/types/animeModel'
+import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, openConnectionAnime, endConnectionAnime} from "./assets/handle"
+import { AnimeDocument, producers } from '../src/types/animeModel'
 import { Log } from '../src/types/logType'
-import { logPool } from './assets/Postgre'
+// import { animeClient } from './assets/Postgre'
+import { Query, QueryConfig, QueryResult } from 'pg'
+import { client } from './assets/pool'
 
-const privateKey = fs.readFileSync('D:\\main\\https\\chave.pem', 'utf8');
-const certificate = fs.readFileSync('D:\\main\\https\\certificado.pem', 'utf8');
+const privateKey = fs.readFileSync(path.join(__dirname,"../","../","https","chave.pem"), 'utf8');
+const certificate = fs.readFileSync(path.join(__dirname,"../","../","https",'certificado.pem'), 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 var app = e()
-const ip_1 = ip.address("Radmin VPN")
-const ip_2 = ip.address("Ethernet")
+// const ip_1 = ip.address("Radmin VPN")
+// const ip_2 = ip.address("Ethernet")
 // const mongoUri = `mongodb://${ip_1}:211/data`
-const couch:nano.ServerScope = Nano('http://admin:285@127.0.0.1:5984');
+// const couch:nano.ServerScope = Nano('http://admin:285@127.0.0.1:5984');
+var animePath = path.join("D:","main","server","Anime")
+var mangaPath = path.join("D:","main","server","Manga")
 
 
-const corsOptions = {
-    origin: (origin, callback) => {
-      // Verifica se a origem da solicitação corresponde à origem esperada
-      if (origin === undefined || origin === `https://${ip_1}`|| origin === `https://${ip_2}`) {
-        callback(null, true); // Permite a solicitação
-      } else {
-        callback(new Error('Acesso bloqueado por política de CORS')); // Bloqueia a solicitação
-      }
-    },
-  };
-app.use(cors(corsOptions))
+// const corsOptions = {
+//     origin: (origin, callback) => {
+//       // Verifica se a origem da solicitação corresponde à origem esperada
+//       if (origin === undefined || origin === `https://${ip_1}`|| origin === `https://${ip_2}`) {
+//         callback(null, true); // Permite a solicitação
+//       } else {
+//         callback(new Error('Acesso bloqueado por política de CORS')); // Bloqueia a solicitação
+//       }
+//     },
+//   };
+// app.use(cors(corsOptions))
 app.use(json());
 app.use(urlencoded({ extended: true }));
 
-app.use(helmet({
-    contentSecurityPolicy:{
-        directives:{
-            defaultSrc: ['self', "*.ngrok-free.app"],
-            scriptSrc:['self','https://kit.fontawesome.com','https://ajax.googleapis.com','https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline', "*.ngrok-free.app"],
-            scriptSrcElem: ['self', 'https://ajax.googleapis.com', 'https://kit.fontawesome.com',"*.ngrok-free.app"],
-            connectSrc: ['self', 'https://kit.fontawesome.com', 'https://ajax.googleapis.com', 'https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline',"*.ngrok-free.app"],
-            mediaSrc:['self',"*.ngrok-free.app","https://cdn.plyr.io"]
-        }
-    },
-}))
+// app.use(helmet({
+//     contentSecurityPolicy:{
+//         directives:{
+//             defaultSrc: ['self', "*.ngrok-free.app"],
+//             scriptSrc:['self','https://kit.fontawesome.com','https://ajax.googleapis.com','https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline', "*.ngrok-free.app"],
+//             scriptSrcElem: ['self', 'https://ajax.googleapis.com', 'https://kit.fontawesome.com',"*.ngrok-free.app"],
+//             connectSrc: ['self', 'https://kit.fontawesome.com', 'https://ajax.googleapis.com', 'https://ka-f.fontawesome.com',"https://cdn.plyr.io",'unsafe-inline',"*.ngrok-free.app"],
+//             mediaSrc:['self',"*.ngrok-free.app","https://cdn.plyr.io"]
+//         }
+//     },
+// }))
 
 
 
@@ -60,12 +64,37 @@ app.use(helmet({
 // const aniCol:mongoose.Collection = db.collection("anime")
 
 const router = e.Router()
+router.use((req,res,next)=>{
+  client.connect()
+        .then(()=>{
+            req.db = client;
+            next()
+        })
+        .catch(err=>{
+            Console.error(err);
+            sendError(res,ErrorType.default,500,"Erro na database");
+        })
+})
+
+
 router.get('/ani/lan',async(req,res)=>{
-  setHeader(res)
-  var docs = await couch.use("anime").list({include_docs:true}) as nano.DocumentListResponse<Anime>
-  const uuidv4Docs = docs.rows.filter(doc => /^[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}$/i.test(doc.doc!._id)).map(doc => doc.doc);
-  res.setHeader("Cache-Control","public, max-age:60")
-  res.send(uuidv4Docs.reverse().slice(0,10));
+  try{
+    setHeader(res)
+    res.setHeader("Cache-Control","public, max-age:60")
+    //WHERE date_added BETWEEN CURRENT_TIMESTAMP - INTERVAL '7 days' AND CURRENT_TIMESTAMP;
+    var query = `SELECT id, name, description, genre, averageeptime FROM anime;`
+    
+    await req.db.execute(query).then((v)=>{
+      Console.log(v.rows)
+      res.send(v.rows)
+    }).catch((err)=>{
+      throw new Error(err)
+    })
+    
+  }catch(err){
+    Console.error(err)
+    sendError(res,ErrorType.undefined)
+  }
 })
 router.get('/ani/img',async(req:e.Request,res:e.Response)=>{
   setHeader(res)
@@ -74,10 +103,8 @@ router.get('/ani/img',async(req:e.Request,res:e.Response)=>{
     if(req.query.Id == null || req.query.Id == undefined){
       throw 1
     }
-    var doc = await couch.use("anime").get(req.query.Id.toString()) as AnimeDocument
-    
     sendFile().img(res)
-    res.sendFile(path.join(doc?.path!,"img",`${doc?._id}.jpg`))
+    res.sendFile(path.join(animePath,(req.query.Id as string),"img",`${req.query.Id}.jpg`))
   }catch(err){
     if(err == 1){
       sendError(res,ErrorType.undefined)
@@ -86,12 +113,74 @@ router.get('/ani/img',async(req:e.Request,res:e.Response)=>{
     }
   }
 })
+// router.get("/ani/:id/ass",async(req:e.Request,res:e.Response)=>{
+//   var client= await openConnectionAnime()
+//   try{
+//     if(!req.params.id){
+//       throw ErrorType.undefined
+//     }
+//     var query:QueryConfig={
+//       text:`
+//       SELECT producer_id
+//         FROM animes.anime_producers
+//         WHERE anime_id = $1;
+//       `,
+//       values:[req.params.id]
+//     }
+//     var resultProd:QueryResult = await animeClient.query(query)
+//     query={
+//       text:`
+//       SELECT creator_id
+//       FROM animes.anime_creators
+//       WHERE anime_id = $1;
+//       `,
+//       values:[req.params.id]
+//     }
+//     var resultCrea:QueryResult = await animeClient.query(query)
+//     query={
+//       text:`
+//       SELECT studio_id
+//       FROM animes.anime_studios
+//       WHERE anime_id = $1;
+//       `,
+//       values:[req.params.id]
+//     }
+//     var resultStu:QueryResult = await animeClient.query(query)
+
+    
+//     var ress = {
+//       producers:resultProd.rows,
+//       creators:resultCrea.rows,
+//       studios:resultStu.rows
+//     }
+//     res.json(ress)
+    
+//   }catch(err:any|ErrorType){
+//     switch(err){
+//       case ErrorType.undefined:
+//         sendError(res,ErrorType.undefined)
+//         break
+//       case ErrorType.default:
+//         sendError(res,ErrorType.default,500,err)
+//         break
+//     }
+//   }finally{
+//     await endConnectionAnime(client)
+//   }
+// })
 router.get("/ani/:id",async(req:e.Request,res:e.Response)=>{
   try{
-    var doc = await couch.use("anime").get(req.params.id)
-    // sleep.sleep(4)
-    setHeader(res)
-    res.send(doc)
+    // var doc = await couch.use("anime").get(req.params.id)
+    var query =`SELECT * FROM anime WHERE id = ${req.params.id};`
+    await req.db.execute(query).then((v)=>{
+      setHeader(res)
+      Console.log(v.rows[0])
+      res.send(v.rows[0])
+    }).catch((err)=>{
+      Console.log(err)
+      throw new Error(err)
+    })
+    
   }catch(err:any){
     sendError(res,ErrorType.NotId)
   }
@@ -199,24 +288,24 @@ router.get("/g/eps",async(req,res)=>{
   //   values: ['7 days'],
   // };
   try{
-    var {count} = req.query
-    if(count){
-      logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC LIMIT $1',[count])
-      .then((result)=>{
-        res.send(result.rows)
-      })
-      .catch((err)=>{
-        throw err
-      })
-    }else{
-      logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC')
-      .then((result)=>{
-        res.send(result.rows)
-      })
-      .catch((err)=>{
-        throw err
-      })
-    }
+    // var {count} = req.query
+    // if(count){
+    //   logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC LIMIT $1',[count])
+    //   .then((result)=>{
+    //     res.send(result.rows)
+    //   })
+    //   .catch((err)=>{
+    //     throw err
+    //   })
+    // }else{
+    //   logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC')
+    //   .then((result)=>{
+    //     res.send(result.rows)
+    //   })
+    //   .catch((err)=>{
+    //     throw err
+    //   })
+    // }
     
   }catch(err){
     sendError(res,ErrorType.default,500,err)
@@ -285,7 +374,9 @@ app.get('*',(req:e.Request,res:e.Response)=>{
 
 const httpsServer = https.createServer(credentials,app)
 
-
+// app.listen(80,"0.0.0.0",()=>{
+//   console.log("Aberto em 0.0.0.0")
+// })
 
 httpsServer.listen(443,"0.0.0.0",()=>{
     Console.log(`https://0.0.0.0`)

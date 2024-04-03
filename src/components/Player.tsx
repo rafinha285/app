@@ -1,7 +1,8 @@
 import React,{useEffect, useRef} from "react";
 import { Episode, SubtitlesTracks } from "../types/episodeModel";
 import { languages, quality } from "../types/types";
-import Plyr, { APITypes, PlyrSource } from "plyr-react";
+import Plyr,{APITypes,PlyrOptions,PlyrSource} from "plyr-react";
+// import Plyr from "@rocketseat/react-plyr";
 import ReactDOMServer from 'react-dom/server';
 import 'plyr/dist/plyr.css'
 import "../css/watch.css"
@@ -13,11 +14,11 @@ import postLog from "../functions/logFunctions";
 interface prop{
     ani:AnimeDocument;
     seasonId:string;
-    ep:Episode
+    ep:Episode;
 }
 
 const Player:React.FC<prop> = ({ani,seasonId,ep}) =>{
-    const ref = useRef<APITypes>(null)
+    // const ref = useRef<Plyr>(null)
     const res = ['1920x1080','1280x720', '854x480']
 
     // const resolutions = (epResolution:quality):Plyr.Source[]=>{
@@ -34,6 +35,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep}) =>{
     //     return [];
     // }
 
+    const ref = useRef<APITypes>(null);
     const createCaptionsTracks = (subtitles:string[]):Plyr.Track[] =>{
         console.log(subtitles)
         return subtitles.map((languageCode, index) => ({
@@ -87,7 +89,13 @@ const Player:React.FC<prop> = ({ani,seasonId,ep}) =>{
         console.log(inEnd)
         ref.current!.plyr.currentTime = inEnd
     }
-    
+    const optionsPlyr:PlyrOptions = {
+        settings:["captions","quality","speed","loop"],
+        controls:['play-large','play','progress','current-time','mute', 'volume', 'captions', 'settings', 'pip','fullscreen'],
+        storage:{ enabled: true, key: 'plyr' },
+        keyboard:{focused:true,global:true},
+        tooltips:{controls:false,seek:true}
+    }
     const initPlyr = async()=>{
         while (!ref.current || !ref.current.plyr || !ref.current.plyr.elements) {
             await new Promise(resolve => setTimeout(resolve, 100));
@@ -95,18 +103,17 @@ const Player:React.FC<prop> = ({ani,seasonId,ep}) =>{
         var plyr = ref.current.plyr
         plyr.source = getResolutions(ep.resolution)
 
+        
         const opIni = ep.openingStart
         const opFim = ep.openinigEnd
         const ed = ep.ending
-
-        
 
         const skIn = $(plyr.elements.controls!)
         var buOp = (<div className="skip-intro plyr__controls__item plyr__control" onClick={()=>handleSkipIntro(opFim)}>
             <span>Pular intro</span>
             <i className="fa-solid fa-chevron-right"></i>
         </div>)
-        const skIButton = $(ReactDOMServer.renderToStaticMarkup(buOp)).prop("id", "intro").on("click",()=>handleSkipIntro(opFim));
+        const skIButton = $(ReactDOMServer.renderToStaticMarkup(buOp)).prop("id", "intro").on("click",()=>(opFim));
         console.log(skIn.children(".plyr__volume"),skIButton)
         skIn.children(".plyr__volume").after(skIButton);
 
@@ -158,7 +165,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep}) =>{
         initPlyr()
     },[])
     return(
-        <Plyr source={{type:"video",sources:[]}} ref={ref} ></Plyr>
+        <Plyr source={{type:"video",sources:[]}} ref={ref}  options={optionsPlyr}></Plyr>
     )
 }
 export default Player

@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from "react";
 import AnimePoster from "../assets/AnimePosters"
-import {Anime, AnimeDocument} from "../types/animeModel"
+import {Anime} from "../types/animeModel"
 import "../css/index.css"
 import "../css/base.css"
 import { Link } from "react-router-dom";
@@ -16,13 +16,13 @@ const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
     useEffect(()=>{
         console.log("aaa") 
         fetch("/api/ani/lan").then((res)=>res.json())
-        .then((data:AnimeDocument[])=>{
+        .then((data:Anime[])=>{
             console.log(data)
             const posterList = data.map((anime,index:number)=>(
                 <AnimePoster
                     key={index}
                     doc={anime}
-                    aniId={anime._id}
+                    aniId={anime.id}
                 />
             ))
             AnisetPosters(posterList)

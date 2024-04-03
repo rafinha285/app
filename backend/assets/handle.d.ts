@@ -2,6 +2,7 @@ import e, * as express from 'express';
 import { User } from "../../src/types/userType";
 import { Log } from "../../src/types/logType";
 import * as jwt from "jsonwebtoken";
+import { PoolClient } from 'pg';
 export declare const Console: {
     log(...args: any[]): void;
     error(...args: any[]): void;
@@ -24,6 +25,9 @@ export declare function sendFile(): {
 };
 export declare function mkDir(no: String, svData: string): Promise<void>;
 export declare function id(num?: number): string | false;
+export declare function openConnectionAnime(): Promise<PoolClient>;
+export declare function rollbackAnime(): Promise<void>;
+export declare function endConnectionAnime(client: PoolClient): Promise<void>;
 export declare function addLog(log: Log): Promise<any>;
 interface TokenRequest extends e.Request {
     usuario?: string | jwt.JwtPayload;

@@ -1,45 +1,37 @@
-import { Audio, state, quality } from "./types";
+import { Audio, quality } from "./types";
 import { character } from "./characterModel";
-import { Season } from "./seasonModel";
+import { Episode } from "./episodeModel";
 import { EpisodeUser } from "./episodeModel";
-import nano from "nano";
-export interface Anime {
-    _id: string;
+import { types } from "cassandra-driver";
+export interface Producer {
+    id: string;
     name: string;
-    name2: string;
-    description: string;
-    quality: quality;
-    language: Audio;
-    state: state;
-    releaseDate: Date;
-    studios: string[];
-    producers: string[];
-    creators: string[];
-    generos: string[];
-    seasons?: Season[];
-    rating?: number;
-    characters?: character[];
-    path?: string;
-    averageEptime?: number;
 }
-export interface AnimeDocument extends nano.DocumentGetResponse {
+export interface Season {
     _id: string;
+    name: string;
+    episodes: Episode[];
+    index: number;
+    animeId: string;
+}
+export interface Anime {
+    id: string;
     name: string;
     name2: string;
     description: string;
     quality: quality;
     language: Audio;
-    state: state;
-    releaseDate: Date;
-    studios: string[];
-    producers: string[];
-    creators: string[];
-    generos: string[];
+    state: string;
+    releasedate: Date;
+    studios: types.Tuple[] | string[][] | string[];
+    producers: types.Tuple[] | string[][] | string[];
+    creators: types.Tuple[] | string[][] | string[];
+    genre: string[];
     seasons?: Season[];
     rating?: number;
     characters?: character[];
-    path?: string;
-    averageEptime?: number;
+    averageeptime?: number;
+    date_added?: Date;
 }
 export interface AnimeUser {
     animeId: string;

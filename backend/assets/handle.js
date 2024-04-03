@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addUser = exports.checkToken = exports.loginUser = exports.addLog = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = void 0;
+exports.addUser = exports.checkToken = exports.loginUser = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = void 0;
 var Console_1 = require("./Console");
 var path = require("path");
 var Postgre_1 = require("./Postgre");
@@ -224,6 +224,55 @@ exports.id = id;
 //         }
 //     }
 // }
+function openConnectionAnime() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, Postgre_1.animeClient.connect()
+                    // await animeClient.query("BEGIN")
+                ];
+                case 1: return [2 /*return*/, _a.sent()
+                    // await animeClient.query("BEGIN")
+                ];
+            }
+        });
+    });
+}
+exports.openConnectionAnime = openConnectionAnime;
+function commitAnime() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, Postgre_1.animeClient.query("COMMIT")];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+function rollbackAnime() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, Postgre_1.animeClient.query("ROLLBACK")];
+                case 1:
+                    _a.sent();
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.rollbackAnime = rollbackAnime;
+function endConnectionAnime(client) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            client.release();
+            return [2 /*return*/];
+        });
+    });
+}
+exports.endConnectionAnime = endConnectionAnime;
 function addLog(log) {
     return __awaiter(this, void 0, void 0, function () {
         var date, page, duration, ep, anime, manga, _id, result;
@@ -235,7 +284,7 @@ function addLog(log) {
                     manga = log.manga ? log.manga : "";
                     _id = (0, uuid_1.v4)();
                     exports.Console.log([_id, new Date(date).toISOString(), anime, manga, page, duration, ep]);
-                    return [4 /*yield*/, Postgre_1.logPool.query('INSERT INTO log (date, anime, manga, page, duration, ep) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [new Date(date).toISOString(), anime, manga, page, duration, ep])];
+                    return [4 /*yield*/, logPool.query('INSERT INTO log (date, anime, manga, page, duration, ep) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [new Date(date).toISOString(), anime, manga, page, duration, ep])];
                 case 1:
                     result = _a.sent();
                     return [2 /*return*/, result.rows[0]];

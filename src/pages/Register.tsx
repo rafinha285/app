@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import bcrypt from 'bcryptjs'
 import "../css/login.css"
 // import * as bcrypt from "bcrypt"
 import {pbkdf2, pbkdf2Sync} from "@react-native-module/pbkdf2"
 import { v4 as uuid } from "uuid";
-
+const salt = bcrypt.genSaltSync(10)
 const Register:React.FC = ()=>{
     const [email,setEmail] = useState<string>("")
     const [name,setName] = useState<string>("")
@@ -55,7 +56,8 @@ const Register:React.FC = ()=>{
             var _id = uuid()
             // var salt = uuid()
             var interations = 1000
-            var hashedPassword = pbkdf2Sync(s,_id,interations,32,"sha256").toString("hex")
+            //var hashedPassword = pbkdf2Sync(s,_id,interations,32,"sha256").toString("hex")
+            var hashedPassword = bcrypt.hashSync(s,salt)
             
             var hashedPasswordConfirm = pbkdf2Sync(cs,_id,interations,32,"sha256").toString("hex")
             console.log(name,surname,hashedPassword,hashedPasswordConfirm,hashedPassword===hashedPasswordConfirm)

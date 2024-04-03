@@ -2,7 +2,7 @@ import e, * as express from 'express';
 import Cconsole from "./Console";
 import * as path from "path";
 import { User } from "../../src/types/userType";
-import {pool,logPool} from "./Postgre";
+import {pool, animeClient} from "./Postgre";
 import { Log, page } from "../../src/types/logType";
 const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg')
@@ -14,6 +14,7 @@ import { MangaUser } from "../../src/types/mangaType";
 import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
 import * as fss from "fs"
+import { PoolClient } from 'pg';
 // import { randomInt } from "crypto";
 
 
@@ -160,7 +161,19 @@ export function id(num:number = 8){
 //         }
 //     }
 // }
-
+export async function openConnectionAnime(){
+    return await animeClient.connect()
+    // await animeClient.query("BEGIN")
+}
+async function commitAnime():Promise<void> {
+    await animeClient.query("COMMIT")
+}
+export async function rollbackAnime():Promise<void>{
+    await animeClient.query("ROLLBACK")
+}
+export async function endConnectionAnime(client:PoolClient) {
+    client.release()
+}
 export async function addLog(log:Log){
     const {date,page,duration,ep} = log
     var anime = log.anime?log.anime:""

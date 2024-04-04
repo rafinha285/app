@@ -18,21 +18,19 @@ import { Log } from '../src/types/logType'
 // import { animeClient } from './assets/Postgre'
 import { Query, QueryConfig, QueryResult } from 'pg'
 import { client } from './assets/pool'
-import { ANIME_PATH } from './consts'
+import { ANIME_PATH, BUILD_PATH, HTTPS_CERT_PATH, HTTPS_KEY_PATH } from './consts'
 import { types } from 'cassandra-driver'
 import { EpisodeSim } from '../src/types/episodeModel'
 import {tupleToSeason} from "../src/functions/animeFunctions"
 
-const privateKey = fs.readFileSync(path.join(__dirname,"../","../","https","chave.pem"), 'utf8');
-const certificate = fs.readFileSync(path.join(__dirname,"../","../","https",'certificado.pem'), 'utf8');
+const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
+const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 var app = e()
 // const ip_1 = ip.address("Radmin VPN")
 // const ip_2 = ip.address("Ethernet")
 // const mongoUri = `mongodb://${ip_1}:211/data`
 // const couch:nano.ServerScope = Nano('http://admin:285@127.0.0.1:5984');
-var animePath = path.join("D:","main","server","Anime")
-var mangaPath = path.join("D:","main","server","Manga")
 
 
 // const corsOptions = {
@@ -108,7 +106,7 @@ router.get('/ani/img',async(req:e.Request,res:e.Response)=>{
       throw 1
     }
     sendFile().img(res)
-    res.sendFile(path.join(animePath,(req.query.Id as string),"img",`${req.query.Id}.jpg`))
+    res.sendFile(path.join(ANIME_PATH,(req.query.Id as string),"img",`${req.query.Id}.jpg`))
   }catch(err){
     if(err == 1){
       sendError(res,ErrorType.undefined)
@@ -429,7 +427,7 @@ app.use(e.static(path.join("D:\\main\\app","build")))
 
 app.get('*',(req:e.Request,res:e.Response)=>{
     sendFile().cssJs(res)
-    res.sendFile(path.join("D:\\main\\app\\build","index.html"))
+    res.sendFile(BUILD_PATH)
 })
 
 

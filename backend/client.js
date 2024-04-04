@@ -47,16 +47,14 @@ var handle_1 = require("./assets/handle");
 var pool_1 = require("./assets/pool");
 var consts_1 = require("./consts");
 var cassandra_driver_1 = require("cassandra-driver");
-var privateKey = fs.readFileSync(path.join(__dirname, "../", "../", "https", "chave.pem"), 'utf8');
-var certificate = fs.readFileSync(path.join(__dirname, "../", "../", "https", 'certificado.pem'), 'utf8');
+var privateKey = fs.readFileSync(consts_1.HTTPS_KEY_PATH, 'utf8');
+var certificate = fs.readFileSync(consts_1.HTTPS_CERT_PATH, 'utf8');
 var credentials = { key: privateKey, cert: certificate };
 var app = e();
 // const ip_1 = ip.address("Radmin VPN")
 // const ip_2 = ip.address("Ethernet")
 // const mongoUri = `mongodb://${ip_1}:211/data`
 // const couch:nano.ServerScope = Nano('http://admin:285@127.0.0.1:5984');
-var animePath = path.join("D:", "main", "server", "Anime");
-var mangaPath = path.join("D:", "main", "server", "Manga");
 // const corsOptions = {
 //     origin: (origin, callback) => {
 //       // Verifica se a origem da solicitação corresponde à origem esperada
@@ -131,7 +129,7 @@ router.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, vo
                 throw 1;
             }
             (0, handle_1.sendFile)().img(res);
-            res.sendFile(path.join(animePath, req.query.Id, "img", "".concat(req.query.Id, ".jpg")));
+            res.sendFile(path.join(consts_1.ANIME_PATH, req.query.Id, "img", "".concat(req.query.Id, ".jpg")));
         }
         catch (err) {
             if (err == 1) {
@@ -524,7 +522,7 @@ app.use('/api', router);
 app.use(e.static(path.join("D:\\main\\app", "build")));
 app.get('*', function (req, res) {
     (0, handle_1.sendFile)().cssJs(res);
-    res.sendFile(path.join("D:\\main\\app\\build", "index.html"));
+    res.sendFile(consts_1.BUILD_PATH);
 });
 var httpsServer = https.createServer(credentials, app);
 // app.listen(80,"0.0.0.0",()=>{

@@ -9,3 +9,7 @@ exports.FFMPEG_PATH = path.join("D:", "main", "ffmpeg", "bin", "ffmpeg.exe");
 exports.FFPROBE_PATH = path.join("D:", "main", "ffmpeg", "bin", "ffprobe.exe");
 exports.RESOLUTIONS = ['1920x1080', '1280x720', '854x480'];
 exports.IP_DATABASE = '192.168.1.20';
+exports.BUILD_PATH = path.join(__dirname, '../', 'build');
+exports.HTTPS_KEY_PATH = path.join(__dirname, "../", "../", "https", 'chave.pem');
+exports.HTTPS_CERT_PATH = path.join(__dirname, "../", "../", "https", 'certificado.pem');
+exports.IP_DATABASE = 'localhost';

@@ -4,4 +4,7 @@ export declare const TEMP_PATH: string;
 export declare const FFMPEG_PATH: string;
 export declare const FFPROBE_PATH: string;
 export declare const RESOLUTIONS: string[];
+export declare const BUILD_PATH: string;
+export declare const HTTPS_KEY_PATH: string;
+export declare const HTTPS_CERT_PATH: string;
 export declare const IP_DATABASE: string;

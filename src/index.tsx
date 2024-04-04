@@ -8,6 +8,7 @@ import MainSearch from './pages/Search/Search';
 import LancamentosPage from './pages/Lan';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ProdSearch from './pages/Search/Prod';
 const App:React.FC = ()=> {
 return (
   <Router>
@@ -17,6 +18,7 @@ return (
       <Route path='/Anime/:id' element={<Anime />}/>
       <Route path='/Anime/:id/watch/:seasonId/:epId' element={<Watch />} />
       <Route path='/gen/:gen' element={<GenSearch />} />
+      <Route path='/prod/:prod'element={<ProdSearch/>}/>
       <Route path='/search' element={<MainSearch />} />
       <Route path='/login' element={<Login/>}/>
       <Route path='/register' element={<Register/>}/>

@@ -3,7 +3,7 @@ import React, {useCallback, useEffect, useRef, useState} from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import Player from "../components/Player";
-import { Episode, EpisodeDocument } from "../types/episodeModel";
+import { Episode} from "../types/episodeModel";
 import { Anime } from "../types/animeModel";
 import "../css/watch.css"
 import { Link } from "react-router-dom";
@@ -12,7 +12,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import EpisodeDropdown from "../assets/EpisodeDropdown";
 import { Log } from "../types/logType";
-import { NextEp, handleNextEp } from "../features/main";
+import { handleNextEp } from "../features/main";
 import { getEpsFromSeason ,tupleToSeason} from "../functions/animeFunctions";
 
 
@@ -24,7 +24,7 @@ const Watch:React.FC = () =>{
     const seasonId = window.location.href.split("/")[6]
     const [ep,setEp] = useState<Episode|null>(null)
     const [ani,setAni]= useState<Anime>()
-    const [epIndex,setEpIndex] = useState<number>(1)
+    // const [epIndex,setEpIndex] = useState<number>(1)
     const [eps,setEps] = useState<Episode[]>()
     const fetchEps = useCallback(async(ani:Anime,ep:Episode) =>{
         var res = await fetch(`/api/g/s/eps/${ani.id}/${ep?.seasonid}`)
@@ -54,7 +54,7 @@ const Watch:React.FC = () =>{
             console.log(res)
             setEp(res)
             console.log(ani)
-            setEpIndex(tupleToSeason(ani!.seasons!).find(e=>e.id == seasonId)?.episodes.findIndex(e=>e===ep?.id)!)
+            // setEpIndex(tupleToSeason(ani!.seasons!).find(e=>e.id == seasonId)?.episodes.findIndex(e=>e===ep?.id)!)
             
         })
         

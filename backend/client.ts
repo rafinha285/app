@@ -271,10 +271,37 @@ router.get("/ani/gen/:gen",async(req:e.Request,res:e.Response)=>{
   }
  
 })
+// router.get("/ani/prod/:prod",async(req,res)=>{
+//   try{
+//     const tuple = new types.Tuple(req.params.prod, '');
+//     var prod = await req.db.execute("SELECT producers FRO anime WHERE producers CONTAINS ?",[tuple],{prepare:true})
+//     Console.log(prod)
+//     var docs = await req.db.execute(`SELECT id, name,description,rating FROM anime WHERE producers CONTAINS ?`,[tuple],{prepare:true})
+//     res.send(docs.rows)
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
+// router.get("/ani/cria/:cria",async(req,res)=>{
+//   try{
+//     var docs = await req.db.execute(`SELECT id, name,description,rating FROM anime WHERE creators CONTAINS ?`,[req.params.cria],{prepare:true})
+//     res.send(docs.rows)
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
+// router.get("/ani/stud/:stu",async(req,res)=>{
+//   try{
+//     var docs = await req.db.execute(`SELECT id, name,description,rating FROM anime WHERE studios CONTAINS ?`,[req.params.stu],{prepare:true})
+//     res.send(docs.rows)
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
 router.get('/search',async (req:e.Request,res:e.Response)=>{
   try{
     var search= req.query.s
-    var result = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE name LIKE ? ALLOW FILTERING`,[`%${search}%`],{prepare:true})
+    var result = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE name LIKE ? OR name2 LIKE ? ALLOW FILTERING`,[`%${search}%`,`%${search}%`],{prepare:true})
     res.send(result.rows)
     // var db = couch.use("anime")
     // Console.log(await db.get("_design/search"))

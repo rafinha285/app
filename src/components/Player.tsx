@@ -31,7 +31,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         
     // })
     async function setPrevPosEp(){
-        setTimeout(()=>{},100)
+        setTimeout(()=>{},500)
         var prevEp = eps.find(v=>v.epindex === (ep.epindex-1))
         console.log(prevEp,res,ep.epindex)
         if(prevEp){
@@ -79,7 +79,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         const resolutions = ['1080p', '720p', '480p'];
         const baseUrl = `/api/ep/${ani.id}/${seasonId}/${ep.id}`
         console.log(ep.subtitlestracks)
-        const captionPlyrTracks = createCaptionsTracks(ep.subtitlestracks)
+        const captionPlyrTracks = createCaptionsTracks(ep.subtitlestracks!)
 
         const d:PlyrSource = {
             type:"video",

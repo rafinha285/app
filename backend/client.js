@@ -324,6 +324,33 @@ router.get("/ani/gen/:gen", function (req, res) { return __awaiter(void 0, void 
         }
     });
 }); });
+// router.get("/ani/prod/:prod",async(req,res)=>{
+//   try{
+//     const tuple = new types.Tuple(req.params.prod, '');
+//     var prod = await req.db.execute("SELECT producers FRO anime WHERE producers CONTAINS ?",[tuple],{prepare:true})
+//     Console.log(prod)
+//     var docs = await req.db.execute(`SELECT id, name,description,rating FROM anime WHERE producers CONTAINS ?`,[tuple],{prepare:true})
+//     res.send(docs.rows)
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
+// router.get("/ani/cria/:cria",async(req,res)=>{
+//   try{
+//     var docs = await req.db.execute(`SELECT id, name,description,rating FROM anime WHERE creators CONTAINS ?`,[req.params.cria],{prepare:true})
+//     res.send(docs.rows)
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
+// router.get("/ani/stud/:stu",async(req,res)=>{
+//   try{
+//     var docs = await req.db.execute(`SELECT id, name,description,rating FROM anime WHERE studios CONTAINS ?`,[req.params.stu],{prepare:true})
+//     res.send(docs.rows)
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
 router.get('/search', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var search, result, err_5;
     return __generator(this, function (_a) {
@@ -331,7 +358,7 @@ router.get('/search', function (req, res) { return __awaiter(void 0, void 0, voi
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 search = req.query.s;
-                return [4 /*yield*/, req.db.execute("SELECT id, name, description,rating FROM anime WHERE name LIKE ? ALLOW FILTERING", ["%".concat(search, "%")], { prepare: true })];
+                return [4 /*yield*/, req.db.execute("SELECT id, name, description,rating FROM anime WHERE name LIKE ? OR name2 LIKE ? ALLOW FILTERING", ["%".concat(search, "%"), "%".concat(search, "%")], { prepare: true })];
             case 1:
                 result = _a.sent();
                 res.send(result.rows);

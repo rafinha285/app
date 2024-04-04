@@ -1,6 +1,6 @@
 import * as path from "path"
-export const ANIME_PATH:string = path.join("~/",'storage','anime')
-export const MANGA_PATH:string = path.join("~/",'storage','manga')
+export const ANIME_PATH:string = path.join("home",'abacate','storage','anime')
+export const MANGA_PATH:string = path.join("home",'abacate','storage','manga')
 export const TEMP_PATH:string = path.join("~/",'storage','temp')
 export const FFMPEG_PATH:string = path.join('usr','bin','ffmpeg')
 export const FFPROBE_PATH:string = path.join('usr','bin','ffprobe')

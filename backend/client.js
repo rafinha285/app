@@ -528,7 +528,7 @@ var httpsServer = https.createServer(credentials, app);
 // app.listen(80,"0.0.0.0",()=>{
 //   console.log("Aberto em 0.0.0.0")
 // })
-httpsServer.listen(8443, "0.0.0.0", function () {
+httpsServer.listen(443, "0.0.0.0", function () {
     handle_1.Console.log("https://0.0.0.0");
 });
 // httpsServer.listen(443,ip_2,()=>{

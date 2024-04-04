@@ -1,9 +1,9 @@
 import * as path from "path"
-export const ANIME_PATH:string = path.join("home",'abacate','storage','anime')
-export const MANGA_PATH:string = path.join("home",'abacate','storage','manga')
-export const TEMP_PATH:string = path.join("~/",'storage','temp')
-export const FFMPEG_PATH:string = path.join('usr','bin','ffmpeg')
-export const FFPROBE_PATH:string = path.join('usr','bin','ffprobe')
+export const ANIME_PATH:string = path.join(__dirname,'../','../','storage','anime')
+export const MANGA_PATH:string = path.join(__dirname,'../','../','storage','manga')
+export const TEMP_PATH:string = path.join(__dirname,'../','../','storage','temp')
+export const FFMPEG_PATH:string = path.join('/','usr','bin','ffmpeg')
+export const FFPROBE_PATH:string = path.join('/','usr','bin','ffprobe')
 export const RESOLUTIONS:string[] = ['1920x1080','1280x720', '854x480']
 export const BUILD_PATH:string = path.join(__dirname,'../','build')
 export const HTTPS_KEY_PATH:string = path.join(__dirname,"../","../","https",'chave.pem')

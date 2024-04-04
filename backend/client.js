@@ -522,7 +522,7 @@ app.use('/api', router);
 app.use(e.static(path.join("D:\\main\\app", "build")));
 app.get('*', function (req, res) {
     (0, handle_1.sendFile)().cssJs(res);
-    res.sendFile(consts_1.BUILD_PATH);
+    res.sendFile(consts_1.BUILD_HTML);
 });
 var httpsServer = https.createServer(credentials, app);
 // app.listen(80,"0.0.0.0",()=>{

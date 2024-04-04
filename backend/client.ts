@@ -18,7 +18,7 @@ import { Log } from '../src/types/logType'
 // import { animeClient } from './assets/Postgre'
 import { Query, QueryConfig, QueryResult } from 'pg'
 import { client } from './assets/pool'
-import { ANIME_PATH, BUILD_PATH, HTTPS_CERT_PATH, HTTPS_KEY_PATH } from './consts'
+import { ANIME_PATH, BUILD_HTML, BUILD_PATH, HTTPS_CERT_PATH, HTTPS_KEY_PATH } from './consts'
 import { types } from 'cassandra-driver'
 import { EpisodeSim } from '../src/types/episodeModel'
 import {tupleToSeason} from "../src/functions/animeFunctions"
@@ -427,7 +427,7 @@ app.use(e.static(path.join("D:\\main\\app","build")))
 
 app.get('*',(req:e.Request,res:e.Response)=>{
     sendFile().cssJs(res)
-    res.sendFile(BUILD_PATH)
+    res.sendFile(BUILD_HTML)
 })
 
 

@@ -99,7 +99,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                     label:reso,
                     size:index === 0 ? 1080 : index === 1 ? 720 : 480
                 }))
-                
+                break
             case quality.HD:
                 console.log("HD")
                 d.sources = resolutions.slice(0, 2).map((reso, index) => ({
@@ -108,7 +108,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                     label: reso,
                     size: index === 0 ? 1080 : 720,
                   }))
-                
+                break
             case quality.SD:
                 d.sources = [resolutions[2]].map((reso,index)=>({
                     src:`${baseUrl}/${ep.id}-${reso.replace("p","")}.mp4`,
@@ -116,7 +116,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                     label:reso,
                     size:480
                 }))
-                
+                break
         }
         return d
     }

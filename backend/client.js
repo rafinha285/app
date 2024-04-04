@@ -519,7 +519,7 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
     });
 }); });
 app.use('/api', router);
-app.use(e.static(path.join("D:\\main\\app", "build")));
+app.use(e.static(consts_1.BUILD_PATH));
 app.get('*', function (req, res) {
     (0, handle_1.sendFile)().cssJs(res);
     res.sendFile(consts_1.BUILD_HTML);

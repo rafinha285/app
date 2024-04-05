@@ -31,7 +31,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         
     // })
     async function setPrevPosEp(){
-        setTimeout(()=>{},500)
+        setTimeout(()=>{},5000)
         var prevEp = eps.find(v=>v.epindex === (ep.epindex-1))
         console.log(prevEp,res,ep.epindex)
         if(prevEp){

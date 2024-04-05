@@ -351,25 +351,28 @@ router.get("/g/eps",async(req,res)=>{
     var eps:EpisodeSim[] = []
     var semana = Math.floor(Date.now()/1000) - 1209600
     var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution FROM episodes WHERE date_added >= ? ALLOW FILTERING",[semana],{prepare:true})
-    result.rows.forEach(async ee=>{
-      var {id,animeid,seasonid,name,duration,resolution} = ee
-      var aniS = await req.db.execute("SELECT name FROM anime WHERE id = ?",[animeid],{prepare:true})
-      // var season = tupleToSeason(aniS.rows[0].seasons).find(e=>e.id === seasonid)
-      // console.log(season)
-      
-      var ep:EpisodeSim={
-        id,
-        animeid,
-        seasonid,
-        name,
-        duration,
-        resolution,
-        animename:aniS.rows[0].name,
-        // seasonname:season?.name!
-      }
-      console.log(ep)
-      eps.push(ep)
-    })
+    setTimeout(()=>{
+      result.rows.forEach(async ee=>{
+        var {id,animeid,seasonid,name,duration,resolution} = ee
+        var aniS = await req.db.execute("SELECT name FROM anime WHERE id = ?",[animeid],{prepare:true})
+        // var season = tupleToSeason(aniS.rows[0].seasons).find(e=>e.id === seasonid)
+        // console.log(season)
+        
+        var ep:EpisodeSim={
+          id,
+          animeid,
+          seasonid,
+          name,
+          duration,
+          resolution,
+          animename:aniS.rows[0].name,
+          // seasonname:season?.name!
+        }
+        console.log(ep)
+        eps.push(ep)
+      })
+    },50)
+    
     setTimeout(()=>{
       Console.log(eps)
       res.send(eps)

@@ -415,34 +415,36 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                 return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution FROM episodes WHERE date_added >= ? ALLOW FILTERING", [semana], { prepare: true })];
             case 1:
                 result = _a.sent();
-                result.rows.forEach(function (ee) { return __awaiter(void 0, void 0, void 0, function () {
-                    var id, animeid, seasonid, name, duration, resolution, aniS, ep;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                id = ee.id, animeid = ee.animeid, seasonid = ee.seasonid, name = ee.name, duration = ee.duration, resolution = ee.resolution;
-                                return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [animeid], { prepare: true })
-                                    // var season = tupleToSeason(aniS.rows[0].seasons).find(e=>e.id === seasonid)
-                                    // console.log(season)
-                                ];
-                            case 1:
-                                aniS = _a.sent();
-                                ep = {
-                                    id: id,
-                                    animeid: animeid,
-                                    seasonid: seasonid,
-                                    name: name,
-                                    duration: duration,
-                                    resolution: resolution,
-                                    animename: aniS.rows[0].name,
-                                    // seasonname:season?.name!
-                                };
-                                console.log(ep);
-                                eps.push(ep);
-                                return [2 /*return*/];
-                        }
-                    });
-                }); });
+                setTimeout(function () {
+                    result.rows.forEach(function (ee) { return __awaiter(void 0, void 0, void 0, function () {
+                        var id, animeid, seasonid, name, duration, resolution, aniS, ep;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    id = ee.id, animeid = ee.animeid, seasonid = ee.seasonid, name = ee.name, duration = ee.duration, resolution = ee.resolution;
+                                    return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [animeid], { prepare: true })
+                                        // var season = tupleToSeason(aniS.rows[0].seasons).find(e=>e.id === seasonid)
+                                        // console.log(season)
+                                    ];
+                                case 1:
+                                    aniS = _a.sent();
+                                    ep = {
+                                        id: id,
+                                        animeid: animeid,
+                                        seasonid: seasonid,
+                                        name: name,
+                                        duration: duration,
+                                        resolution: resolution,
+                                        animename: aniS.rows[0].name,
+                                        // seasonname:season?.name!
+                                    };
+                                    console.log(ep);
+                                    eps.push(ep);
+                                    return [2 /*return*/];
+                            }
+                        });
+                    }); });
+                }, 50);
                 setTimeout(function () {
                     handle_1.Console.log(eps);
                     res.send(eps);

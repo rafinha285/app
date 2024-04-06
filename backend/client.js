@@ -413,7 +413,7 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                 count = req.query.count;
                 eps = [];
                 semana = Math.floor(Date.now() / 1000) - 1209600;
-                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ORDER BY date_added DESC ALLOW FILTERING;", [semana, count], { prepare: true })];
+                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;", [semana, count], { prepare: true })];
             case 1:
                 result = _a.sent();
                 handle_1.Console.log(result);

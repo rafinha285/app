@@ -380,17 +380,17 @@ router.get("/g/eps",async(req,res)=>{
       eps.push(ep)
       // Console.log(eps)
     })
-    // await sleep(20)
+    await sleep(20)
     // console.log(eps)
-    // eps.sort((a,b)=>{
-    //   if (b.date_added < a.date_added) {
-    //     return -1;
-    //   }
-    //   if (b.date_added > a.date_added) {
-    //       return 1;
-    //   }
-    //   return 0;
-    // })
+    eps.sort((a,b)=>{
+      if (b.date_added < a.date_added) {
+        return -1;
+      }
+      if (b.date_added > a.date_added) {
+          return 1;
+      }
+      return 0;
+    })
     await sleep(20)
     res.send(eps)
     // var {count} = req.query

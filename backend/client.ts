@@ -9,8 +9,8 @@ import bodyParser,{urlencoded,json} from "body-parser"
 // import {pool} from './assets/Postgre'
 import {User} from "../src/types/userType"
 // import mongoose from "mongoose"
-import * as nano from "nano"
-const Nano = require('nano');
+// import * as nano from "nano"
+// const Nano = require('nano');
 import { Anime } from '../../app_admin/src/types/animeModel'
 import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, openConnectionAnime, endConnectionAnime} from "./assets/handle"
 // import { AnimeDocument, producers } from '../src/types/animeModel'
@@ -22,6 +22,7 @@ import { ANIME_PATH, BUILD_HTML, BUILD_PATH, HTTPS_CERT_PATH, HTTPS_KEY_PATH } f
 import { types } from 'cassandra-driver'
 import { EpisodeSim } from '../src/types/episodeModel'
 import {tupleToSeason} from "../src/functions/animeFunctions"
+import * as sleep from 'sleep-promise';
 
 const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
@@ -351,35 +352,33 @@ router.get("/g/eps",async(req,res)=>{
     var eps:EpisodeSim[] = []
     var semana = Math.floor(Date.now()/1000) - 1209600
     var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution FROM episodes WHERE date_added >= ? ALLOW FILTERING",[semana],{prepare:true})
-    setTimeout(()=>{
-      result.rows.forEach(async ee=>{
-        var {id,animeid,seasonid,name,duration,resolution} = ee
-        var aniS = await req.db.execute("SELECT name FROM anime WHERE id = ?",[animeid],{prepare:true})
-        // var season = tupleToSeason(aniS.rows[0].seasons).find(e=>e.id === seasonid)
-        // console.log(season)
-        
-        var ep:EpisodeSim={
-          id,
-          animeid,
-          seasonid,
-          name,
-          duration,
-          resolution,
-          animename:aniS.rows[0].name,
-          // seasonname:season?.name!
-        }
-        console.log(ep)
-        eps.push(ep)
-      })
-    },50)
-    
-    setTimeout(()=>{
-      Console.log(eps)
-      res.send(eps)
-    },2)
-    
-   
-    
+    Console.log(result)
+    await sleep(2)
+    result.rows.forEach(async ee=>{
+      // Console.log(ee)
+      var {id,animeid,seasonid,name,duration,resolution} = ee
+      var aniS = await req.db.execute("SELECT name FROM anime WHERE id = ?",[animeid],{prepare:true})
+      await sleep(.1)
+      // var season = tupleToSeason(aniS.rows[0].seasons).find(e=>e.id === seasonid)
+      // console.log(season)
+      
+      var ep:EpisodeSim={
+        id,
+        animeid,
+        seasonid,
+        name,
+        duration,
+        resolution,
+        animename:aniS.rows[0].name,
+        // seasonname:season?.name!
+      }
+      // console.log(ep)
+      eps.push(ep)
+      // Console.log(eps)
+    })
+    await sleep(1000)
+    // console.log(eps)
+    res.send(eps)
     // var {count} = req.query
     // if(count){
     //   logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC LIMIT $1',[count])

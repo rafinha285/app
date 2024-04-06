@@ -42,11 +42,11 @@ var path = require("path");
 var fs = require("fs");
 var https = require("https");
 var body_parser_1 = require("body-parser");
-var Nano = require('nano');
 var handle_1 = require("./assets/handle");
 var pool_1 = require("./assets/pool");
 var consts_1 = require("./consts");
 var cassandra_driver_1 = require("cassandra-driver");
+var sleep = require("sleep-promise");
 var privateKey = fs.readFileSync(consts_1.HTTPS_KEY_PATH, 'utf8');
 var certificate = fs.readFileSync(consts_1.HTTPS_CERT_PATH, 'utf8');
 var credentials = { key: privateKey, cert: certificate };
@@ -409,52 +409,60 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
+                _a.trys.push([0, 4, , 5]);
                 eps = [];
                 semana = Math.floor(Date.now() / 1000) - 1209600;
                 return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution FROM episodes WHERE date_added >= ? ALLOW FILTERING", [semana], { prepare: true })];
             case 1:
                 result = _a.sent();
-                setTimeout(function () {
-                    result.rows.forEach(function (ee) { return __awaiter(void 0, void 0, void 0, function () {
-                        var id, animeid, seasonid, name, duration, resolution, aniS, ep;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    id = ee.id, animeid = ee.animeid, seasonid = ee.seasonid, name = ee.name, duration = ee.duration, resolution = ee.resolution;
-                                    return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [animeid], { prepare: true })
-                                        // var season = tupleToSeason(aniS.rows[0].seasons).find(e=>e.id === seasonid)
-                                        // console.log(season)
-                                    ];
-                                case 1:
-                                    aniS = _a.sent();
-                                    ep = {
-                                        id: id,
-                                        animeid: animeid,
-                                        seasonid: seasonid,
-                                        name: name,
-                                        duration: duration,
-                                        resolution: resolution,
-                                        animename: aniS.rows[0].name,
-                                        // seasonname:season?.name!
-                                    };
-                                    console.log(ep);
-                                    eps.push(ep);
-                                    return [2 /*return*/];
-                            }
-                        });
-                    }); });
-                }, 50);
-                setTimeout(function () {
-                    handle_1.Console.log(eps);
-                    res.send(eps);
-                }, 2);
-                return [3 /*break*/, 3];
+                handle_1.Console.log(result);
+                return [4 /*yield*/, sleep(2)];
             case 2:
+                _a.sent();
+                result.rows.forEach(function (ee) { return __awaiter(void 0, void 0, void 0, function () {
+                    var id, animeid, seasonid, name, duration, resolution, aniS, ep;
+                    return __generator(this, function (_a) {
+                        switch (_a.label) {
+                            case 0:
+                                id = ee.id, animeid = ee.animeid, seasonid = ee.seasonid, name = ee.name, duration = ee.duration, resolution = ee.resolution;
+                                return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [animeid], { prepare: true })];
+                            case 1:
+                                aniS = _a.sent();
+                                return [4 /*yield*/, sleep(.1)
+                                    // var season = tupleToSeason(aniS.rows[0].seasons).find(e=>e.id === seasonid)
+                                    // console.log(season)
+                                ];
+                            case 2:
+                                _a.sent();
+                                ep = {
+                                    id: id,
+                                    animeid: animeid,
+                                    seasonid: seasonid,
+                                    name: name,
+                                    duration: duration,
+                                    resolution: resolution,
+                                    animename: aniS.rows[0].name,
+                                    // seasonname:season?.name!
+                                };
+                                // console.log(ep)
+                                eps.push(ep);
+                                return [2 /*return*/];
+                        }
+                    });
+                }); });
+                return [4 /*yield*/, sleep(1000)
+                    // console.log(eps)
+                ];
+            case 3:
+                _a.sent();
+                // console.log(eps)
+                res.send(eps);
+                return [3 /*break*/, 5];
+            case 4:
                 err_7 = _a.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_7);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); });

@@ -405,14 +405,15 @@ router.get("/g/s/eps/:animeid/:seasonid", function (req, res) { return __awaiter
     });
 }); });
 router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var eps, semana, result, err_7;
+    var count, eps, semana, result, err_7;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 4, , 5]);
+                count = req.query.count;
                 eps = [];
                 semana = Math.floor(Date.now() / 1000) - 1209600;
-                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution FROM episodes WHERE date_added >= ? ALLOW FILTERING", [semana], { prepare: true })];
+                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING", [semana, count], { prepare: true })];
             case 1:
                 result = _a.sent();
                 handle_1.Console.log(result);
@@ -450,7 +451,7 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                         }
                     });
                 }); });
-                return [4 /*yield*/, sleep(1000)
+                return [4 /*yield*/, sleep(20)
                     // console.log(eps)
                 ];
             case 3:

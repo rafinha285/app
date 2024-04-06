@@ -349,9 +349,10 @@ router.get("/g/eps",async(req,res)=>{
   //   values: ['7 days'],
   // };
   try{
+    var {count} = req.query
     var eps:EpisodeSim[] = []
     var semana = Math.floor(Date.now()/1000) - 1209600
-    var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution FROM episodes WHERE date_added >= ? ALLOW FILTERING",[semana],{prepare:true})
+    var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING",[semana,count],{prepare:true})
     Console.log(result)
     await sleep(2)
     result.rows.forEach(async ee=>{
@@ -376,7 +377,7 @@ router.get("/g/eps",async(req,res)=>{
       eps.push(ep)
       // Console.log(eps)
     })
-    await sleep(1000)
+    await sleep(20)
     // console.log(eps)
     res.send(eps)
     // var {count} = req.query

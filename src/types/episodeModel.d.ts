@@ -36,4 +36,5 @@ export interface EpisodeSim {
     duration: number;
     resolution: string[];
     animename: string;
+    date_added: Date;
 }

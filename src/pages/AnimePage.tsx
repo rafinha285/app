@@ -203,7 +203,7 @@ const AnimePage:React.FC = ()=>{
                     </div>
                     <div className="seasons">
                         <select onChange={seasonChangeHandle}>
-                            {(ani.seasons! as Season[])?.map((s)=>(
+                            {(ani.seasons! as Season[])?.sort((a,b)=>a.index-b.index).map((s)=>(
                                 <option value={s.id} key={s.index}>{s.name}</option>
                             ))}
                         </select>

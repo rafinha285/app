@@ -409,11 +409,11 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 4, , 5]);
+                _a.trys.push([0, 5, , 6]);
                 count = req.query.count;
                 eps = [];
                 semana = Math.floor(Date.now() / 1000) - 1209600;
-                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING", [semana, count], { prepare: true })];
+                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING", [semana, count], { prepare: true })];
             case 1:
                 result = _a.sent();
                 handle_1.Console.log(result);
@@ -421,16 +421,18 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
             case 2:
                 _a.sent();
                 result.rows.forEach(function (ee) { return __awaiter(void 0, void 0, void 0, function () {
-                    var id, animeid, seasonid, name, duration, resolution, aniS, ep;
+                    var id, animeid, seasonid, name, duration, resolution, date_added, aniS, ep;
                     return __generator(this, function (_a) {
                         switch (_a.label) {
                             case 0:
-                                id = ee.id, animeid = ee.animeid, seasonid = ee.seasonid, name = ee.name, duration = ee.duration, resolution = ee.resolution;
+                                id = ee.id, animeid = ee.animeid, seasonid = ee.seasonid, name = ee.name, duration = ee.duration, resolution = ee.resolution, date_added = ee.date_added;
                                 return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [animeid], { prepare: true })];
                             case 1:
                                 aniS = _a.sent();
-                                return [4 /*yield*/, sleep(.1)
-                                    // var season = tupleToSeason(aniS.rows[0].seasons).find(e=>e.id === seasonid)
+                                return [4 /*yield*/, sleep(20)
+                                    // console.log(aniS.rows,aniS.rows[0].seasons)
+                                    // var season = tupleToSeason(aniS.rows[0].seasons)
+                                    // console.log(season,season.find(e=>e.id == seasonid))
                                     // console.log(season)
                                 ];
                             case 2:
@@ -443,7 +445,8 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                                     duration: duration,
                                     resolution: resolution,
                                     animename: aniS.rows[0].name,
-                                    // seasonname:season?.name!
+                                    // seasonname:season.name,
+                                    date_added: new Date(date_added)
                                 };
                                 // console.log(ep)
                                 eps.push(ep);
@@ -457,13 +460,25 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
             case 3:
                 _a.sent();
                 // console.log(eps)
-                res.send(eps);
-                return [3 /*break*/, 5];
+                eps.sort(function (a, b) {
+                    if (a.date_added < b.date_added) {
+                        return -1;
+                    }
+                    if (a.date_added > b.date_added) {
+                        return 1;
+                    }
+                    return 0;
+                });
+                return [4 /*yield*/, sleep(20)];
             case 4:
+                _a.sent();
+                res.send(eps);
+                return [3 /*break*/, 6];
+            case 5:
                 err_7 = _a.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_7);
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); });

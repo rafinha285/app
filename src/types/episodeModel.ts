@@ -58,4 +58,5 @@ export interface EpisodeSim{
     resolution:string[];
     animename:string;
     // seasonname:string;
+    date_added:Date
 }

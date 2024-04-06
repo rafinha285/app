@@ -409,11 +409,11 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 5, , 6]);
+                _a.trys.push([0, 4, , 5]);
                 count = req.query.count;
                 eps = [];
                 semana = Math.floor(Date.now() / 1000) - 1209600;
-                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING", [semana, count], { prepare: true })];
+                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ORDER BY date_added DESC; ALLOW FILTERING", [semana, count], { prepare: true })];
             case 1:
                 result = _a.sent();
                 handle_1.Console.log(result);
@@ -454,31 +454,38 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                         }
                     });
                 }); });
-                return [4 /*yield*/, sleep(20)
-                    // console.log(eps)
-                ];
-            case 3:
-                _a.sent();
+                // await sleep(20)
                 // console.log(eps)
-                eps.sort(function (a, b) {
-                    if (b.date_added < a.date_added) {
-                        return -1;
-                    }
-                    if (b.date_added > a.date_added) {
-                        return 1;
-                    }
-                    return 0;
-                });
+                // eps.sort((a,b)=>{
+                //   if (b.date_added < a.date_added) {
+                //     return -1;
+                //   }
+                //   if (b.date_added > a.date_added) {
+                //       return 1;
+                //   }
+                //   return 0;
+                // })
                 return [4 /*yield*/, sleep(20)];
-            case 4:
+            case 3:
+                // await sleep(20)
+                // console.log(eps)
+                // eps.sort((a,b)=>{
+                //   if (b.date_added < a.date_added) {
+                //     return -1;
+                //   }
+                //   if (b.date_added > a.date_added) {
+                //       return 1;
+                //   }
+                //   return 0;
+                // })
                 _a.sent();
                 res.send(eps);
-                return [3 /*break*/, 6];
-            case 5:
+                return [3 /*break*/, 5];
+            case 4:
                 err_7 = _a.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_7);
-                return [3 /*break*/, 6];
-            case 6: return [2 /*return*/];
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); });

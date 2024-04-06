@@ -352,7 +352,7 @@ router.get("/g/eps",async(req,res)=>{
     var {count} = req.query
     var eps:EpisodeSim[] = []
     var semana = Math.floor(Date.now()/1000) - 1209600
-    var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING",[semana,count],{prepare:true})
+    var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ORDER BY date_added DESC; ALLOW FILTERING",[semana,count],{prepare:true})
     Console.log(result)
     await sleep(2)
     result.rows.forEach(async ee=>{
@@ -380,17 +380,17 @@ router.get("/g/eps",async(req,res)=>{
       eps.push(ep)
       // Console.log(eps)
     })
-    await sleep(20)
+    // await sleep(20)
     // console.log(eps)
-    eps.sort((a,b)=>{
-      if (b.date_added < a.date_added) {
-        return -1;
-      }
-      if (b.date_added > a.date_added) {
-          return 1;
-      }
-      return 0;
-    })
+    // eps.sort((a,b)=>{
+    //   if (b.date_added < a.date_added) {
+    //     return -1;
+    //   }
+    //   if (b.date_added > a.date_added) {
+    //       return 1;
+    //   }
+    //   return 0;
+    // })
     await sleep(20)
     res.send(eps)
     // var {count} = req.query

@@ -383,10 +383,10 @@ router.get("/g/eps",async(req,res)=>{
     await sleep(20)
     // console.log(eps)
     eps.sort((a,b)=>{
-      if (a.date_added < b.date_added) {
+      if (b.date_added < a.date_added) {
         return -1;
       }
-      if (a.date_added > b.date_added) {
+      if (b.date_added > a.date_added) {
           return 1;
       }
       return 0;

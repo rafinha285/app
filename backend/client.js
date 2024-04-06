@@ -461,10 +461,10 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                 _a.sent();
                 // console.log(eps)
                 eps.sort(function (a, b) {
-                    if (a.date_added < b.date_added) {
+                    if (b.date_added < a.date_added) {
                         return -1;
                     }
-                    if (a.date_added > b.date_added) {
+                    if (b.date_added > a.date_added) {
                         return 1;
                     }
                     return 0;

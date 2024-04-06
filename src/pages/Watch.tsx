@@ -151,7 +151,7 @@ const Watch:React.FC = () =>{
                         <div>
                             <div id="epSelDrop" className="ep-sel-dropdown">
                                 <div className="inEps">
-                                    {eps.map((e)=>(
+                                    {eps.sort((a,b)=>a.epindex-b.epindex).map((e)=>(
                                         <EpisodeDropdown epId={e.id} epNom={e.name} aniId={ani.id} seasonId={seasonId!} epNId={ep?.id!} key={e.epindex}></EpisodeDropdown>
                                     ))}
                                 </div>

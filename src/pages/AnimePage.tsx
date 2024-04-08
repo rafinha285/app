@@ -70,9 +70,6 @@ const AnimePage:React.FC = ()=>{
     // (ani?.seasons! as Season[])
     // const [epsComponent,setEpsComponent] = useState<React.Component[]>()
     
-    const downloadHandle = () =>{
-        
-    }
     const getAss = () =>{
         
     }
@@ -216,8 +213,7 @@ const AnimePage:React.FC = ()=>{
                         {(ani.seasons! as Season[])?.map((s)=>(
                             <div style={{display: s.index === 1?'block':"none"}} id={s.id} key={s.index}>
                                 {s.episodes?.map((ep,i)=>{
-                                    return(<EpisodeLink downloadHandle={downloadHandle} ep={ep} s={s} ani={ani} key={ep}></EpisodeLink>)
-                                    
+                                    return(<EpisodeLink ep={ep} s={s} ani={ani} key={ep}></EpisodeLink>)
                                 })}
                             </div>
                         ))}

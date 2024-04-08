@@ -440,6 +440,40 @@ router.get("/test",(req:e.Request,res:e.Response)=>{
 router.get("/css/:file",(req:e.Request,res:e.Response)=>{
   res.sendFile(path.join("E:\\main\\app\\src\\css",req.params.file))
 })
+// router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso",async(req,res)=>{
+//   try{
+//     var {aniId,seasonId,epId,reso} = req.params
+//     res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
+router.get("/g/aniD/:ani/:seasonId/:epId",async(req,res)=>{
+  try{
+    var {ani,seasonId,epId} = req.params
+    if(!ani||!seasonId||!epId){
+      throw ErrorType.undefined
+    }
+    var result = await req.db.execute(`SELECT name, seasons FROM anime WHERE id = ?`,[ani],{prepare:true})
+    var seasons = tupleToSeason(result.rows[0].seasons)
+    var episode = await req.db.execute(`SELECT name, resolution FROM episode WHERE id = ?`,[epId])
+    res.json({
+      aniName:result.rows[0].name,
+      seasonName:seasons.find((v)=>v.id ==seasonId)!.name,
+      episodeName:episode.rows[0].name,
+      episodeResolution:episode.rows[0].resolution
+    })
+  }catch(err){
+    switch(err){
+      case ErrorType.undefined:
+        sendError(res,ErrorType.undefined)
+        break
+      default:
+        sendError(res,ErrorType.default,500,err)
+        break
+    }
+  }
+})
 router.get("/ep/:aniId/:season/:epId/:file",async(req,res)=>{
   setHeader(res)
   var {aniId,season,epId,file} = req.params

@@ -15,3 +15,8 @@ export const animeClient = new Pool({
     password:"285",
     port:5433
 })
+export const logPool = new Pool({
+    user:"server",
+    host:IP_DATABASE,
+    database:"log"
+})

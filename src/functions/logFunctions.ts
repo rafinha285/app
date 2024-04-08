@@ -1,17 +1,17 @@
 import $ from "jquery"
 import {v4 as uuid} from "uuid"
 import { Log } from "../types/logType"
-import { AnimeDocument } from "../types/animeModel"
+import { Anime } from "../types/animeModel"
 import { page } from "../types/logType"
-import { EpisodeDocument } from "../types/episodeModel"
+import { Episode } from "../types/episodeModel"
 
-function postLog(ani:AnimeDocument,episode:boolean,epid:string|null = null,plyrDuration:number|null = null){
+function postLog(ani:Anime,episode:boolean,epid:string|null = null,plyrDuration:number|null = null){
     console.log(ani,episode,epid,plyrDuration)
     if(episode){
         var data:Log = {
             // _id:uuid(),
             date:new Date(Date.now()),
-            anime:ani?._id,
+            anime:ani?.id,
             page:page.WATCH,
             duration:plyrDuration!,
             ep:epid!
@@ -26,7 +26,7 @@ function postLog(ani:AnimeDocument,episode:boolean,epid:string|null = null,plyrD
         var data:Log = {
             // _id:uuid(),
             date:new Date(Date.now()),
-            anime:ani?._id,
+            anime:ani?.id,
             page:page.ANIMEPAGE,
         }
         data.page = page[data.page]

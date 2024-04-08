@@ -22,6 +22,7 @@ import StarIcon from '@mui/icons-material/Star';
 import { genToArray, tupleToProducer, tupleToSeason } from "../functions/animeFunctions";
 import AniProducers, { prodType } from "../assets/AnimeProd";
 import { types } from "cassandra-driver";
+import { Episode } from "../types/episodeModel";
 
 
 interface seasonDate{
@@ -47,7 +48,7 @@ const AnimePage:React.FC = ()=>{
             })
         }
         if(ani){
-            // postLog(ani,false)
+            postLog(ani,false)
             setGen(ani.genre)
             ani.seasons = tupleToSeason(ani.seasons as types.Tuple[])
             console.log(ani.seasons)
@@ -66,6 +67,9 @@ const AnimePage:React.FC = ()=>{
     //     //     setSeasonD(res)
     //     // })
     // },[])
+    // (ani?.seasons! as Season[])
+    // const [epsComponent,setEpsComponent] = useState<React.Component[]>()
+    
     const downloadHandle = () =>{
         
     }
@@ -211,9 +215,10 @@ const AnimePage:React.FC = ()=>{
                     <div className="eps">
                         {(ani.seasons! as Season[])?.map((s)=>(
                             <div style={{display: s.index === 1?'block':"none"}} id={s.id} key={s.index}>
-                                {s.episodes?.map((ep,i)=>(
-                                    <EpisodeLink downloadHandle={downloadHandle} ep={ep} s={s} ani={ani}></EpisodeLink>
-                                ))}
+                                {s.episodes?.map((ep,i)=>{
+                                    return(<EpisodeLink downloadHandle={downloadHandle} ep={ep} s={s} ani={ani} key={ep}></EpisodeLink>)
+                                    
+                                })}
                             </div>
                         ))}
                     </div>

@@ -284,7 +284,7 @@ function addLog(log) {
                     manga = log.manga ? log.manga : "";
                     _id = (0, uuid_1.v4)();
                     exports.Console.log([_id, new Date(date).toISOString(), anime, manga, page, duration, ep]);
-                    return [4 /*yield*/, logPool.query('INSERT INTO log (date, anime, manga, page, duration, ep) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [new Date(date).toISOString(), anime, manga, page, duration, ep])];
+                    return [4 /*yield*/, Postgre_1.logPool.query('INSERT INTO log (date, anime, manga, page, duration, ep) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *', [new Date(date).toISOString(), anime, manga, page, duration, ep])];
                 case 1:
                     result = _a.sent();
                     return [2 /*return*/, result.rows[0]];

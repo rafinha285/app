@@ -6,14 +6,14 @@ import { Episode } from "../types/episodeModel";
 interface prop{
     ani:Anime,
     s:Season,
-    ep:string,
+    ep:Episode|string,
     downloadHandle:()=>void
 }
 const EpisodeLink:React.FC<prop> = ({ani,s,ep,downloadHandle})=>{
     const [episode,setEpisode] = useState<Episode>()
     useEffect(()=>{
         $.ajax({
-            url:`/api/g/eps/${ani.id}/${s.id}/${ep}`
+            url:`/api/g/eps/${ani.id}/${s.id}/${(ep as Episode).id||(ep as string)}`
         }).done((res:Episode)=>{
             setEpisode(res)
         })
@@ -21,7 +21,7 @@ const EpisodeLink:React.FC<prop> = ({ani,s,ep,downloadHandle})=>{
     return(
         <>
             {episode?(
-                <div className="ep">
+                <div className="ep" key={episode.epindex}>
                     <span>{episode.name}</span>
                     <div>
                         <button><i className="far fa-eye"></i> Visto</button>

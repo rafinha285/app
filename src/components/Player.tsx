@@ -65,15 +65,19 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
     // }
 
     const ref = useRef<APITypes>(null);
-    const createCaptionsTracks = (subtitles:string[]):Plyr.Track[] =>{
+    const createCaptionsTracks = (subtitles:string[]|null):Plyr.Track[] =>{
         console.log(subtitles)
-        return subtitles.map((languageCode, index) => ({
-            kind: 'captions',
-            label: languageCode,
-            srcLang: subtitles[index], // Usa o código original
-            src: `/api/ep/${ani.id}/${seasonId}/${ep.id}/${ep.id}-${subtitles[index]}.vtt`,
-            default: subtitles[index] === "por", // Define o português como padrão
-        }));
+        if(!subtitles){
+            return []
+        }else{
+            return subtitles.map((languageCode, index) => ({
+                kind: 'captions',
+                label: languageCode,
+                srcLang: subtitles[index], // Usa o código original
+                src: `/api/ep/${ani.id}/${seasonId}/${ep.id}/${ep.id}-${subtitles[index]}.vtt`,
+                default: subtitles[index] === "por", // Define o português como padrão
+            }));
+        }
     }
     const getResolutions = (epReso:string[]):PlyrSource=>{
         const resolutions = ['1080p', '720p', '480p'];

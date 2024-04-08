@@ -337,6 +337,7 @@ router.get("/g/s/eps/:animeid/:seasonid",async(req,res)=>{
   try{
     const {animeid,seasonid} = req.params
     var result = await req.db.execute("SELECT * FROM episodes WHERE animeid = ? AND seasonid = ? ALLOW FILTERING",[types.Uuid.fromString(animeid),types.Uuid.fromString(seasonid)])
+    await sleep(50)
     Console.log(result.rows)
     res.send(result.rows)
   }catch(err){

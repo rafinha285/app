@@ -428,10 +428,12 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                         switch (_b.label) {
                             case 0:
                                 id = ee.id, animeid = ee.animeid, seasonid = ee.seasonid, name = ee.name, duration = ee.duration, resolution = ee.resolution, date_added = ee.date_added;
-                                return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [animeid], { prepare: true })];
+                                return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [animeid], { prepare: true })
+                                    // Console.log(aniS)
+                                ];
                             case 1:
                                 aniS = _b.sent();
-                                handle_1.Console.log(aniS);
+                                // Console.log(aniS)
                                 return [4 /*yield*/, sleep(20)
                                     // console.log(aniS.rows,aniS.rows[0].seasons)
                                     // var season = tupleToSeason(aniS.rows[0].seasons)
@@ -439,6 +441,7 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                                     // console.log(season)
                                 ];
                             case 2:
+                                // Console.log(aniS)
                                 _b.sent();
                                 ep = {
                                     id: id,

@@ -359,7 +359,7 @@ router.get("/g/eps",async(req,res)=>{
       // Console.log(ee)
       var {id,animeid,seasonid,name,duration,resolution,date_added} = ee
       var aniS = await req.db.execute("SELECT name FROM anime WHERE id = ?",[animeid],{prepare:true})
-      Console.log(aniS)
+      // Console.log(aniS)
       await sleep(20)
       // console.log(aniS.rows,aniS.rows[0].seasons)
       // var season = tupleToSeason(aniS.rows[0].seasons)

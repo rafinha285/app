@@ -133,7 +133,7 @@ const Watch:React.FC = () =>{
                     </div>
                     <div className="ep-select">
                         <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
-                            <a id="before" aria-disabled={isFirstEp(eps)}>
+                            <a id="before" aria-disabled={isFirstEp(eps)} href={prevUrl}>
                                 <button className="ep-sel-but" disabled={isFirstEp(eps)}>
                                     <i className="fa-solid fa-arrow-left"></i>
                                 </button>

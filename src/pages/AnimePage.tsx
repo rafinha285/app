@@ -53,8 +53,8 @@ const AnimePage:React.FC = ()=>{
             setGen(ani.genre)
             ani.seasons = tupleToSeason(ani.seasons as types.Tuple[])
             console.log(ani.seasons)
-            ani.seasons.forEach((season)=>{
-                season.episodes.forEach(async ep=>{
+            ani.seasons?.forEach((season)=>{
+                season.episodes?.forEach(async ep=>{
                     const response = await fetch(`/api/g/eps/${ani!.id}/${season.id}/${ep}`)
                     if (response.ok) {
                         const data = await response.json();
@@ -222,9 +222,9 @@ const AnimePage:React.FC = ()=>{
                         </select>
                     </div>
                     <div className="eps">
-                        {(ani.seasons as Season[]).map((season)=>(
+                        {(ani.seasons as Season[])?.map((season)=>(
                             <div style={{display:season.index === 1?"block":"none"}} id={season.id} key={season.index}>
-                                {episodes.filter((episodes)=>episodes.seasonid == season.id).sort((a,b)=>a.epindex - b.epindex).map((ep)=>{
+                                {episodes.filter((episodes)=>episodes.seasonid == season.id)?.sort((a,b)=>a.epindex - b.epindex).map((ep)=>{
                                     // console.log(episodes.filter((episodes)=>episodes.seasonid == season.id))
                                     console.log(ep.name,ep.epindex)
                                     return <EpisodeLink ani={ani} s={season} ep={ep} key={ep.epindex}/>

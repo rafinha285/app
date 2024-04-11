@@ -36,17 +36,15 @@ const Download:React.FC = () =>{
         <html>
             <Header/>
             <div className="download-main">
-                <div className="download-div">
-                    <div className="main-download-title">
-                        <h1>{aniName}</h1><br/>
-                        <h2>{epName}</h2><br/>
-                        <img alt={epName} src={`/api/ep/${id}/${seasonId}/${epId}/${epId}.jpg`}/>
-                    </div>
-                    <div className="main-download-content">
-                        {epReso?.map((v,i)=>(
-                            <EpDownloadButton reso={v} downloadHandle={(reso)=>downloadHandle(reso)} key={i}></EpDownloadButton>
-                        ))}
-                    </div>
+                <div className="main-download-title">
+                    <h1>{aniName}</h1><br/>
+                    <h2>{epName}</h2>
+                    <img className="download-img" alt={epName} src={`/api/ep/${id}/${seasonId}/${epId}/${epId}.jpg`}/>
+                </div>
+                <div className="main-download-content">
+                    {epReso?.map((v,i)=>(
+                        <EpDownloadButton reso={v} downloadHandle={(reso)=>downloadHandle(reso)} key={i}></EpDownloadButton>
+                    ))}
                 </div>
             </div>
             <Footer/>

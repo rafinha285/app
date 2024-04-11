@@ -15,7 +15,7 @@ const Download:React.FC = () =>{
         aniName:string;
         seasonName:string;
         episodeName:string;
-        episodeResolution:string[]
+        episodeResolution:string[];
     }
     useEffect(()=>{
         $.ajax({
@@ -36,12 +36,13 @@ const Download:React.FC = () =>{
         <html>
             <Header/>
             <div className="download-main">
-                <div style={{width:"10em",height:"35em"}}>
+                <div className="download-div">
                     <div className="main-download-title">
-                        <h1>{aniName}</h1>
-                        <h2>{epName}</h2>
+                        <h1>{aniName}</h1><br/>
+                        <h2>{epName}</h2><br/>
+                        <img alt={epName} src={`/api/ep/${id}/${seasonId}/${epId}/${epId}.jpg`}/>
                     </div>
-                    <div className="">
+                    <div className="main-download-content">
                         {epReso?.map((v,i)=>(
                             <EpDownloadButton reso={v} downloadHandle={(reso)=>downloadHandle(reso)} key={i}></EpDownloadButton>
                         ))}

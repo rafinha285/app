@@ -1,10 +1,32 @@
 .download-main{
     margin: 1em 20em;
-    background-color: var(--purple);
+    background-color: var(--dark_purple);
 }
 .main-download-title{
     margin: auto;
+    float: left;
+    display: flex;
+    flex-direction: column;
 }
 .main-download-content{
     margin: auto;
+    float: right;
+}
+.download-div{
+    margin: 10em;
+    padding: 50px;
+}
+.download-button{
+    border: none;
+    margin: 10px;
+    border-radius: 5px;
+}
+.download-button[name="1080"]{
+    background-color: var(--red);
+}
+.download-button[name="720"]{
+    background-color: var(--light-pink);
+}
+.download-button[name="480"]{
+    background-color: var(--light-blue2);
 }

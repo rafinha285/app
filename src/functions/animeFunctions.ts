@@ -20,12 +20,21 @@ export function tupleToSeason(data:any[]):Season[]{
     if(data == null){
         return []
     }else{
-        return data.map(item=>({
-            id:item[0],
-            name:item[1],
-            episodes:item[2],
-            index:item[3]
-        }))
+        if(data[0].elements){
+            return data.map(item=>({
+                id:item.elements[0],
+                name:item.elements[1],
+                episodes:item.elements[2],
+                index:item.elements[3]
+            }))
+        }else{
+            return data.map(item=>({
+                id:item[0],
+                name:item[1],
+                episodes:item[2],
+                index:item[3]
+            }))
+        }
     }
     
 }

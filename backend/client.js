@@ -389,19 +389,22 @@ router.get("/g/s/eps/:animeid/:seasonid", function (req, res) { return __awaiter
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
+                _b.trys.push([0, 3, , 4]);
                 _a = req.params, animeid = _a.animeid, seasonid = _a.seasonid;
                 return [4 /*yield*/, req.db.execute("SELECT * FROM episodes WHERE animeid = ? AND seasonid = ? ALLOW FILTERING", [cassandra_driver_1.types.Uuid.fromString(animeid), cassandra_driver_1.types.Uuid.fromString(seasonid)])];
             case 1:
                 result = _b.sent();
+                return [4 /*yield*/, sleep(50)];
+            case 2:
+                _b.sent();
                 handle_1.Console.log(result.rows);
                 res.send(result.rows);
-                return [3 /*break*/, 3];
-            case 2:
+                return [3 /*break*/, 4];
+            case 3:
                 err_6 = _b.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_6);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); });
@@ -545,7 +548,8 @@ router.get("/g/aniD/:ani/:seasonId/:epId", function (req, res) { return __awaite
             case 1:
                 result = _b.sent();
                 seasons = (0, animeFunctions_1.tupleToSeason)(result.rows[0].seasons);
-                return [4 /*yield*/, req.db.execute("SELECT name, resolution FROM episode WHERE id = ?", [epId])];
+                handle_1.Console.log(result.rows[0].seasons, seasons, seasons.find(function (v) { return v.id == seasonId; }));
+                return [4 /*yield*/, req.db.execute("SELECT name, resolution FROM episodes WHERE id = ?", [epId])];
             case 2:
                 episode = _b.sent();
                 res.json({

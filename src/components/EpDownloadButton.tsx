@@ -7,7 +7,7 @@ interface props{
 
 const EpDownloadButton:React.FC<props> = ({reso,downloadHandle}) =>{
     return(
-        <button onClick={()=>downloadHandle(reso)}>{reso.split("x")[1].toUpperCase()}P<i className="fa-solid fa-download"/></button>
+        <button className="download-button" name={reso.split("x")[1].toLocaleUpperCase()} onClick={()=>downloadHandle(reso)}>{reso.split("x")[1].toUpperCase()}P<i className="fa-solid fa-download"/></button>
     )
 }
 export default EpDownloadButton

@@ -222,8 +222,8 @@ const AnimePage:React.FC = ()=>{
                         </select>
                     </div>
                     <div className="eps">
-                        {(ani.seasons as Season[])?.map((season)=>(
-                            <div style={{display:season.index === 1?"block":"none"}} id={season.id} key={season.index}>
+                        {(ani.seasons as Season[])?.map((season,i,arr)=>(
+                            <div style={{display:season.index === Math.min(...arr.map(v=>v.index))?"block":"none"}} id={season.id} key={season.index}>
                                 {episodes.filter((episodes)=>episodes.seasonid == season.id)?.sort((a,b)=>a.epindex - b.epindex).map((ep)=>{
                                     // console.log(episodes.filter((episodes)=>episodes.seasonid == season.id))
                                     console.log(ep.name,ep.epindex)

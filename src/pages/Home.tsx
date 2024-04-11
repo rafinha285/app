@@ -16,7 +16,7 @@ const Home = () =>{
                 <Header></Header>
                 <Episodes count={8}></Episodes>
                 <AnimeLan manga={false}></AnimeLan>
-                <AnimeLan manga={true}></AnimeLan>
+                {/* <AnimeLan manga={true}></AnimeLan> */}
                 <Footer></Footer>
             </body>
         </html>

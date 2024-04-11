@@ -458,7 +458,8 @@ router.get("/g/aniD/:ani/:seasonId/:epId",async(req,res)=>{
     }
     var result = await req.db.execute(`SELECT name, seasons FROM anime WHERE id = ?`,[ani],{prepare:true})
     var seasons = tupleToSeason(result.rows[0].seasons)
-    var episode = await req.db.execute(`SELECT name, resolution FROM episode WHERE id = ?`,[epId])
+    Console.log(result.rows[0].seasons,seasons,seasons.find((v)=>v.id == seasonId))
+    var episode = await req.db.execute(`SELECT name, resolution FROM episodes WHERE id = ?`,[epId])
     res.json({
       aniName:result.rows[0].name,
       seasonName:seasons.find((v)=>v.id ==seasonId)!.name,

@@ -27,10 +27,22 @@ const Download:React.FC = () =>{
             setEpReso(res.episodeResolution)
         })
     },[!aniName,!seasonName,!epName,!epReso])
-    const downloadHandle = (reso:string) =>{
-        $.ajax({
-            url:`/api/g/ep/download/${id}/${seasonId}/${epId}/${reso.split("x")[1]}`
-        })
+    const downloadHandle = async(reso:string) =>{
+        try{
+            const response = await fetch(`/api/g/ep/download/${id}/${seasonId}/${epId}/${reso.split("x")[1]}`)
+            if(!response.ok) throw new Error("Erro ao baixar Episodio");
+            const blob = await response.blob()
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement('a')
+            link.href = url;
+            link.setAttribute('download', `${epName}.mp4`);
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link);
+        }catch(err){
+            console.error(err)
+        }
+        
     }
     return(
         <html>

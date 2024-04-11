@@ -503,7 +503,7 @@ router.post('/log',async(req:e.Request,res:e.Response)=>{
 })
 app.use('/api',router)
 
-app.use(e.static(BUILD_PATH))
+app.use(e.static(BUILD_PATH,{ maxAge: '1d' }))
 
 app.get('*',(req:e.Request,res:e.Response)=>{
     sendFile().cssJs(res)

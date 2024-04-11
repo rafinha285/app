@@ -442,14 +442,14 @@ router.get("/test",(req:e.Request,res:e.Response)=>{
 router.get("/css/:file",(req:e.Request,res:e.Response)=>{
   res.sendFile(path.join("E:\\main\\app\\src\\css",req.params.file))
 })
-// router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso",async(req,res)=>{
-//   try{
-//     var {aniId,seasonId,epId,reso} = req.params
-//     res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
-//   }catch(err){
-//     sendError(res,ErrorType.default,500,err)
-//   }
-// })
+router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso",async(req,res)=>{
+  try{
+    var {aniId,seasonId,epId,reso} = req.params
+    res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+})
 router.get("/g/aniD/:ani/:seasonId/:epId",async(req,res)=>{
   try{
     var {ani,seasonId,epId} = req.params

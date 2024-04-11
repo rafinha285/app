@@ -526,14 +526,19 @@ router.get("/test", function (req, res) {
 router.get("/css/:file", function (req, res) {
     res.sendFile(path.join("E:\\main\\app\\src\\css", req.params.file));
 });
-// router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso",async(req,res)=>{
-//   try{
-//     var {aniId,seasonId,epId,reso} = req.params
-//     res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
-//   }catch(err){
-//     sendError(res,ErrorType.default,500,err)
-//   }
-// })
+router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, aniId, seasonId, epId, reso;
+    return __generator(this, function (_b) {
+        try {
+            _a = req.params, aniId = _a.aniId, seasonId = _a.seasonId, epId = _a.epId, reso = _a.reso;
+            res.download(path.join(consts_1.ANIME_PATH, aniId, "seasons", seasonId, epId, "".concat(epId, "-").concat(reso, ".mp4")));
+        }
+        catch (err) {
+            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
+        }
+        return [2 /*return*/];
+    });
+}); });
 router.get("/g/aniD/:ani/:seasonId/:epId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, ani, seasonId, epId, result, seasons, episode, err_9;
     return __generator(this, function (_b) {

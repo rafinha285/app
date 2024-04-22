@@ -3,7 +3,8 @@ import * as e from 'express'
 import * as path from 'path'
 import * as cors from 'cors'
 import * as fs from 'fs'
-import * as https from "https"
+// import * as https from "https"
+import * as http from 'http'
 import helmet from "helmet"
 import bodyParser,{urlencoded,json} from "body-parser"
 // import {pool} from './assets/Postgre'
@@ -25,9 +26,9 @@ import {tupleToSeason} from "../src/functions/animeFunctions"
 import * as sleep from 'sleep-promise';
 import WebSocket from 'ws';
 
-const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
-const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
-const credentials = { key: privateKey, cert: certificate };
+// const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
+// const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
+// const credentials = { key: privateKey, cert: certificate };
 var app = e()
 // const ip_1 = ip.address("Radmin VPN")
 // const ip_2 = ip.address("Ethernet")
@@ -49,7 +50,7 @@ var app = e()
 app.use(json());
 app.use(urlencoded({ extended: true }));
 
-const httpsServer = https.createServer(credentials,app)
+const httpsServer = http.createServer(app)
 
 // app.use(helmet({
 //     contentSecurityPolicy:{
@@ -119,61 +120,8 @@ router.get('/ani/img',async(req:e.Request,res:e.Response)=>{
     }
   }
 })
-// router.get("/ani/:id/ass",async(req:e.Request,res:e.Response)=>{
-//   var client= await openConnectionAnime()
-//   try{
-//     if(!req.params.id){
-//       throw ErrorType.undefined
-//     }
-//     var query:QueryConfig={
-//       text:`
-//       SELECT producer_id
-//         FROM animes.anime_producers
-//         WHERE anime_id = $1;
-//       `,
-//       values:[req.params.id]
-//     }
-//     var resultProd:QueryResult = await animeClient.query(query)
-//     query={
-//       text:`
-//       SELECT creator_id
-//       FROM animes.anime_creators
-//       WHERE anime_id = $1;
-//       `,
-//       values:[req.params.id]
-//     }
-//     var resultCrea:QueryResult = await animeClient.query(query)
-//     query={
-//       text:`
-//       SELECT studio_id
-//       FROM animes.anime_studios
-//       WHERE anime_id = $1;
-//       `,
-//       values:[req.params.id]
-//     }
-//     var resultStu:QueryResult = await animeClient.query(query)
 
-    
-//     var ress = {
-//       producers:resultProd.rows,
-//       creators:resultCrea.rows,
-//       studios:resultStu.rows
-//     }
-//     res.json(ress)
-    
-//   }catch(err:any|ErrorType){
-//     switch(err){
-//       case ErrorType.undefined:
-//         sendError(res,ErrorType.undefined)
-//         break
-//       case ErrorType.default:
-//         sendError(res,ErrorType.default,500,err)
-//         break
-//     }
-//   }finally{
-//     await endConnectionAnime(client)
-//   }
-// })
+
 router.get("/g/eps/:animeId/:seasonId/:ep",async (req,res)=>{
   try{
     if(!req.params.animeId || !req.params.seasonId||!req.params.ep){
@@ -324,18 +272,6 @@ router.get('/search',async (req:e.Request,res:e.Response)=>{
   }
 
 })
-// router.get("/g/ep/:aniId/:sId/:id",async(req,res)=>{
-//   try{
-//     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument
-//     var s = doc.seasons!.find((v)=>v._id === req.params.sId)
-//     var ep = s!.episodes.find((v)=>v._id===req.params.id)
-//     Console.log(doc,s,ep)
-//     Console.log(doc.seasons)
-//     res.send(ep)
-//   }catch(err){
-//     sendError(res,ErrorType.default,500,err)
-//   }
-// })
 router.get("/g/s/eps/:animeid/:seasonid",async(req,res)=>{
   try{
     const {animeid,seasonid} = req.params
@@ -368,10 +304,6 @@ router.get("/g/eps",async(req,res)=>{
       var aniS = await req.db.execute("SELECT name FROM anime WHERE id = ?",[animeid],{prepare:true})
       // Console.log(aniS)
       await sleep(20)
-      // console.log(aniS.rows,aniS.rows[0].seasons)
-      // var season = tupleToSeason(aniS.rows[0].seasons)
-      // console.log(season,season.find(e=>e.id == seasonid))
-      // console.log(season)
       
       var ep:EpisodeSim={
         id,
@@ -389,37 +321,10 @@ router.get("/g/eps",async(req,res)=>{
       // Console.log(eps)
     })
     await sleep(20)
-    // console.log(eps)
-    // eps.sort((a,b)=>{
-    //   if (b.date_added < a.date_added) {
-    //     return -1;
-    //   }
-    //   if (b.date_added > a.date_added) {
-    //       return 1;
-    //   }
-    //   return 0;
-    // })
     eps.sort((a,b)=>new Date(b.date_added).valueOf() - new Date(a.date_added).valueOf())
     await sleep(20)
     res.send(eps)
-    // var {count} = req.query
-    // if(count){
-    //   logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC LIMIT $1',[count])
-    //   .then((result)=>{
-    //     res.send(result.rows)
-    //   })
-    //   .catch((err)=>{
-    //     throw err
-    //   })
-    // }else{
-    //   logPool.query('SELECT * FROM public."newEpisodes" WHERE date >= CURRENT_DATE - INTERVAL \'7 days\' ORDER BY date DESC')
-    //   .then((result)=>{
-    //     res.send(result.rows)
-    //   })
-    //   .catch((err)=>{
-    //     throw err
-    //   })
-    // }
+    
     
   }catch(err){
     sendError(res,ErrorType.default,500,err)
@@ -555,12 +460,6 @@ app.get('*',(req:e.Request,res:e.Response)=>{
 //   console.log("Aberto em 0.0.0.0")
 // })
 
-httpsServer.listen(443,"0.0.0.0",()=>{
-    Console.log(`https://0.0.0.0`)
+httpsServer.listen(4433,"0.0.0.0",()=>{
+    Console.log(`http://0.0.0.0:4433`)
 })
-// httpsServer.listen(443,ip_2,()=>{
-//   Console.log(`https://${ip_2}`)
-// })
-// app.listen(80,ip_2,()=>{
-//   Console.log(`http://${ip_2}`)
-// })

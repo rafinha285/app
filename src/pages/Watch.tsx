@@ -65,7 +65,7 @@ const Watch:React.FC = () =>{
         }).done((res)=>{
             setAni(res)
             if(ani&&ep){
-                console.log(nextEpUrl(eps,ani.id,e))
+                console.log(nextEpUrl(eps!,ani.id,ep))
                 console.log(ani,ani.id)
                 fetchEps(ani,ep)
                 .catch(console.error)

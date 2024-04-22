@@ -40,7 +40,8 @@ var e = require("express");
 // import * as ip from 'ip'
 var path = require("path");
 var fs = require("fs");
-var https = require("https");
+// import * as https from "https"
+var http = require("http");
 var body_parser_1 = require("body-parser");
 var handle_1 = require("./assets/handle");
 var pool_1 = require("./assets/pool");
@@ -48,9 +49,9 @@ var consts_1 = require("./consts");
 var cassandra_driver_1 = require("cassandra-driver");
 var animeFunctions_1 = require("../src/functions/animeFunctions");
 var sleep = require("sleep-promise");
-var privateKey = fs.readFileSync(consts_1.HTTPS_KEY_PATH, 'utf8');
-var certificate = fs.readFileSync(consts_1.HTTPS_CERT_PATH, 'utf8');
-var credentials = { key: privateKey, cert: certificate };
+// const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
+// const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
+// const credentials = { key: privateKey, cert: certificate };
 var app = e();
 // const ip_1 = ip.address("Radmin VPN")
 // const ip_2 = ip.address("Ethernet")
@@ -69,7 +70,7 @@ var app = e();
 // app.use(cors(corsOptions))
 app.use((0, body_parser_1.json)());
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
-var httpsServer = https.createServer(credentials, app);
+var httpsServer = http.createServer(app);
 // app.use(helmet({
 //     contentSecurityPolicy:{
 //         directives:{
@@ -144,58 +145,6 @@ router.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, vo
         return [2 /*return*/];
     });
 }); });
-// router.get("/ani/:id/ass",async(req:e.Request,res:e.Response)=>{
-//   var client= await openConnectionAnime()
-//   try{
-//     if(!req.params.id){
-//       throw ErrorType.undefined
-//     }
-//     var query:QueryConfig={
-//       text:`
-//       SELECT producer_id
-//         FROM animes.anime_producers
-//         WHERE anime_id = $1;
-//       `,
-//       values:[req.params.id]
-//     }
-//     var resultProd:QueryResult = await animeClient.query(query)
-//     query={
-//       text:`
-//       SELECT creator_id
-//       FROM animes.anime_creators
-//       WHERE anime_id = $1;
-//       `,
-//       values:[req.params.id]
-//     }
-//     var resultCrea:QueryResult = await animeClient.query(query)
-//     query={
-//       text:`
-//       SELECT studio_id
-//       FROM animes.anime_studios
-//       WHERE anime_id = $1;
-//       `,
-//       values:[req.params.id]
-//     }
-//     var resultStu:QueryResult = await animeClient.query(query)
-//     var ress = {
-//       producers:resultProd.rows,
-//       creators:resultCrea.rows,
-//       studios:resultStu.rows
-//     }
-//     res.json(ress)
-//   }catch(err:any|ErrorType){
-//     switch(err){
-//       case ErrorType.undefined:
-//         sendError(res,ErrorType.undefined)
-//         break
-//       case ErrorType.default:
-//         sendError(res,ErrorType.default,500,err)
-//         break
-//     }
-//   }finally{
-//     await endConnectionAnime(client)
-//   }
-// })
 router.get("/g/eps/:animeId/:seasonId/:ep", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var ep, err_2;
     return __generator(this, function (_a) {
@@ -373,18 +322,6 @@ router.get('/search', function (req, res) { return __awaiter(void 0, void 0, voi
         }
     });
 }); });
-// router.get("/g/ep/:aniId/:sId/:id",async(req,res)=>{
-//   try{
-//     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument
-//     var s = doc.seasons!.find((v)=>v._id === req.params.sId)
-//     var ep = s!.episodes.find((v)=>v._id===req.params.id)
-//     Console.log(doc,s,ep)
-//     Console.log(doc.seasons)
-//     res.send(ep)
-//   }catch(err){
-//     sendError(res,ErrorType.default,500,err)
-//   }
-// })
 router.get("/g/s/eps/:animeid/:seasonid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, animeid, seasonid, result, err_6;
     return __generator(this, function (_b) {
@@ -439,12 +376,7 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                             case 1:
                                 aniS = _b.sent();
                                 // Console.log(aniS)
-                                return [4 /*yield*/, sleep(20)
-                                    // console.log(aniS.rows,aniS.rows[0].seasons)
-                                    // var season = tupleToSeason(aniS.rows[0].seasons)
-                                    // console.log(season,season.find(e=>e.id == seasonid))
-                                    // console.log(season)
-                                ];
+                                return [4 /*yield*/, sleep(20)];
                             case 2:
                                 // Console.log(aniS)
                                 _b.sent();
@@ -465,30 +397,9 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                         }
                     });
                 }); });
-                return [4 /*yield*/, sleep(20)
-                    // console.log(eps)
-                    // eps.sort((a,b)=>{
-                    //   if (b.date_added < a.date_added) {
-                    //     return -1;
-                    //   }
-                    //   if (b.date_added > a.date_added) {
-                    //       return 1;
-                    //   }
-                    //   return 0;
-                    // })
-                ];
+                return [4 /*yield*/, sleep(20)];
             case 3:
                 _a.sent();
-                // console.log(eps)
-                // eps.sort((a,b)=>{
-                //   if (b.date_added < a.date_added) {
-                //     return -1;
-                //   }
-                //   if (b.date_added > a.date_added) {
-                //       return 1;
-                //   }
-                //   return 0;
-                // })
                 eps.sort(function (a, b) { return new Date(b.date_added).valueOf() - new Date(a.date_added).valueOf(); });
                 return [4 /*yield*/, sleep(20)];
             case 4:
@@ -678,12 +589,6 @@ app.get('*', function (req, res) {
 // app.listen(80,"0.0.0.0",()=>{
 //   console.log("Aberto em 0.0.0.0")
 // })
-httpsServer.listen(443, "0.0.0.0", function () {
-    handle_1.Console.log("https://0.0.0.0");
+httpsServer.listen(4433, "0.0.0.0", function () {
+    handle_1.Console.log("http://0.0.0.0:4433");
 });
-// httpsServer.listen(443,ip_2,()=>{
-//   Console.log(`https://${ip_2}`)
-// })
-// app.listen(80,ip_2,()=>{
-//   Console.log(`http://${ip_2}`)
-// })

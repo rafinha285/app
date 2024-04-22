@@ -134,12 +134,12 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         controls:['play-large','play','progress','current-time','mute', 'volume', 'captions', 'settings', 'pip','fullscreen'],
         storage:{ enabled: true, key: 'plyr' },
         keyboard:{focused:true,global:true},
-        tooltips:{controls:false,seek:true}
+        tooltips:{controls:true,seek:true}
     }
     const initPlyr = async()=>{
         while (!ref.current || !ref.current.plyr || !ref.current.plyr.elements) {
             await new Promise(resolve => setTimeout(resolve, 100));
-          }
+        }
         var plyr = ref.current.plyr
         plyr.source = getResolutions(ep.resolution)
         console.log(ep.resolution)
@@ -164,7 +164,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
 
         const intr = $(plyr.elements.controls!).find("#intro");
         var buEd = (<div className="skip-intro plyr__controls__item plyr__control" onClick={()=>handleNextEp(ani.id,seasonId,seasonEp,ep.epindex)}>
-            <span>Poximo episodio</span>
+            <span>Proximo episodio</span>
             <i className="fa-solid fa-chevron-right"></i>
         </div>)
         const skEButton = $(ReactDOMServer.renderToStaticMarkup(buEd)).prop("id", "outro").on("click",()=>handleNextEp(ani.id,seasonId,seasonEp,ep.epindex))

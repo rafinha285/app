@@ -23,6 +23,7 @@ import { types } from 'cassandra-driver'
 import { EpisodeSim } from '../src/types/episodeModel'
 import {tupleToSeason} from "../src/functions/animeFunctions"
 import * as sleep from 'sleep-promise';
+import WebSocket from 'ws';
 
 const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
@@ -47,6 +48,8 @@ var app = e()
 // app.use(cors(corsOptions))
 app.use(json());
 app.use(urlencoded({ extended: true }));
+
+const httpsServer = https.createServer(credentials,app)
 
 // app.use(helmet({
 //     contentSecurityPolicy:{
@@ -352,7 +355,10 @@ router.get("/g/eps",async(req,res)=>{
   try{
     var {count} = req.query
     var eps:EpisodeSim[] = []
-    var semana = Math.floor(Date.now()/1000) - 1209600
+    let currentDate = new Date();
+
+    // Subtrai uma semana (7 dias) da data atual
+    let semana = new Date(currentDate.valueOf() - 7 * 24 * 60 * 60 * 1000);
     var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;",[semana,count],{prepare:true})
     Console.log(result)
     await sleep(2)
@@ -384,15 +390,16 @@ router.get("/g/eps",async(req,res)=>{
     })
     await sleep(20)
     // console.log(eps)
-    eps.sort((a,b)=>{
-      if (b.date_added < a.date_added) {
-        return -1;
-      }
-      if (b.date_added > a.date_added) {
-          return 1;
-      }
-      return 0;
-    })
+    // eps.sort((a,b)=>{
+    //   if (b.date_added < a.date_added) {
+    //     return -1;
+    //   }
+    //   if (b.date_added > a.date_added) {
+    //       return 1;
+    //   }
+    //   return 0;
+    // })
+    eps.sort((a,b)=>new Date(b.date_added).valueOf() - new Date(a.date_added).valueOf())
     await sleep(20)
     res.send(eps)
     // var {count} = req.query
@@ -442,10 +449,41 @@ router.get("/test",(req:e.Request,res:e.Response)=>{
 router.get("/css/:file",(req:e.Request,res:e.Response)=>{
   res.sendFile(path.join("E:\\main\\app\\src\\css",req.params.file))
 })
+// const downloadwss = new WebSocket.Server({ server: httpsServer });
+// downloadwss.on("connection",(ws)=>{
+  
+// })
 router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso",async(req,res)=>{
   try{
     var {aniId,seasonId,epId,reso} = req.params
-    res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
+    var filePath = path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`)
+
+    const stat = fs.statSync(filePath);
+    const fileSize = stat.size;
+
+    const readStream = fs.createReadStream(filePath);
+
+    res.setHeader('Content-Type', 'video/mp4');
+    res.setHeader('Content-Length', fileSize);
+    res.setHeader('Content-Disposition', `attachment; filename=${epId}.mp4`);
+
+    let uploadedBytes = 0;
+    readStream.on('data', (chunk) => {
+      uploadedBytes += chunk.length;
+      const progress = (uploadedBytes / fileSize) * 100;
+      // Envia o progresso para o cliente
+      res.write(chunk);
+    });
+
+    readStream.on('end', () => {
+      res.end();
+    });
+
+    readStream.on('error', (err) => {
+      console.error(err);
+      res.status(500).end();
+    });
+    // res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
   }catch(err){
     sendError(res,ErrorType.default,500,err)
   }
@@ -511,7 +549,7 @@ app.get('*',(req:e.Request,res:e.Response)=>{
 })
 
 
-const httpsServer = https.createServer(credentials,app)
+
 
 // app.listen(80,"0.0.0.0",()=>{
 //   console.log("Aberto em 0.0.0.0")

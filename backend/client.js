@@ -69,6 +69,7 @@ var app = e();
 // app.use(cors(corsOptions))
 app.use((0, body_parser_1.json)());
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
+var httpsServer = https.createServer(credentials, app);
 // app.use(helmet({
 //     contentSecurityPolicy:{
 //         directives:{
@@ -409,14 +410,15 @@ router.get("/g/s/eps/:animeid/:seasonid", function (req, res) { return __awaiter
     });
 }); });
 router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var count, eps, semana, result, err_7;
+    var count, eps, currentDate, semana, result, err_7;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 5, , 6]);
                 count = req.query.count;
                 eps = [];
-                semana = Math.floor(Date.now() / 1000) - 1209600;
+                currentDate = new Date();
+                semana = new Date(currentDate.valueOf() - 7 * 24 * 60 * 60 * 1000);
                 return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;", [semana, count], { prepare: true })];
             case 1:
                 result = _a.sent();
@@ -465,19 +467,29 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                 }); });
                 return [4 /*yield*/, sleep(20)
                     // console.log(eps)
+                    // eps.sort((a,b)=>{
+                    //   if (b.date_added < a.date_added) {
+                    //     return -1;
+                    //   }
+                    //   if (b.date_added > a.date_added) {
+                    //       return 1;
+                    //   }
+                    //   return 0;
+                    // })
                 ];
             case 3:
                 _a.sent();
                 // console.log(eps)
-                eps.sort(function (a, b) {
-                    if (b.date_added < a.date_added) {
-                        return -1;
-                    }
-                    if (b.date_added > a.date_added) {
-                        return 1;
-                    }
-                    return 0;
-                });
+                // eps.sort((a,b)=>{
+                //   if (b.date_added < a.date_added) {
+                //     return -1;
+                //   }
+                //   if (b.date_added > a.date_added) {
+                //       return 1;
+                //   }
+                //   return 0;
+                // })
+                eps.sort(function (a, b) { return new Date(b.date_added).valueOf() - new Date(a.date_added).valueOf(); });
                 return [4 /*yield*/, sleep(20)];
             case 4:
                 _a.sent();
@@ -526,12 +538,36 @@ router.get("/test", function (req, res) {
 router.get("/css/:file", function (req, res) {
     res.sendFile(path.join("E:\\main\\app\\src\\css", req.params.file));
 });
+// const downloadwss = new WebSocket.Server({ server: httpsServer });
+// downloadwss.on("connection",(ws)=>{
+// })
 router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, aniId, seasonId, epId, reso;
+    var _a, aniId, seasonId, epId, reso, filePath, stat, fileSize_1, readStream, uploadedBytes_1;
     return __generator(this, function (_b) {
         try {
             _a = req.params, aniId = _a.aniId, seasonId = _a.seasonId, epId = _a.epId, reso = _a.reso;
-            res.download(path.join(consts_1.ANIME_PATH, aniId, "seasons", seasonId, epId, "".concat(epId, "-").concat(reso, ".mp4")));
+            filePath = path.join(consts_1.ANIME_PATH, aniId, "seasons", seasonId, epId, "".concat(epId, "-").concat(reso, ".mp4"));
+            stat = fs.statSync(filePath);
+            fileSize_1 = stat.size;
+            readStream = fs.createReadStream(filePath);
+            res.setHeader('Content-Type', 'video/mp4');
+            res.setHeader('Content-Length', fileSize_1);
+            res.setHeader('Content-Disposition', "attachment; filename=".concat(epId, ".mp4"));
+            uploadedBytes_1 = 0;
+            readStream.on('data', function (chunk) {
+                uploadedBytes_1 += chunk.length;
+                var progress = (uploadedBytes_1 / fileSize_1) * 100;
+                // Envia o progresso para o cliente
+                res.write(chunk);
+            });
+            readStream.on('end', function () {
+                res.end();
+            });
+            readStream.on('error', function (err) {
+                console.error(err);
+                res.status(500).end();
+            });
+            // res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
         }
         catch (err) {
             (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
@@ -634,12 +670,11 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
     });
 }); });
 app.use('/api', router);
-app.use(e.static(consts_1.BUILD_PATH));
+app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
 app.get('*', function (req, res) {
     (0, handle_1.sendFile)().cssJs(res);
     res.sendFile(consts_1.BUILD_HTML);
 });
-var httpsServer = https.createServer(credentials, app);
 // app.listen(80,"0.0.0.0",()=>{
 //   console.log("Aberto em 0.0.0.0")
 // })

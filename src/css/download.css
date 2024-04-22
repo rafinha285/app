@@ -26,10 +26,10 @@
     background-color: var(--red);
 }
 .download-button[name="720"]{
-    background-color: var(--light-pink);
+    background-color: var(--lightpink);
 }
 .download-button[name="480"]{
-    background-color: var(--light-blue2);
+    background-color: var(--light_blue2);
 }
 .download-img{
     max-width: 10em;

@@ -67,6 +67,7 @@ export const handleNextEp = (ani:string,seasonId:string,eps:Episode[],index:numb
 export function nextEpUrl(eps:Episode[],ani:string,ep:Episode,):string|undefined{
     var posEp = eps.find(v=>v.epindex === (ep.epindex+1))
     if(posEp){
+        console.log(ani,ep.seasonid,posEp,posEp.id,`/Anime/${ani}/watch/${ep.seasonid}/${posEp.id}`)
         return `/Anime/${ani}/watch/${ep.seasonid}/${posEp.id}`
     }else{
         return undefined
@@ -75,6 +76,7 @@ export function nextEpUrl(eps:Episode[],ani:string,ep:Episode,):string|undefined
 export function prevEpUrl(eps:Episode[],ani:string,ep:Episode,):string|undefined{
     var prevEp = eps.find(v=>v.epindex === (ep.epindex-1))
     if(prevEp){
+        console.log(ani,ep.seasonid,prevEp,prevEp.id,`/Anime/${ani}/watch/${ep.seasonid}/${prevEp.id}`)
         return `/Anime/${ani}/watch/${ep.seasonid}/${prevEp.id}`
     }else{
         return undefined

@@ -65,6 +65,7 @@ const Watch:React.FC = () =>{
         }).done((res)=>{
             setAni(res)
             if(ani&&ep){
+                console.log(nextEpUrl(eps,ani.id,e))
                 console.log(ani,ani.id)
                 fetchEps(ani,ep)
                 .catch(console.error)
@@ -78,6 +79,7 @@ const Watch:React.FC = () =>{
                         // $("#before").attr("href",`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[epIndex-1]._id}`)
                         // $("#after").attr("href",`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[ep?.index!+1]._id!}`)
                         // if()
+                        
                         setNextUrl(nextEpUrl(eps,ani.id,ep))
                         setPrevUrl(prevEpUrl(eps,ani.id,ep))
                         console.log(`/Anime/${ani.id}/watch/${ep?.seasonid}/${eps.find(v=>v.epindex === (ep.epindex+1))!.id}`)

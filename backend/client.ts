@@ -254,20 +254,8 @@ router.get('/search',async (req:e.Request,res:e.Response)=>{
   try{
     var search= req.query.s
     Console.log(search)
-    //,[`%${search}%`,`%${search}%`]
-    var result = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE name LIKE :search OR name2 LIKE :search ALLOW FILTERING`,{search:`%${search}%`},{prepare:true})
+    var result = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE name LIKE ? OR name2 LIKE ? ALLOW FILTERING`,[`%${search}%`,`%${search}%`],{prepare:true})
     res.send(result.rows)
-    // var db = couch.use("anime")
-    // Console.log(await db.get("_design/search"))
-    // db.view("anime","search",{include_docs:true,key:{search}},(err,response)=>{
-    //   if(err)throw err
-    //   Console.log(response)
-    //   const result = response.rows.map(row => row.doc); // Obtém os documentos da view
-
-    //   console.log(result);
-    //   res.send(result)
-    // })
-    // Console.log(animeResults)
     
   }catch(err){
     sendError(res,ErrorType.default,500,err)

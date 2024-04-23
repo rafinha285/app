@@ -163,7 +163,10 @@
     background: var(--gray-dark);
 }
 
-
+.plyr__menu__container{
+    max-height: 25em;
+    overflow: auto;
+}
 
 .mainplayer *{
     color:black !important;

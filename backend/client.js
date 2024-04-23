@@ -310,7 +310,7 @@ router.get('/search', function (req, res) { return __awaiter(void 0, void 0, voi
                 _a.trys.push([0, 2, , 3]);
                 search = req.query.s;
                 handle_1.Console.log(search);
-                return [4 /*yield*/, req.db.execute("SELECT id, name, description,rating FROM anime WHERE name LIKE '".concat(search, "' OR name2 LIKE '").concat(search, "' ALLOW FILTERING"), { prepare: true })];
+                return [4 /*yield*/, req.db.execute("SELECT id, name, description,rating FROM anime WHERE name LIKE ? OR name2 LIKE ? ALLOW FILTERING", ["%".concat(search, "%"), "%".concat(search, "%")], { prepare: true })];
             case 1:
                 result = _a.sent();
                 res.send(result.rows);

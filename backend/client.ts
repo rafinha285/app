@@ -254,7 +254,7 @@ router.get('/search',async (req:e.Request,res:e.Response)=>{
   try{
     var search= req.query.s
     Console.log(search)
-    var result = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE name LIKE ? OR name2 LIKE ? ALLOW FILTERING`,[`%${search}%`,`%${search}%`],{prepare:true})
+    var result = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE name LIKE ? OR name2 LIKE ? ALLOW FILTERING`,[`'%${search}%'`,`'%${search}%'`],{prepare:true})
     res.send(result.rows)
     
   }catch(err){

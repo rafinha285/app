@@ -19,7 +19,7 @@ import { Log } from '../src/types/logType'
 // import { animeClient } from './assets/Postgre'
 import { Query, QueryConfig, QueryResult } from 'pg'
 import { client } from './assets/pool'
-import { ANIME_PATH, BUILD_HTML, BUILD_PATH, HTTPS_CERT_PATH, HTTPS_KEY_PATH } from './consts'
+import { ANIME_PATH, BUILD_HTML, BUILD_PATH} from './consts'
 import { types } from 'cassandra-driver'
 import { EpisodeSim } from '../src/types/episodeModel'
 import {tupleToSeason} from "../src/functions/animeFunctions"
@@ -344,16 +344,6 @@ router.get("/g/eps",async(req,res)=>{
 // })
 
 
-router.get("/test",(req:e.Request,res:e.Response)=>{
-  res.sendFile("E:\\main\\app\\src\\test\\test.html")
-})
-router.get("/css/:file",(req:e.Request,res:e.Response)=>{
-  res.sendFile(path.join("E:\\main\\app\\src\\css",req.params.file))
-})
-// const downloadwss = new WebSocket.Server({ server: httpsServer });
-// downloadwss.on("connection",(ws)=>{
-  
-// })
 router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso",async(req,res)=>{
   try{
     var {aniId,seasonId,epId,reso} = req.params

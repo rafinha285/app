@@ -450,15 +450,6 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
 //     sendError(res,ErrorType.default,500,err)
 //   }
 // })
-router.get("/test", function (req, res) {
-    res.sendFile("E:\\main\\app\\src\\test\\test.html");
-});
-router.get("/css/:file", function (req, res) {
-    res.sendFile(path.join("E:\\main\\app\\src\\css", req.params.file));
-});
-// const downloadwss = new WebSocket.Server({ server: httpsServer });
-// downloadwss.on("connection",(ws)=>{
-// })
 router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, aniId, seasonId, epId, reso, filePath, stat, fileSize_1, readStream, uploadedBytes_1;
     return __generator(this, function (_b) {

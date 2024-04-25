@@ -266,7 +266,8 @@ router.get('/search',async (req:e.Request,res:e.Response)=>{
   try{
     var search= req.query.s
     Console.log(search)
-    var result = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE name LIKE ? OR name2 LIKE ? ALLOW FILTERING`,[`'%${search}%'`,`'%${search}%'`],{prepare:true})
+    //[`'%${search}%'`,`'%${search}%'`]
+    var result = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE name LIKE '%${search}%' OR name2 LIKE '%${search}%' ALLOW FILTERING`,[],{prepare:true})
     res.send(result.rows)
     
   }catch(err){
@@ -344,6 +345,24 @@ router.get("/g/eps",async(req,res)=>{
 // })
 
 
+
+
+//!character
+// router.get("/ani/char/:aniId/:charId/img",async(req,res)=>{
+//   try{
+//     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument;
+//     // var char = doc.characters?.find((v)=>v._id == req.params.charId);
+//     res.sendFile(path.join(doc.path!,"characters",req.params.charId,`${req.params.charId}.jpg`))
+//   }catch(err){
+//     sendError(res,ErrorType.default,500,err)
+//   }
+// })
+
+
+// const downloadwss = new WebSocket.Server({ server: httpsServer });
+// downloadwss.on("connection",(ws)=>{
+  
+// })
 router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso",async(req,res)=>{
   try{
     var {aniId,seasonId,epId,reso} = req.params

@@ -2,7 +2,7 @@ import $ from "jquery"
 import {Anime, Producer,Season} from "../types/animeModel"
 import AnimePoster from "../assets/AnimePosters"
 import { Episode } from "../types/episodeModel";
-import { languages } from "../types/types";
+import { languages } from "../types/types.ts";
 
 
 export function genToArray(gen:string){

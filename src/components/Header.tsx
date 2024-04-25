@@ -41,6 +41,7 @@ const Header = ()=>{
                             <a href="/Anime/seasons">Seasons</a>
                             <a href="/Anime/dublados">Dublados</a>
                             <a href="/Anime/legendados">Legendados</a>
+                            <a href="/Anime/agenda">Agenda Lançamentos</a>
                         </div>
                     </div>
                     <li><a href="">Mangá</a></li>

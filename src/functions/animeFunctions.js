@@ -36,7 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEpsFromSeason = exports.tupleToSeason = exports.tupleToProducer = exports.genToArray = void 0;
+exports.DateToStringLocal = exports.getEpsFromSeason = exports.tupleToSeason = exports.tupleToProducer = exports.genToArray = void 0;
+var types_1 = require("../types/types");
 function genToArray(gen) {
     console.log(gen);
     var s = gen.slice(1, -1);
@@ -87,3 +88,32 @@ function getEpsFromSeason(ani, season) {
     });
 }
 exports.getEpsFromSeason = getEpsFromSeason;
+function DateToStringLocal(date) {
+    var day = String(date.getDate()).padStart(2, '0');
+    var month = String(date.getMonth() + 1).padStart(2, '0'); // O mês é baseado em zero
+    var year = date.getFullYear();
+    // Retorna a data formatada como uma string
+    return "".concat(day, "/").concat(month, "/").concat(year);
+}
+exports.DateToStringLocal = DateToStringLocal;
+Date.prototype.getDayOfWeekName = function () {
+    // const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    var daysOfWeek = Date.prototype.daysOfWeek();
+    var dayOfWeek = this.getDay(); // Retorna um número de 0 (Domingo) a 6 (Sábado)
+    return daysOfWeek[dayOfWeek];
+};
+Date.prototype.daysOfWeek = function (language) {
+    if (language === void 0) { language = types_1.languages.Portuguese; }
+    switch (language) {
+        case types_1.languages.Portuguese:
+            return ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+        case types_1.languages.English:
+            return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        case types_1.languages.Spanish:
+            return ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']; // Dias da semana em espanhol
+        case types_1.languages.Japanese:
+            return ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日']; // Dias da semana em japonês
+        default:
+            return ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']; // Padrão para idioma português
+    }
+};

@@ -10,6 +10,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ProdSearch from './pages/Search/Prod';
 import Download from './pages/Download';
+import Agenda from './pages/Agenda';
 const App:React.FC = ()=> {
 return (
   <Router>
@@ -19,6 +20,7 @@ return (
       <Route path='/Anime/:id' element={<Anime />}/>
       <Route path='/Anime/:id/watch/:seasonId/:epId' element={<Watch />} />
       <Route path='/Anime/:id/download/:seasonId/:epId' element={<Download/>}/>
+      <Route path='/Anime/agenda' element={<Agenda/>}/>
       <Route path='/gen/:gen' element={<GenSearch />} />
       <Route path='/prod/:prod'element={<ProdSearch/>}/>
       <Route path='/search' element={<MainSearch />} />

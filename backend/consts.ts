@@ -1,8 +1,7 @@
 import * as path from "path"
-export const ANIME_PATH:string = path.join('\\\\192.168.1.20','anime')
-export const MANGA_PATH:string = path.join('\\\\192.168.1.20','manga')
-//__dirname,'../','../','storage'
-export const TEMP_PATH:string = path.join('\\\\192.168.1.20','temp')
+export const ANIME_PATH:string = path.join(__dirname,'../','../','storage','anime')
+export const MANGA_PATH:string = path.join(__dirname,'../','../','storage','manga')
+export const TEMP_PATH:string = path.join(__dirname,'../','../','storage','temp')
 export const FFMPEG_PATH:string = path.join('/','usr','bin','ffmpeg')
 export const FFPROBE_PATH:string = path.join('/','usr','bin','ffprobe')
 export const RESOLUTIONS:string[] = ['1920x1080','1280x720', '854x480']

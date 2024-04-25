@@ -12,8 +12,8 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import EpisodeDropdown from "../assets/EpisodeDropdown";
 import { Log } from "../types/logType";
-import { handleNextEp, nextEpUrl, prevEpUrl } from "../features/main";
-import { DateToStringLocal, getEpsFromSeason ,tupleToSeason} from "../functions/animeFunctions";
+import { DateToStringLocal, handleNextEp, nextEpUrl, prevEpUrl } from "../features/main";
+import { getEpsFromSeason ,tupleToSeason} from "../functions/animeFunctions";
 
 
 

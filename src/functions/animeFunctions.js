@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DateToStringLocal = exports.getEpsFromSeason = exports.tupleToSeason = exports.tupleToProducer = exports.genToArray = void 0;
-var types_1 = require("../types/types");
+var episodeModel_1 = require("../types/episodeModel");
 function genToArray(gen) {
     console.log(gen);
     var s = gen.slice(1, -1);
@@ -103,15 +103,15 @@ Date.prototype.getDayOfWeekName = function () {
     return daysOfWeek[dayOfWeek];
 };
 Date.prototype.daysOfWeek = function (language) {
-    if (language === void 0) { language = types_1.languages.Portuguese; }
+    if (language === void 0) { language = episodeModel_1.languages.Portuguese; }
     switch (language) {
-        case types_1.languages.Portuguese:
+        case episodeModel_1.languages.Portuguese:
             return ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-        case types_1.languages.English:
+        case episodeModel_1.languages.English:
             return ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-        case types_1.languages.Spanish:
+        case episodeModel_1.languages.Spanish:
             return ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']; // Dias da semana em espanhol
-        case types_1.languages.Japanese:
+        case episodeModel_1.languages.Japanese:
             return ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日']; // Dias da semana em japonês
         default:
             return ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']; // Padrão para idioma português

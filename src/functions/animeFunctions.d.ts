@@ -1,6 +1,6 @@
 import { Producer, Season } from "../types/animeModel";
 import { Episode } from "../types/episodeModel";
-import { languages } from "../types/types";
+import { languages } from "../types/episodeModel";
 export declare function genToArray(gen: string): string[];
 export declare function tupleToProducer(data: any[]): Producer[];
 export declare function tupleToSeason(data: any[]): Season[];

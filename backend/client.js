@@ -43,6 +43,10 @@ var fs = require("fs");
 // import * as https from "https"
 var http = require("http");
 var body_parser_1 = require("body-parser");
+// import mongoose from "mongoose"
+// import * as nano from "nano"
+// const Nano = require('nano');
+// import { Anime } from '../../app_admin/src/types/animeModel'
 var handle_1 = require("./assets/handle");
 var pool_1 = require("./assets/pool");
 var consts_1 = require("./consts");

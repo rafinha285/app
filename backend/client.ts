@@ -12,7 +12,7 @@ import {User} from "../src/types/userType"
 // import mongoose from "mongoose"
 // import * as nano from "nano"
 // const Nano = require('nano');
-import { Anime } from '../../app_admin/src/types/animeModel'
+// import { Anime } from '../../app_admin/src/types/animeModel'
 import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, openConnectionAnime, endConnectionAnime} from "./assets/handle"
 // import { AnimeDocument, producers } from '../src/types/animeModel'
 import { Log } from '../src/types/logType'

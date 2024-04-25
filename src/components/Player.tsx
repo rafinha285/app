@@ -1,7 +1,7 @@
 import React,{useEffect, useRef} from "react";
 import { Episode, SubtitlesTracks } from "../types/episodeModel";
 import { languages, quality } from "../types/types";
-import Plyr,{APITypes,PlyrOptions,PlyrSource} from "../external_package/plyr-react/";
+import Plyr,{APITypes,PlyrOptions,PlyrSource} from "plyr-react";
 // import Plyr from "@rocketseat/react-plyr";
 import ReactDOMServer from 'react-dom/server';
 import 'plyr/dist/plyr.css'

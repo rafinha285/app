@@ -345,29 +345,6 @@ router.get("/g/eps",async(req,res)=>{
 // })
 
 
-<<<<<<< HEAD
-
-
-//!character
-// router.get("/ani/char/:aniId/:charId/img",async(req,res)=>{
-//   try{
-//     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument;
-//     // var char = doc.characters?.find((v)=>v._id == req.params.charId);
-//     res.sendFile(path.join(doc.path!,"characters",req.params.charId,`${req.params.charId}.jpg`))
-//   }catch(err){
-//     sendError(res,ErrorType.default,500,err)
-//   }
-// })
-
-
-=======
-router.get("/test",(req:e.Request,res:e.Response)=>{
-  res.sendFile("E:\\main\\app\\src\\test\\test.html")
-})
-router.get("/css/:file",(req:e.Request,res:e.Response)=>{
-  res.sendFile(path.join("E:\\main\\app\\src\\css",req.params.file))
-})
->>>>>>> parent of d27f66f (const change)
 // const downloadwss = new WebSocket.Server({ server: httpsServer });
 // downloadwss.on("connection",(ws)=>{
   

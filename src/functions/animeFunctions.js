@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getEpsFromSeason = exports.tupleToSeason = exports.tupleToProducer = exports.genToArray = void 0;
+// import { languages } from "../types/episodeModel";
 function genToArray(gen) {
     console.log(gen);
     var s = gen.slice(1, -1);

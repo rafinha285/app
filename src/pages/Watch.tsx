@@ -12,7 +12,7 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import EpisodeDropdown from "../assets/EpisodeDropdown";
 import { Log } from "../types/logType";
-import { handleNextEp, nextEpUrl, prevEpUrl } from "../features/main";
+import { DateToStringLocal, handleNextEp, nextEpUrl, prevEpUrl } from "../features/main";
 import { getEpsFromSeason ,tupleToSeason} from "../functions/animeFunctions";
 
 
@@ -132,6 +132,7 @@ const Watch:React.FC = () =>{
                 <div className="ep-sel1">
                     <div>
                         <p>Nome Episódio: <span>{ep?.name}</span></p>
+                        <p>Data de Lançamento <span>{DateToStringLocal(new Date(ep?.releasedate!))}</span></p>
                     </div>
                     <div className="ep-select">
                         <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>

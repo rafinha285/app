@@ -2,6 +2,7 @@ import $ from "jquery"
 import {Anime, Producer,Season} from "../types/animeModel"
 import AnimePoster from "../assets/AnimePosters"
 import { Episode } from "../types/episodeModel";
+// import { languages } from "../types/episodeModel";
 
 
 export function genToArray(gen:string){
@@ -41,3 +42,5 @@ export function tupleToSeason(data:any[]):Season[]{
 export async function getEpsFromSeason(ani:string,season:string):Promise<Episode[]>{
     return await (await fetch(`/api/g/s/eps/${ani}/${season}`)).json()
 }
+
+

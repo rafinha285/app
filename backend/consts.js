@@ -10,6 +10,4 @@ exports.FFPROBE_PATH = path.join('/', 'usr', 'bin', 'ffprobe');
 exports.RESOLUTIONS = ['1920x1080', '1280x720', '854x480'];
 exports.BUILD_PATH = path.join(__dirname, '../', 'build');
 exports.BUILD_HTML = path.join(exports.BUILD_PATH, "index.html");
-// export const HTTPS_KEY_PATH:string = path.join('/','etc','letsencrypt','live','animefoda.top','privkey.pem')
-// export const HTTPS_CERT_PATH:string = path.join('/','etc','letsencrypt','live','animefoda.top','fullchain.pem')
 exports.IP_DATABASE = '192.168.1.20';

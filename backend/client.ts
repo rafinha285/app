@@ -12,7 +12,7 @@ import {User} from "../src/types/userType"
 // import mongoose from "mongoose"
 // import * as nano from "nano"
 // const Nano = require('nano');
-import { Anime } from '../../app_admin/src/types/animeModel'
+// import { Anime } from '../../app_admin/src/types/animeModel'
 import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, openConnectionAnime, endConnectionAnime} from "./assets/handle"
 // import { AnimeDocument, producers } from '../src/types/animeModel'
 import { Log } from '../src/types/logType'
@@ -141,6 +141,16 @@ router.get("/g/eps/:animeId/:seasonId/:ep",async (req,res)=>{
     
   }
 })
+router.get("/ani/agenda",async(req,res)=>{
+  try{
+    console.log('agenda')
+    var resp = await req.db.execute(`SELECT id, name, description,rating, weekday FROM anime WHERE state = 'Lançando' ALLOW FILTERING`)
+    console.log(resp.rows)
+    res.send(resp.rows)
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+})
 router.get("/ani/:id",async(req:e.Request,res:e.Response)=>{
   try{
     // var doc = await couch.use("anime").get(req.params.id)
@@ -223,6 +233,8 @@ router.get("/ani/gen/:gen",async(req:e.Request,res:e.Response)=>{
   }
  
 })
+
+
 // router.get("/ani/prod/:prod",async(req,res)=>{
 //   try{
 //     const tuple = new types.Tuple(req.params.prod, '');
@@ -321,15 +333,18 @@ router.get("/g/eps",async(req,res)=>{
     sendError(res,ErrorType.default,500,err)
   }
 })
-// router.get("/ani/char/:aniId/:charId",async(req,res)=>{
+//!dabgpo
+// router.get("/ani/char/:aniId/:charId/img",async(req,res)=>{
 //   try{
 //     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument;
-//     var char = doc.characters?.find((v)=>v._id == req.params.charId)
-//     res.send(char)
+//     // var char = doc.characters?.find((v)=>v._id == req.params.charId);
+//     res.sendFile(path.join(doc.path!,"characters",req.params.charId,`${req.params.charId}.jpg`))
 //   }catch(err){
 //     sendError(res,ErrorType.default,500,err)
 //   }
 // })
+
+
 
 
 //!character

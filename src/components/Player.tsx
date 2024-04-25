@@ -204,7 +204,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             //     lastLoggedTime.push(currentTimeInSeconds);
             // }
         }
-        plyr.on()
+        // plyr.on()
         plyr.elements.container?.addEventListener("timeupdate",handleTimeUpdate)
         // const lastLoggedTime:number[] = [];
     }

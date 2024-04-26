@@ -50,6 +50,7 @@ export enum ErrorType {
     undefined ,
     noToken,
     invalidToken,
+    invalidReCaptcha,
     default
 }
 export function sendError(res:express.Response,errorType:ErrorType = ErrorType.default,status:number = 500,menssage:string = ""){
@@ -71,11 +72,15 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
     }
     function noToken(res:e.Response){
         Console.log("No token is provided")
-        res.status(401).json({mensagem:"No token is provided"})
+        res.status(401).json({success:false,mensagem:"No token is provided"})
     }
     function invalidToken(res:e.Response){
         Console.log("Invalid Token")
-        res.status(403).json({mensagem:"Invalid Token"})
+        res.status(403).json({success:false,mensagem:"Invalid Token"})
+    }
+    function invalidReCaptcha(res:e.Response){
+        Console.error("Falha na verificação do reCAPTCHA")
+        res.send(400).json({success:false,message:"Falha na verificação do reCAPTCHA"})
     }
     switch(errorType){
         case ErrorType.NotId:
@@ -92,6 +97,9 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
             break
         case ErrorType.invalidToken:
             invalidToken(res)
+            break
+        case ErrorType.invalidReCaptcha:
+            invalidReCaptcha(res)
             break
         case ErrorType.default:
             error(res,status,menssage)

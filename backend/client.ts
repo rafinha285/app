@@ -436,8 +436,39 @@ router.post('/log',async(req:e.Request,res:e.Response)=>{
   }
 })
 
-router.post("/p/account",(req,res)=>{
-  
+router.post("/new/user",async(req,res)=>{
+  try{
+    const { email, name, surname, username, birthDate, password, recaptchaToken } = req.body;
+    if(!recaptchaToken){
+      throw ErrorType.noToken
+    }
+
+    const response = await fetch('https://www.google.com/recaptcha/api/siteverify',{
+      method:"POST",
+      headers:{
+        'Content-Type':'application/x-www-form-urlencoded',
+      },
+      body: `secret=6LcHpccpAAAAADy0tuoQA__xb-zsWUV-x0ybALSI&response=${recaptchaToken}`
+    })
+    const data = await response.json()
+    if(data.success){
+      
+
+      return res.send(200).json({success:true,message: 'Usuário registrado com sucesso' })
+    }else{
+      throw ErrorType.invalidReCaptcha
+    }
+  }catch(err:any|ErrorType){
+    switch(err){
+      case ErrorType.noToken:
+        sendError(res,ErrorType.noToken);
+        break
+      case ErrorType.invalidToken:
+        sendError(res,ErrorType.invalidReCaptcha)
+      default:
+        sendError(res,ErrorType.default,500,err)
+    }
+  }
 })
 app.use('/api',router)
 

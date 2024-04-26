@@ -183,7 +183,6 @@ router.get("/ani/agenda", function (req, res) { return __awaiter(void 0, void 0,
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                console.log('agenda');
                 return [4 /*yield*/, req.db.execute("SELECT id, name, description,rating, weekday FROM anime WHERE state = 'Lan\u00E7ando' ALLOW FILTERING")];
             case 1:
                 resp = _a.sent();
@@ -576,6 +575,51 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
             case 3:
                 err_11 = _a.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_11);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
+router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, response, data, err_12;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 3, , 4]);
+                _a = req.body, email = _a.email, name_1 = _a.name, surname = _a.surname, username = _a.username, birthDate = _a.birthDate, password = _a.password, recaptchaToken = _a.recaptchaToken;
+                if (!recaptchaToken) {
+                    throw handle_1.ErrorType.noToken;
+                }
+                return [4 /*yield*/, fetch('https://www.google.com/recaptcha/api/siteverify', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: "secret=6LcHpccpAAAAADy0tuoQA__xb-zsWUV-x0ybALSI&response=".concat(recaptchaToken)
+                    })];
+            case 1:
+                response = _b.sent();
+                return [4 /*yield*/, response.json()];
+            case 2:
+                data = _b.sent();
+                if (data.success) {
+                    return [2 /*return*/, res.send(200).json({ success: true, message: 'Usuário registrado com sucesso' })];
+                }
+                else {
+                    throw handle_1.ErrorType.invalidReCaptcha;
+                }
+                return [3 /*break*/, 4];
+            case 3:
+                err_12 = _b.sent();
+                switch (err_12) {
+                    case handle_1.ErrorType.noToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
+                        break;
+                    case handle_1.ErrorType.invalidToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidReCaptcha);
+                    default:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_12);
+                }
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

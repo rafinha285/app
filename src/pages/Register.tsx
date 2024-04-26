@@ -55,6 +55,7 @@ const Register:React.FC = ()=>{
     }
     const handleRecaptchaChange = (value: string | null) => {
         setRecaptchaValue(value);
+        console.log(value)
     };
     const handleSendAccount = async()=>{
         if(recaptchaValue){
@@ -78,6 +79,7 @@ const Register:React.FC = ()=>{
                             username:username,
                             birthDate:birthDate?.toISOString(),
                             password:hashedPassword,
+                            recaptchaToken:recaptchaValue
                         }
                     }).done((res)=>{
                         console.log(res)
@@ -92,8 +94,8 @@ const Register:React.FC = ()=>{
     return(
         <html lang="pt-BR">
             <Header></Header>
-            <form>z
-                <div className="login" style={{height:"60em"}}>
+            <form action="">
+                <div className="login" style={{height:"auto"}}>
                     <div className="div-flex">
                         <span>E-mail: </span><input type="email" onChange={(e)=>handleChange(e,eeenum.email)}></input><br/>
                         <span>Nome:</span><input onChange={(e)=>handleChange(e,eeenum.name)}></input><br/>
@@ -107,7 +109,7 @@ const Register:React.FC = ()=>{
                     </div>
                     <ReCAPTCHA sitekey="6LcHpccpAAAAAILEI6AF1tPIzD7z69E0Ia0RO42t" onChange={handleRecaptchaChange}></ReCAPTCHA>
                     <div className="div-flex">
-                        <button onClick={handleSendAccount} className="logBut">Registrar-se <i className="fa-solid fa-plus"></i></button>
+                        <button type="submit" onClick={handleSendAccount} className="logBut">Registrar-se <i className="fa-solid fa-plus"></i></button>
                     </div>
                 </div>
             </form>

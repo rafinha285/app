@@ -9,10 +9,10 @@ export const pool = new Pool({
     port: 5432,
 })
 export const animeClient = new Pool({
-    user:"postgres",
+    user:"server",
     host:IP_DATABASE,
     database:"anime",
-    password:"285",
+    password:"254",
     port:5433
 })
 export const logPool = new Pool({

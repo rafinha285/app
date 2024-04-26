@@ -18,7 +18,8 @@ export declare enum ErrorType {
     undefined = 2,
     noToken = 3,
     invalidToken = 4,
-    default = 5
+    invalidReCaptcha = 5,
+    default = 6
 }
 export declare function sendError(res: express.Response, errorType?: ErrorType, status?: number, menssage?: string): void;
 export declare function sendFile(): {

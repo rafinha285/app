@@ -88,7 +88,8 @@ var ErrorType;
     ErrorType[ErrorType["undefined"] = 2] = "undefined";
     ErrorType[ErrorType["noToken"] = 3] = "noToken";
     ErrorType[ErrorType["invalidToken"] = 4] = "invalidToken";
-    ErrorType[ErrorType["default"] = 5] = "default";
+    ErrorType[ErrorType["invalidReCaptcha"] = 5] = "invalidReCaptcha";
+    ErrorType[ErrorType["default"] = 6] = "default";
 })(ErrorType || (exports.ErrorType = ErrorType = {}));
 function sendError(res, errorType, status, menssage) {
     if (errorType === void 0) { errorType = ErrorType.default; }
@@ -112,11 +113,15 @@ function sendError(res, errorType, status, menssage) {
     }
     function noToken(res) {
         exports.Console.log("No token is provided");
-        res.status(401).json({ mensagem: "No token is provided" });
+        res.status(401).json({ success: false, mensagem: "No token is provided" });
     }
     function invalidToken(res) {
         exports.Console.log("Invalid Token");
-        res.status(403).json({ mensagem: "Invalid Token" });
+        res.status(403).json({ success: false, mensagem: "Invalid Token" });
+    }
+    function invalidReCaptcha(res) {
+        exports.Console.error("Falha na verificação do reCAPTCHA");
+        res.send(400).json({ success: false, message: "Falha na verificação do reCAPTCHA" });
     }
     switch (errorType) {
         case ErrorType.NotId:
@@ -133,6 +138,9 @@ function sendError(res, errorType, status, menssage) {
             break;
         case ErrorType.invalidToken:
             invalidToken(res);
+            break;
+        case ErrorType.invalidReCaptcha:
+            invalidReCaptcha(res);
             break;
         case ErrorType.default:
             error(res, status, menssage);

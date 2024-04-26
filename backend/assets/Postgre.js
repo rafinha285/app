@@ -11,10 +11,10 @@ exports.pool = new pg_1.Pool({
     port: 5432,
 });
 exports.animeClient = new pg_1.Pool({
-    user: "postgres",
+    user: "server",
     host: consts_1.IP_DATABASE,
     database: "anime",
-    password: "285",
+    password: "254",
     port: 5433
 });
 exports.logPool = new pg_1.Pool({

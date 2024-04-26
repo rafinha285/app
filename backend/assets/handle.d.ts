@@ -37,5 +37,12 @@ interface TokenRequest extends e.Request {
 }
 export declare function loginUser(req: e.Request, res: e.Response): Promise<void>;
 export declare function checkToken(req: TokenRequest, res: e.Response, next: e.NextFunction): Promise<void>;
-export declare function addUser(user: User): Promise<User>;
+export declare function addUser(user: {
+    name: string;
+    surname: string;
+    username: string;
+    birthDate: Date;
+    email: string;
+    password: string;
+}): Promise<User>;
 export {};

@@ -581,11 +581,11 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
     });
 }); });
 router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, response, data, err_12;
+    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, response, data, userData, err_12;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 3, , 4]);
+                _b.trys.push([0, 6, , 7]);
                 _a = req.body, email = _a.email, name_1 = _a.name, surname = _a.surname, username = _a.username, birthDate = _a.birthDate, password = _a.password, recaptchaToken = _a.recaptchaToken;
                 if (!recaptchaToken) {
                     throw handle_1.ErrorType.noToken;
@@ -602,14 +602,22 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                 return [4 /*yield*/, response.json()];
             case 2:
                 data = _b.sent();
-                if (data.success) {
-                    return [2 /*return*/, res.send(200).json({ success: true, message: 'Usuário registrado com sucesso' })];
-                }
-                else {
-                    throw handle_1.ErrorType.invalidReCaptcha;
-                }
-                return [3 /*break*/, 4];
+                if (!data.success) return [3 /*break*/, 4];
+                userData = {
+                    name: name_1,
+                    email: email,
+                    surname: surname,
+                    username: username,
+                    birthDate: birthDate,
+                    password: password,
+                };
+                return [4 /*yield*/, (0, handle_1.addUser)(userData)];
             case 3:
+                _b.sent();
+                return [2 /*return*/, res.send(200).json({ success: true, message: 'Usuário registrado com sucesso' })];
+            case 4: throw handle_1.ErrorType.invalidReCaptcha;
+            case 5: return [3 /*break*/, 7];
+            case 6:
                 err_12 = _b.sent();
                 switch (err_12) {
                     case handle_1.ErrorType.noToken:
@@ -620,8 +628,8 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                     default:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_12);
                 }
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
         }
     });
 }); });

@@ -217,7 +217,14 @@ export async function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunc
         next()
     })
 }
-export async function addUser(user:User):Promise<User>{
+export async function addUser(user:{
+    name:string,
+    surname:string,
+    username:string,
+    birthDate:Date,
+    email:string,
+    password:string
+}):Promise<User>{
     const {name,surname,username,birthDate,email,password} = user
     var _id = uuidv4()
     const totalAnime:number = 0;
@@ -236,7 +243,7 @@ export async function addUser(user:User):Promise<User>{
     const mangaList: MangaUser[] = [];
     var saltRounds = await bcrypt.genSalt()
     var hashedPassword = bcrypt.hashSync(password+saltRounds,saltRounds)
-    const result = await pool.query(
+    const result = await animeClient.query(
         `INSERT INTO public."user" (_id, username, email, password, name, surname, birthdate, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalManga, totalMangaReading,totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, animeList, mangaList, totalAnimeLiked, totalMangaLiked) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21) RETURNING *`,
         [
             _id, username, email, hashedPassword, name, surname, new Date(birthDate).toISOString(),

@@ -452,7 +452,15 @@ router.post("/new/user",async(req,res)=>{
     })
     const data = await response.json()
     if(data.success){
-      
+      let userData = {
+        name,
+        email,
+        surname,
+        username,
+        birthDate,
+        password,
+      }
+      await addUser(userData)
 
       return res.send(200).json({success:true,message: 'Usuário registrado com sucesso' })
     }else{

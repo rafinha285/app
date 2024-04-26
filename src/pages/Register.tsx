@@ -92,23 +92,25 @@ const Register:React.FC = ()=>{
     return(
         <html lang="pt-BR">
             <Header></Header>
-            <div className="login" style={{height:"60em"}}>
-                <div className="div-flex">
-                    <span>E-mail: </span><input type="email" onChange={(e)=>handleChange(e,eeenum.email)}></input><br/>
-                    <span>Nome:</span><input onChange={(e)=>handleChange(e,eeenum.name)}></input><br/>
-                    <span>Sobrenome: </span><input onChange={(e)=>handleChange(e,eeenum.surname)}></input><br/>
-                    <span>Username: </span><input onChange={(e)=>handleChange(e,eeenum.username)}></input><br/>
-                    <span>Data de Nascimento: </span><input type="date" onChange={(e)=>handleChange(e,eeenum.birthDate)}/><br/>
+            <form>z
+                <div className="login" style={{height:"60em"}}>
+                    <div className="div-flex">
+                        <span>E-mail: </span><input type="email" onChange={(e)=>handleChange(e,eeenum.email)}></input><br/>
+                        <span>Nome:</span><input onChange={(e)=>handleChange(e,eeenum.name)}></input><br/>
+                        <span>Sobrenome: </span><input onChange={(e)=>handleChange(e,eeenum.surname)}></input><br/>
+                        <span>Username: </span><input onChange={(e)=>handleChange(e,eeenum.username)}></input><br/>
+                        <span>Data de Nascimento: </span><input type="date" onChange={(e)=>handleChange(e,eeenum.birthDate)}/><br/>
+                    </div>
+                    <div className="div-flex">
+                        <span>Senha: </span><input type="password" onChange={(e)=>handleChange(e,eeenum.senha)}/><br/>
+                        <span>Confirmar Senha: </span><input type="password" onChange={(e)=>handleChange(e,eeenum.csenha)}/><br/>
+                    </div>
+                    <ReCAPTCHA sitekey="6LcHpccpAAAAAILEI6AF1tPIzD7z69E0Ia0RO42t" onChange={handleRecaptchaChange}></ReCAPTCHA>
+                    <div className="div-flex">
+                        <button onClick={handleSendAccount} className="logBut">Registrar-se <i className="fa-solid fa-plus"></i></button>
+                    </div>
                 </div>
-                <div className="div-flex">
-                    <span>Senha: </span><input type="password" onChange={(e)=>handleChange(e,eeenum.senha)}/><br/>
-                    <span>Confirmar Senha: </span><input type="password" onChange={(e)=>handleChange(e,eeenum.csenha)}/><br/>
-                </div>
-                <ReCAPTCHA sitekey="6LfefMcpAAAAADN6z8VWWq75zpLqUAkpEbmaA0XA" onChange={handleRecaptchaChange}></ReCAPTCHA>
-                <div className="div-flex">
-                    <button onClick={handleSendAccount} className="logBut">Registrar-se <i className="fa-solid fa-plus"></i></button>
-                </div>
-            </div>
+            </form>
             <Footer></Footer>
         </html>
     )

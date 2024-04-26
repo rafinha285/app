@@ -28,7 +28,7 @@ const Register:React.FC = ()=>{
         csenha = "csenha"
     }
     const handleChange= (e:React.ChangeEvent<HTMLInputElement>,eenum:eeenum)=>{
-        console.log(eenum,e.target.value)
+        // console.log(eenum,e.target.value)
         switch(eenum){
             case eeenum.email:
                 setEmail(e.target.value)
@@ -68,7 +68,7 @@ const Register:React.FC = ()=>{
                 var hashedPassword = bcrypt.hashSync(s,salt)
                 
                 var hashedPasswordConfirm = pbkdf2Sync(cs,_id,interations,32,"sha256").toString("hex")
-                console.log(name,surname,hashedPassword,hashedPasswordConfirm,hashedPassword===hashedPasswordConfirm)
+                console.log(name,surname,s===cs)
                 if(hashedPassword == hashedPasswordConfirm){
                     $.ajax("/api/new/user",{
                         method:"POST",

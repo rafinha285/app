@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs'
 import "../css/login.css"
 // import * as bcrypt from "bcrypt"
 import {pbkdf2, pbkdf2Sync} from "@react-native-module/pbkdf2"
+import ReCAPTCHA from "react-google-recaptcha";
 import { v4 as uuid } from "uuid";
 const salt = bcrypt.genSaltSync(10)
 const Register:React.FC = ()=>{
@@ -15,6 +16,7 @@ const Register:React.FC = ()=>{
     const [birthDate,setBirthDate] = useState<Date>()
     const [s,setS] = useState<string>("")
     const [cs,setCs] = useState<string>("")
+    const [recaptchaValue,setRecaptchaValue] = useState<string|null>(null)
 
     enum eeenum{
         email = "email",
@@ -51,40 +53,46 @@ const Register:React.FC = ()=>{
                 break
         }
     }
+    const handleRecaptchaChange = (value: string | null) => {
+        setRecaptchaValue(value);
+    };
     const handleSendAccount = async()=>{
-        if(email&&name&&surname&&username&&birthDate&&s&&cs){
-            var _id = uuid()
-            // var salt = uuid()
-            var interations = 1000
-            //var hashedPassword = pbkdf2Sync(s,_id,interations,32,"sha256").toString("hex")
-            var hashedPassword = bcrypt.hashSync(s,salt)
-            
-            var hashedPasswordConfirm = pbkdf2Sync(cs,_id,interations,32,"sha256").toString("hex")
-            console.log(name,surname,hashedPassword,hashedPasswordConfirm,hashedPassword===hashedPasswordConfirm)
-            if(hashedPassword == hashedPasswordConfirm){
-                $.ajax("/api/new/user",{
-                    method:"POST",
-                    data:{
-                        _id:_id,
-                        name:name,
-                        surname:surname,
-                        email:email,
-                        username:username,
-                        birthDate:birthDate?.toISOString(),
-                        password:hashedPassword,
-                    }
-                }).done((res)=>{
-                    console.log(res)
-                })
+        if(recaptchaValue){
+            if(email&&name&&surname&&username&&birthDate&&s&&cs){
+                var _id = uuid()
+                // var salt = uuid()
+                var interations = 1000
+                //var hashedPassword = pbkdf2Sync(s,_id,interations,32,"sha256").toString("hex")
+                var hashedPassword = bcrypt.hashSync(s,salt)
+                
+                var hashedPasswordConfirm = pbkdf2Sync(cs,_id,interations,32,"sha256").toString("hex")
+                console.log(name,surname,hashedPassword,hashedPasswordConfirm,hashedPassword===hashedPasswordConfirm)
+                if(hashedPassword == hashedPasswordConfirm){
+                    $.ajax("/api/new/user",{
+                        method:"POST",
+                        data:{
+                            _id:_id,
+                            name:name,
+                            surname:surname,
+                            email:email,
+                            username:username,
+                            birthDate:birthDate?.toISOString(),
+                            password:hashedPassword,
+                        }
+                    }).done((res)=>{
+                        console.log(res)
+                    })
+                }
+            }else{
+                console.log("aaaaa")
             }
-        }else{
-            console.log("aaaaa")
         }
+        
     }
     return(
         <html lang="pt-BR">
             <Header></Header>
-            <div className="login" style={{height:"40em"}}>
+            <div className="login" style={{height:"60em"}}>
                 <div className="div-flex">
                     <span>E-mail: </span><input type="email" onChange={(e)=>handleChange(e,eeenum.email)}></input><br/>
                     <span>Nome:</span><input onChange={(e)=>handleChange(e,eeenum.name)}></input><br/>
@@ -96,6 +104,7 @@ const Register:React.FC = ()=>{
                     <span>Senha: </span><input type="password" onChange={(e)=>handleChange(e,eeenum.senha)}/><br/>
                     <span>Confirmar Senha: </span><input type="password" onChange={(e)=>handleChange(e,eeenum.csenha)}/><br/>
                 </div>
+                <ReCAPTCHA sitekey="6LfefMcpAAAAADN6z8VWWq75zpLqUAkpEbmaA0XA" onChange={handleRecaptchaChange}></ReCAPTCHA>
                 <div className="div-flex">
                     <button onClick={handleSendAccount} className="logBut">Registrar-se <i className="fa-solid fa-plus"></i></button>
                 </div>

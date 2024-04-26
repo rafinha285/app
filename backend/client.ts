@@ -19,7 +19,7 @@ import { Log } from '../src/types/logType'
 // import { animeClient } from './assets/Postgre'
 import { Query, QueryConfig, QueryResult } from 'pg'
 import { client } from './assets/pool'
-import { ANIME_PATH, BUILD_HTML, BUILD_PATH} from './consts'
+import { ANIME_PATH, BUILD_HTML, BUILD_PATH, HTTPS_CERT_PATH, HTTPS_KEY_PATH } from './consts'
 import { types } from 'cassandra-driver'
 import { EpisodeSim } from '../src/types/episodeModel'
 import {tupleToSeason} from "../src/functions/animeFunctions"
@@ -334,20 +334,6 @@ router.get("/g/eps",async(req,res)=>{
   }
 })
 //!dabgpo
-// router.get("/ani/char/:aniId/:charId/img",async(req,res)=>{
-//   try{
-//     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument;
-//     // var char = doc.characters?.find((v)=>v._id == req.params.charId);
-//     res.sendFile(path.join(doc.path!,"characters",req.params.charId,`${req.params.charId}.jpg`))
-//   }catch(err){
-//     sendError(res,ErrorType.default,500,err)
-//   }
-// })
-
-
-
-
-//!character
 // router.get("/ani/char/:aniId/:charId/img",async(req,res)=>{
 //   try{
 //     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument;

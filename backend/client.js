@@ -450,22 +450,9 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
 //     sendError(res,ErrorType.default,500,err)
 //   }
 // })
-
-
-//!character
-// router.get("/ani/char/:aniId/:charId/img",async(req,res)=>{
-//   try{
-//     var doc = await couch.use("anime").get(req.params.aniId) as AnimeDocument;
-//     // var char = doc.characters?.find((v)=>v._id == req.params.charId);
-//     res.sendFile(path.join(doc.path!,"characters",req.params.charId,`${req.params.charId}.jpg`))
-//   }catch(err){
-//     sendError(res,ErrorType.default,500,err)
-//   }
-// })
 // const downloadwss = new WebSocket.Server({ server: httpsServer });
 // downloadwss.on("connection",(ws)=>{
 // })
-
 router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, aniId, seasonId, epId, reso, filePath, stat, fileSize_1, readStream, uploadedBytes_1;
     return __generator(this, function (_b) {
@@ -501,7 +488,7 @@ router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso", function (req, res) { 
     });
 }); });
 router.get("/g/aniD/:ani/:seasonId/:epId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, ani, seasonId, epId, result, seasons, episode, err_8;
+    var _a, ani, seasonId, epId, result, seasons, episode, err_9;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -526,13 +513,13 @@ router.get("/g/aniD/:ani/:seasonId/:epId", function (req, res) { return __awaite
                 });
                 return [3 /*break*/, 4];
             case 3:
-                err_8 = _b.sent();
-                switch (err_8) {
+                err_9 = _b.sent();
+                switch (err_9) {
                     case handle_1.ErrorType.undefined:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.undefined);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_8);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_9);
                         break;
                 }
                 return [3 /*break*/, 4];
@@ -551,7 +538,7 @@ router.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awai
     });
 }); });
 router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userData, user, err_9;
+    var userData, user, err_10;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -565,15 +552,15 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                 res.json(user);
                 return [3 /*break*/, 4];
             case 3:
-                err_9 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_9);
+                err_10 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_10);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
 router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var logData, log, err_10;
+    var logData, log, err_11;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -587,8 +574,8 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
                 res.json(log);
                 return [3 /*break*/, 4];
             case 3:
-                err_10 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_10);
+                err_11 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_11);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

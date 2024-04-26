@@ -143,7 +143,7 @@ router.get("/g/eps/:animeId/:seasonId/:ep",async (req,res)=>{
 })
 router.get("/ani/agenda",async(req,res)=>{
   try{
-    console.log('agenda')
+    // console.log('agenda')
     var resp = await req.db.execute(`SELECT id, name, description,rating, weekday FROM anime WHERE state = 'Lançando' ALLOW FILTERING`)
     console.log(resp.rows)
     res.send(resp.rows)
@@ -434,6 +434,10 @@ router.post('/log',async(req:e.Request,res:e.Response)=>{
   }catch(err){
     sendError(res,ErrorType.default,500,err)
   }
+})
+
+router.post("/p/account",(req,res)=>{
+  
 })
 app.use('/api',router)
 

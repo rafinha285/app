@@ -67,9 +67,9 @@ const Register:React.FC = ()=>{
                 //var hashedPassword = pbkdf2Sync(s,_id,interations,32,"sha256").toString("hex")
                 var hashedPassword = bcrypt.hashSync(s,salt)
                 
-                var hashedPasswordConfirm = pbkdf2Sync(cs,_id,interations,32,"sha256").toString("hex")
+                // var hashedPasswordConfirm = pbkdf2Sync(cs,_id,interations,32,"sha256").toString("hex")
                 console.log(name,surname,s===cs)
-                if(hashedPassword == hashedPasswordConfirm){
+                if(s == cs){
                     $.ajax("/api/new/user",{
                         method:"POST",
                         data:{

@@ -57,7 +57,8 @@ const Register:React.FC = ()=>{
         setRecaptchaValue(value);
         console.log(value)
     };
-    const handleSendAccount = async()=>{
+    const handleSendAccount = async(e:React.MouseEvent)=>{
+        e.preventDefault()
         if(recaptchaValue){
             if(email&&name&&surname&&username&&birthDate&&s&&cs){
                 var _id = uuid()

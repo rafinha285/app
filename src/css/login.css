@@ -24,6 +24,15 @@
     cursor: pointer;
     margin-bottom: 1em;
 }
+.logBut:disabled{
+    background: var(--dark);
+    border: 1px solid #797979;
+    color: #797979;
+    cursor: progress;
+}
+.logBut:disabled i{
+    color: #797979;
+}
 .div-flex{
     display: flex;
     flex-direction: column;

@@ -44,5 +44,6 @@ export declare function addUser(user: {
     birthDate: Date;
     email: string;
     password: string;
+    salt: string;
 }): Promise<User>;
 export {};

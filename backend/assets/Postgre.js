@@ -20,5 +20,7 @@ exports.animeClient = new pg_1.Pool({
 exports.logPool = new pg_1.Pool({
     user: "server",
     host: consts_1.IP_DATABASE,
-    database: "log"
+    database: "log",
+    password: "254",
+    port: 5433
 });

@@ -223,7 +223,8 @@ export async function addUser(user:{
     username:string,
     birthDate:Date,
     email:string,
-    password:string
+    password:string,
+    salt:string
 }):Promise<User>{
     const {name,surname,username,birthDate,email,password} = user
     var _id = uuidv4()
@@ -241,12 +242,59 @@ export async function addUser(user:{
     const totalMangaLiked:number = 0
     const animeList: AnimeUser[] = [];
     const mangaList: MangaUser[] = [];
-    var saltRounds = await bcrypt.genSalt()
-    var hashedPassword = bcrypt.hashSync(password+saltRounds,saltRounds)
     const result = await animeClient.query(
-        `INSERT INTO user (_id, username, email, password, name, surname, birthdate, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalManga, totalMangaReading,totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, animeList, mangaList, totalAnimeLiked, totalMangaLiked) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21) RETURNING *`,
+        `INSERT INTO users.users 
+        (
+            _id, 
+            username, 
+            email, 
+            password, 
+            name, 
+            surname, 
+            birthdate, 
+            totalAnime, 
+            totalAnimeWatching, 
+            totalAnimeCompleted, 
+            totalAnimeDropped, 
+            totalAnimePlanToWatch, 
+            totalManga, 
+            totalMangaReading,
+            totalMangaCompleted, 
+            totalMangaDropped, 
+            totalMangaPlanToRead, 
+            animeList, 
+            mangaList, 
+            totalAnimeLiked, 
+            totalMangaLiked,
+            salt
+        ) 
+        VALUES 
+        (
+            $1, 
+            $2, 
+            $3, 
+            $4, 
+            $5, 
+            $6, 
+            $7, 
+            $8, 
+            $9, 
+            $10, 
+            $11, 
+            $12, 
+            $13, 
+            $14, 
+            $15, 
+            $16, 
+            $17, 
+            $18, 
+            $19, 
+            $20, 
+            $21,
+            $22
+        ) RETURNING *`,
         [
-            _id, username, email, hashedPassword, name, surname, new Date(birthDate).toISOString(),
+            _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
             totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
             totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
             animeList || [],  // Se animeList for nulo, usa um array vazio

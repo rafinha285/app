@@ -45,7 +45,6 @@ var ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath("D:/Site_anime/ffmpeg/bin/ffmpeg.exe");
 ffmpeg.setFfprobePath("D:/Site_anime/ffmpeg/bin/ffprobe.exe");
 var uuid_1 = require("uuid");
-var bcrypt = require("bcrypt");
 var jwt = require("jsonwebtoken");
 var fss = require("fs");
 // import { randomInt } from "crypto";
@@ -334,7 +333,7 @@ function checkToken(req, res, next) {
 exports.checkToken = checkToken;
 function addUser(user) {
     return __awaiter(this, void 0, void 0, function () {
-        var name, surname, username, birthDate, email, password, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaLiked, animeList, mangaList, saltRounds, hashedPassword, result;
+        var name, surname, username, birthDate, email, password, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaLiked, animeList, mangaList, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -354,12 +353,8 @@ function addUser(user) {
                     totalMangaLiked = 0;
                     animeList = [];
                     mangaList = [];
-                    return [4 /*yield*/, bcrypt.genSalt()];
-                case 1:
-                    saltRounds = _a.sent();
-                    hashedPassword = bcrypt.hashSync(password + saltRounds, saltRounds);
-                    return [4 /*yield*/, Postgre_1.animeClient.query("INSERT INTO user (_id, username, email, password, name, surname, birthdate, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalManga, totalMangaReading,totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, animeList, mangaList, totalAnimeLiked, totalMangaLiked) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21) RETURNING *", [
-                            _id, username, email, hashedPassword, name, surname, new Date(birthDate).toISOString(),
+                    return [4 /*yield*/, Postgre_1.animeClient.query("INSERT INTO users.users \n        (\n            _id, \n            username, \n            email, \n            password, \n            name, \n            surname, \n            birthdate, \n            totalAnime, \n            totalAnimeWatching, \n            totalAnimeCompleted, \n            totalAnimeDropped, \n            totalAnimePlanToWatch, \n            totalManga, \n            totalMangaReading,\n            totalMangaCompleted, \n            totalMangaDropped, \n            totalMangaPlanToRead, \n            animeList, \n            mangaList, \n            totalAnimeLiked, \n            totalMangaLiked,\n            salt\n        ) \n        VALUES \n        (\n            $1, \n            $2, \n            $3, \n            $4, \n            $5, \n            $6, \n            $7, \n            $8, \n            $9, \n            $10, \n            $11, \n            $12, \n            $13, \n            $14, \n            $15, \n            $16, \n            $17, \n            $18, \n            $19, \n            $20, \n            $21,\n            $22\n        ) RETURNING *", [
+                            _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
                             totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
                             totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
                             animeList || [],
@@ -367,7 +362,7 @@ function addUser(user) {
                             totalAnimeLiked || [],
                             totalMangaLiked || [], // Se totalMangaLiked for nulo, usa um array vazio,
                         ])];
-                case 2:
+                case 1:
                     result = _a.sent();
                     return [2 /*return*/, result.rows[0]];
             }

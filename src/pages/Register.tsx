@@ -4,7 +4,7 @@ import Footer from "../components/Footer";
 import bcrypt from 'bcryptjs'
 import "../css/login.css"
 // import * as bcrypt from "bcrypt"
-import {pbkdf2, pbkdf2Sync} from "@react-native-module/pbkdf2"
+// import {pbkdf2, pbkdf2Sync} from "@react-native-module/pbkdf2"
 import ReCAPTCHA from "react-google-recaptcha";
 import { v4 as uuid } from "uuid";
 const salt = bcrypt.genSaltSync(10)
@@ -17,11 +17,11 @@ const Register:React.FC = ()=>{
     const [s,setS] = useState<string>("")
     const [cs,setCs] = useState<string>("")
     const [recaptchaValue,setRecaptchaValue] = useState<string|null>(null)
-
+    let send:boolean = false
     enum eeenum{
         email = "email",
         name = "name",
-        surname = "surname  ",
+        surname = "surname",
         username = "username",
         birthDate = "birthDate",
         senha = "senha",
@@ -60,7 +60,7 @@ const Register:React.FC = ()=>{
     const handleSendAccount = async(e:React.MouseEvent)=>{
         e.preventDefault()
         if(recaptchaValue){
-            if(email&&name&&surname&&username&&birthDate&&s&&cs){
+            if(email&&name&&surname&&username&&birthDate&&s&&cs&&!send){
                 var _id = uuid()
                 // var salt = uuid()
                 var interations = 1000
@@ -80,14 +80,15 @@ const Register:React.FC = ()=>{
                             username:username,
                             birthDate:birthDate?.toISOString(),
                             password:hashedPassword,
-                            recaptchaToken:recaptchaValue
+                            recaptchaToken:recaptchaValue,
+                            salt
                         }
-                    }).done((res)=>{
+                    })
+                    .done((res)=>{
                         console.log(res)
                     })
+                    $(document).ajaxSend(()=>{send=true})
                 }
-            }else{
-                console.log("aaaaa")
             }
         }
         
@@ -110,7 +111,7 @@ const Register:React.FC = ()=>{
                     </div>
                     <ReCAPTCHA sitekey="6LcHpccpAAAAAILEI6AF1tPIzD7z69E0Ia0RO42t" onChange={handleRecaptchaChange}></ReCAPTCHA>
                     <div className="div-flex">
-                        <button type="submit" onClick={handleSendAccount} className="logBut">Registrar-se <i className="fa-solid fa-plus"></i></button>
+                        <button type="submit" onClick={handleSendAccount} disabled={send} className="logBut">Registrar-se <i className="fa-solid fa-plus"></i></button>
                     </div>
                 </div>
             </form>

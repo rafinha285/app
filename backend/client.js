@@ -726,6 +726,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                         break;
                     case handle_1.ErrorType.invalidPassOrEmail:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidPassOrEmail);
+                        break;
                     default:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_14);
                         break;

@@ -561,6 +561,7 @@ app.post('/login/',async(req,res)=>{
         break
       case ErrorType.invalidPassOrEmail:
         sendError(res,ErrorType.invalidPassOrEmail)
+        break
       default:
         sendError(res,ErrorType.default,500,err)
         break

@@ -704,6 +704,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n        WITH hashed_password AS (\n          SELECT users.crypt($1, salt) AS hash\n          FROM users.users\n          WHERE email = $2\n        )\n        SELECT * FROM users.users\n        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n      ", [password, email])];
             case 3:
                 result = _b.sent();
+                handle_1.Console.log(result.rows);
                 if (result.rows.length < 1) {
                     throw handle_1.ErrorType.invalidPassOrEmail;
                 }

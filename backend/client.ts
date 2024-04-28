@@ -538,6 +538,7 @@ app.post('/login/',async(req,res)=>{
         SELECT * FROM users.users
         WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
       `,[password,email])
+      Console.log(result.rows)
       if(result.rows.length < 1){
         throw ErrorType.invalidPassOrEmail
       }

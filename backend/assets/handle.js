@@ -333,11 +333,11 @@ function checkToken(req, res, next) {
 exports.checkToken = checkToken;
 function addUser(user) {
     return __awaiter(this, void 0, void 0, function () {
-        var name, surname, username, birthDate, email, password, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaLiked, animeList, mangaList, result;
+        var name, surname, username, birthDate, email, password, salt, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaLiked, animeList, mangaList, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    name = user.name, surname = user.surname, username = user.username, birthDate = user.birthDate, email = user.email, password = user.password;
+                    name = user.name, surname = user.surname, username = user.username, birthDate = user.birthDate, email = user.email, password = user.password, salt = user.salt;
                     _id = (0, uuid_1.v4)();
                     totalAnime = 0;
                     totalAnimeWatching = 0;
@@ -360,7 +360,8 @@ function addUser(user) {
                             animeList || [],
                             mangaList || [],
                             totalAnimeLiked || [],
-                            totalMangaLiked || [], // Se totalMangaLiked for nulo, usa um array vazio,
+                            totalMangaLiked || [],
+                            salt
                         ])];
                 case 1:
                     result = _a.sent();

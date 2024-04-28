@@ -226,7 +226,7 @@ export async function addUser(user:{
     password:string,
     salt:string
 }):Promise<User>{
-    const {name,surname,username,birthDate,email,password} = user
+    const {name,surname,username,birthDate,email,password,salt} = user
     var _id = uuidv4()
     const totalAnime:number = 0;
     const totalAnimeWatching:number = 0;
@@ -301,6 +301,7 @@ export async function addUser(user:{
             mangaList || [],  // Se mangaList for nulo, usa um array vazio
             totalAnimeLiked || [],  // Se totalAnimeLiked for nulo, usa um array vazio
             totalMangaLiked || [],   // Se totalMangaLiked for nulo, usa um array vazio,
+            salt
         ]
     );
     return result.rows[0];

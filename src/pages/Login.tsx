@@ -23,7 +23,8 @@ const Login:React.FC = ()=>{
             try{
                 const response = await axios.post("/login",{
                     email,
-                    password
+                    password,
+                    recaptchaValue
                 })
                 const token = response.data.token
     

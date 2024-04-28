@@ -39,7 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.addUser = exports.checkToken = exports.loginUser = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = void 0;
 var Console_1 = require("./Console");
 var path = require("path");
-var Postgre_1 = require("./Postgre");
+var Postgre_1 = require("../database/Postgre");
 var fs = require('fs');
 var ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath("D:/Site_anime/ffmpeg/bin/ffmpeg.exe");
@@ -88,7 +88,9 @@ var ErrorType;
     ErrorType[ErrorType["noToken"] = 3] = "noToken";
     ErrorType[ErrorType["invalidToken"] = 4] = "invalidToken";
     ErrorType[ErrorType["invalidReCaptcha"] = 5] = "invalidReCaptcha";
-    ErrorType[ErrorType["default"] = 6] = "default";
+    ErrorType[ErrorType["invalidPassOrEmail"] = 6] = "invalidPassOrEmail";
+    ErrorType[ErrorType["unauthorized"] = 7] = "unauthorized";
+    ErrorType[ErrorType["default"] = 8] = "default";
 })(ErrorType || (exports.ErrorType = ErrorType = {}));
 function sendError(res, errorType, status, menssage) {
     if (errorType === void 0) { errorType = ErrorType.default; }
@@ -120,7 +122,13 @@ function sendError(res, errorType, status, menssage) {
     }
     function invalidReCaptcha(res) {
         exports.Console.error("Falha na verificação do reCAPTCHA");
-        res.send(400).json({ success: false, message: "Falha na verificação do reCAPTCHA" });
+        res.status(400).json({ success: false, message: "Falha na verificação do reCAPTCHA" });
+    }
+    function invalidPassOrEmail(res) {
+        res.status(401).json({ success: false, message: "Falha ao logar, senha ou email incorretos" });
+    }
+    function unauthorized(res) {
+        res.status(401).json({ success: false, message: "Essa operação não é autorizada" });
     }
     switch (errorType) {
         case ErrorType.NotId:
@@ -140,6 +148,12 @@ function sendError(res, errorType, status, menssage) {
             break;
         case ErrorType.invalidReCaptcha:
             invalidReCaptcha(res);
+            break;
+        case ErrorType.invalidPassOrEmail:
+            invalidPassOrEmail(res);
+            break;
+        case ErrorType.unauthorized:
+            unauthorized(res);
             break;
         case ErrorType.default:
             error(res, status, menssage);
@@ -338,6 +352,7 @@ function addUser(user) {
             switch (_a.label) {
                 case 0:
                     name = user.name, surname = user.surname, username = user.username, birthDate = user.birthDate, email = user.email, password = user.password, salt = user.salt;
+                    console.log(salt);
                     _id = (0, uuid_1.v4)();
                     totalAnime = 0;
                     totalAnimeWatching = 0;

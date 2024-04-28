@@ -17,14 +17,18 @@ import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, op
 // import { AnimeDocument, producers } from '../src/types/animeModel'
 import { Log } from '../src/types/logType'
 // import { animeClient } from './assets/Postgre'
-import { Query, QueryConfig, QueryResult } from 'pg'
-import { client } from './assets/pool'
+// import { Query, QueryConfig, QueryResult } from 'pg'
+import { client } from './database/pool'
 import { ANIME_PATH, BUILD_HTML, BUILD_PATH, HTTPS_CERT_PATH, HTTPS_KEY_PATH } from './consts'
 import { types } from 'cassandra-driver'
 import { EpisodeSim } from '../src/types/episodeModel'
 import {tupleToSeason} from "../src/functions/animeFunctions"
 import * as sleep from 'sleep-promise';
-import WebSocket from 'ws';
+// import WebSocket from 'ws';
+import { animeClient } from './database/Postgre'
+import * as cookieParser from "cookie-parser"
+import * as jwt from "jsonwebtoken"
+import { reCaptchaSecretKey, secretKey } from './secret/config'
 
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 // const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
@@ -49,6 +53,7 @@ var app = e()
 // app.use(cors(corsOptions))
 app.use(json());
 app.use(urlencoded({ extended: true }));
+app.use(cookieParser())
 
 const httpsServer = http.createServer(app)
 
@@ -438,7 +443,7 @@ router.post('/log',async(req:e.Request,res:e.Response)=>{
 
 router.post("/new/user",async(req,res)=>{
   try{
-    const { email, name, surname, username, birthDate, password, recaptchaToken } = req.body;
+    const { email, name, surname, username, birthDate, password, recaptchaToken, salt} = req.body;
     if(!recaptchaToken){
       throw ErrorType.noToken
     }
@@ -448,7 +453,7 @@ router.post("/new/user",async(req,res)=>{
       headers:{
         'Content-Type':'application/x-www-form-urlencoded',
       },
-      body: `secret=6LcHpccpAAAAADy0tuoQA__xb-zsWUV-x0ybALSI&response=${recaptchaToken}`
+      body: `secret=${reCaptchaSecretKey}&response=${recaptchaToken}`
     })
     const data = await response.json()
     if(data.success){
@@ -459,6 +464,7 @@ router.post("/new/user",async(req,res)=>{
         username,
         birthDate,
         password,
+        salt
       }
       await addUser(userData)
 
@@ -478,9 +484,98 @@ router.post("/new/user",async(req,res)=>{
     }
   }
 })
+router.get('/user',async(req,res)=>{
+  try{
+    const token = req.cookies.token;
+    if(!token){
+      throw ErrorType.noToken
+    }
+    // const {username} = req.body
+
+    let decode = jwt.verify(token,secretKey) as jwt.JwtPayload;
+    let result = await animeClient.query(`
+      SELECT * FROM user.users WHERE username = $1;
+    `,[decode.username])
+    if(result.rows.length < 1){
+      throw ErrorType.invalidPassOrEmail
+    }
+    res.send(result.rows[0])
+  }catch(err){
+    switch(err){
+      case ErrorType.noToken:
+        sendError(res,ErrorType.noToken)
+        break
+      default:
+        sendError(res,ErrorType.default,500,err)
+        break
+    }
+  }
+})
 app.use('/api',router)
 
 app.use(e.static(BUILD_PATH,{ maxAge: '1d' }))
+app.post('/login/',async(req,res)=>{
+  try{
+    const {email,password,recaptchaToken} = req.body;
+    if(!recaptchaToken){
+      throw ErrorType.invalidReCaptcha
+    }
+    const response = await fetch('https://www.google.com/recaptcha/api/siteverify',{
+      method:"POST",
+      headers:{
+        'Content-Type':'application/x-www-form-urlencoded',
+      },
+      body: `secret=${reCaptchaSecretKey}&response=${recaptchaToken}`
+    })
+    const data = await response.json()
+    if(data.success){
+      let result = await animeClient.query(`
+        WITH hashed_password AS (
+          SELECT users.crypt($1, salt) AS hash
+          FROM users.users
+          WHERE email = $2
+        )
+        SELECT * FROM users.users
+        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
+      `,[password,email])
+      if(result.rows.length < 1){
+        throw ErrorType.invalidPassOrEmail
+      }
+      const token = jwt.sign({username:result.rows[0].username},secretKey,{expiresIn:"1d"})
+      res.cookie('token',token,{httpOnly:true,secure:true})
+    }else{
+      throw ErrorType.invalidReCaptcha
+    }
+    
+
+  }catch(err){
+    switch(err){
+      case ErrorType.invalidReCaptcha:
+        sendError(res,ErrorType.invalidReCaptcha)
+        break
+      case ErrorType.invalidToken:
+        sendError(res,ErrorType.invalidToken)
+        break
+      case ErrorType.noToken:
+        sendError(res,ErrorType.noToken)
+        break
+      case ErrorType.invalidPassOrEmail:
+        sendError(res,ErrorType.invalidPassOrEmail)
+      default:
+        sendError(res,ErrorType.default,500,err)
+        break
+    }
+  }
+})
+app.post('/logout',async(req,res)=>{
+  try{
+    res.clearCookie('token')
+    res.json({success:true,message:"Logout successful"})
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+  
+})
 
 app.get('*',(req:e.Request,res:e.Response)=>{
     sendFile().cssJs(res)

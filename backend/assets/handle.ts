@@ -2,7 +2,7 @@ import e, * as express from 'express';
 import Cconsole from "./Console";
 import * as path from "path";
 import { User } from "../../src/types/userType";
-import {pool, animeClient, logPool} from "./Postgre";
+import {pool, animeClient, logPool} from "../database/Postgre";
 import { Log, page } from "../../src/types/logType";
 const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg')
@@ -51,6 +51,8 @@ export enum ErrorType {
     noToken,
     invalidToken,
     invalidReCaptcha,
+    invalidPassOrEmail,
+    unauthorized,
     default
 }
 export function sendError(res:express.Response,errorType:ErrorType = ErrorType.default,status:number = 500,menssage:string = ""){
@@ -80,7 +82,13 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
     }
     function invalidReCaptcha(res:e.Response){
         Console.error("Falha na verificação do reCAPTCHA")
-        res.send(400).json({success:false,message:"Falha na verificação do reCAPTCHA"})
+        res.status(400).json({success:false,message:"Falha na verificação do reCAPTCHA"})
+    }
+    function invalidPassOrEmail(res:e.Response){
+        res.status(401).json({success:false,message:"Falha ao logar, senha ou email incorretos"})
+    }
+    function unauthorized(res:e.Response){
+        res.status(401).json({success:false,message:"Essa operação não é autorizada"})
     }
     switch(errorType){
         case ErrorType.NotId:
@@ -100,6 +108,12 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
             break
         case ErrorType.invalidReCaptcha:
             invalidReCaptcha(res)
+            break
+        case ErrorType.invalidPassOrEmail:
+            invalidPassOrEmail(res)
+            break
+        case ErrorType.unauthorized:
+            unauthorized(res)
             break
         case ErrorType.default:
             error(res,status,menssage)
@@ -227,6 +241,7 @@ export async function addUser(user:{
     salt:string
 }):Promise<User>{
     const {name,surname,username,birthDate,email,password,salt} = user
+    console.log(salt)
     var _id = uuidv4()
     const totalAnime:number = 0;
     const totalAnimeWatching:number = 0;

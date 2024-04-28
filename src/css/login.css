@@ -2,7 +2,7 @@
     background: var(--light_blue2);
     /* background: radial-gradient(circle, rgba(104,5,242,1) 0%, rgba(9,9,121,1) 76%, rgba(33,2,77,1) 100%); */
     margin: auto;
-    height: 25em;
+    height: 33em;
     min-width: 30%;
     border-radius: 10px;
 }

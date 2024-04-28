@@ -86,6 +86,7 @@ const Register:React.FC = ()=>{
                     })
                     .done((res)=>{
                         console.log(res)
+                        window.location.href = '/login'
                     })
                     $(document).ajaxSend(()=>{send=true})
                 }

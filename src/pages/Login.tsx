@@ -11,8 +11,8 @@ const cookies = new Cookies();
 const Login:React.FC = ()=>{
     const [recaptchaValue,setRecaptchaValue] = useState<string|null>(null)
     const [error,setError] = useState<any|null>(null)
-    let email:string
-    let password:string
+    const [password,setPassword] = useState<string>()
+    const [email,setEmail] = useState<string>()
     
     const handleRecaptchaChange = (value: string | null) => {
         setRecaptchaValue(value);
@@ -44,10 +44,10 @@ const Login:React.FC = ()=>{
     const handleChange = (e:React.ChangeEvent<HTMLInputElement>,ee:enu)=>{
         switch(ee){
             case enu.password:
-                password = e.target.value
+                setPassword(e.target.value)
                 break
             case enu.email:
-                email = e.target.value
+                setEmail(e.target.value)
                 break
         }
     }

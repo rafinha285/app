@@ -21,7 +21,7 @@ const Login:React.FC = ()=>{
     const handleLogin = async()=>{
         if(recaptchaValue){
             try{
-                const response = await axios.post("/api/login",{
+                const response = await axios.post("/login",{
                     email,
                     password
                 })

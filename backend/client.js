@@ -710,7 +710,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                 }
                 token = jwt.sign({ _id: result.rows[0]._id, username: result.rows[0].username }, config_1.secretKey, { expiresIn: "1d" });
                 res.cookie('token', token, { httpOnly: true, secure: true });
-                res.send({ success: true, message: "Login Successful" });
+                res.send({ success: true, message: "Login Successful", token: token });
                 return [3 /*break*/, 5];
             case 4: throw handle_1.ErrorType.invalidReCaptcha;
             case 5: return [3 /*break*/, 7];

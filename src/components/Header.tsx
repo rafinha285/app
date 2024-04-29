@@ -28,10 +28,8 @@ const Header = ()=>{
     }
     // const [cookies,setCookie,removeCookie] = useCookies(['token'])
     
-    let handleLoadPage = ()=>{
-        console.log(cookies.getAll())
-    }
-    document.addEventListener("load",handleLoadPage)
+    console.log(document.cookie)
+    console.log(cookies.getAll())
     const context = useContext(GlobalContext);
     if(!context){
         return <div>O contexto global não está definido</div>;

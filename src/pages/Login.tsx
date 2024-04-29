@@ -31,10 +31,10 @@ const Login:React.FC = ()=>{
                 })
                 
                 const token = response.data.token
-                console.log(token,response,response.headers["set-cookie"])
+                // console.log(token,response,response.headers["set-cookie"])
                 // cookies.set("token",token,{path:"/",maxAge:86400, secure: true})
                 setCookie('token',token,{path:"/",maxAge:84600})
-                // window.location.href = "/"
+                window.location.href = "/"
             }catch(err){
                 console.log(err)
                 setError(true)

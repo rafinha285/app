@@ -31,6 +31,7 @@ const Header = ()=>{
         return <div>O contexto global não está definido</div>;
     }
     const {isLogged} = context
+    console.log(isLogged)
     return(
         <header className="header">
             <nav>

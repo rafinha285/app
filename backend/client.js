@@ -708,7 +708,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                 if (result.rows.length < 1) {
                     throw handle_1.ErrorType.invalidPassOrEmail;
                 }
-                token = jwt.sign({ username: result.rows[0].username }, config_1.secretKey, { expiresIn: "1d" });
+                token = jwt.sign({ _id: result.rows[0]._id, username: result.rows[0].username }, config_1.secretKey, { expiresIn: "1d" });
                 res.cookie('token', token, { httpOnly: true, secure: true });
                 res.send({ success: true, message: "Login Successful" });
                 return [3 /*break*/, 5];

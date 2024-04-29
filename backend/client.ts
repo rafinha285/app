@@ -542,7 +542,7 @@ app.post('/login/',async(req,res)=>{
       if(result.rows.length < 1){
         throw ErrorType.invalidPassOrEmail
       }
-      const token = jwt.sign({username:result.rows[0].username},secretKey,{expiresIn:"1d"})
+      const token = jwt.sign({_id:result.rows[0]._id,username:result.rows[0].username},secretKey,{expiresIn:"1d"})
       res.cookie('token',token,{httpOnly:true,secure:true})
       res.send({success:true,message:"Login Successful"})
     }else{

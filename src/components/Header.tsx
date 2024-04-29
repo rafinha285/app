@@ -1,9 +1,10 @@
 import React,{ useState }  from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { useCookies } from 'react-cookie';
 import "../css/index.css"
 import "../css/base.css"
-import $ from 'jquery'
+// import $ from 'jquery'
 
 
 const Header = ()=>{
@@ -23,6 +24,7 @@ const Header = ()=>{
     const toggleSearch = ()=>{
         setSearchVisible(!searchVisible)
     }
+    const [cookies,setCookie,removeCookie] = useCookies(['token'])
     return(
         <header className="header">
             <nav>

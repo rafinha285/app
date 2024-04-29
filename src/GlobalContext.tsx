@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, useState } from "react";
-import jwt from 'jsonwebtoken';
+// import jwt from 'jsonwebtoken';
 
 interface GlobalContextType {
     isLogged: boolean;
@@ -19,16 +19,7 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
     const [isLogged, setIsLogged] = useState<boolean>(false)
     const token = getCookie('token');
     if(token){
-        try{
-            const decodeToken:any = jwt.decode(token)
-            if(decodeToken){
-                setIsLogged(true)
-            }else{
-                setIsLogged(false)
-            }
-        }catch(erro){
-            setIsLogged(false)
-        }
+        setIsLogged(true)
     }else{
         setIsLogged(false)
     }

@@ -9,12 +9,12 @@ const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
     const [isLogged, setIsLogged] = useState<boolean>(false)
-    const [cookies] = useCookies();
+    // const [cookies] = useCookies();
     // const token = getCookie('token');
     useEffect(() => {
         
-        console.log(cookies.token,cookies,document.cookie)
-        setIsLogged(!!(cookies.token)); // Verifica se o token existe e define o estado de isLogged
+        console.log(sessionStorage.getItem("token"))
+        setIsLogged(!!(sessionStorage.getItem("token"))); // Verifica se o token existe e define o estado de isLogged
     }, [!(document.readyState === "complete")]); 
     
     return(

@@ -6,7 +6,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import "../css/login.css"
 import Cookies from "universal-cookie"
 // import { CookieSetOption } from "react-cookie";
-import { useCookies } from "react-cookie";
+// import { useCookies } from "react-cookie";
 import axios from 'axios';
 
 const cookiess = new Cookies();
@@ -15,7 +15,7 @@ const Login:React.FC = ()=>{
     const [error,setError] = useState<any|null>(null)
     const [password,setPassword] = useState<string>()
     const [email,setEmail] = useState<string>()
-    const [cookies,setCookie,removeCookie] = useCookies()
+    // const [cookies,setCookie,removeCookie] = useCookies()
     
     const handleRecaptchaChange = (value: string | null) => {
         setRecaptchaValue(value);
@@ -33,7 +33,8 @@ const Login:React.FC = ()=>{
                 const token = response.data.token
                 // console.log(token,response,response.headers["set-cookie"])
                 // cookies.set("token",token,{path:"/",maxAge:86400, secure: true})
-                setCookie('token',token,{path:"/",maxAge:84600})
+                // setCookie('token',token,{path:"/",maxAge:84600})
+                sessionStorage.setItem("token",token)
                 window.location.href = "/"
             }catch(err){
                 console.log(err)

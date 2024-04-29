@@ -34,7 +34,7 @@ const Login:React.FC = ()=>{
                 console.log(token,response)
                 // cookies.set("token",token,{path:"/",maxAge:86400, secure: true})
                 setCookie('token',token,{path:"/",maxAge:84600})
-                window.location.href = "/"
+                // window.location.href = "/"
             }catch(err){
                 console.log(err)
                 setError(true)

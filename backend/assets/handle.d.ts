@@ -18,7 +18,10 @@ export declare enum ErrorType {
     undefined = 2,
     noToken = 3,
     invalidToken = 4,
-    default = 5
+    invalidReCaptcha = 5,
+    invalidPassOrEmail = 6,
+    unauthorized = 7,
+    default = 8
 }
 export declare function sendError(res: express.Response, errorType?: ErrorType, status?: number, menssage?: string): void;
 export declare function sendFile(): {
@@ -36,5 +39,13 @@ interface TokenRequest extends e.Request {
 }
 export declare function loginUser(req: e.Request, res: e.Response): Promise<void>;
 export declare function checkToken(req: TokenRequest, res: e.Response, next: e.NextFunction): Promise<void>;
-export declare function addUser(user: User): Promise<User>;
+export declare function addUser(user: {
+    name: string;
+    surname: string;
+    username: string;
+    birthDate: Date;
+    email: string;
+    password: string;
+    salt: string;
+}): Promise<User>;
 export {};

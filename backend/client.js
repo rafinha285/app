@@ -43,12 +43,23 @@ var fs = require("fs");
 // import * as https from "https"
 var http = require("http");
 var body_parser_1 = require("body-parser");
+// import mongoose from "mongoose"
+// import * as nano from "nano"
+// const Nano = require('nano');
+// import { Anime } from '../../app_admin/src/types/animeModel'
 var handle_1 = require("./assets/handle");
-var pool_1 = require("./assets/pool");
+// import { animeClient } from './assets/Postgre'
+// import { Query, QueryConfig, QueryResult } from 'pg'
+var pool_1 = require("./database/pool");
 var consts_1 = require("./consts");
 var cassandra_driver_1 = require("cassandra-driver");
 var animeFunctions_1 = require("../src/functions/animeFunctions");
 var sleep = require("sleep-promise");
+// import WebSocket from 'ws';
+var Postgre_1 = require("./database/Postgre");
+var cookieParser = require("cookie-parser");
+var jwt = require("jsonwebtoken");
+var config_1 = require("./secret/config");
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 // const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
 // const credentials = { key: privateKey, cert: certificate };
@@ -70,6 +81,7 @@ var app = e();
 // app.use(cors(corsOptions))
 app.use((0, body_parser_1.json)());
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
+app.use(cookieParser());
 var httpsServer = http.createServer(app);
 // app.use(helmet({
 //     contentSecurityPolicy:{
@@ -179,7 +191,6 @@ router.get("/ani/agenda", function (req, res) { return __awaiter(void 0, void 0,
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                console.log('agenda');
                 return [4 /*yield*/, req.db.execute("SELECT id, name, description,rating, weekday FROM anime WHERE state = 'Lan\u00E7ando' ALLOW FILTERING")];
             case 1:
                 resp = _a.sent();
@@ -331,7 +342,7 @@ router.get('/search', function (req, res) { return __awaiter(void 0, void 0, voi
                 _a.trys.push([0, 2, , 3]);
                 search = req.query.s;
                 handle_1.Console.log(search);
-                return [4 /*yield*/, req.db.execute("SELECT id, name, description,rating FROM anime WHERE name LIKE ? OR name2 LIKE ? ALLOW FILTERING", ["'%".concat(search, "%'"), "'%".concat(search, "%'")], { prepare: true })];
+                return [4 /*yield*/, req.db.execute("SELECT id, name, description,rating FROM anime WHERE name LIKE '%".concat(search, "%' OR name2 LIKE '%").concat(search, "%' ALLOW FILTERING"), [], { prepare: true })];
             case 1:
                 result = _a.sent();
                 res.send(result.rows);
@@ -446,12 +457,6 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
 //     sendError(res,ErrorType.default,500,err)
 //   }
 // })
-router.get("/test", function (req, res) {
-    res.sendFile("E:\\main\\app\\src\\test\\test.html");
-});
-router.get("/css/:file", function (req, res) {
-    res.sendFile(path.join("E:\\main\\app\\src\\css", req.params.file));
-});
 // const downloadwss = new WebSocket.Server({ server: httpsServer });
 // downloadwss.on("connection",(ws)=>{
 // })
@@ -583,8 +588,168 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
         }
     });
 }); });
+router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, salt, response, data, userData, err_12;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 6, , 7]);
+                _a = req.body, email = _a.email, name_1 = _a.name, surname = _a.surname, username = _a.username, birthDate = _a.birthDate, password = _a.password, recaptchaToken = _a.recaptchaToken, salt = _a.salt;
+                if (!recaptchaToken) {
+                    throw handle_1.ErrorType.noToken;
+                }
+                return [4 /*yield*/, fetch('https://www.google.com/recaptcha/api/siteverify', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: "secret=".concat(config_1.reCaptchaSecretKey, "&response=").concat(recaptchaToken)
+                    })];
+            case 1:
+                response = _b.sent();
+                return [4 /*yield*/, response.json()];
+            case 2:
+                data = _b.sent();
+                if (!data.success) return [3 /*break*/, 4];
+                userData = {
+                    name: name_1,
+                    email: email,
+                    surname: surname,
+                    username: username,
+                    birthDate: birthDate,
+                    password: password,
+                    salt: salt
+                };
+                return [4 /*yield*/, (0, handle_1.addUser)(userData)];
+            case 3:
+                _b.sent();
+                return [2 /*return*/, res.send(200).json({ success: true, message: 'Usuário registrado com sucesso' })];
+            case 4: throw handle_1.ErrorType.invalidReCaptcha;
+            case 5: return [3 /*break*/, 7];
+            case 6:
+                err_12 = _b.sent();
+                switch (err_12) {
+                    case handle_1.ErrorType.noToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
+                        break;
+                    case handle_1.ErrorType.invalidToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidReCaptcha);
+                    default:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_12);
+                }
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
+        }
+    });
+}); });
+router.get('/user', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var token, decode, result, err_13;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                token = req.cookies.token;
+                if (!token) {
+                    throw handle_1.ErrorType.noToken;
+                }
+                decode = jwt.verify(token, config_1.secretKey);
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT * FROM user.users WHERE username = $1;\n    ", [decode.username])];
+            case 1:
+                result = _a.sent();
+                if (result.rows.length < 1) {
+                    throw handle_1.ErrorType.invalidPassOrEmail;
+                }
+                res.send(result.rows[0]);
+                return [3 /*break*/, 3];
+            case 2:
+                err_13 = _a.sent();
+                switch (err_13) {
+                    case handle_1.ErrorType.noToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
+                        break;
+                    default:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_13);
+                        break;
+                }
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 app.use('/api', router);
 app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
+app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, password, recaptchaToken, response, data, result, token, err_14;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 6, , 7]);
+                _a = req.body, email = _a.email, password = _a.password, recaptchaToken = _a.recaptchaToken;
+                if (!recaptchaToken) {
+                    throw handle_1.ErrorType.invalidReCaptcha;
+                }
+                return [4 /*yield*/, fetch('https://www.google.com/recaptcha/api/siteverify', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: "secret=".concat(config_1.reCaptchaSecretKey, "&response=").concat(recaptchaToken)
+                    })];
+            case 1:
+                response = _b.sent();
+                return [4 /*yield*/, response.json()];
+            case 2:
+                data = _b.sent();
+                if (!data.success) return [3 /*break*/, 4];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        WITH hashed_password AS (\n          SELECT users.crypt($1, salt) AS hash\n          FROM users.users\n          WHERE email = $2\n        )\n        SELECT * FROM users.users\n        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n      ", [password, email])];
+            case 3:
+                result = _b.sent();
+                handle_1.Console.log(result.rows);
+                if (result.rows.length < 1) {
+                    throw handle_1.ErrorType.invalidPassOrEmail;
+                }
+                token = jwt.sign({ _id: result.rows[0]._id, username: result.rows[0].username }, config_1.secretKey, { expiresIn: "1d" });
+                res.cookie('token', token, { httpOnly: true, secure: true });
+                res.send({ success: true, message: "Login Successful", token: token });
+                return [3 /*break*/, 5];
+            case 4: throw handle_1.ErrorType.invalidReCaptcha;
+            case 5: return [3 /*break*/, 7];
+            case 6:
+                err_14 = _b.sent();
+                switch (err_14) {
+                    case handle_1.ErrorType.invalidReCaptcha:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidReCaptcha);
+                        break;
+                    case handle_1.ErrorType.invalidToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidToken);
+                        break;
+                    case handle_1.ErrorType.noToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
+                        break;
+                    case handle_1.ErrorType.invalidPassOrEmail:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidPassOrEmail);
+                        break;
+                    default:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_14);
+                        break;
+                }
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
+        }
+    });
+}); });
+app.post('/logout', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        try {
+            res.clearCookie('token');
+            res.json({ success: true, message: "Logout successful" });
+        }
+        catch (err) {
+            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
+        }
+        return [2 /*return*/];
+    });
+}); });
 app.get('*', function (req, res) {
     (0, handle_1.sendFile)().cssJs(res);
     res.sendFile(consts_1.BUILD_HTML);

@@ -2,7 +2,7 @@ import e, * as express from 'express';
 import Cconsole from "./Console";
 import * as path from "path";
 import { User } from "../../src/types/userType";
-import {pool, animeClient, logPool} from "./Postgre";
+import {pool, animeClient, logPool} from "../database/Postgre";
 import { Log, page } from "../../src/types/logType";
 const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg')
@@ -50,6 +50,9 @@ export enum ErrorType {
     undefined ,
     noToken,
     invalidToken,
+    invalidReCaptcha,
+    invalidPassOrEmail,
+    unauthorized,
     default
 }
 export function sendError(res:express.Response,errorType:ErrorType = ErrorType.default,status:number = 500,menssage:string = ""){
@@ -71,11 +74,21 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
     }
     function noToken(res:e.Response){
         Console.log("No token is provided")
-        res.status(401).json({mensagem:"No token is provided"})
+        res.status(401).json({success:false,mensagem:"No token is provided"})
     }
     function invalidToken(res:e.Response){
         Console.log("Invalid Token")
-        res.status(403).json({mensagem:"Invalid Token"})
+        res.status(403).json({success:false,mensagem:"Invalid Token"})
+    }
+    function invalidReCaptcha(res:e.Response){
+        Console.error("Falha na verificação do reCAPTCHA")
+        res.status(400).json({success:false,message:"Falha na verificação do reCAPTCHA"})
+    }
+    function invalidPassOrEmail(res:e.Response){
+        res.status(401).json({success:false,message:"Falha ao logar, senha ou email incorretos"})
+    }
+    function unauthorized(res:e.Response){
+        res.status(401).json({success:false,message:"Essa operação não é autorizada"})
     }
     switch(errorType){
         case ErrorType.NotId:
@@ -92,6 +105,15 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
             break
         case ErrorType.invalidToken:
             invalidToken(res)
+            break
+        case ErrorType.invalidReCaptcha:
+            invalidReCaptcha(res)
+            break
+        case ErrorType.invalidPassOrEmail:
+            invalidPassOrEmail(res)
+            break
+        case ErrorType.unauthorized:
+            unauthorized(res)
             break
         case ErrorType.default:
             error(res,status,menssage)
@@ -209,8 +231,17 @@ export async function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunc
         next()
     })
 }
-export async function addUser(user:User):Promise<User>{
-    const {name,surname,username,birthDate,email,password} = user
+export async function addUser(user:{
+    name:string,
+    surname:string,
+    username:string,
+    birthDate:Date,
+    email:string,
+    password:string,
+    salt:string
+}):Promise<User>{
+    const {name,surname,username,birthDate,email,password,salt} = user
+    console.log(salt)
     var _id = uuidv4()
     const totalAnime:number = 0;
     const totalAnimeWatching:number = 0;
@@ -226,18 +257,66 @@ export async function addUser(user:User):Promise<User>{
     const totalMangaLiked:number = 0
     const animeList: AnimeUser[] = [];
     const mangaList: MangaUser[] = [];
-    var saltRounds = await bcrypt.genSalt()
-    var hashedPassword = bcrypt.hashSync(password+saltRounds,saltRounds)
-    const result = await pool.query(
-        `INSERT INTO public."user" (_id, username, email, password, name, surname, birthdate, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalManga, totalMangaReading,totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, animeList, mangaList, totalAnimeLiked, totalMangaLiked) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21) RETURNING *`,
+    const result = await animeClient.query(
+        `INSERT INTO users.users 
+        (
+            _id, 
+            username, 
+            email, 
+            password, 
+            name, 
+            surname, 
+            birthdate, 
+            totalAnime, 
+            totalAnimeWatching, 
+            totalAnimeCompleted, 
+            totalAnimeDropped, 
+            totalAnimePlanToWatch, 
+            totalManga, 
+            totalMangaReading,
+            totalMangaCompleted, 
+            totalMangaDropped, 
+            totalMangaPlanToRead, 
+            animeList, 
+            mangaList, 
+            totalAnimeLiked, 
+            totalMangaLiked,
+            salt
+        ) 
+        VALUES 
+        (
+            $1, 
+            $2, 
+            $3, 
+            $4, 
+            $5, 
+            $6, 
+            $7, 
+            $8, 
+            $9, 
+            $10, 
+            $11, 
+            $12, 
+            $13, 
+            $14, 
+            $15, 
+            $16, 
+            $17, 
+            $18, 
+            $19, 
+            $20, 
+            $21,
+            $22
+        ) RETURNING *`,
         [
-            _id, username, email, hashedPassword, name, surname, new Date(birthDate).toISOString(),
+            _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
             totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
             totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
             animeList || [],  // Se animeList for nulo, usa um array vazio
             mangaList || [],  // Se mangaList for nulo, usa um array vazio
             totalAnimeLiked || [],  // Se totalAnimeLiked for nulo, usa um array vazio
             totalMangaLiked || [],   // Se totalMangaLiked for nulo, usa um array vazio,
+            salt
         ]
     );
     return result.rows[0];

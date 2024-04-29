@@ -9,7 +9,7 @@ interface props{
 
 const AgendComponent:React.FC<props> = ({ani}) =>{
     return(
-        <Link to={`/Anime/agenda/`} className="search-item">
+        <Link to={`/Anime/${ani.id}`} className="search-item">
             <div className="search-img">
                 <img src={`/api/ani/img?Id=${ani.id}`}/>
             </div>

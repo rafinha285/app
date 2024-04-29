@@ -1,7 +1,8 @@
 /backend/node_modules
+/backend/secret
+/backend/database
 /build
 /node_modules
-# /src/types/*.ts
 /src/types/*.js
 /backend_old/node_modules
 /backend/target

@@ -31,7 +31,7 @@ const Login:React.FC = ()=>{
                 })
                 
                 const token = response.data.token
-                console.log(token)
+                console.log(token,response)
                 // cookies.set("token",token,{path:"/",maxAge:86400, secure: true})
                 setCookie('token',token,{path:"/",maxAge:84600})
                 window.location.href = "/"

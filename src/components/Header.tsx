@@ -1,9 +1,10 @@
-import React,{ useState }  from "react";
+import React,{ useContext, useState }  from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useCookies } from 'react-cookie';
 import "../css/index.css"
 import "../css/base.css"
+import GlobalContext from "../GlobalContext";
 // import $ from 'jquery'
 
 
@@ -24,7 +25,12 @@ const Header = ()=>{
     const toggleSearch = ()=>{
         setSearchVisible(!searchVisible)
     }
-    const [cookies,setCookie,removeCookie] = useCookies(['token'])
+    // const [cookies,setCookie,removeCookie] = useCookies(['token'])
+    const context = useContext(GlobalContext);
+    if(!context){
+        return <div>O contexto global não está definido</div>;
+    }
+    const {isLogged} = context
     return(
         <header className="header">
             <nav>
@@ -57,7 +63,9 @@ const Header = ()=>{
                         placeholder="Buscar..."
                         ></input>
                     </li>
-                    <li><Link to={"/login"}><i className="fa-solid fa-user"></i></Link></li>
+                    <li>{isLogged?(
+                        <Link to={'/user'}><i className="fa-solid fa-user"></i></Link>
+                    ):(<Link to={"/login"}><i className="fa-solid fa-user"></i></Link>)}</li>
                 </ul>
             </nav>
         </header>

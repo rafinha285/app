@@ -12,6 +12,7 @@ import ProdSearch from './pages/Search/Prod';
 import Download from './pages/Download';
 import Agenda from './pages/Agenda';
 import GlobalContext, { GlobalProvider } from './GlobalContext';
+import UserPage from './pages/User';
 const App:React.FC = ()=> {
 return (
   <Router>
@@ -28,6 +29,7 @@ return (
         <Route path='/search' element={<MainSearch />} />
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
+        <Route path='/user' element={<UserPage/>}/>
       </Routes>
     </GlobalProvider>
   </Router>

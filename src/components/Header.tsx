@@ -2,12 +2,13 @@ import React,{ useContext, useState }  from "react";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { useCookies } from 'react-cookie';
+import Cookies from "universal-cookie"
 import "../css/index.css"
 import "../css/base.css"
 import GlobalContext from "../GlobalContext";
 // import $ from 'jquery'
 
-
+const cookies = new Cookies();
 const Header = ()=>{
     const [searchTerm, setSearchTerm] = useState("");
     const navigate = useNavigate()
@@ -26,8 +27,7 @@ const Header = ()=>{
         setSearchVisible(!searchVisible)
     }
     // const [cookies,setCookie,removeCookie] = useCookies(['token'])
-    const [cookies,setCookie,removeCookie] = useCookies(['token'])
-    console.log(cookies)
+    console.log(cookies.get("token"))
     const context = useContext(GlobalContext);
     if(!context){
         return <div>O contexto global não está definido</div>;

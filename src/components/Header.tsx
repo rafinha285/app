@@ -26,7 +26,7 @@ const Header = ()=>{
         setSearchVisible(!searchVisible)
     }
     // const [cookies,setCookie,removeCookie] = useCookies(['token'])
-    const [cookies,setCookie,removeCookie] = useCookies()
+    const [cookies,setCookie,removeCookie] = useCookies(['token'])
     console.log(cookies)
     const context = useContext(GlobalContext);
     if(!context){

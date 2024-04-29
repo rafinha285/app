@@ -15,7 +15,7 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
         
         console.log(cookies.token,cookies,document.cookie)
         setIsLogged(!!(cookies.token)); // Verifica se o token existe e define o estado de isLogged
-    }, []); 
+    }, [document.readyState === "complete"]); 
     
     return(
         <GlobalContext.Provider value={{isLogged}}>

@@ -13,7 +13,7 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
     // const token = getCookie('token');
     useEffect(() => {
         
-        console.log(cookies.token,cookies)
+        console.log(cookies.token,cookies,document.cookie)
         setIsLogged(!!(cookies.token)); // Verifica se o token existe e define o estado de isLogged
     }, []); 
     

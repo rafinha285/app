@@ -27,7 +27,8 @@ const Header = ()=>{
         setSearchVisible(!searchVisible)
     }
     // const [cookies,setCookie,removeCookie] = useCookies(['token'])
-    console.log(cookies.get("token"))
+    
+    console.log(cookies.getAll())
     const context = useContext(GlobalContext);
     if(!context){
         return <div>O contexto global não está definido</div>;

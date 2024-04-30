@@ -20,4 +20,16 @@ export declare enum state {
     COMPLETED = "Completo",
     CANCELED = "Cancelado"
 }
+export declare enum userAnimeState {
+    watching = "Assistindo",
+    completed = "Completado",
+    on_hold = "Em espera",
+    dropped = "Desisti",
+    plan_to_watch = "Pretendo assistir"
+}
+export declare enum priorityValue {
+    LOW = "Baixa",
+    MEDIUM = "Media",
+    HIGH = "Alta"
+}
 export type StateType = "ONGOING" | "HIATUS" | "COMPLETED" | "CANCELED";

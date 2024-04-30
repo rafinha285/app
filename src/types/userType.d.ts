@@ -1,13 +1,8 @@
 import { ObjectId } from "mongoose";
 import { AnimeUser } from "./animeModel";
 import { MangaUser } from "./mangaType";
-interface GoogleLogin {
-    idToken: string;
-    accessToken: string;
-}
 export interface User {
     _id: ObjectId;
-    googleLogin: GoogleLogin;
     name: string;
     surname: string;
     username: string;
@@ -30,4 +25,3 @@ export interface User {
     totalAnimeLiked: AnimeUser[];
     totalMangaLiked: MangaUser[];
 }
-export {};

@@ -12,7 +12,7 @@ import ProdSearch from './pages/Search/Prod';
 import Download from './pages/Download';
 import Agenda from './pages/Agenda';
 import GlobalContext, { GlobalProvider } from './GlobalContext';
-import UserPage from './pages/User';
+import UserPage from './pages/User/User';
 const App:React.FC = ()=> {
 return (
   <Router>

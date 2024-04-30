@@ -1,6 +1,7 @@
 import { ObjectId } from "mongoose";
 import { AnimeUser } from "./animeModel"
 import { MangaUser } from "./mangaType";
+import { roles } from "./types";
 
 interface GoogleLogin{
     idToken:string;
@@ -8,26 +9,28 @@ interface GoogleLogin{
 }
 export interface User{
     _id:ObjectId;
-    googleLogin:GoogleLogin;
     name:string;
     surname:string
     username:string;
     birthDate:Date;
     email:string;
+    role:roles[]
     password:string;
     salt:string;
-    totalAnime:number;
-    totalAnimeWatching:number;
-    totalAnimeCompleted:number;
-    totalAnimeDropped:number;
-    totalAnimePlanToWatch:number;
-    totalManga:number;
-    totalMangaReading:number;
-    totalMangaCompleted:number;
-    totalMangaDropped:number;
-    totalMangaPlanToRead:number;
-    animeList:AnimeUser[];
-    mangaList:MangaUser[];
-    totalAnimeLiked:AnimeUser[];
-    totalMangaLiked:MangaUser[]
+    totalanime:number;
+    totalanimewatching:number;
+    totalanimecompleted:number;
+    totalanimeonhold:number;
+    totalanimedropped:number;
+    totalanimeplantowatch:number;
+    totalmanga:number;
+    totalmangareading:number;
+    totalmangacompleted:number;
+    totalmangaonhold:number;
+    totalmangadropped:number;
+    totalmangaplantoread:number;
+    animelist:AnimeUser[];
+    mangalist:MangaUser[];
+    totalanimeliked:string[];
+    totalmangaliked:string[]
 }

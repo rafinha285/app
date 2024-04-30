@@ -1,8 +1,8 @@
 import e, * as express from 'express';
 import { User } from "../../src/types/userType";
 import { Log } from "../../src/types/logType";
-import * as jwt from "jsonwebtoken";
 import { PoolClient } from 'pg';
+import { TokenRequest } from '../types';
 export declare const Console: {
     log(...args: any[]): void;
     error(...args: any[]): void;
@@ -20,8 +20,9 @@ export declare enum ErrorType {
     invalidToken = 4,
     invalidReCaptcha = 5,
     invalidPassOrEmail = 6,
-    unauthorized = 7,
-    default = 8
+    invalidEmail = 7,
+    unauthorized = 8,
+    default = 9
 }
 export declare function sendError(res: express.Response, errorType?: ErrorType, status?: number, menssage?: string): void;
 export declare function sendFile(): {
@@ -34,10 +35,6 @@ export declare function openConnectionAnime(): Promise<PoolClient>;
 export declare function rollbackAnime(): Promise<void>;
 export declare function endConnectionAnime(client: PoolClient): Promise<void>;
 export declare function addLog(log: Log): Promise<any>;
-interface TokenRequest extends e.Request {
-    usuario?: string | jwt.JwtPayload;
-}
-export declare function loginUser(req: e.Request, res: e.Response): Promise<void>;
 export declare function checkToken(req: TokenRequest, res: e.Response, next: e.NextFunction): Promise<void>;
 export declare function addUser(user: {
     name: string;
@@ -48,4 +45,3 @@ export declare function addUser(user: {
     password: string;
     salt: string;
 }): Promise<User>;
-export {};

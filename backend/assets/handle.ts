@@ -15,6 +15,8 @@ import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
 import * as fss from "fs"
 import { PoolClient } from 'pg';
+import { secretKey } from '../secret/config';
+import { JwtUser, TokenRequest } from '../types';
 // import { randomInt } from "crypto";
 
 
@@ -52,6 +54,7 @@ export enum ErrorType {
     invalidToken,
     invalidReCaptcha,
     invalidPassOrEmail,
+    invalidEmail,
     unauthorized,
     default
 }
@@ -86,6 +89,9 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
     }
     function invalidPassOrEmail(res:e.Response){
         res.status(401).json({success:false,message:"Falha ao logar, senha ou email incorretos"})
+    }
+    function invalidEmail(res:e.Response){
+        res.status(401).json({success:false,message:"O email n é valido"})
     }
     function unauthorized(res:e.Response){
         res.status(401).json({success:false,message:"Essa operação não é autorizada"})
@@ -209,25 +215,35 @@ export async function addLog(log:Log){
     )
     return result.rows[0]
 }
-interface TokenRequest extends e.Request{
-    usuario?:string | jwt.JwtPayload 
-}
-export async function loginUser(req:e.Request,res:e.Response) {
-    
-}
-export async function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) {
+
+
+export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) {
     const token = req.headers.authorization;
-    const segredo = fss.readFileSync("D:/main/https/token/token.pem")
+    const segredo = secretKey
     if(!token){
         sendError(res,ErrorType.noToken)
         return
     }
     jwt.verify(token,segredo,(err,usuario)=>{
-        if(err){
-            sendError(res,ErrorType.invalidToken)
-            return
+        if (err) {
+            sendError(res, ErrorType.invalidToken);
+            return;
         }
-        req.usuario = usuario
+        if (typeof usuario === 'string') {
+            try {
+                // Decodifica o token JWT para obter as informações do usuário
+                const decodedToken = jwt.verify(usuario, segredo) as JwtUser | null;
+                if (decodedToken) {
+                    req.user = decodedToken;
+                } else {
+                    req.user = usuario;
+                }
+            } catch (error) {
+                req.user = usuario;
+            }
+        } else {
+            req.user = usuario;
+        }
         next()
     })
 }

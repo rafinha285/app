@@ -589,7 +589,7 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
     });
 }); });
 router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, salt, response, data, userData, err_12;
+    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, salt, emailRegex, response, data, userData, err_12;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -597,6 +597,10 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                 _a = req.body, email = _a.email, name_1 = _a.name, surname = _a.surname, username = _a.username, birthDate = _a.birthDate, password = _a.password, recaptchaToken = _a.recaptchaToken, salt = _a.salt;
                 if (!recaptchaToken) {
                     throw handle_1.ErrorType.noToken;
+                }
+                emailRegex = /\S+@\S+\.\S+/;
+                if (!emailRegex.test(email)) {
+                    throw handle_1.ErrorType.invalidEmail;
                 }
                 return [4 /*yield*/, fetch('https://www.google.com/recaptcha/api/siteverify', {
                         method: "POST",
@@ -634,6 +638,10 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                         break;
                     case handle_1.ErrorType.invalidToken:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidReCaptcha);
+                        break;
+                    case handle_1.ErrorType.invalidEmail:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidEmail);
+                        break;
                     default:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_12);
                 }
@@ -642,18 +650,13 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
         }
     });
 }); });
-router.get('/user', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var token, decode, result, err_13;
+router.get('/user', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, err_13;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                token = req.cookies.token;
-                if (!token) {
-                    throw handle_1.ErrorType.noToken;
-                }
-                decode = jwt.verify(token, config_1.secretKey);
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT * FROM user.users WHERE username = $1;\n    ", [decode.username])];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked, animelist, mangalist\n      FROM users.users\n      WHERE _id = $1;\n    ", [req.user._id])];
             case 1:
                 result = _a.sent();
                 if (result.rows.length < 1) {

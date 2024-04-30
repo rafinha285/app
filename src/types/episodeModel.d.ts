@@ -24,9 +24,11 @@ export interface Episode {
     resolution: string[];
 }
 export interface EpisodeUser {
+    id: string;
+    seasonid: string;
     name: string;
-    droppedOn: number;
-    episodeId: string;
+    dropped_on: number;
+    date_watched: Date;
 }
 export interface EpisodeSim {
     id: string;

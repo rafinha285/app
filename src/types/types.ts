@@ -20,4 +20,21 @@ export enum state{
 	COMPLETED="Completo",
 	CANCELED= "Cancelado"
 }
+export enum userAnimeState{
+    watching="Assistindo",
+    completed="Completado",
+    on_hold="Em espera",
+    dropped="Desisti",
+    plan_to_watch="Pretendo assistir"
+}
+export enum roles{
+    adm = "Administrador",
+    client = "Cliente",
+    creator = "Criador"
+}
+export enum priorityValue{
+    LOW="Baixa",
+    MEDIUM="Media",
+    HIGH="Alta"
+}
 export type StateType = "ONGOING" | "HIATUS" | "COMPLETED" | "CANCELED";

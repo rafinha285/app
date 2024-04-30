@@ -13,7 +13,7 @@ import {User} from "../src/types/userType"
 // import * as nano from "nano"
 // const Nano = require('nano');
 // import { Anime } from '../../app_admin/src/types/animeModel'
-import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, openConnectionAnime, endConnectionAnime} from "./assets/handle"
+import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, openConnectionAnime, endConnectionAnime, checkToken} from "./assets/handle"
 // import { AnimeDocument, producers } from '../src/types/animeModel'
 import { Log } from '../src/types/logType'
 // import { animeClient } from './assets/Postgre'
@@ -29,6 +29,7 @@ import { animeClient } from './database/Postgre'
 import * as cookieParser from "cookie-parser"
 import * as jwt from "jsonwebtoken"
 import { reCaptchaSecretKey, secretKey } from './secret/config'
+import { JwtUser } from './types'
 
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 // const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
@@ -156,6 +157,15 @@ router.get("/ani/agenda",async(req,res)=>{
     sendError(res,ErrorType.default,500,err)
   }
 })
+// get the props form anime (props = genre,studios,creators,producers) for the user page
+router.get('/ani/:id/props',checkToken,async(req,res)=>{
+  try{
+    let response = await req.db.execute(`SELECT producers, creators, genre, studios`)
+    res.send(response.rows[0])
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+})
 router.get("/ani/:id",async(req:e.Request,res:e.Response)=>{
   try{
     // var doc = await couch.use("anime").get(req.params.id)
@@ -173,6 +183,7 @@ router.get("/ani/:id",async(req:e.Request,res:e.Response)=>{
     sendError(res,ErrorType.NotId)
   }
 })
+
 app.get("/ani/season/",(req,res)=>{
   try{
     // setHeader(res)
@@ -447,7 +458,10 @@ router.post("/new/user",async(req,res)=>{
     if(!recaptchaToken){
       throw ErrorType.noToken
     }
-
+    const emailRegex = /\S+@\S+\.\S+/;
+    if(!emailRegex.test(email)){
+      throw ErrorType.invalidEmail
+    }
     const response = await fetch('https://www.google.com/recaptcha/api/siteverify',{
       method:"POST",
       headers:{
@@ -479,23 +493,24 @@ router.post("/new/user",async(req,res)=>{
         break
       case ErrorType.invalidToken:
         sendError(res,ErrorType.invalidReCaptcha)
+        break
+      case ErrorType.invalidEmail:
+        sendError(res,ErrorType.invalidEmail)
+        break
       default:
         sendError(res,ErrorType.default,500,err)
     }
   }
 })
-router.get('/user',async(req,res)=>{
-  try{
-    const token = req.cookies.token;
-    if(!token){
-      throw ErrorType.noToken
-    }
-    // const {username} = req.body
 
-    let decode = jwt.verify(token,secretKey) as jwt.JwtPayload;
+
+router.get('/user',checkToken,async(req,res)=>{
+  try{
     let result = await animeClient.query(`
-      SELECT * FROM user.users WHERE username = $1;
-    `,[decode.username])
+      SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked, animelist, mangalist
+      FROM users.users
+      WHERE _id = $1;
+    `,[(req.user as JwtUser)._id])
     if(result.rows.length < 1){
       throw ErrorType.invalidPassOrEmail
     }

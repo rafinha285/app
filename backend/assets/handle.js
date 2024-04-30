@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addUser = exports.checkToken = exports.loginUser = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = void 0;
+exports.addUser = exports.checkToken = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = void 0;
 var Console_1 = require("./Console");
 var path = require("path");
 var Postgre_1 = require("../database/Postgre");
@@ -46,7 +46,7 @@ ffmpeg.setFfmpegPath("D:/Site_anime/ffmpeg/bin/ffmpeg.exe");
 ffmpeg.setFfprobePath("D:/Site_anime/ffmpeg/bin/ffprobe.exe");
 var uuid_1 = require("uuid");
 var jwt = require("jsonwebtoken");
-var fss = require("fs");
+var config_1 = require("../secret/config");
 // import { randomInt } from "crypto";
 exports.Console = Console_1.default;
 // export const epModel = mongoose.model<episode>('aniEp',aniEpS)
@@ -89,8 +89,9 @@ var ErrorType;
     ErrorType[ErrorType["invalidToken"] = 4] = "invalidToken";
     ErrorType[ErrorType["invalidReCaptcha"] = 5] = "invalidReCaptcha";
     ErrorType[ErrorType["invalidPassOrEmail"] = 6] = "invalidPassOrEmail";
-    ErrorType[ErrorType["unauthorized"] = 7] = "unauthorized";
-    ErrorType[ErrorType["default"] = 8] = "default";
+    ErrorType[ErrorType["invalidEmail"] = 7] = "invalidEmail";
+    ErrorType[ErrorType["unauthorized"] = 8] = "unauthorized";
+    ErrorType[ErrorType["default"] = 9] = "default";
 })(ErrorType || (exports.ErrorType = ErrorType = {}));
 function sendError(res, errorType, status, menssage) {
     if (errorType === void 0) { errorType = ErrorType.default; }
@@ -126,6 +127,9 @@ function sendError(res, errorType, status, menssage) {
     }
     function invalidPassOrEmail(res) {
         res.status(401).json({ success: false, message: "Falha ao logar, senha ou email incorretos" });
+    }
+    function invalidEmail(res) {
+        res.status(401).json({ success: false, message: "O email n é valido" });
     }
     function unauthorized(res) {
         res.status(401).json({ success: false, message: "Essa operação não é autorizada" });
@@ -314,20 +318,12 @@ function addLog(log) {
     });
 }
 exports.addLog = addLog;
-function loginUser(req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/];
-        });
-    });
-}
-exports.loginUser = loginUser;
 function checkToken(req, res, next) {
     return __awaiter(this, void 0, void 0, function () {
         var token, segredo;
         return __generator(this, function (_a) {
             token = req.headers.authorization;
-            segredo = fss.readFileSync("D:/main/https/token/token.pem");
+            segredo = config_1.secretKey;
             if (!token) {
                 sendError(res, ErrorType.noToken);
                 return [2 /*return*/];
@@ -337,7 +333,24 @@ function checkToken(req, res, next) {
                     sendError(res, ErrorType.invalidToken);
                     return;
                 }
-                req.usuario = usuario;
+                if (typeof usuario === 'string') {
+                    try {
+                        // Decodifica o token JWT para obter as informações do usuário
+                        var decodedToken = jwt.verify(usuario, segredo);
+                        if (decodedToken) {
+                            req.user = decodedToken;
+                        }
+                        else {
+                            req.user = usuario;
+                        }
+                    }
+                    catch (error) {
+                        req.user = usuario;
+                    }
+                }
+                else {
+                    req.user = usuario;
+                }
                 next();
             });
             return [2 /*return*/];

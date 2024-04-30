@@ -676,7 +676,9 @@ router.get('/user', handle_1.checkToken, function (req, res) { return __awaiter(
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                console.log(req.headers, req.cookies, req.user);
+                console.log(req.user);
+                console.log(req.headers);
+                console.log(req.cookies);
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked, animelist, mangalist\n      FROM users.users\n      WHERE _id = $1;\n    ", [req.user._id])];
             case 1:
                 result = _a.sent();

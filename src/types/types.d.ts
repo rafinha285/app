@@ -27,6 +27,11 @@ export declare enum userAnimeState {
     dropped = "Desisti",
     plan_to_watch = "Pretendo assistir"
 }
+export declare enum roles {
+    adm = "Administrador",
+    client = "Cliente",
+    creator = "Criador"
+}
 export declare enum priorityValue {
     LOW = "Baixa",
     MEDIUM = "Media",

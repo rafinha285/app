@@ -35,7 +35,7 @@ export declare function openConnectionAnime(): Promise<PoolClient>;
 export declare function rollbackAnime(): Promise<void>;
 export declare function endConnectionAnime(client: PoolClient): Promise<void>;
 export declare function addLog(log: Log): Promise<any>;
-export declare function checkToken(req: TokenRequest, res: e.Response, next: e.NextFunction): Promise<void>;
+export declare function checkToken(req: TokenRequest, res: e.Response, next: e.NextFunction): void;
 export declare function addUser(user: {
     name: string;
     surname: string;

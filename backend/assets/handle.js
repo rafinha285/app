@@ -319,42 +319,37 @@ function addLog(log) {
 }
 exports.addLog = addLog;
 function checkToken(req, res, next) {
-    return __awaiter(this, void 0, void 0, function () {
-        var token, segredo;
-        return __generator(this, function (_a) {
-            token = req.headers.authorization;
-            segredo = config_1.secretKey;
-            if (!token) {
-                sendError(res, ErrorType.noToken);
-                return [2 /*return*/];
-            }
-            jwt.verify(token, segredo, function (err, usuario) {
-                if (err) {
-                    sendError(res, ErrorType.invalidToken);
-                    return;
-                }
-                if (typeof usuario === 'string') {
-                    try {
-                        // Decodifica o token JWT para obter as informações do usuário
-                        var decodedToken = jwt.verify(usuario, segredo);
-                        if (decodedToken) {
-                            req.user = decodedToken;
-                        }
-                        else {
-                            req.user = usuario;
-                        }
-                    }
-                    catch (error) {
-                        req.user = usuario;
-                    }
+    var token = req.headers.authorization;
+    console.log(token);
+    var segredo = config_1.secretKey;
+    if (!token) {
+        sendError(res, ErrorType.noToken);
+        return;
+    }
+    jwt.verify(token, segredo, function (err, usuario) {
+        if (err) {
+            sendError(res, ErrorType.invalidToken);
+            return;
+        }
+        if (typeof usuario === 'string') {
+            try {
+                // Decodifica o token JWT para obter as informações do usuário
+                var decodedToken = jwt.verify(usuario, segredo);
+                if (decodedToken) {
+                    req.user = decodedToken;
                 }
                 else {
                     req.user = usuario;
                 }
-                next();
-            });
-            return [2 /*return*/];
-        });
+            }
+            catch (error) {
+                req.user = usuario;
+            }
+        }
+        else {
+            req.user = usuario;
+        }
+        next();
     });
 }
 exports.checkToken = checkToken;

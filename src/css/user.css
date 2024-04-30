@@ -16,7 +16,7 @@
     flex-direction: column;
     background:rgb(103 0 145);
     padding:var(--padding);
-    width:30%;
+    width:50%;
     border-radius:10px;
 }
 /* left side */

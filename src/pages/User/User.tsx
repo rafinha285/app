@@ -5,6 +5,8 @@ import { DateToStringLocal } from "../../features/main";
 import RoleDiv from "../../components/User/RoleDiv";
 import { userAnimeState } from "../../types/types";
 import AnimeListDiv from "../../components/User/AnimeListDiv";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 const UserPage:React.FC = () =>{
     const handleGetUser =async()=>{
@@ -27,7 +29,8 @@ const UserPage:React.FC = () =>{
     },[])
     
     return(
-        <>
+        <html>
+            <Header/>
             <div className="info">
                 <div className="left">
                     <img className="user-img"></img>
@@ -68,7 +71,8 @@ const UserPage:React.FC = () =>{
                     </div>
                 </div>
             </div>
-        </>
+            <Footer/>
+        </html>
     )
 }
 export default UserPage

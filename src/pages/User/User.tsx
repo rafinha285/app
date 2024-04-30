@@ -20,7 +20,7 @@ const UserPage:React.FC = () =>{
             .then(response => response.json())
             // .then((data:User)=>console.log(data))
             .catch((error:any)=>console.error('Error fetching user data:', error))
-
+        console.log(response)
         setUser(response)
     }
     var [user,setUser] = useState<User>()

@@ -69,7 +69,7 @@ const Header = ()=>{
                         ></input>
                     </li>
                     <li>{isLogged?(
-                        <Link to={'/user'}><i className="fa-solid fa-user"></i></Link>
+                        <a href={'/user'}><i className="fa-solid fa-user"></i></a>
                     ):(<Link to={"/login"}><i className="fa-solid fa-user"></i></Link>)}</li>
                 </ul>
             </nav>

@@ -319,7 +319,8 @@ function addLog(log) {
 }
 exports.addLog = addLog;
 function checkToken(req, res, next) {
-    var token = req.headers.authorization;
+    var _a;
+    var token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
     console.log(token);
     var segredo = config_1.secretKey;
     if (!token) {

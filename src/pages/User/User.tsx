@@ -4,6 +4,7 @@ import "../../css/user.css"
 import { DateToStringLocal } from "../../features/main";
 import RoleDiv from "../../components/User/RoleDiv";
 import { userAnimeState } from "../../types/types";
+import AnimeListDiv from "../../components/User/AnimeListDiv";
 
 const UserPage:React.FC = () =>{
     const handleGetUser =async()=>{
@@ -41,7 +42,7 @@ const UserPage:React.FC = () =>{
                     <div className="role">
                         <p>Cargos: </p>
                         <div className="role-list">
-                            {user?.role.map((v,i)=>(
+                            {user?.role?.map((v,i)=>(
                                 <RoleDiv role={v} key={i}/>
                             ))}
                         </div>
@@ -61,7 +62,9 @@ const UserPage:React.FC = () =>{
                 <div className="content">
                     <h1>Lista de anime</h1>
                     <div className="list">
-
+                        {user?.animelist?.map((v,i)=>(
+                            <AnimeListDiv ani={v} key={i}></AnimeListDiv>
+                        ))}
                     </div>
                 </div>
             </div>

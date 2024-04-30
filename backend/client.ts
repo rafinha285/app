@@ -504,7 +504,7 @@ router.post("/new/user",async(req,res)=>{
 })
 
 
-router.get('/user',checkToken,async(req,res)=>{
+app.get('/user',checkToken,async(req,res)=>{
   try{
     console.log(req.user)
     console.log(req.headers)

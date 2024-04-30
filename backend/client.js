@@ -670,6 +670,9 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
         }
     });
 }); });
+app.get('/checktoken', handle_1.checkToken, function (req, res) {
+    res.json({ success: true });
+});
 app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var result, err_14;
     return __generator(this, function (_a) {

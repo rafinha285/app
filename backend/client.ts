@@ -503,7 +503,9 @@ router.post("/new/user",async(req,res)=>{
   }
 })
 
-
+app.get('/checktoken',checkToken,(req,res)=>{
+  res.json({success:true})
+})
 app.get('/g/user',checkToken,async(req,res)=>{
   try{
     console.log(req.user)

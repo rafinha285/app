@@ -17,12 +17,20 @@ const UserPage:React.FC = () =>{
         const headers: HeadersInit ={
             'Authorization':`Bearer ${token}`
         }
-        const response:User = await fetch("/g/user",{headers})
+        const check:{success:boolean} = await fetch("/checktoken",{headers})
+            .then(response=>response.json())
+        if(check.success){
+            const response:User = await fetch("/g/user",{headers})
             .then(response => response.json())
             // .then((data:User)=>console.log(data))
             .catch((error:any)=>console.error('Error fetching user data:', error))
-        console.log(response)
-        setUser(response)
+            console.log(response)
+            setUser(response)
+        }else{
+            sessionStorage.removeItem("token")
+            window.location.href = '/login'
+        }
+        
     }
     var [user,setUser] = useState<User>()
     useEffect(()=>{

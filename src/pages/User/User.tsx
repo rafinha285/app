@@ -7,6 +7,7 @@ import { userAnimeState } from "../../types/types";
 import AnimeListDiv from "../../components/User/AnimeListDiv";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
+import { Helmet } from "react-helmet";
 
 const UserPage:React.FC = () =>{
     
@@ -31,6 +32,9 @@ const UserPage:React.FC = () =>{
     
     return(
         <html>
+            <Helmet>
+                <title>Usuario: {user?.username}</title>
+            </Helmet>
             <Header/>
             <div className="info">
                 <div className="left">

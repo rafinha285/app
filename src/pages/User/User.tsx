@@ -32,7 +32,7 @@ const UserPage:React.FC = () =>{
                     <img className="user-img"></img>
                     <p className="user">Username: {user?.username}</p>
                     {/* DateToStringLocal(user?.birthDate!) */}
-                    <p className='birth-date'>Data de Nascimento: {user?.birthDate.toLocaleString("pt-br")}</p>
+                    <p className='birth-date'>Data de Nascimento: {user?.birthDate?.toLocaleString("pt-br")}</p>
                 </div>
                 <div className="right">
                     <p>Nome: {user?.name}</p>

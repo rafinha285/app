@@ -27,7 +27,14 @@ const Header = ()=>{
         setSearchVisible(!searchVisible)
     }
     // const [cookies,setCookie,removeCookie] = useCookies(['token'])
-    
+    const handleLogout = async()=>{
+        sessionStorage.removeItem("token")
+        fetch('/logout/')
+            .then(response=>response.json())
+            .then(data=>console.log(data))
+
+        window.location.href='/'
+    }
     console.log(document.cookie)
     console.log(cookies.getAll())
     const context = useContext(GlobalContext);
@@ -68,9 +75,19 @@ const Header = ()=>{
                         placeholder="Buscar..."
                         ></input>
                     </li>
+                    {/* <li>{isLogged?(
+                        
+                        <Link to={'/user'}><i className="fa-solid fa-user"></i></Link>
+                    ):(<Link to={"/login"}><i className="fa-solid fa-user"></i></Link>)}</li> */}
                     <li>{isLogged?(
-                        <a href={'/user'}><i className="fa-solid fa-user"></i></a>
-                    ):(<Link to={"/login"}><i className="fa-solid fa-user"></i></Link>)}</li>
+                        <Link to={'/user'}><i className="fa-solid fa-user"></i></Link>
+                    ):(
+                        window.location.pathname === "/user"?(
+                            <button onClick={handleLogout}><i className="fa-solid fa-right-from-bracket"></i></button>
+                        ):(
+                            <Link to={"/login"}><i className="fa-solid fa-user"></i></Link>
+                        )
+                    )}</li>
                 </ul>
             </nav>
         </header>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from "react";
+import React, { useContext, useEffect, useState} from "react";
 import {Anime, Season} from "../types/animeModel";
 import "../css/index.css"
 import "../css/base.css"
@@ -23,6 +23,7 @@ import { genToArray, tupleToProducer, tupleToSeason } from "../functions/animeFu
 import AniProducers, { prodType } from "../assets/AnimeProd";
 import { types } from "cassandra-driver";
 import { Episode } from "../types/episodeModel";
+import GlobalContext from "../GlobalContext";
 
 
 interface seasonDate{
@@ -32,6 +33,7 @@ interface seasonDate{
 }
 
 const AnimePage:React.FC = ()=>{
+    const context = useContext(GlobalContext)!
     const {id} = useParams()
     const [ani,setAni] = useState<Anime |null>(null)
     const [err,setErr] = useState<boolean>(false)
@@ -61,6 +63,9 @@ const AnimePage:React.FC = ()=>{
                         // Aqui você pode fazer algo com os episódios, como atualizar o estado ou armazená-los de alguma forma
                         console.log(`Episódios da temporada ${season.id}:`, data);
                         setEpisodes((prevEpisodes) => [...prevEpisodes, data]);
+                        if(context.isLogged){
+                            fetch("/api/")
+                        }
                     } else {
                         throw new Error(`Erro ao buscar episódios da temporada ${season.id}`);
                     }
@@ -110,7 +115,19 @@ const AnimePage:React.FC = ()=>{
     function getLabelText(value: number) {
         return `${value} Star${value !== 1 ? 's' : ''}, ${ratingLabel[value]}`;
     }
-    const [ratingValue,setRatingValue] = useState<number|null>(2)
+    const handleRatingValue = async(value:number) =>{
+        if(!context.isLogged){
+            alert("Nenhuma conta conectada")
+            return null
+        }
+        const response = await fetch(`/api/user/anime/${ani!.id}`)
+            .then(response =>response.json());
+        
+    }
+    const handleAddAnimeToList = async()=>{
+
+    }
+    const [ratingValue,setRatingValue] = useState<number|null>()
     const [ratingHover,setRatingHover] = useState(-1)
     console.log(ani)
     return(
@@ -201,7 +218,7 @@ const AnimePage:React.FC = ()=>{
                                 precision={1}
                                 getLabelText={getLabelText}
                                 onChange={(event,newValue)=>{
-                                    setRatingValue(newValue)
+                                    handleRatingValue(newValue!)
                                 }}
                                 onChangeActive={(event, newHover) => {
                                     setRatingHover(newHover);
@@ -210,9 +227,10 @@ const AnimePage:React.FC = ()=>{
                                 size="large"
                             />
                             {ratingValue!== null&&(
-                                <Box sx={{ml:2,color:"white"}}>{ratingLabel[ratingHover !== -1?ratingHover:ratingValue]}</Box>
+                                <Box sx={{ml:2,color:"white"}}>{ratingLabel[ratingHover! !== -1?ratingHover!:ratingValue!]}</Box>
                             )}
                         </Box>
+                        <button className="addAnimeList" onClick={handleAddAnimeToList}>Adicionar a lista de anime</button>
                     </div>
                     <div className="seasons">
                         <select onChange={seasonChangeHandle}>

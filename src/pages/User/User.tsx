@@ -28,7 +28,7 @@ const UserPage:React.FC = () =>{
     useEffect(()=>{
         handleGetUser()
         console.log(user)
-    },[])
+    },[!user])
     
     return(
         <html>

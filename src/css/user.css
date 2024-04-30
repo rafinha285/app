@@ -27,11 +27,11 @@
     border-radius:45em;
 }
 .left .user{
-    margin:auto
+    margin:0 auto
 }
 .left .birth-date{
     font-size:10px;
-    margin:auto
+    margin:0 auto
 }
 /* role css*/
 .role{
@@ -52,7 +52,7 @@
     margin:0;
 }
 /* anime infos */
-.left .anime-infos{
+.right .anime-infos{
     padding-left:10px
 }
 .anime-infos p:first-child{

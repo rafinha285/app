@@ -17,7 +17,7 @@ const UserPage:React.FC = () =>{
         const headers: HeadersInit ={
             'Authorization':`Bearer ${token}`
         }
-        const response:User = await fetch("/user",{headers})
+        const response:User = await fetch("/g/user",{headers})
             .then(response => response.json())
             // .then((data:User)=>console.log(data))
             .catch((error:any)=>console.error('Error fetching user data:', error))

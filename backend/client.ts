@@ -506,7 +506,9 @@ router.post("/new/user",async(req,res)=>{
 
 router.get('/user',checkToken,async(req,res)=>{
   try{
-    console.log(req.headers,req.cookies,req.user)
+    console.log(req.user)
+    console.log(req.headers)
+    console.log(req.cookies)
     let result = await animeClient.query(`
       SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked, animelist, mangalist
       FROM users.users

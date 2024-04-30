@@ -80,13 +80,13 @@ const Header = ()=>{
                         <Link to={'/user'}><i className="fa-solid fa-user"></i></Link>
                     ):(<Link to={"/login"}><i className="fa-solid fa-user"></i></Link>)}</li> */}
                     <li>{isLogged?(
-                        <Link to={'/user'}><i className="fa-solid fa-user"></i></Link>
-                    ):(
                         window.location.pathname === "/user"?(
                             <button onClick={handleLogout}><i className="fa-solid fa-right-from-bracket"></i></button>
                         ):(
-                            <Link to={"/login"}><i className="fa-solid fa-user"></i></Link>
+                            <Link to={'/user'}><i className="fa-solid fa-user"></i></Link>
                         )
+                    ):(
+                        <Link to={"/login"}><i className="fa-solid fa-user"></i></Link>
                     )}</li>
                 </ul>
             </nav>

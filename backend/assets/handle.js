@@ -321,13 +321,14 @@ exports.addLog = addLog;
 function checkToken(req, res, next) {
     var _a;
     var token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
-    console.log(token);
+    var tokencookie = req.cookies.token;
+    console.log(tokencookie);
     var segredo = config_1.secretKey;
-    if (!token) {
+    if (!tokencookie) {
         sendError(res, ErrorType.noToken);
         return;
     }
-    jwt.verify(token, segredo, function (err, usuario) {
+    jwt.verify(tokencookie, segredo, function (err, usuario) {
         if (err) {
             sendError(res, ErrorType.invalidToken);
             return;

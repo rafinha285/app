@@ -219,13 +219,14 @@ export async function addLog(log:Log){
 
 export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) {
     const token = req.headers.authorization?.split(" ")[1];
-    console.log(token)
+    const tokencookie = req.cookies.token
+    console.log(tokencookie)
     const segredo = secretKey
-    if(!token){
+    if(!tokencookie){
         sendError(res,ErrorType.noToken)
         return
     }
-    jwt.verify(token,segredo,(err,usuario)=>{
+    jwt.verify(tokencookie,segredo,(err,usuario)=>{
         if (err) {
             sendError(res, ErrorType.invalidToken);
             return;

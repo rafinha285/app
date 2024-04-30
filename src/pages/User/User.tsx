@@ -17,7 +17,7 @@ const UserPage:React.FC = () =>{
         const headers: HeadersInit ={
             'Authorization':`Bearer ${token}`
         }
-        const check:{success:boolean} = await fetch("/checktoken",{headers})
+        const check:{success:boolean} = await fetch("/g/checktoken",{headers})
             .then(response=>response.json())
         if(check.success){
             const response:User = await fetch("/g/user",{headers})

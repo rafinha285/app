@@ -9,7 +9,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 
 const UserPage:React.FC = () =>{
-    location.reload()
+    window.location.reload()
     const handleGetUser =async()=>{
         const token = sessionStorage.getItem('token');
         // let user:User

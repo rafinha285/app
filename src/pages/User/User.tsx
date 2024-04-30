@@ -22,6 +22,7 @@ const UserPage:React.FC = () =>{
     var [user,setUser] = useState<User>()
     useEffect(()=>{
         handleGetUser()
+        console.log(user)
     },[])
     
     return(
@@ -59,7 +60,7 @@ const UserPage:React.FC = () =>{
                 <div className="content">
                     <h1>Lista de anime</h1>
                     <div className="list">
-                        
+
                     </div>
                 </div>
             </div>

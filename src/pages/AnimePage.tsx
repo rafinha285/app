@@ -134,7 +134,7 @@ const AnimePage:React.FC = ()=>{
     }
     const handleAddAnimeToList = async()=>{
         checkIsLogged(context.isLogged)
-        const response = await fetch(`/api/user/anime/add/${ani?.id!}`)
+        const response = await fetch(`/api/user/anime/add/${ani?.id!}`,{method:"POST"})
             .then(res=>res.json())
         console.log(response)
     }

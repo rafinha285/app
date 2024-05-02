@@ -32,6 +32,7 @@ import * as jwt from "jsonwebtoken"
 import { reCaptchaSecretKey, secretKey } from './secret/config'
 import { JwtUser } from './types'
 import { priorityValue, userAnimeState } from './assets/handle'
+import * as siteTypes from "../src/types/types"
 
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 // const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
@@ -521,13 +522,13 @@ router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
     `,[
         (req.user as JwtUser)._id,
         req.params.id,
-        Object.keys(userAnimeState)[0],
+        Object.keys(siteTypes.userAnimeState)[0],
         anime.name,
         new Date(Date.now()),
         null,
         0.0,
         0,
-        Object.keys(priorityValue)[0],
+        Object.keys(siteTypes.priorityValue)[0],
         0
     ])
     Console.log(result.rows)

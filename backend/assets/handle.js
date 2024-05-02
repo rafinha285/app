@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addUser = exports.checkToken = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = exports.userAnimeState = exports.priorityValue = void 0;
+exports.addUser = exports.checkToken = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = void 0;
 var Console_1 = require("./Console");
 var path = require("path");
 var Postgre_1 = require("../database/Postgre");
@@ -48,20 +48,6 @@ var uuid_1 = require("uuid");
 var jwt = require("jsonwebtoken");
 var config_1 = require("../secret/config");
 // import { randomInt } from "crypto";
-var priorityValue;
-(function (priorityValue) {
-    priorityValue["LOW"] = "Baixa";
-    priorityValue["MEDIUM"] = "Media";
-    priorityValue["HIGH"] = "Alta";
-})(priorityValue || (exports.priorityValue = priorityValue = {}));
-var userAnimeState;
-(function (userAnimeState) {
-    userAnimeState["watching"] = "Assistindo";
-    userAnimeState["completed"] = "Completado";
-    userAnimeState["on_hold"] = "Em espera";
-    userAnimeState["dropped"] = "Desistido";
-    userAnimeState["plan_to_watch"] = "Pretendo assistir";
-})(userAnimeState || (exports.userAnimeState = userAnimeState = {}));
 exports.Console = Console_1.default;
 // export const epModel = mongoose.model<episode>('aniEp',aniEpS)
 function setHeader(res) {

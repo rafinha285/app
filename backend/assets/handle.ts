@@ -231,7 +231,7 @@ export async function addLog(log:Log){
 export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) {
     const token = req.headers.authorization?.split(" ")[1];
     const tokencookie = req.cookies.token
-    console.log(tokencookie)
+    // console.log(tokencookie)
     const segredo = secretKey
     if(!tokencookie){
         sendError(res,ErrorType.noToken)

@@ -42,6 +42,15 @@ const AnimePage:React.FC = ()=>{
     const [episodes,setEpisodes] = useState<Episode[]>([])
     const [isInList,setIsInList] = useState<boolean>(false)
     const [isPopupOpen,setIsPopupOpen] = useState<boolean>()
+
+    let checkList=async()=>{
+        await fetch(`/api/user/list/checkanime/${ani!.id}`)
+            .then(response=>response.json())
+            .then(data=>{
+                setIsInList(data.message)
+            })
+    }
+    
     useEffect(()=>{
         if(!ani){
             $.ajax(`/api/ani/${id}`).done((res:Anime)=>{
@@ -73,15 +82,7 @@ const AnimePage:React.FC = ()=>{
                 
             })
             if(context.isLogged){
-                let checkList=async()=>{
-                    await fetch(`/api/user/list/checkanime/${ani.id}`)
-                        .then(response=>response.json())
-                        .then(data=>{
-                            setIsInList(data.message)
-                        })
-                }
                 checkList()
-                
             }
         }
     },[ani,id])
@@ -136,7 +137,10 @@ const AnimePage:React.FC = ()=>{
         checkIsLogged(context.isLogged)
         const response = await fetch(`/api/user/anime/add/${ani?.id!}`,{method:"POST"})
             .then(res=>res.json())
-        console.log(response)
+            .then((data)=>{
+                console.log(response)
+                checkList()
+            })
     }
     const handleEditAnimePopup = async()=>{
         checkIsLogged(context.isLogged)

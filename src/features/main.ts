@@ -1,5 +1,7 @@
+import { useContext } from "react"
 import { Anime } from "../types/animeModel"
 import { Episode, languages } from "../types/episodeModel"
+import GlobalContext, { GlobalContextType } from "../GlobalContext"
 
 export function getEpTime(ee:number):string{
     var e = Math.round(ee)
@@ -96,6 +98,12 @@ export function DateToStringLocal(date:Date){
 
   // Retorna a data formatada como uma string
   return `${day}/${month}/${year}`;
+}
+export function checkIsLogged(isLogged:boolean){
+    if(!isLogged){
+        alert("Nenhuma conta conectada")
+        window.location.href = '/login/'
+    }
 }
 
 Date.prototype.getDayOfWeekName = function(){

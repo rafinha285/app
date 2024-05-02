@@ -460,6 +460,24 @@ router.post("/user/anime/like",checkToken,async(req,res)=>{
     sendError(res,ErrorType.default,500,err)
   }
 })
+router.get("/user/list/checkanime/:id",checkToken,async(req,res)=>{
+    try{
+        let checkIfExists = await animeClient.query(`
+            SELECT COUNT(*) AS num_animes
+            FROM users.user_anime_list
+            WHERE user_id = $1
+            AND anime_id = $2
+        `,[(req.user as JwtUser)._id,req.params.id])
+        const num_animes = checkIfExists.rows[0].num_animes;
+        if(num_animes>0){
+            res.json({success:true,message:true})
+        }else{
+            res.json({success:true,message:false})
+        }
+    }catch(err){
+        sendError(res,ErrorType.default,500,err)
+    }
+})
 router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
   try{
     Console.log(req.user)

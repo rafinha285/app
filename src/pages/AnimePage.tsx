@@ -5,7 +5,7 @@ import "../css/base.css"
 import "../css/anime.css"
 import "../css/anime_.css"
 import "../css/loading.css"
-import { getEpTime, getMonthName} from "../features/main";
+import { checkIsLogged, getEpTime, getMonthName} from "../features/main";
 import LikeButton from "../assets/LikeButton"
 import AniGeneros from "../assets/Animegenre";
 import { Link, useParams } from "react-router-dom";
@@ -24,6 +24,7 @@ import AniProducers, { prodType } from "../assets/AnimeProd";
 import { types } from "cassandra-driver";
 import { Episode } from "../types/episodeModel";
 import GlobalContext from "../GlobalContext";
+import Popup from "reactjs-popup"
 
 
 interface seasonDate{
@@ -39,6 +40,8 @@ const AnimePage:React.FC = ()=>{
     const [err,setErr] = useState<boolean>(false)
     const [seasonD,setSeasonD] = useState<seasonDate>()
     const [episodes,setEpisodes] = useState<Episode[]>([])
+    const [isInList,setIsInList] = useState<boolean>(false)
+    const [isPopupOpen,setIsPopupOpen] = useState<boolean>()
     useEffect(()=>{
         if(!ani){
             $.ajax(`/api/ani/${id}`).done((res:Anime)=>{
@@ -64,7 +67,11 @@ const AnimePage:React.FC = ()=>{
                         console.log(`Episódios da temporada ${season.id}:`, data);
                         setEpisodes((prevEpisodes) => [...prevEpisodes, data]);
                         if(context.isLogged){
-                            fetch("/api/")
+                            await fetch(`/api/user/list/checkanime/${ani.id}`)
+                                .then(response=>response.json())
+                                .then(data=>{
+                                    setIsInList(data.message)
+                                })
                         }
                     } else {
                         throw new Error(`Erro ao buscar episódios da temporada ${season.id}`);
@@ -116,21 +123,20 @@ const AnimePage:React.FC = ()=>{
         return `${value} Star${value !== 1 ? 's' : ''}, ${ratingLabel[value]}`;
     }
     const handleRatingValue = async(value:number) =>{
-        if(!context.isLogged){
-            alert("Nenhuma conta conectada")
-            window.location.href = '/login/'
-        }
+        checkIsLogged(context.isLogged)
         const response = await fetch(`/api/user/anime/${ani!.id}`)
             .then(response =>response.json());
         
     }
     const handleAddAnimeToList = async()=>{
-        if(!context.isLogged){
-            alert("Nenhuma conta conectada")
-            window.location.href = '/login/'
-        }
+        checkIsLogged(context.isLogged)
         const response = await fetch(`/api/user/anime/add/${ani?.id!}`)
             .then(res=>res.json())
+        console.log(response)
+    }
+    const handleEditAnimePopup = async()=>{
+        checkIsLogged(context.isLogged)
+
     }
     const handleLike = ()=>{
 
@@ -238,7 +244,16 @@ const AnimePage:React.FC = ()=>{
                                 <Box sx={{ml:2,color:"white"}}>{ratingLabel[ratingHover! !== -1?ratingHover!:ratingValue!]}</Box>
                             )}
                         </Box>
-                        <button className="addAnimeList" onClick={handleAddAnimeToList}>Adicionar a lista de anime</button>
+                        <Popup open={isPopupOpen} onClose={()=>setIsPopupOpen(false)}>
+                            <div>
+
+                            </div>
+                        </Popup>
+                        {isInList?(
+                            <button className="addAnimeList" onClick={()=>setIsPopupOpen(true)}>Editar Lista</button>
+                        ):(
+                            <button className="addAnimeList" onClick={handleAddAnimeToList}>Adicionar a lista de anime<i className="fa-solid fa-plus"></i></button>
+                        )}
                     </div>
                     <div className="seasons">
                         <select onChange={seasonChangeHandle}>

@@ -22,14 +22,14 @@ const UserPage:React.FC = () =>{
         const check:{success:boolean} = await fetch("/g/checktoken",{headers})
             .then(response=>response.json())
         if(check.success){
-            const response:User = await fetch("/g/user",{headers})
+            await fetch("/g/user",{headers})
             .then(response => response.json())
             .then((data:User)=>{
-                animelist = data.animelist.map(parseAnime)
+                // animelist = data.animelist.map(parseAnime)
+                setUser(data)
             })
             .catch((error:any)=>console.error('Error fetching user data:', error))
-            console.log(response)
-            setUser(response)
+            // console.log(response)
         }else{
             sessionStorage.removeItem("token")
             window.location.href = '/login'
@@ -82,9 +82,9 @@ const UserPage:React.FC = () =>{
                 <div className="content">
                     <h1>Lista de anime</h1>
                     <div className="list">
-                        {.map((v,i)=>(
+                        {/*.map((v,i)=>(
                             <AnimeListDiv ani={v} key={i}></AnimeListDiv>
-                        ))}
+                        ))*/}
                     </div>
                 </div>
             </div>

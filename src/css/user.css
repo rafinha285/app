@@ -117,8 +117,8 @@
 }
 
 :root{
-    --width:15em;
+    --user-width:15em;
     --anime-width:80%;
     --height:15em;
     --padding:10em;
-  }
+}

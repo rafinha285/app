@@ -8,9 +8,11 @@ import AnimeListDiv from "../../components/User/AnimeListDiv";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { Helmet } from "react-helmet";
+import { parseAnime } from "../../functions/animeFunctions";
+import { AnimeUser } from "../../types/animeModel";
 
 const UserPage:React.FC = () =>{
-    
+    let animelist:AnimeUser[]
     const handleGetUser =async()=>{
         const token = sessionStorage.getItem('token');
         // let user:User
@@ -22,7 +24,9 @@ const UserPage:React.FC = () =>{
         if(check.success){
             const response:User = await fetch("/g/user",{headers})
             .then(response => response.json())
-            // .then((data:User)=>console.log(data))
+            .then((data:User)=>{
+                animelist = data.animelist.map(parseAnime)
+            })
             .catch((error:any)=>console.error('Error fetching user data:', error))
             console.log(response)
             setUser(response)
@@ -78,7 +82,7 @@ const UserPage:React.FC = () =>{
                 <div className="content">
                     <h1>Lista de anime</h1>
                     <div className="list">
-                        {user?.animelist?.map((v,i)=>(
+                        {.map((v,i)=>(
                             <AnimeListDiv ani={v} key={i}></AnimeListDiv>
                         ))}
                     </div>

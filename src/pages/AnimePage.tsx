@@ -118,13 +118,21 @@ const AnimePage:React.FC = ()=>{
     const handleRatingValue = async(value:number) =>{
         if(!context.isLogged){
             alert("Nenhuma conta conectada")
-            return null
+            window.location.href = '/login/'
         }
         const response = await fetch(`/api/user/anime/${ani!.id}`)
             .then(response =>response.json());
         
     }
     const handleAddAnimeToList = async()=>{
+        if(!context.isLogged){
+            alert("Nenhuma conta conectada")
+            window.location.href = '/login/'
+        }
+        const response = await fetch(`/api/user/anime/add/${ani?.id!}`)
+            .then(res=>res.json())
+    }
+    const handleLike = ()=>{
 
     }
     const [ratingValue,setRatingValue] = useState<number|null>()

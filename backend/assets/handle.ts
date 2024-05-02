@@ -266,12 +266,14 @@ export async function addUser(user:{
     const totalAnimeCompleted:number = 0;
     const totalAnimeDropped:number = 0;
     const totalAnimePlanToWatch:number = 0;
+    const totalAnimeOnHold = 0;
     const totalAnimeLiked:number = 0;
     const totalManga:number = 0;
     const totalMangaReading:number = 0;
     const totalMangaCompleted:number = 0;
     const totalMangaDropped:number = 0;
     const totalMangaPlanToRead:number = 0;
+    const totalMangaOnHold = 0
     const totalMangaLiked:number = 0
     const animeList: AnimeUser[] = [];
     const mangaList: MangaUser[] = [];
@@ -285,21 +287,23 @@ export async function addUser(user:{
             name, 
             surname, 
             birthdate, 
-            totalAnime, 
-            totalAnimeWatching, 
-            totalAnimeCompleted, 
-            totalAnimeDropped, 
-            totalAnimePlanToWatch, 
-            totalManga, 
-            totalMangaReading,
-            totalMangaCompleted, 
-            totalMangaDropped, 
-            totalMangaPlanToRead, 
+            totalanime, 
+            totalanimewatching, 
+            totalanimecompleted, 
+            totalanimedropped, 
+            totalanimeplantowatch, 
+            totalmanga, 
+            totalmangareading,
+            totalmangacompleted, 
+            totalmangadropped, 
+            totalmangaplantoread, 
             animeList, 
             mangaList, 
             totalAnimeLiked, 
             totalMangaLiked,
-            salt
+            salt,
+            totalanimeonhold,
+            totalmangaonhold
         ) 
         VALUES 
         (
@@ -324,7 +328,9 @@ export async function addUser(user:{
             $19, 
             $20, 
             $21,
-            $22
+            $22,
+            $23,
+            $24
         ) RETURNING *`,
         [
             _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
@@ -334,7 +340,9 @@ export async function addUser(user:{
             mangaList || [],  // Se mangaList for nulo, usa um array vazio
             totalAnimeLiked || [],  // Se totalAnimeLiked for nulo, usa um array vazio
             totalMangaLiked || [],   // Se totalMangaLiked for nulo, usa um array vazio,
-            salt
+            salt,
+            totalAnimeOnHold,
+            totalMangaOnHold
         ]
     );
     return result.rows[0];

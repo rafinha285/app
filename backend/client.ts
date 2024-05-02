@@ -451,7 +451,57 @@ router.post('/log',async(req:e.Request,res:e.Response)=>{
     sendError(res,ErrorType.default,500,err)
   }
 })
+router.post("/user/anime/like",checkToken,async(req,res)=>{
+  try{
 
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+})
+router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
+  try{
+    let anime = await req.db.execute(`SELECT id,name FROM anime WHERE id = ?`,[req.params.id],{prepare:true})
+    // anime.rows[0].name;
+    animeClient.query(`
+      INSERT INTO users.user_anime_list (
+        user_id,
+        anime_id,
+        status,
+        name,
+        start_date,
+        finish_date,
+        rate,
+        times_watched,
+        priority,
+        rewatched_episodes,
+      ) VALUES(
+        $1,
+        $2,
+        $3,
+        $4,
+        $5,
+        $6,
+        $7,
+        $8,
+        $9,
+        $10,
+      )
+    `,[
+        
+    ])
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+})
+router.get('/user/anime',checkToken,async(req,res)=>{
+  try{
+    animeClient.query(`
+      
+    `)
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+})
 router.post("/new/user",async(req,res)=>{
   try{
     const { email, name, surname, username, birthDate, password, recaptchaToken, salt} = req.body;

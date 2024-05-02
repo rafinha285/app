@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getEpsFromSeason = exports.tupleToSeason = exports.tupleToProducer = exports.genToArray = void 0;
+exports.parseAnime = exports.getEpsFromSeason = exports.tupleToSeason = exports.tupleToProducer = exports.genToArray = void 0;
 // import { languages } from "../types/episodeModel";
 function genToArray(gen) {
     console.log(gen);
@@ -88,3 +88,20 @@ function getEpsFromSeason(ani, season) {
     });
 }
 exports.getEpsFromSeason = getEpsFromSeason;
+var parseAnime = function (animeString) {
+    var animeValues = animeString.replace(/[\(\)"]/g, '').split(',');
+    return {
+        id: animeValues[0],
+        name: animeValues[1],
+        watched_episodes: parseInt(animeValues[2]),
+        start_date: animeValues[3],
+        finish_date: animeValues[4],
+        rate: parseFloat(animeValues[5]),
+        state: animeValues[6],
+        times_watched: parseInt(animeValues[7]),
+        priority: animeValues[8],
+        rewatched_episodes: parseInt(animeValues[9]),
+        last_ep: JSON.parse(animeValues[10])
+    };
+};
+exports.parseAnime = parseAnime;

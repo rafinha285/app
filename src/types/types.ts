@@ -24,7 +24,7 @@ export enum userAnimeState{
     watching="Assistindo",
     completed="Completado",
     on_hold="Em espera",
-    dropped="Desisti",
+    dropped="Desistido",
     plan_to_watch="Pretendo assistir"
 }
 export enum roles{

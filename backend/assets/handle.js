@@ -357,7 +357,7 @@ function checkToken(req, res, next) {
 exports.checkToken = checkToken;
 function addUser(user) {
     return __awaiter(this, void 0, void 0, function () {
-        var name, surname, username, birthDate, email, password, salt, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaLiked, animeList, mangaList, result;
+        var name, surname, username, birthDate, email, password, salt, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeOnHold, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaOnHold, totalMangaLiked, animeList, mangaList, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -369,16 +369,18 @@ function addUser(user) {
                     totalAnimeCompleted = 0;
                     totalAnimeDropped = 0;
                     totalAnimePlanToWatch = 0;
+                    totalAnimeOnHold = 0;
                     totalAnimeLiked = 0;
                     totalManga = 0;
                     totalMangaReading = 0;
                     totalMangaCompleted = 0;
                     totalMangaDropped = 0;
                     totalMangaPlanToRead = 0;
+                    totalMangaOnHold = 0;
                     totalMangaLiked = 0;
                     animeList = [];
                     mangaList = [];
-                    return [4 /*yield*/, Postgre_1.animeClient.query("INSERT INTO users.users \n        (\n            _id, \n            username, \n            email, \n            password, \n            name, \n            surname, \n            birthdate, \n            totalAnime, \n            totalAnimeWatching, \n            totalAnimeCompleted, \n            totalAnimeDropped, \n            totalAnimePlanToWatch, \n            totalManga, \n            totalMangaReading,\n            totalMangaCompleted, \n            totalMangaDropped, \n            totalMangaPlanToRead, \n            animeList, \n            mangaList, \n            totalAnimeLiked, \n            totalMangaLiked,\n            salt\n        ) \n        VALUES \n        (\n            $1, \n            $2, \n            $3, \n            $4, \n            $5, \n            $6, \n            $7, \n            $8, \n            $9, \n            $10, \n            $11, \n            $12, \n            $13, \n            $14, \n            $15, \n            $16, \n            $17, \n            $18, \n            $19, \n            $20, \n            $21,\n            $22\n        ) RETURNING *", [
+                    return [4 /*yield*/, Postgre_1.animeClient.query("INSERT INTO users.users \n        (\n            _id, \n            username, \n            email, \n            password, \n            name, \n            surname, \n            birthdate, \n            totalanime, \n            totalanimewatching, \n            totalanimecompleted, \n            totalanimedropped, \n            totalanimeplantowatch, \n            totalmanga, \n            totalmangareading,\n            totalmangacompleted, \n            totalmangadropped, \n            totalmangaplantoread, \n            animeList, \n            mangaList, \n            totalAnimeLiked, \n            totalMangaLiked,\n            salt,\n            totalanimeonhold,\n            totalmangaonhold\n        ) \n        VALUES \n        (\n            $1, \n            $2, \n            $3, \n            $4, \n            $5, \n            $6, \n            $7, \n            $8, \n            $9, \n            $10, \n            $11, \n            $12, \n            $13, \n            $14, \n            $15, \n            $16, \n            $17, \n            $18, \n            $19, \n            $20, \n            $21,\n            $22,\n            $23,\n            $24\n        ) RETURNING *", [
                             _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
                             totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
                             totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
@@ -386,7 +388,9 @@ function addUser(user) {
                             mangaList || [],
                             totalAnimeLiked || [],
                             totalMangaLiked || [],
-                            salt
+                            salt,
+                            totalAnimeOnHold,
+                            totalMangaOnHold
                         ])];
                 case 1:
                     result = _a.sent();

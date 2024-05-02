@@ -39,7 +39,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
 // import * as ip from 'ip'
 var path = require("path");
-var cors = require("cors");
 var fs = require("fs");
 // import * as https from "https"
 var http = require("http");
@@ -69,18 +68,17 @@ var app = e();
 // const ip_2 = ip.address("Ethernet")
 // const mongoUri = `mongodb://${ip_1}:211/data`
 // const couch:nano.ServerScope = Nano('http://admin:285@127.0.0.1:5984');
-var corsOptions = {
-    origin: function (origin, callback) {
-        // Verificar se a origem é a mesma
-        if (origin && origin === 'https://animefoda.top') {
-            callback(null, true); // Permitir a origem
-        }
-        else {
-            callback('Acesso não permitido'); // Recusar a origem
-        }
-    },
-};
-app.use(cors(corsOptions));
+// const corsOptions = {
+//     origin: (origin, callback) => {
+//       // Verificar se a origem é a mesma
+//       if (origin && origin === 'https://animefoda.top') {
+//         callback(null, true); // Permitir a origem
+//       } else {
+//         callback('Acesso não permitido'); // Recusar a origem
+//       }
+//     },
+//   };
+// app.use(cors(corsOptions))
 app.use((0, body_parser_1.json)());
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
 app.use(cookieParser());

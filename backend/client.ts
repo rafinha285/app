@@ -44,17 +44,17 @@ var app = e()
 // const couch:nano.ServerScope = Nano('http://admin:285@127.0.0.1:5984');
 
 
-const corsOptions = {
-    origin: (origin, callback) => {
-      // Verificar se a origem é a mesma
-      if (origin && origin === 'https://animefoda.top') {
-        callback(null, true); // Permitir a origem
-      } else {
-        callback('Acesso não permitido'); // Recusar a origem
-      }
-    },
-  };
-app.use(cors(corsOptions))
+// const corsOptions = {
+//     origin: (origin, callback) => {
+//       // Verificar se a origem é a mesma
+//       if (origin && origin === 'https://animefoda.top') {
+//         callback(null, true); // Permitir a origem
+//       } else {
+//         callback('Acesso não permitido'); // Recusar a origem
+//       }
+//     },
+//   };
+// app.use(cors(corsOptions))
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser())

@@ -31,7 +31,7 @@ import * as cookieParser from "cookie-parser"
 import * as jwt from "jsonwebtoken"
 import { reCaptchaSecretKey, secretKey } from './secret/config'
 import { JwtUser } from './types'
-import { priorityValue, userAnimeState } from '../src/types/types'
+import { priorityValue, userAnimeState } from './assets/handle'
 
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 // const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');

@@ -3,6 +3,18 @@ import { User } from "../../src/types/userType";
 import { Log } from "../../src/types/logType";
 import { PoolClient } from 'pg';
 import { TokenRequest } from '../types';
+export declare enum priorityValue {
+    LOW = "Baixa",
+    MEDIUM = "Media",
+    HIGH = "Alta"
+}
+export declare enum userAnimeState {
+    watching = "Assistindo",
+    completed = "Completado",
+    on_hold = "Em espera",
+    dropped = "Desistido",
+    plan_to_watch = "Pretendo assistir"
+}
 export declare const Console: {
     log(...args: any[]): void;
     error(...args: any[]): void;

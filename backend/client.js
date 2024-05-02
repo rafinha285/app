@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
 // import * as ip from 'ip'
 var path = require("path");
+var cors = require("cors");
 var fs = require("fs");
 // import * as https from "https"
 var http = require("http");
@@ -48,8 +49,6 @@ var body_parser_1 = require("body-parser");
 // const Nano = require('nano');
 // import { Anime } from '../../app_admin/src/types/animeModel'
 var handle_1 = require("./assets/handle");
-// import { animeClient } from './assets/Postgre'
-// import { Query, QueryConfig, QueryResult } from 'pg'
 var pool_1 = require("./database/pool");
 var consts_1 = require("./consts");
 var cassandra_driver_1 = require("cassandra-driver");
@@ -60,6 +59,7 @@ var Postgre_1 = require("./database/Postgre");
 var cookieParser = require("cookie-parser");
 var jwt = require("jsonwebtoken");
 var config_1 = require("./secret/config");
+var types_1 = require("../src/types/types");
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 // const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
 // const credentials = { key: privateKey, cert: certificate };
@@ -68,17 +68,18 @@ var app = e();
 // const ip_2 = ip.address("Ethernet")
 // const mongoUri = `mongodb://${ip_1}:211/data`
 // const couch:nano.ServerScope = Nano('http://admin:285@127.0.0.1:5984');
-// const corsOptions = {
-//     origin: (origin, callback) => {
-//       // Verifica se a origem da solicitação corresponde à origem esperada
-//       if (origin === undefined || origin === `https://${ip_1}`|| origin === `https://${ip_2}`) {
-//         callback(null, true); // Permite a solicitação
-//       } else {
-//         callback(new Error('Acesso bloqueado por política de CORS')); // Bloqueia a solicitação
-//       }
-//     },
-//   };
-// app.use(cors(corsOptions))
+var corsOptions = {
+    origin: function (origin, callback) {
+        // Verificar se a origem é a mesma
+        if (origin && origin === 'https://animefoda.top') {
+            callback(null, true); // Permitir a origem
+        }
+        else {
+            callback('Acesso não permitido'); // Recusar a origem
+        }
+    },
+};
+app.use(cors(corsOptions));
 app.use((0, body_parser_1.json)());
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
 app.use(cookieParser());
@@ -619,27 +620,49 @@ router.post("/user/anime/like", handle_1.checkToken, function (req, res) { retur
     });
 }); });
 router.post("/user/anime/add/:id", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var anime, err_13;
+    var anime, checkIfExists, num_animes, result, err_13;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
+                _a.trys.push([0, 4, , 5]);
                 handle_1.Console.log(req.user);
-                return [4 /*yield*/, req.db.execute("SELECT id,name FROM anime WHERE id = ?", [req.params.id], { prepare: true })
-                    // anime.rows[0].name;
-                ];
+                return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [req.params.id], { prepare: true })];
             case 1:
-                anime = _a.sent();
-                // anime.rows[0].name;
-                Postgre_1.animeClient.query("\n      INSERT INTO users.user_anime_list (\n        user_id,\n        anime_id,\n        status,\n        name,\n        start_date,\n        finish_date,\n        rate,\n        times_watched,\n        priority,\n        rewatched_episodes,\n      ) VALUES(\n        $1,\n        $2,\n        $3,\n        $4,\n        $5,\n        $6,\n        $7,\n        $8,\n        $9,\n        $10,\n      )\n    ", [
-                    req.user._id
-                ]);
-                return [3 /*break*/, 3];
+                anime = (_a.sent()).rows[0];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT COUNT(*) AS num_animes\n        FROM users.user_anime_list\n        WHERE user_id = $1\n        AND anime_id = $2\n    ", [req.user._id, req.params.id])];
             case 2:
+                checkIfExists = _a.sent();
+                num_animes = checkIfExists.rows[0].num_animes;
+                if (num_animes > 0) {
+                    return [2 /*return*/, res.status(403).json({ success: false, message: "Anime ja existe na sua lista" })];
+                }
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n    INSERT INTO users.user_anime_list (\n        user_id,\n        anime_id,\n        status,\n        name,\n        start_date,\n        finish_date,\n        rate,\n        times_watched,\n        priority,\n        rewatched_episodes\n    ) VALUES(\n        $1,\n        $2,\n        $3,\n        $4,\n        $5,\n        $6,\n        $7,\n        $8,\n        $9,\n        $10\n    ) RETURNING TRUE\n\n    ", [
+                        req.user._id,
+                        req.params.id,
+                        Object.keys(types_1.userAnimeState)[0],
+                        anime.name,
+                        new Date(Date.now()),
+                        null,
+                        0.0,
+                        0,
+                        Object.keys(types_1.priorityValue)[0],
+                        0
+                    ])];
+            case 3:
+                result = _a.sent();
+                handle_1.Console.log(result.rows);
+                if (result.rows.length > 0) {
+                    res.status(201).json({ success: true, message: "Anime adicionado a lista de anime" });
+                }
+                else {
+                    return [2 /*return*/, res.status(500).json({ success: false, message: "Falha ao adicionar anime na sua lista" })];
+                }
+                return [3 /*break*/, 5];
+            case 4:
                 err_13 = _a.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_13);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
         }
     });
 }); });

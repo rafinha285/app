@@ -27,6 +27,13 @@ export enum userAnimeState{
     dropped="Desistido",
     plan_to_watch="Pretendo assistir"
 }
+export enum userMangaState{
+    reading="Lendo",
+    completed="Completado",
+    on_hold="Em espera",
+    dropped="Desistido",
+    plan_to_read="Pretendo ler"
+}
 export enum roles{
     adm = "Administrador",
     client = "Cliente",

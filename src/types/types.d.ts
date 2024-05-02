@@ -27,6 +27,13 @@ export declare enum userAnimeState {
     dropped = "Desistido",
     plan_to_watch = "Pretendo assistir"
 }
+export declare enum userMangaState {
+    reading = "Lendo",
+    completed = "Completado",
+    on_hold = "Em espera",
+    dropped = "Desistido",
+    plan_to_read = "Pretendo ler"
+}
 export declare enum roles {
     adm = "Administrador",
     client = "Cliente",

@@ -3,7 +3,7 @@ import {User} from "../../types/userType"
 import "../../css/user.css"
 import { DateToStringLocal } from "../../features/main";
 import RoleDiv from "../../components/User/RoleDiv";
-import { userAnimeState } from "../../types/types";
+import { userAnimeState, userMangaState } from "../../types/types";
 import AnimeListDiv from "../../components/User/AnimeListDiv";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
@@ -75,6 +75,15 @@ const UserPage:React.FC = () =>{
                         <p>Animes {userAnimeState.on_hold}: {user?.totalanimeonhold}</p>
                         <p>Animes {userAnimeState.dropped}: {user?.totalanimedropped}</p>
                         <p>Animes {userAnimeState.plan_to_watch}: {user?.totalanimeplantowatch}</p>
+                    </div>
+                    <p>Manga</p>
+                    <div className="anime-infos">
+                        <p>Mangas: {user?.totalmanga}</p>
+                        <p>Mangas {userMangaState.reading}: {user?.totalmangareading}</p>
+                        <p>Mangas {userMangaState.completed}: {user?.totalmangacompleted}</p>
+                        <p>Mangas {userMangaState.on_hold}: {user?.totalmangaonhold}</p>
+                        <p>Mangas {userMangaState.dropped}: {user?.totalmangadropped}</p>
+                        <p>Mangas {userMangaState.plan_to_read}: {user?.totalmangaplantoread}</p>
                     </div>
                 </div>
             </div>

@@ -18,6 +18,7 @@ import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, op
 import { Log } from '../src/types/logType'
 // import { animeClient } from './assets/Postgre'
 // import { Query, QueryConfig, QueryResult } from 'pg'
+import { types as pgtypes } from 'pg'
 import { client } from './database/pool'
 import { ANIME_PATH, BUILD_HTML, BUILD_PATH, HTTPS_CERT_PATH, HTTPS_KEY_PATH } from './consts'
 import { types } from 'cassandra-driver'
@@ -30,6 +31,7 @@ import * as cookieParser from "cookie-parser"
 import * as jwt from "jsonwebtoken"
 import { reCaptchaSecretKey, secretKey } from './secret/config'
 import { JwtUser } from './types'
+import { priorityValue, userAnimeState } from '../src/types/types'
 
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 // const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
@@ -41,17 +43,17 @@ var app = e()
 // const couch:nano.ServerScope = Nano('http://admin:285@127.0.0.1:5984');
 
 
-// const corsOptions = {
-//     origin: (origin, callback) => {
-//       // Verifica se a origem da solicitação corresponde à origem esperada
-//       if (origin === undefined || origin === `https://${ip_1}`|| origin === `https://${ip_2}`) {
-//         callback(null, true); // Permite a solicitação
-//       } else {
-//         callback(new Error('Acesso bloqueado por política de CORS')); // Bloqueia a solicitação
-//       }
-//     },
-//   };
-// app.use(cors(corsOptions))
+const corsOptions = {
+    origin: (origin, callback) => {
+      // Verificar se a origem é a mesma
+      if (origin && origin === 'https://animefoda.top') {
+        callback(null, true); // Permitir a origem
+      } else {
+        callback('Acesso não permitido'); // Recusar a origem
+      }
+    },
+  };
+app.use(cors(corsOptions))
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser())
@@ -461,10 +463,20 @@ router.post("/user/anime/like",checkToken,async(req,res)=>{
 router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
   try{
     Console.log(req.user)
-    let anime = await req.db.execute(`SELECT id,name FROM anime WHERE id = ?`,[req.params.id],{prepare:true})
+    let anime = (await req.db.execute(`SELECT name FROM anime WHERE id = ?`,[req.params.id],{prepare:true})).rows[0]
     // anime.rows[0].name;
-    animeClient.query(`
-      INSERT INTO users.user_anime_list (
+    let checkIfExists = await animeClient.query(`
+        SELECT COUNT(*) AS num_animes
+        FROM users.user_anime_list
+        WHERE user_id = $1
+        AND anime_id = $2
+    `,[(req.user as JwtUser)._id,req.params.id])
+    const num_animes = checkIfExists.rows[0].num_animes;
+    if(num_animes>0){
+        return res.status(403).json({success:false,message:"Anime ja existe na sua lista"})
+    }
+    let result = await animeClient.query(`
+    INSERT INTO users.user_anime_list (
         user_id,
         anime_id,
         status,
@@ -474,8 +486,8 @@ router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
         rate,
         times_watched,
         priority,
-        rewatched_episodes,
-      ) VALUES(
+        rewatched_episodes
+    ) VALUES(
         $1,
         $2,
         $3,
@@ -485,11 +497,27 @@ router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
         $7,
         $8,
         $9,
-        $10,
-      )
+        $10
+    ) RETURNING TRUE
+
     `,[
-        req.user._id
+        (req.user as JwtUser)._id,
+        req.params.id,
+        Object.keys(userAnimeState)[0],
+        anime.name,
+        new Date(Date.now()),
+        null,
+        0.0,
+        0,
+        Object.keys(priorityValue)[0],
+        0
     ])
+    Console.log(result.rows)
+    if(result.rows.length>0){
+        res.status(201).json({success:true,message:"Anime adicionado a lista de anime"})
+    }else{
+        return res.status(500).json({success:false,message:"Falha ao adicionar anime na sua lista"})
+    }
   }catch(err){
     sendError(res,ErrorType.default,500,err)
   }

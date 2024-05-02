@@ -1,7 +1,7 @@
 /* css for base of the page */
 .info{
     display:flex;
-    padding: var(--padding);
+    padding: var(--user-padding);
     justify-content:space-between;
 }
 .left{

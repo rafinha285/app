@@ -1,6 +1,4 @@
 import { ObjectId } from "mongoose";
-import { AnimeUser } from "./animeModel";
-import { MangaUser } from "./mangaType";
 import { roles } from "./types";
 export interface User {
     _id: ObjectId;
@@ -24,8 +22,6 @@ export interface User {
     totalmangaonhold: number;
     totalmangadropped: number;
     totalmangaplantoread: number;
-    animelist: AnimeUser[] | string;
-    mangalist: MangaUser[];
     totalanimeliked: string[];
     totalmangaliked: string[];
 }

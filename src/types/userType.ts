@@ -29,8 +29,6 @@ export interface User{
     totalmangaonhold:number;
     totalmangadropped:number;
     totalmangaplantoread:number;
-    animelist:AnimeUser[]|string;
-    mangalist:MangaUser[];
     totalanimeliked:string[];
     totalmangaliked:string[]
 }

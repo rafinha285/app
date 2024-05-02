@@ -66,19 +66,23 @@ const AnimePage:React.FC = ()=>{
                         // Aqui você pode fazer algo com os episódios, como atualizar o estado ou armazená-los de alguma forma
                         console.log(`Episódios da temporada ${season.id}:`, data);
                         setEpisodes((prevEpisodes) => [...prevEpisodes, data]);
-                        if(context.isLogged){
-                            await fetch(`/api/user/list/checkanime/${ani.id}`)
-                                .then(response=>response.json())
-                                .then(data=>{
-                                    setIsInList(data.message)
-                                })
-                        }
                     } else {
                         throw new Error(`Erro ao buscar episódios da temporada ${season.id}`);
                     }
                 })
                 
             })
+            if(context.isLogged){
+                let checkList=async()=>{
+                    await fetch(`/api/user/list/checkanime/${ani.id}`)
+                        .then(response=>response.json())
+                        .then(data=>{
+                            setIsInList(data.message)
+                        })
+                }
+                checkList()
+                
+            }
         }
     },[ani,id])
     const [gen,setGen] = useState<string[]>([])

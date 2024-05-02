@@ -8,22 +8,22 @@
     display: flex;
     flex-direction: column;
     background:rgb(103 0 145);
-    padding:var(--padding);
+    padding:var(--user-padding);
     border-radius:10px;
 }
 .right{
     display: flex;
     flex-direction: column;
     background:rgb(103 0 145);
-    padding:var(--padding);
+    padding:var(--user-padding);
     width:50%;
     border-radius:10px;
 }
 /* left side */
 .user-img{
     border:1px solid white;
-    width:var(--width);
-    height:var(--height);
+    width:var(--user-width);
+    height:var(--user-height);
     border-radius:45em;
 }
 .left .user{
@@ -119,6 +119,6 @@
 :root{
     --user-width:15em;
     --anime-width:80%;
-    --height:15em;
-    --padding:10em;
+    --user-height:15em;
+    --user-padding:10em;
 }

@@ -624,13 +624,16 @@ router.post("/user/anime/add/:id", handle_1.checkToken, function (req, res) { re
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
+                handle_1.Console.log(req.user);
                 return [4 /*yield*/, req.db.execute("SELECT id,name FROM anime WHERE id = ?", [req.params.id], { prepare: true })
                     // anime.rows[0].name;
                 ];
             case 1:
                 anime = _a.sent();
                 // anime.rows[0].name;
-                Postgre_1.animeClient.query("\n      INSERT INTO users.user_anime_list (\n        user_id,\n        anime_id,\n        status,\n        name,\n        start_date,\n        finish_date,\n        rate,\n        times_watched,\n        priority,\n        rewatched_episodes,\n      ) VALUES(\n        $1,\n        $2,\n        $3,\n        $4,\n        $5,\n        $6,\n        $7,\n        $8,\n        $9,\n        $10,\n      )\n    ", []);
+                Postgre_1.animeClient.query("\n      INSERT INTO users.user_anime_list (\n        user_id,\n        anime_id,\n        status,\n        name,\n        start_date,\n        finish_date,\n        rate,\n        times_watched,\n        priority,\n        rewatched_episodes,\n      ) VALUES(\n        $1,\n        $2,\n        $3,\n        $4,\n        $5,\n        $6,\n        $7,\n        $8,\n        $9,\n        $10,\n      )\n    ", [
+                    req.user._id
+                ]);
                 return [3 /*break*/, 3];
             case 2:
                 err_13 = _a.sent();
@@ -725,7 +728,7 @@ app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(v
                 console.log(req.user);
                 console.log(req.headers);
                 console.log(req.cookies);
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked, animelist, mangalist\n      FROM users.users\n      WHERE _id = $1;\n    ", [req.user._id])];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked,totalanimeonhold,totalmangaonhold\n      FROM users.users\n      WHERE _id = $1;\n    ", [req.user._id])];
             case 1:
                 result = _a.sent();
                 if (result.rows.length < 1) {

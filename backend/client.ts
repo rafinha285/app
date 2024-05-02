@@ -460,6 +460,7 @@ router.post("/user/anime/like",checkToken,async(req,res)=>{
 })
 router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
   try{
+    Console.log(req.user)
     let anime = await req.db.execute(`SELECT id,name FROM anime WHERE id = ?`,[req.params.id],{prepare:true})
     // anime.rows[0].name;
     animeClient.query(`
@@ -487,7 +488,7 @@ router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
         $10,
       )
     `,[
-        
+        req.user._id
     ])
   }catch(err){
     sendError(res,ErrorType.default,500,err)
@@ -562,7 +563,7 @@ app.get('/g/user',checkToken,async(req,res)=>{
     console.log(req.headers)
     console.log(req.cookies)
     let result = await animeClient.query(`
-      SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked, animelist, mangalist
+      SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked,totalanimeonhold,totalmangaonhold
       FROM users.users
       WHERE _id = $1;
     `,[(req.user as JwtUser)._id])

@@ -32,12 +32,12 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
             setAniProp(props)
 
         }
-
+        handleGetProps()
     },[])
     return(
         <div className="anime">
             <div className="anime-content">
-                <img src={`/api/ani/img?Id=${ani.id}`}></img>
+                <img src={`/api/ani/img?Id=${ani.anime_id}`}></img>
                 <p>{ani.name}</p>
             </div>
             <div className="anime-cotent">

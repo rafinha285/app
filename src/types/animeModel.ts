@@ -92,7 +92,8 @@ export interface Anime{
 	date_added?:Date;
 }
 export interface AnimeUser{
-	id:string
+	id:number
+	anime_id:string
     name:string;
     watched_episodes:number;
 	start_date:Date;

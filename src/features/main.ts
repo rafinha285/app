@@ -92,6 +92,7 @@ declare global{
 }
 
 export function DateToStringLocal(date:Date){
+    console.log(date)
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0'); // O mês é baseado em zero
     const year = date.getFullYear();

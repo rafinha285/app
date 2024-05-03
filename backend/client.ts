@@ -163,7 +163,7 @@ router.get("/ani/agenda",async(req,res)=>{
 // get the props form anime (props = genre,studios,creators,producers) for the user page
 router.get('/ani/:id/props',checkToken,async(req,res)=>{
   try{
-    let response = await req.db.execute(`SELECT producers, creators, genre, studios WHERE id = ?`,[req.params.id],{prepare:true})
+    let response = await req.db.execute(`SELECT producers, creators, genre, studios FROM anime WHERE id = ?`,[req.params.id],{prepare:true})
     res.send(response.rows[0])
   }catch(err){
     sendError(res,ErrorType.default,500,err)

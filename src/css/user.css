@@ -113,6 +113,7 @@
 .prop-list{
     display:inline-flex;
     align-items: center;
+    flex-wrap: wrap;
 }
 .prop-item{
     border:1px white solid;

@@ -212,7 +212,7 @@ router.get('/ani/:id/props', handle_1.checkToken, function (req, res) { return _
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, req.db.execute("SELECT producers, creators, genre, studios")];
+                return [4 /*yield*/, req.db.execute("SELECT producers, creators, genre, studios WHERE id = ?", [req.params.id], { prepare: true })];
             case 1:
                 response = _a.sent();
                 res.send(response.rows[0]);

@@ -21,7 +21,7 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
             const headers:HeadersInit = {
                 "Authorization":`Bearer ${token}`
             }
-            const getAnimeProps = await fetch(`/api/ani/${ani.id}/props`,headers)
+            const getAnimeProps = await fetch(`/api/ani/${ani.anime_id}/props`,headers)
                 .then(async(response)=>await response.json())
             var props:aniProps = {
                 producers:tupleToProducer(getAnimeProps.producers),

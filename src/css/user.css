@@ -101,6 +101,11 @@
 }
 .prop{
     display:inline-flex;
+    margin:20px 0;
+    color: white;
+}
+.prop p{
+    margin: 0;
 }
 .prop-list{
     display:inline-flex;

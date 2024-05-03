@@ -81,6 +81,9 @@
     display:flex;
     margin:10px 0;
 }
+.anime p{
+    margin:0;
+}
 .anime-content{
     width:33%;
     padding:10px;

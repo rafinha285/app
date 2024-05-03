@@ -12,7 +12,7 @@ import { parseAnime } from "../../functions/animeFunctions";
 import { AnimeUser } from "../../types/animeModel";
 
 const UserPage:React.FC = () =>{
-    let animelist:AnimeUser[]
+    let [animelist,setAnimelist] = useState<AnimeUser[]>([])
     const handleGetUser =async()=>{
         const token = sessionStorage.getItem('token');
         // let user:User
@@ -29,6 +29,11 @@ const UserPage:React.FC = () =>{
                 setUser(data)
             })
             .catch((error:any)=>console.error('Error fetching user data:', error))
+            await fetch("/api/user/animelist")
+                .then(response=>response.json())
+                .then((data:AnimeUser[])=>{
+                    setAnimelist(data)
+                })
             // console.log(response)
         }else{
             sessionStorage.removeItem("token")
@@ -91,9 +96,9 @@ const UserPage:React.FC = () =>{
                 <div className="content">
                     <h1>Lista de anime</h1>
                     <div className="list">
-                        {/*.map((v,i)=>(
+                        {animelist?.map((v,i)=>(
                             <AnimeListDiv ani={v} key={i}></AnimeListDiv>
-                        ))*/}
+                        ))}
                     </div>
                 </div>
             </div>

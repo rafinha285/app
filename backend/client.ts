@@ -600,7 +600,18 @@ router.post("/new/user",async(req,res)=>{
     }
   }
 })
-
+router.get("/user/animelist",checkToken,async(req,res)=>{
+  try{
+    let result = await animeClient.query(`
+        SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id
+        FROM users.user_anime_list
+        WHERE user_id = $1;
+  `,[(req.user as JwtUser)._id])
+  res.send(result.rows)
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+})
 app.get('/g/checktoken',checkToken,(req,res)=>{
   res.json({success:true})
 })
@@ -629,6 +640,7 @@ app.get('/g/user',checkToken,async(req,res)=>{
     }
   }
 })
+
 app.use('/api',router)
 
 app.use(e.static(BUILD_PATH,{ maxAge: '1d' }))

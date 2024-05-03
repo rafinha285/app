@@ -207,3 +207,9 @@ h1, h2{
 .addAnimeList:hover{
     background: var(--dark_purple);
 }
+.popup-overlay{
+    background:rgba(9, 0, 14, 0.5)
+}
+.edit-list-content{
+    padding: 5em;
+}

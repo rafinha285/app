@@ -253,8 +253,8 @@ const AnimePage:React.FC = ()=>{
                             )}
                         </Box>
                         <Popup open={isPopupOpen} onClose={()=>setIsPopupOpen(false)}>
-                            <div>
-
+                            <div className="edit-list-content">
+                                
                             </div>
                         </Popup>
                         {isInList?(

@@ -858,7 +858,7 @@ app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(v
 app.use('/api', router);
 app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
 app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, recaptchaToken, salt, response, data, hashedPassword, passwordDatabase, compare, result, token, err_20;
+    var _a, email, password, recaptchaToken, salt, response, data, hashedPassword, passwordDatabase, passwordWithSalt, compare, result, token, err_20;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -884,7 +884,8 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
             case 3:
                 hashedPassword = _b.sent();
                 passwordDatabase = hashedPassword.rows[0].passwordDatabase;
-                compare = bcrypt.compareSync(password, passwordDatabase);
+                passwordWithSalt = "".concat(password, ".").concat(salt);
+                compare = bcrypt.compareSync(passwordWithSalt, passwordDatabase);
                 if (!compare) return [3 /*break*/, 5];
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n          SELECT _id,username FROM users.users WHERE email = $1\n        ", [email])];
             case 4:

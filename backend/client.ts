@@ -688,8 +688,8 @@ app.post('/login/',async(req,res)=>{
         SELECT password FROM users.users WHERE email = $1
       `,[email])
       let {passwordDatabase} = hashedPassword.rows[0] 
-
-      let compare = bcrypt.compareSync(password,passwordDatabase)
+      const passwordWithSalt = `${password}.${salt}`;
+      let compare = bcrypt.compareSync(passwordWithSalt,passwordDatabase)
       // let result = await animeClient.query(`
       //   WITH hashed_password AS (
       //     SELECT users.crypt($1, salt) AS hash

@@ -17,3 +17,7 @@ export declare const parseAnime: (animeString: string) => {
     rewatched_episodes: number;
     last_ep: any;
 };
+export declare function getLabelText(value: number, ratingValue: {
+    [index: string]: string;
+}): string;
+export declare const handleRatingValue: (value: number, context: GlobalContextType, ani: string) => Promise<void>;

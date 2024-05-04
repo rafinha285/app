@@ -212,4 +212,34 @@ h1, h2{
 }
 .edit-list-content{
     padding: 5em;
+    background: var(--light_blue2);
+    border-radius: 5px;
+    width: 50em;
+}
+.close-popup{
+    background: none;
+    border: none;
+}
+.close-popup:hover i{
+    color: #9e9e9e;
+}
+.edit-list-content{
+    display: flex;
+    flex-direction: column;
+    margin: 2em 5em;
+    justify-content: space-around;
+    height: 30em;
+    overflow: auto;
+}
+.edit-list-content .edit-list{
+    display: flex;
+    flex-direction: column;
+    margin: 2em 5em;
+    justify-content: space-around;
+    height: 30em;
+    overflow: auto;
+}
+.edit-list .status select,
+.edit-list .status option{
+    color: black;
 }

@@ -600,6 +600,19 @@ router.post("/new/user",async(req,res)=>{
     }
   }
 })
+router.get("/user/animelist/:id",checkToken,async(req,res)=>{
+  try{
+    let result = await animeClient.query(`
+      SELECT *
+      FROM users.user_anime_list
+      WHERE user_id = $1
+      AND anime_id = $1;
+    `,[(req.user as JwtUser)._id,req.params.id])
+    res.json(result.rows)
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+})
 router.get("/user/animelist",checkToken,async(req,res)=>{
   try{
     let result = await animeClient.query(`

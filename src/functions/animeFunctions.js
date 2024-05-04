@@ -36,7 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseAnime = exports.getEpsFromSeason = exports.tupleToSeason = exports.tupleToProducer = exports.genToArray = void 0;
+exports.handleRatingValue = exports.getLabelText = exports.parseAnime = exports.getEpsFromSeason = exports.tupleToSeason = exports.tupleToProducer = exports.genToArray = void 0;
+var main_1 = require("../features/main");
 // import { languages } from "../types/episodeModel";
 function genToArray(gen) {
     console.log(gen);
@@ -105,3 +106,22 @@ var parseAnime = function (animeString) {
     };
 };
 exports.parseAnime = parseAnime;
+function getLabelText(value, ratingValue) {
+    return "".concat(value, " Star").concat(value !== 1 ? 's' : '', ", ").concat(ratingValue[value]);
+}
+exports.getLabelText = getLabelText;
+var handleRatingValue = function (value, context, ani) { return __awaiter(void 0, void 0, void 0, function () {
+    var response;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                (0, main_1.checkIsLogged)(context.isLogged);
+                return [4 /*yield*/, fetch("/api/user/anime/".concat(ani))
+                        .then(function (response) { return response.json(); })];
+            case 1:
+                response = _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.handleRatingValue = handleRatingValue;

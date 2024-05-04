@@ -45,3 +45,6 @@ export declare enum priorityValue {
     HIGH = "Alta"
 }
 export type StateType = "ONGOING" | "HIATUS" | "COMPLETED" | "CANCELED";
+export declare const ratingLabel: {
+    [index: string]: string;
+};

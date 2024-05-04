@@ -2,6 +2,8 @@ import $ from "jquery"
 import {Anime, AnimeUser, Producer,Season} from "../types/animeModel"
 import AnimePoster from "../assets/AnimePosters"
 import { Episode } from "../types/episodeModel";
+import { checkIsLogged } from "../features/main";
+import { GlobalContextType } from "../GlobalContext";
 // import { languages } from "../types/episodeModel";
 
 
@@ -60,3 +62,12 @@ export const parseAnime = (animeString:string) => {
     };
 };
 
+export function getLabelText(value: number,ratingValue:{[index:string]:string}) {
+    return `${value} Star${value !== 1 ? 's' : ''}, ${ratingValue[value]}`;
+}
+export const handleRatingValue = async(value:number,context:GlobalContextType,ani:string) =>{
+    checkIsLogged(context.isLogged)
+    const response = await fetch(`/api/user/anime/${ani}`)
+        .then(response =>response.json());
+    
+}

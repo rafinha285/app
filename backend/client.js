@@ -763,8 +763,27 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
         }
     });
 }); });
-router.get("/user/animelist", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+router.get("/user/animelist/:id", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var result, err_16;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT *\n      FROM users.user_anime_list\n      WHERE user_id = $1\n      AND anime_id = $1;\n    ", [req.user._id, req.params.id])];
+            case 1:
+                result = _a.sent();
+                res.json(result.rows);
+                return [3 /*break*/, 3];
+            case 2:
+                err_16 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_16);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.get("/user/animelist", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, err_17;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -775,8 +794,8 @@ router.get("/user/animelist", handle_1.checkToken, function (req, res) { return 
                 res.send(result.rows);
                 return [3 /*break*/, 3];
             case 2:
-                err_16 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_16);
+                err_17 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_17);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -786,7 +805,7 @@ app.get('/g/checktoken', handle_1.checkToken, function (req, res) {
     res.json({ success: true });
 });
 app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, err_17;
+    var result, err_18;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -803,13 +822,13 @@ app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(v
                 res.send(result.rows[0]);
                 return [3 /*break*/, 3];
             case 2:
-                err_17 = _a.sent();
-                switch (err_17) {
+                err_18 = _a.sent();
+                switch (err_18) {
                     case handle_1.ErrorType.noToken:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_17);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_18);
                         break;
                 }
                 return [3 /*break*/, 3];
@@ -820,7 +839,7 @@ app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(v
 app.use('/api', router);
 app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
 app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, recaptchaToken, response, data, result, token, err_18;
+    var _a, email, password, recaptchaToken, response, data, result, token, err_19;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -856,8 +875,8 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
             case 4: throw handle_1.ErrorType.invalidReCaptcha;
             case 5: return [3 /*break*/, 7];
             case 6:
-                err_18 = _b.sent();
-                switch (err_18) {
+                err_19 = _b.sent();
+                switch (err_19) {
                     case handle_1.ErrorType.invalidReCaptcha:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidReCaptcha);
                         break;
@@ -871,7 +890,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidPassOrEmail);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_18);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_19);
                         break;
                 }
                 return [3 /*break*/, 7];

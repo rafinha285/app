@@ -32,6 +32,7 @@ import * as jwt from "jsonwebtoken"
 import { reCaptchaSecretKey, secretKey } from './secret/config'
 import { JwtUser } from './types'
 import { priorityValue, userAnimeState } from './assets/handle'
+import * as bcrypt from "bcrypt"
 // import * as siteTypes from "../src/types/types"
 
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
@@ -683,33 +684,42 @@ app.post('/login/',async(req,res)=>{
     })
     const data = await response.json()
     if(data.success){
-      var hashedPassword
-      let result = await animeClient.query(`
-      WITH hashed_password_income AS (
-        SELECT users.crypt($1, salt) AS hash
-        FROM users.users
-        WHERE email = $2
-      ),hashed_password AS (
-        SELECT users.crypt(password,$3) AS hashed
-        FROM users.users
-        WHERE email = $2
-      )
-      SELECT * FROM users.users
-      WHERE email = $2 AND (SELECT hashed FROM hashed_password) = (SELECT hash FROM hashed_password_income)
-      `,[password,email,salt])
-      Console.log(result.rows)
-      if(result.rows.length < 1){
+      var hashedPassword = await animeClient.query(`
+        SELECT password FROM users WHERE email = $1
+      `,[email])
+      let {passwordDatabase} = hashedPassword.rows[0] 
+
+      let compare = await bcrypt.compare(password,passwordDatabase)
+      // let result = await animeClient.query(`
+      //   WITH hashed_password AS (
+      //     SELECT users.crypt($1, salt) AS hash
+      //     FROM users.users
+      //     WHERE email = $2
+      //   )
+      //   SELECT * FROM users.users
+      //   WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
+      // `,[password,email])
+      // Console.log(result.rows)
+      // if(result.rows.length < 1){
+      //   throw ErrorType.invalidPassOrEmail
+      // }
+      if(compare){
+        let result = await animeClient.query(`
+          SELECT _id,username FROM users.users WHERE email = $1
+        `,[email])
+        const token = jwt.sign({
+          _id:result.rows[0]._id,
+          username:result.rows[0].username,
+          UserAgent:req.get("User-Agent"),
+          ip:req.socket.remoteAddress,
+          SecChUa:req.get("Sec-Ch-Ua")
+        },secretKey,{expiresIn:"1d"})
+        res.cookie('token',token,{httpOnly:true,secure:true})
+        res.send({success:true,message:"Login Successful",token})
+      }else{
         throw ErrorType.invalidPassOrEmail
       }
-      const token = jwt.sign({
-        _id:result.rows[0]._id,
-        username:result.rows[0].username,
-        UserAgent:req.get("User-Agent"),
-        ip:req.socket.remoteAddress,
-        SecChUa:req.get("Sec-Ch-Ua")
-      },secretKey,{expiresIn:"1d"})
-      res.cookie('token',token,{httpOnly:true,secure:true})
-      res.send({success:true,message:"Login Successful",token})
+      
     }else{
       throw ErrorType.invalidReCaptcha
     }

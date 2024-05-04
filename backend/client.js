@@ -59,6 +59,7 @@ var cookieParser = require("cookie-parser");
 var jwt = require("jsonwebtoken");
 var config_1 = require("./secret/config");
 var handle_2 = require("./assets/handle");
+var bcrypt = require("bcrypt");
 // import * as siteTypes from "../src/types/types"
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 // const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
@@ -857,11 +858,11 @@ app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(v
 app.use('/api', router);
 app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
 app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, recaptchaToken, salt, response, data, hashedPassword, result, token, err_20;
+    var _a, email, password, recaptchaToken, salt, response, data, hashedPassword, passwordDatabase, compare, result, token, err_20;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 6, , 7]);
+                _b.trys.push([0, 10, , 11]);
                 _a = req.body, email = _a.email, password = _a.password, recaptchaToken = _a.recaptchaToken, salt = _a.salt;
                 if (!recaptchaToken) {
                     throw handle_1.ErrorType.invalidReCaptcha;
@@ -878,14 +879,32 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                 return [4 /*yield*/, response.json()];
             case 2:
                 data = _b.sent();
-                if (!data.success) return [3 /*break*/, 4];
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n      WITH hashed_password_income AS (\n        SELECT users.crypt($1, salt) AS hash\n        FROM users.users\n        WHERE email = $2\n      ),hashed_password AS (\n        SELECT users.crypt(password,$3) AS hashed\n        FROM users.users\n        WHERE email = $2\n      )\n      SELECT * FROM users.users\n      WHERE email = $2 AND (SELECT hashed FROM hashed_password) = (SELECT hash FROM hashed_password_income)\n      ", [password, email, salt])];
+                if (!data.success) return [3 /*break*/, 8];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT password FROM users WHERE email = $1\n      ", [email])];
             case 3:
+                hashedPassword = _b.sent();
+                passwordDatabase = hashedPassword.rows[0].passwordDatabase;
+                return [4 /*yield*/, bcrypt.compare(password, passwordDatabase)
+                    // let result = await animeClient.query(`
+                    //   WITH hashed_password AS (
+                    //     SELECT users.crypt($1, salt) AS hash
+                    //     FROM users.users
+                    //     WHERE email = $2
+                    //   )
+                    //   SELECT * FROM users.users
+                    //   WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
+                    // `,[password,email])
+                    // Console.log(result.rows)
+                    // if(result.rows.length < 1){
+                    //   throw ErrorType.invalidPassOrEmail
+                    // }
+                ];
+            case 4:
+                compare = _b.sent();
+                if (!compare) return [3 /*break*/, 6];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n          SELECT _id,username FROM users.users WHERE email = $1\n        ", [email])];
+            case 5:
                 result = _b.sent();
-                handle_1.Console.log(result.rows);
-                if (result.rows.length < 1) {
-                    throw handle_1.ErrorType.invalidPassOrEmail;
-                }
                 token = jwt.sign({
                     _id: result.rows[0]._id,
                     username: result.rows[0].username,
@@ -895,10 +914,12 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                 }, config_1.secretKey, { expiresIn: "1d" });
                 res.cookie('token', token, { httpOnly: true, secure: true });
                 res.send({ success: true, message: "Login Successful", token: token });
-                return [3 /*break*/, 5];
-            case 4: throw handle_1.ErrorType.invalidReCaptcha;
-            case 5: return [3 /*break*/, 7];
-            case 6:
+                return [3 /*break*/, 7];
+            case 6: throw handle_1.ErrorType.invalidPassOrEmail;
+            case 7: return [3 /*break*/, 9];
+            case 8: throw handle_1.ErrorType.invalidReCaptcha;
+            case 9: return [3 /*break*/, 11];
+            case 10:
                 err_20 = _b.sent();
                 switch (err_20) {
                     case handle_1.ErrorType.invalidReCaptcha:
@@ -917,8 +938,8 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                         (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_20);
                         break;
                 }
-                return [3 /*break*/, 7];
-            case 7: return [2 /*return*/];
+                return [3 /*break*/, 11];
+            case 11: return [2 /*return*/];
         }
     });
 }); });

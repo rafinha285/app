@@ -22,6 +22,10 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
         <div className="edit-list-content">
             <button onClick={onClose} className="close-popup"><i className="fa-solid fa-x"></i></button>
             <div className="edit-list">
+                <div style={{display:"flex"}}>
+                    <button>Update Anime</button>
+                    <button>Delete Anime</button>
+                </div>
                 <p>Editar Anime: {ani.name}</p>
                 <div className="status">
                     <p>Status: </p>

@@ -884,6 +884,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
             case 3:
                 hashedPassword = _b.sent();
                 passwordDatabase = hashedPassword.rows[0].passwordDatabase;
+                handle_1.Console.log(passwordDatabase, password);
                 passwordWithSalt = "".concat(password, ".").concat(salt);
                 compare = bcrypt.compareSync(passwordWithSalt, passwordDatabase);
                 if (!compare) return [3 /*break*/, 5];

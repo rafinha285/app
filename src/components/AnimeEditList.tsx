@@ -14,6 +14,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     const [ratingHover,setRatingHover] = useState(-1)
     const [ratingValue,setRatingValue] = useState<number>()
     const context = useContext(GlobalContext)!
+    console.log(ani)
     const handleUpdateList = async() =>{
         
     }

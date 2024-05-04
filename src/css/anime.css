@@ -198,7 +198,7 @@ h1, h2{
     background: var(--light_blue2);
 }
 .addAnimeList{
-    margin: 0 2em;
+    margin: 3.5em;
     background: none;
     border: 1px white solid;
     border-radius: 5px;

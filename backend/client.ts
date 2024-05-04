@@ -671,7 +671,7 @@ app.use('/api',router)
 app.use(e.static(BUILD_PATH,{ maxAge: '1d' }))
 app.post('/login/',async(req,res)=>{
   try{
-    const {email,password,recaptchaToken,salt} = req.body;
+    const {email,hashedPassword,recaptchaToken,salt} = req.body;
     if(!recaptchaToken){
       throw ErrorType.invalidReCaptcha
     }
@@ -684,12 +684,12 @@ app.post('/login/',async(req,res)=>{
     })
     const data = await response.json()
     if(data.success){
-      var hashedPassword = await animeClient.query(`
+      var hashedPasswordData = await animeClient.query(`
         SELECT password FROM users.users WHERE email = $1
       `,[email])
-      let {passwordDatabase} = hashedPassword.rows[0] 
-      Console.log(passwordDatabase,password,req.body)
-      const passwordWithSalt = `${password}.${salt}`;
+      let {passwordDatabase} = hashedPasswordData.rows[0] 
+      Console.log(passwordDatabase,hashedPassword,req.body)
+      const passwordWithSalt = `${hashedPassword}.${salt}`;
       let compare = bcrypt.compareSync(passwordWithSalt,passwordDatabase)
       // let result = await animeClient.query(`
       //   WITH hashed_password AS (

@@ -858,12 +858,12 @@ app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(v
 app.use('/api', router);
 app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
 app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, recaptchaToken, salt, response, data, hashedPassword, passwordDatabase, passwordWithSalt, compare, result, token, err_20;
+    var _a, email, hashedPassword, recaptchaToken, salt, response, data, hashedPasswordData, passwordDatabase, passwordWithSalt, compare, result, token, err_20;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 9, , 10]);
-                _a = req.body, email = _a.email, password = _a.password, recaptchaToken = _a.recaptchaToken, salt = _a.salt;
+                _a = req.body, email = _a.email, hashedPassword = _a.hashedPassword, recaptchaToken = _a.recaptchaToken, salt = _a.salt;
                 if (!recaptchaToken) {
                     throw handle_1.ErrorType.invalidReCaptcha;
                 }
@@ -882,10 +882,10 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                 if (!data.success) return [3 /*break*/, 7];
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT password FROM users.users WHERE email = $1\n      ", [email])];
             case 3:
-                hashedPassword = _b.sent();
-                passwordDatabase = hashedPassword.rows[0].passwordDatabase;
-                handle_1.Console.log(passwordDatabase, password, req.body);
-                passwordWithSalt = "".concat(password, ".").concat(salt);
+                hashedPasswordData = _b.sent();
+                passwordDatabase = hashedPasswordData.rows[0].passwordDatabase;
+                handle_1.Console.log(passwordDatabase, hashedPassword, req.body);
+                passwordWithSalt = "".concat(hashedPassword, ".").concat(salt);
                 compare = bcrypt.compareSync(passwordWithSalt, passwordDatabase);
                 if (!compare) return [3 /*break*/, 5];
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n          SELECT _id,username FROM users.users WHERE email = $1\n        ", [email])];

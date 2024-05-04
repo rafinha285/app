@@ -862,7 +862,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 10, , 11]);
+                _b.trys.push([0, 9, , 10]);
                 _a = req.body, email = _a.email, password = _a.password, recaptchaToken = _a.recaptchaToken, salt = _a.salt;
                 if (!recaptchaToken) {
                     throw handle_1.ErrorType.invalidReCaptcha;
@@ -879,31 +879,15 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                 return [4 /*yield*/, response.json()];
             case 2:
                 data = _b.sent();
-                if (!data.success) return [3 /*break*/, 8];
+                if (!data.success) return [3 /*break*/, 7];
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT password FROM users.users WHERE email = $1\n      ", [email])];
             case 3:
                 hashedPassword = _b.sent();
                 passwordDatabase = hashedPassword.rows[0].passwordDatabase;
-                return [4 /*yield*/, bcrypt.compare(password, passwordDatabase)
-                    // let result = await animeClient.query(`
-                    //   WITH hashed_password AS (
-                    //     SELECT users.crypt($1, salt) AS hash
-                    //     FROM users.users
-                    //     WHERE email = $2
-                    //   )
-                    //   SELECT * FROM users.users
-                    //   WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
-                    // `,[password,email])
-                    // Console.log(result.rows)
-                    // if(result.rows.length < 1){
-                    //   throw ErrorType.invalidPassOrEmail
-                    // }
-                ];
-            case 4:
-                compare = _b.sent();
-                if (!compare) return [3 /*break*/, 6];
+                compare = bcrypt.compareSync(password, passwordDatabase);
+                if (!compare) return [3 /*break*/, 5];
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n          SELECT _id,username FROM users.users WHERE email = $1\n        ", [email])];
-            case 5:
+            case 4:
                 result = _b.sent();
                 token = jwt.sign({
                     _id: result.rows[0]._id,
@@ -914,12 +898,12 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                 }, config_1.secretKey, { expiresIn: "1d" });
                 res.cookie('token', token, { httpOnly: true, secure: true });
                 res.send({ success: true, message: "Login Successful", token: token });
-                return [3 /*break*/, 7];
-            case 6: throw handle_1.ErrorType.invalidPassOrEmail;
-            case 7: return [3 /*break*/, 9];
-            case 8: throw handle_1.ErrorType.invalidReCaptcha;
-            case 9: return [3 /*break*/, 11];
-            case 10:
+                return [3 /*break*/, 6];
+            case 5: throw handle_1.ErrorType.invalidPassOrEmail;
+            case 6: return [3 /*break*/, 8];
+            case 7: throw handle_1.ErrorType.invalidReCaptcha;
+            case 8: return [3 /*break*/, 10];
+            case 9:
                 err_20 = _b.sent();
                 switch (err_20) {
                     case handle_1.ErrorType.invalidReCaptcha:
@@ -938,8 +922,8 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                         (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_20);
                         break;
                 }
-                return [3 /*break*/, 11];
-            case 11: return [2 /*return*/];
+                return [3 /*break*/, 10];
+            case 10: return [2 /*return*/];
         }
     });
 }); });

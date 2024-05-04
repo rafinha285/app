@@ -602,6 +602,7 @@ router.post("/new/user",async(req,res)=>{
 })
 router.get("/user/animelist/:id",checkToken,async(req,res)=>{
   try{
+    Console.log((req.user as JwtUser)._id,req.params.id)
     let result = await animeClient.query(`
       SELECT *
       FROM users.user_anime_list

@@ -769,6 +769,7 @@ router.get("/user/animelist/:id", handle_1.checkToken, function (req, res) { ret
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
+                handle_1.Console.log(req.user._id, req.params.id);
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT *\n      FROM users.user_anime_list\n      WHERE user_id = $1\n      AND anime_id = $1;\n    ", [req.user._id, req.params.id])];
             case 1:
                 result = _a.sent();

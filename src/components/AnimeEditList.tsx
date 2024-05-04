@@ -16,15 +16,18 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     const context = useContext(GlobalContext)!
     console.log(ani)
     const handleUpdateList = async() =>{
-        
+        await fetch('/api/')
+    }
+    const handleDeleteList = async()=>{
+
     }
     return(
         <div className="edit-list-content">
             <button onClick={onClose} className="close-popup"><i className="fa-solid fa-x"></i></button>
             <div className="edit-list">
                 <div style={{display:"flex"}}>
-                    <button>Update Anime</button>
-                    <button>Delete Anime</button>
+                    <button className="update-button" onClick={handleUpdateList}>Update Anime</button>
+                    <button className="update-button" onClick={handleDeleteList}>Delete Anime</button>
                 </div>
                 <p>Editar Anime: {ani.name}</p>
                 <div className="status">

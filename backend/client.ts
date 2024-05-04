@@ -626,6 +626,16 @@ router.get("/user/animelist",checkToken,async(req,res)=>{
     sendError(res,ErrorType.default,500,err)
   }
 })
+router.patch('/user/animelist/update',checkToken,async(req,res)=>{
+  try{
+    await animeClient.query(`
+      UPDATE users.user_anime_list
+        SET
+    `)
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+})
 app.get('/g/checktoken',checkToken,(req,res)=>{
   res.json({success:true})
 })
@@ -660,7 +670,7 @@ app.use('/api',router)
 app.use(e.static(BUILD_PATH,{ maxAge: '1d' }))
 app.post('/login/',async(req,res)=>{
   try{
-    const {email,password,recaptchaToken} = req.body;
+    const {email,password,recaptchaToken,salt} = req.body;
     if(!recaptchaToken){
       throw ErrorType.invalidReCaptcha
     }
@@ -673,20 +683,31 @@ app.post('/login/',async(req,res)=>{
     })
     const data = await response.json()
     if(data.success){
+      var hashedPassword
       let result = await animeClient.query(`
-        WITH hashed_password AS (
-          SELECT users.crypt($1, salt) AS hash
-          FROM users.users
-          WHERE email = $2
-        )
-        SELECT * FROM users.users
-        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
-      `,[password,email])
+      WITH hashed_password_income AS (
+        SELECT users.crypt($1, salt) AS hash
+        FROM users.users
+        WHERE email = $2
+      ),hashed_password AS (
+        SELECT users.crypt(password,$3) AS hashed
+        FROM users.users
+        WHERE email = $2
+      )
+      SELECT * FROM users.users
+      WHERE email = $2 AND (SELECT hashed FROM hashed_password) = (SELECT hash FROM hashed_password_income)
+      `,[password,email,salt])
       Console.log(result.rows)
       if(result.rows.length < 1){
         throw ErrorType.invalidPassOrEmail
       }
-      const token = jwt.sign({_id:result.rows[0]._id,username:result.rows[0].username},secretKey,{expiresIn:"1d"})
+      const token = jwt.sign({
+        _id:result.rows[0]._id,
+        username:result.rows[0].username,
+        UserAgent:req.get("User-Agent"),
+        ip:req.socket.remoteAddress,
+        SecChUa:req.get("Sec-Ch-Ua")
+      },secretKey,{expiresIn:"1d"})
       res.cookie('token',token,{httpOnly:true,secure:true})
       res.send({success:true,message:"Login Successful",token})
     }else{

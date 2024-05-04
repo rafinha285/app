@@ -33,11 +33,12 @@ const AnimeStar:React.FC<props> = ({ratingHover,setRatingHover,context,ani,ratin
                 size="large"
             />
             <Box sx={{ml:2,color:"white"}}>
+                <p>
                 {ratingValue!== null&&(
                     <>
                         {ratingLabel[ratingHover! !== -1?ratingHover!:ratingValue!]}
                     </>
-                )}
+                )}</p>
             </Box>
             {/* {ratingValue!== null&&(
                 <Box sx={{ml:2,color:"white"}}>{ratingLabel[ratingHover! !== -1?ratingHover!:ratingValue!]}</Box>

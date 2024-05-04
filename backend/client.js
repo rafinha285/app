@@ -801,11 +801,29 @@ router.get("/user/animelist", handle_1.checkToken, function (req, res) { return 
         }
     });
 }); });
+router.patch('/user/animelist/update', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var err_18;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n      UPDATE users.user_anime_list\n        SET\n    ")];
+            case 1:
+                _a.sent();
+                return [3 /*break*/, 3];
+            case 2:
+                err_18 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_18);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 app.get('/g/checktoken', handle_1.checkToken, function (req, res) {
     res.json({ success: true });
 });
 app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, err_18;
+    var result, err_19;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -822,13 +840,13 @@ app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(v
                 res.send(result.rows[0]);
                 return [3 /*break*/, 3];
             case 2:
-                err_18 = _a.sent();
-                switch (err_18) {
+                err_19 = _a.sent();
+                switch (err_19) {
                     case handle_1.ErrorType.noToken:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_18);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_19);
                         break;
                 }
                 return [3 /*break*/, 3];
@@ -839,12 +857,12 @@ app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(v
 app.use('/api', router);
 app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
 app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, recaptchaToken, response, data, result, token, err_19;
+    var _a, email, password, recaptchaToken, salt, response, data, hashedPassword, result, token, err_20;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 6, , 7]);
-                _a = req.body, email = _a.email, password = _a.password, recaptchaToken = _a.recaptchaToken;
+                _a = req.body, email = _a.email, password = _a.password, recaptchaToken = _a.recaptchaToken, salt = _a.salt;
                 if (!recaptchaToken) {
                     throw handle_1.ErrorType.invalidReCaptcha;
                 }
@@ -861,22 +879,28 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
             case 2:
                 data = _b.sent();
                 if (!data.success) return [3 /*break*/, 4];
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n        WITH hashed_password AS (\n          SELECT users.crypt($1, salt) AS hash\n          FROM users.users\n          WHERE email = $2\n        )\n        SELECT * FROM users.users\n        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n      ", [password, email])];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n      WITH hashed_password_income AS (\n        SELECT users.crypt($1, salt) AS hash\n        FROM users.users\n        WHERE email = $2\n      ),hashed_password AS (\n        SELECT users.crypt(password,$3) AS hashed\n        FROM users.users\n        WHERE email = $2\n      )\n      SELECT * FROM users.users\n      WHERE email = $2 AND (SELECT hashed FROM hashed_password) = (SELECT hash FROM hashed_password_income)\n      ", [password, email, salt])];
             case 3:
                 result = _b.sent();
                 handle_1.Console.log(result.rows);
                 if (result.rows.length < 1) {
                     throw handle_1.ErrorType.invalidPassOrEmail;
                 }
-                token = jwt.sign({ _id: result.rows[0]._id, username: result.rows[0].username }, config_1.secretKey, { expiresIn: "1d" });
+                token = jwt.sign({
+                    _id: result.rows[0]._id,
+                    username: result.rows[0].username,
+                    UserAgent: req.get("User-Agent"),
+                    ip: req.socket.remoteAddress,
+                    SecChUa: req.get("Sec-Ch-Ua")
+                }, config_1.secretKey, { expiresIn: "1d" });
                 res.cookie('token', token, { httpOnly: true, secure: true });
                 res.send({ success: true, message: "Login Successful", token: token });
                 return [3 /*break*/, 5];
             case 4: throw handle_1.ErrorType.invalidReCaptcha;
             case 5: return [3 /*break*/, 7];
             case 6:
-                err_19 = _b.sent();
-                switch (err_19) {
+                err_20 = _b.sent();
+                switch (err_20) {
                     case handle_1.ErrorType.invalidReCaptcha:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidReCaptcha);
                         break;
@@ -890,7 +914,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidPassOrEmail);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_19);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_20);
                         break;
                 }
                 return [3 /*break*/, 7];

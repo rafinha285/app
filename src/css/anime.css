@@ -245,3 +245,12 @@ h1, h2{
 .edit-list .status option{
     color: black;
 }
+.edit-list .update-button{
+    width: 48%;
+    background: none;
+    border: 1px solid white;
+    border-radius: 5px;
+}
+.update-button:hover{
+    background: var(--dark_purple);
+}

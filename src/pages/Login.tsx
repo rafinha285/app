@@ -8,6 +8,7 @@ import Cookies from "universal-cookie"
 // import { CookieSetOption } from "react-cookie";
 // import { useCookies } from "react-cookie";
 import axios from 'axios';
+import { genSalt, hashSync } from "bcryptjs";
 
 const cookiess = new Cookies();
 const Login:React.FC = ()=>{
@@ -22,11 +23,14 @@ const Login:React.FC = ()=>{
         console.log(value)
     };
     const handleLogin = async()=>{
-        if(recaptchaValue){
+        if(recaptchaValue&&password&&email){
             try{
+                const salt = await genSalt(10)
+                const hashedPassword = hashSync(password,salt)
                 const response = await axios.post("/login",{
                     email,
-                    password,
+                    hashedPassword,
+                    salt,
                     recaptchaToken:recaptchaValue
                 })
                 

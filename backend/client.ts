@@ -602,12 +602,12 @@ router.post("/new/user",async(req,res)=>{
 })
 router.get("/user/animelist/:id",checkToken,async(req,res)=>{
   try{
-    Console.log((req.user as JwtUser)._id,req.params.id)
+    // Console.log((req.user as JwtUser)._id,req.params.id)
     let result = await animeClient.query(`
       SELECT *
       FROM users.user_anime_list
       WHERE user_id = $1
-      AND anime_id = $1;
+      AND anime_id = $2;
     `,[(req.user as JwtUser)._id,req.params.id])
     res.json(result.rows)
   }catch(err){

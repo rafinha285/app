@@ -685,7 +685,7 @@ app.post('/login/',async(req,res)=>{
     const data = await response.json()
     if(data.success){
       var hashedPassword = await animeClient.query(`
-        SELECT password FROM users WHERE email = $1
+        SELECT password FROM users.users WHERE email = $1
       `,[email])
       let {passwordDatabase} = hashedPassword.rows[0] 
 

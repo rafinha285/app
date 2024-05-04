@@ -880,7 +880,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
             case 2:
                 data = _b.sent();
                 if (!data.success) return [3 /*break*/, 8];
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT password FROM users WHERE email = $1\n      ", [email])];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT password FROM users.users WHERE email = $1\n      ", [email])];
             case 3:
                 hashedPassword = _b.sent();
                 passwordDatabase = hashedPassword.rows[0].passwordDatabase;

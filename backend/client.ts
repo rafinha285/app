@@ -609,7 +609,7 @@ router.get("/user/animelist/:id",checkToken,async(req,res)=>{
       WHERE user_id = $1
       AND anime_id = $2;
     `,[(req.user as JwtUser)._id,req.params.id])
-    res.json(result.rows)
+    res.json(result.rows[0])
   }catch(err){
     sendError(res,ErrorType.default,500,err)
   }

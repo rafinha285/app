@@ -772,7 +772,7 @@ router.get("/user/animelist/:id", handle_1.checkToken, function (req, res) { ret
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT *\n      FROM users.user_anime_list\n      WHERE user_id = $1\n      AND anime_id = $2;\n    ", [req.user._id, req.params.id])];
             case 1:
                 result = _a.sent();
-                res.json(result.rows);
+                res.json(result.rows[0]);
                 return [3 /*break*/, 3];
             case 2:
                 err_16 = _a.sent();

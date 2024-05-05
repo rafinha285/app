@@ -65,9 +65,15 @@ export const parseAnime = (animeString:string) => {
 export function getLabelText(value: number,ratingValue:{[index:string]:string}) {
     return `${value} Star${value !== 1 ? 's' : ''}, ${ratingValue[value]}`;
 }
-export const handleRatingValue = async(value:number,context:GlobalContextType,ani:string) =>{
+export const handleRatingValue = async(value:number,context:GlobalContextType,ani:string,setRatingValue:React.Dispatch<React.SetStateAction<number>>) =>{
     checkIsLogged(context.isLogged)
-    const response = await fetch(`/api/user/anime/${ani}`)
-        .then(response =>response.json());
-    
+    const response = await fetch(`/api/user/anime/${ani}/editrating`,{method:"POST",body:({ratingValue:value}).toString()})
+        .then(response =>response.json())
+        .then(data=>{
+            if(data.success){
+                setRatingValue(value)
+            }else{
+                console.error(data.message)
+            }
+        })
 }

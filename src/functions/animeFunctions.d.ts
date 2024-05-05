@@ -20,4 +20,4 @@ export declare const parseAnime: (animeString: string) => {
 export declare function getLabelText(value: number, ratingValue: {
     [index: string]: string;
 }): string;
-export declare const handleRatingValue: (value: number, context: GlobalContextType, ani: string) => Promise<void>;
+export declare const handleRatingValue: (value: number, context: GlobalContextType, ani: string, setRatingValue: React.Dispatch<React.SetStateAction<number>>) => Promise<void>;

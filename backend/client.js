@@ -661,7 +661,7 @@ router.post("/user/anime/add/:id", handle_1.checkToken, function (req, res) { re
                 if (num_animes > 0) {
                     return [2 /*return*/, res.status(403).json({ success: false, message: "Anime ja existe na sua lista" })];
                 }
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n    INSERT INTO users.user_anime_list (\n        user_id,\n        anime_id,\n        status,\n        name,\n        start_date,\n        finish_date,\n        rate,\n        times_watched,\n        priority,\n        rewatched_episodes\n    ) VALUES(\n        $1,\n        $2,\n        $3,\n        $4,\n        $5,\n        $6,\n        $7,\n        $8,\n        $9,\n        $10\n    ) RETURNING TRUE\n\n    ", [
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n    INSERT INTO users.user_anime_list (\n        user_id,\n        anime_id,\n        status,\n        name,\n        start_date,\n        finish_date,\n        rate,\n        times_watched,\n        priority,\n        rewatched_episodes,\n        watched_episodes\n    ) VALUES(\n        $1,\n        $2,\n        $3,\n        $4,\n        $5,\n        $6,\n        $7,\n        $8,\n        $9,\n        $10,\n        $11\n    ) RETURNING TRUE\n\n    ", [
                         req.user._id,
                         req.params.id,
                         Object.keys(handle_1.userAnimeState)[0],
@@ -671,6 +671,7 @@ router.post("/user/anime/add/:id", handle_1.checkToken, function (req, res) { re
                         0.0,
                         0,
                         Object.keys(handle_1.priorityValue)[0],
+                        0,
                         0
                     ])];
             case 3:

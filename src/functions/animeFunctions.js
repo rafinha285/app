@@ -110,14 +110,22 @@ function getLabelText(value, ratingValue) {
     return "".concat(value, " Star").concat(value !== 1 ? 's' : '', ", ").concat(ratingValue[value]);
 }
 exports.getLabelText = getLabelText;
-var handleRatingValue = function (value, context, ani) { return __awaiter(void 0, void 0, void 0, function () {
+var handleRatingValue = function (value, context, ani, setRatingValue) { return __awaiter(void 0, void 0, void 0, function () {
     var response;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 (0, main_1.checkIsLogged)(context.isLogged);
-                return [4 /*yield*/, fetch("/api/user/anime/".concat(ani))
-                        .then(function (response) { return response.json(); })];
+                return [4 /*yield*/, fetch("/api/user/anime/".concat(ani, "/editrating"), { method: "POST", body: ({ ratingValue: value }).toString() })
+                        .then(function (response) { return response.json(); })
+                        .then(function (data) {
+                        if (data.success) {
+                            setRatingValue(value);
+                        }
+                        else {
+                            console.error(data.message);
+                        }
+                    })];
             case 1:
                 response = _a.sent();
                 return [2 /*return*/];

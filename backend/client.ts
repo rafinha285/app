@@ -506,7 +506,8 @@ router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
         rate,
         times_watched,
         priority,
-        rewatched_episodes
+        rewatched_episodes,
+        watched_episodes
     ) VALUES(
         $1,
         $2,
@@ -517,7 +518,8 @@ router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
         $7,
         $8,
         $9,
-        $10
+        $10,
+        $11
     ) RETURNING TRUE
 
     `,[
@@ -530,6 +532,7 @@ router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
         0.0,
         0,
         Object.keys(priorityValue)[0],
+        0,
         0
     ])
     Console.log(result.rows)

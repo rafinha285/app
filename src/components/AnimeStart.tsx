@@ -9,11 +9,13 @@ import StarIcon from '@mui/icons-material/Star';
 interface props{
     ratingHover:number
     setRatingHover:React.Dispatch<React.SetStateAction<number>>
+    setRatingValue:React.Dispatch<React.SetStateAction<number>>
     context:GlobalContextType
-    ani:Anime|AnimeUser;
+    // ani:Anime|AnimeUser;
+    aniId:string
     ratingValue:number|null|undefined
 }
-const AnimeStar:React.FC<props> = ({ratingHover,setRatingHover,context,ani,ratingValue})=>{
+const AnimeStar:React.FC<props> = ({ratingHover,setRatingHover,setRatingValue,context,ratingValue,aniId})=>{
     return(
         <div style={{padding:"auto",border:"1px white solid",borderRadius:'5px'}} className="not">
             <Rating
@@ -24,7 +26,7 @@ const AnimeStar:React.FC<props> = ({ratingHover,setRatingHover,context,ani,ratin
                 precision={0.5}
                 getLabelText={(v)=>getLabelText(v,ratingLabel)}
                 onChange={(event,newValue)=>{
-                    handleRatingValue(newValue!,context,(ani!.id as string))
+                    handleRatingValue(newValue!,context,aniId,setRatingValue)
                 }}
                 onChangeActive={(event, newHover) => {
                     setRatingHover(newHover);

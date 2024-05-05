@@ -260,9 +260,9 @@ export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) 
                     let verify = (decodedToken.UserAgent === req.get("User-Agent")!&&
                     decodedToken.ip === req.socket.remoteAddress&&
                     decodedToken.SecChUa === req.get("Sec-Ch-Ua")!)
-                    Console.log(verify)
-                    Console.log(decodedToken.UserAgent,decodedToken.ip,decodedToken.SecChUa)
-                    Console.log(req.get("User-Agent")!,req.socket.remoteAddress,req.get("Sec-Ch-Ua")!)
+                    console.log(verify)
+                    console.log(decodedToken.UserAgent,decodedToken.ip,decodedToken.SecChUa)
+                    console.log(req.get("User-Agent")!,req.socket.remoteAddress,req.get("Sec-Ch-Ua")!)
                     if(verify){
                         req.user = decodedToken;
                     }else{

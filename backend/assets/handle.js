@@ -365,9 +365,9 @@ function checkToken(req, res, next) {
                     var verify = (decodedToken.UserAgent === req.get("User-Agent") &&
                         decodedToken.ip === req.socket.remoteAddress &&
                         decodedToken.SecChUa === req.get("Sec-Ch-Ua"));
-                    exports.Console.log(verify);
-                    exports.Console.log(decodedToken.UserAgent, decodedToken.ip, decodedToken.SecChUa);
-                    exports.Console.log(req.get("User-Agent"), req.socket.remoteAddress, req.get("Sec-Ch-Ua"));
+                    console.log(verify);
+                    console.log(decodedToken.UserAgent, decodedToken.ip, decodedToken.SecChUa);
+                    console.log(req.get("User-Agent"), req.socket.remoteAddress, req.get("Sec-Ch-Ua"));
                     if (verify) {
                         req.user = decodedToken;
                     }

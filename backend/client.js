@@ -886,7 +886,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                 passwordDatabase = hashedPasswordData.rows[0].passwordDatabase;
                 handle_1.Console.log(passwordDatabase, hashedPassword, req.body);
                 passwordWithSalt = "".concat(hashedPassword, ".").concat(salt);
-                compare = bcrypt.compareSync(passwordWithSalt, passwordDatabase);
+                compare = bcrypt.compareSync(hashedPassword, passwordDatabase);
                 if (!compare) return [3 /*break*/, 5];
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n          SELECT _id,username FROM users.users WHERE email = $1\n        ", [email])];
             case 4:

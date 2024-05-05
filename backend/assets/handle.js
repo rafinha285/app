@@ -380,7 +380,14 @@ function checkToken(req, res, next) {
                 }
             }
             catch (error) {
-                req.user = usuario;
+                switch (error) {
+                    case ErrorType.isLoggedElsewhere:
+                        return sendError(res, ErrorType.isLoggedElsewhere);
+                    default:
+                        return sendError(res, ErrorType.default, 500, error);
+                }
+                // return
+                // req.user = usuario;
             }
         }
         else {

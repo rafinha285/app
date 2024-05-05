@@ -90,7 +90,10 @@ declare global{
         daysOfWeek(language?:languages):string[];
     }
 }
-
+export function DateToStringInput(dat:Date):string{
+    let date:Date = new Date(dat)
+    return date.toISOString().split("T")[0]
+}
 export function DateToStringLocal(dat:Date){
     let date:Date = new Date(dat)
     const day = String(date.getDate()).padStart(2, '0');

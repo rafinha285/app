@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkIsLogged = exports.DateToStringLocal = exports.prevEpUrl = exports.nextEpUrl = exports.handleNextEp = exports.getMonthName = exports.trim = exports.getEpTime = void 0;
+exports.checkIsLogged = exports.DateToStringLocal = exports.DateToStringInput = exports.prevEpUrl = exports.nextEpUrl = exports.handleNextEp = exports.getMonthName = exports.trim = exports.getEpTime = void 0;
 var episodeModel_1 = require("../types/episodeModel");
 function getEpTime(ee) {
     var e = Math.round(ee);
@@ -88,6 +88,11 @@ function prevEpUrl(eps, ani, ep) {
     }
 }
 exports.prevEpUrl = prevEpUrl;
+function DateToStringInput(dat) {
+    var date = new Date(dat);
+    return date.toISOString().split("T")[0];
+}
+exports.DateToStringInput = DateToStringInput;
 function DateToStringLocal(dat) {
     var date = new Date(dat);
     var day = String(date.getDate()).padStart(2, '0');

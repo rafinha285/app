@@ -11,5 +11,6 @@ declare global {
         daysOfWeek(language?: languages): string[];
     }
 }
+export declare function DateToStringInput(dat: Date): string;
 export declare function DateToStringLocal(dat: Date): string;
 export declare function checkIsLogged(isLogged: boolean): void;

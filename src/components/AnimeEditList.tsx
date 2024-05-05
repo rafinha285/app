@@ -5,7 +5,7 @@ import { Box, Rating } from "@mui/material"
 import { getLabelText } from "../functions/animeFunctions"
 import AnimeStar from "./AnimeStart"
 import GlobalContext from "../GlobalContext"
-import { DateToStringLocal } from "../features/main"
+import { DateToStringInput, DateToStringLocal } from "../features/main"
 
 interface props{
     onClose:()=>void
@@ -112,10 +112,10 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                     <div>
                         <p>Data de começo: </p>
                         {/* startDate?DateToStringLocal(startDate):"" */}
-                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.startDate)} value={startDate?new Date(startDate).toISOString():""}/>
+                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.startDate)} value={startDate?DateToStringInput(startDate):""}/>
                         <p>Data de fim: </p>
                         {/* endDate?DateToStringLocal(endDate):"" */}
-                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.endDate)} value={endDate?new Date(endDate).toISOString():""}></input>
+                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.endDate)} value={endDate?DateToStringInput(endDate):""}></input>
                     </div>
                 </div>
                 <p>Vezes asistido</p>

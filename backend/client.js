@@ -790,11 +790,10 @@ router.get("/user/animelist", handle_1.checkToken, function (req, res) { return 
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 verify = (req.user.UserAgent === req.get("User-Agent") &&
-                    req.user.ip === req.socket.remoteAddress &&
-                    req.user.SecChUa === req.get("Sec-Ch-Ua"));
+                    req.user.ip === req.socket.remoteAddress);
                 console.log(!verify);
-                console.log(req.user.UserAgent, req.user.ip, req.user.SecChUa);
-                console.log(req.get("User-Agent"), req.socket.remoteAddress, req.get("Sec-Ch-Ua"));
+                console.log(req.user.UserAgent, req.user.ip);
+                console.log(req.get("User-Agent"), req.socket.remoteAddress);
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id\n        FROM users.user_anime_list\n        WHERE user_id = $1;\n  ", [req.user._id])];
             case 1:
                 result = _a.sent();
@@ -898,7 +897,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                     username: result.rows[0].username,
                     UserAgent: req.get("User-Agent"),
                     ip: req.socket.remoteAddress,
-                    SecChUa: req.get("Sec-Ch-Ua")
+                    // SecChUa:req.get("Sec-Ch-Ua")!
                 };
                 token = jwt.sign(tokenInfo, config_1.secretKey, { expiresIn: "1d" });
                 res.cookie('token', token, { httpOnly: true, secure: true });

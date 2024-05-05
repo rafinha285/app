@@ -363,11 +363,10 @@ function checkToken(req, res, next) {
                 var decodedToken = jwt.verify(usuario, segredo);
                 if (decodedToken) {
                     var verify = (decodedToken.UserAgent === req.get("User-Agent") &&
-                        decodedToken.ip === req.socket.remoteAddress &&
-                        decodedToken.SecChUa === req.get("Sec-Ch-Ua"));
+                        decodedToken.ip === req.socket.remoteAddress);
                     console.log(verify);
-                    console.log(decodedToken.UserAgent, decodedToken.ip, decodedToken.SecChUa);
-                    console.log(req.get("User-Agent"), req.socket.remoteAddress, req.get("Sec-Ch-Ua"));
+                    console.log(decodedToken.UserAgent, decodedToken.ip);
+                    console.log(req.get("User-Agent"), req.socket.remoteAddress);
                     if (!verify) {
                         throw ErrorType.isLoggedElsewhere;
                     }

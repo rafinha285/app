@@ -618,11 +618,10 @@ router.get("/user/animelist/:id",checkToken,async(req,res)=>{
 router.get("/user/animelist",checkToken,async(req,res)=>{
   try{
     let verify = ((req.user as JwtUser).UserAgent === req.get("User-Agent")!&&
-                    (req.user as JwtUser).ip === req.socket.remoteAddress&&
-                    (req.user as JwtUser).SecChUa === req.get("Sec-Ch-Ua")!)
+                    (req.user as JwtUser).ip === req.socket.remoteAddress)
                     console.log(!verify)
-                    console.log((req.user as JwtUser).UserAgent,(req.user as JwtUser).ip,(req.user as JwtUser).SecChUa)
-                    console.log(req.get("User-Agent")!,req.socket.remoteAddress,req.get("Sec-Ch-Ua")!)
+                    console.log((req.user as JwtUser).UserAgent,(req.user as JwtUser).ip)
+                    console.log(req.get("User-Agent")!,req.socket.remoteAddress)
     let result = await animeClient.query(`
         SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id
         FROM users.user_anime_list
@@ -708,7 +707,7 @@ app.post('/login/',async(req,res)=>{
         username:result.rows[0].username,
         UserAgent:req.get("User-Agent")!,
         ip:req.socket.remoteAddress!,
-        SecChUa:req.get("Sec-Ch-Ua")!
+        // SecChUa:req.get("Sec-Ch-Ua")!
       }
       const token = jwt.sign(tokenInfo,secretKey,{expiresIn:"1d"})
       res.cookie('token',token,{httpOnly:true,secure:true})

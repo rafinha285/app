@@ -6,6 +6,7 @@ import { getLabelText } from "../functions/animeFunctions"
 import AnimeStar from "./AnimeStart"
 import GlobalContext from "../GlobalContext"
 import { DateToStringInput, DateToStringLocal } from "../features/main"
+import axios from "axios"
 
 interface props{
     onClose:()=>void
@@ -59,6 +60,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     }
     const handleUpdateList = async() =>{
         let body = {
+            id:ani.id,
             watched_episodes:watchedEpisodes,
             start_date:startDate,
             finish_date:endDate,
@@ -68,16 +70,10 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
             times_watched:timesWatched,
             rewatched_episodes:rewatchedEpisodes
         }
-        await fetch('/api/user/animelist/update',{method:"PATCH",body:body.toString()})
-        .then(response=>response.json())
-        .then((data)=>{
-            if(data.success){
-                alert("Atualizado com sucesso")
-                onClose()
-            }else{
-                alert(data.message)
-                onClose()
-            }
+        await axios.patch('/api/user/animelist/update',body)
+        .then((res)=>{
+            alert(res.data.message)
+            onClose()
         })
     }
     const handleDeleteList = async()=>{

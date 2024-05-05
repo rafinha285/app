@@ -632,10 +632,32 @@ router.get("/user/animelist",checkToken,async(req,res)=>{
 })
 router.patch('/user/animelist/update',checkToken,async(req,res)=>{
   try{
+    const {id,watched_episodes,start_date,finish_date,rate,state,priority,times_watched,rewatched_episodes} = req.body
+
     await animeClient.query(`
       UPDATE users.user_anime_list
-        SET
-    `)
+        SET 
+          watched_episodes =$1
+          start_date = $2,
+          finish_date = $3,
+          rate = $4,
+          state = $5,
+          priority = $6,
+          times_watched = $7,
+          rewatched_episodes = $8
+        WHERE id = $9
+    `,[
+      watched_episodes,
+      start_date,
+      finish_date,
+      rate,
+      state,
+      priority,
+      times_watched,
+      rewatched_episodes,
+      id
+    ])
+    res.json({success:true,message:"Atualizado com sucesso"})
   }catch(err){
     sendError(res,ErrorType.default,500,err)
   }

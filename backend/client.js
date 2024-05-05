@@ -804,17 +804,29 @@ router.get("/user/animelist", handle_1.checkToken, function (req, res) { return 
     });
 }); });
 router.patch('/user/animelist/update', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var err_18;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var _a, id, watched_episodes, start_date, finish_date, rate, state, priority, times_watched, rewatched_episodes, err_18;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n      UPDATE users.user_anime_list\n        SET\n    ")];
+                _b.trys.push([0, 2, , 3]);
+                _a = req.body, id = _a.id, watched_episodes = _a.watched_episodes, start_date = _a.start_date, finish_date = _a.finish_date, rate = _a.rate, state = _a.state, priority = _a.priority, times_watched = _a.times_watched, rewatched_episodes = _a.rewatched_episodes;
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n      UPDATE users.user_anime_list\n        SET \n          watched_episodes =$1\n          start_date = $2,\n          finish_date = $3,\n          rate = $4,\n          state = $5,\n          priority = $6,\n          times_watched = $7,\n          rewatched_episodes = $8\n        WHERE id = $9\n    ", [
+                        watched_episodes,
+                        start_date,
+                        finish_date,
+                        rate,
+                        state,
+                        priority,
+                        times_watched,
+                        rewatched_episodes,
+                        id
+                    ])];
             case 1:
-                _a.sent();
+                _b.sent();
+                res.json({ success: true, message: "Atualizado com sucesso" });
                 return [3 /*break*/, 3];
             case 2:
-                err_18 = _a.sent();
+                err_18 = _b.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_18);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];

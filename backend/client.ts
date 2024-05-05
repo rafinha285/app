@@ -684,7 +684,6 @@ app.post('/login/',async(req,res)=>{
     })
     const data = await response.json()
     if(data.success){
-      
       let result = await animeClient.query(`
         WITH hashed_password AS (
           SELECT users.crypt($1, salt) AS hash

@@ -257,7 +257,12 @@ export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) 
                 // Decodifica o token JWT para obter as informações do usuário
                 const decodedToken = jwt.verify(usuario, segredo) as JwtUser | null;
                 if (decodedToken) {
-                    let verify = (decodedToken.UserAgent === req.get("User-Agent")!&&decodedToken.ip === req.socket.remoteAddress&&decodedToken.SecChUa === req.get("Sec-Ch-Ua")!)
+                    let verify = (decodedToken.UserAgent === req.get("User-Agent")!&&
+                    decodedToken.ip === req.socket.remoteAddress&&
+                    decodedToken.SecChUa === req.get("Sec-Ch-Ua")!)
+                    Console.log(verify)
+                    Console.log(decodedToken.UserAgent,decodedToken.ip,decodedToken.SecChUa)
+                    Console.log(req.get("User-Agent")!,req.socket.remoteAddress,req.get("Sec-Ch-Ua")!)
                     if(verify){
                         req.user = decodedToken;
                     }else{

@@ -15,7 +15,7 @@ interface props{
 }
 const AnimeStar:React.FC<props> = ({ratingHover,setRatingHover,context,ani,ratingValue})=>{
     return(
-        <Box sx={{p:"auto",border:"1px white solid",borderRadius:'5px'}} className="not">
+        <div style={{padding:"auto",border:"1px white solid",borderRadius:'5px'}} className="not">
             <Rating
                 className="rating"
                 name="rating"
@@ -32,18 +32,18 @@ const AnimeStar:React.FC<props> = ({ratingHover,setRatingHover,context,ani,ratin
                 emptyIcon={<StarIcon style={{ opacity: 0.55 }} fontSize="inherit" />}
                 size="large"
             />
-            <Box sx={{ml:2,color:"white"}}>
+            <div style={{marginLeft:2,color:"white"}}>
                 <p>
                 {ratingValue!== null&&(
                     <>
                         {ratingLabel[ratingHover! !== -1?ratingHover!:ratingValue!]}
                     </>
                 )}</p>
-            </Box>
+            </div>
             {/* {ratingValue!== null&&(
                 <Box sx={{ml:2,color:"white"}}>{ratingLabel[ratingHover! !== -1?ratingHover!:ratingValue!]}</Box>
             )} */}
-        </Box>
+        </div>
     )
 }
 export default AnimeStar

@@ -112,10 +112,10 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                     <div>
                         <p>Data de começo: </p>
                         {/* startDate?DateToStringLocal(startDate):"" */}
-                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.startDate)} value={startDate?startDate.toISOString():""}/>
+                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.startDate)} value={startDate?new Date(startDate).toISOString():""}/>
                         <p>Data de fim: </p>
                         {/* endDate?DateToStringLocal(endDate):"" */}
-                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.endDate)} value={endDate?endDate.toISOString():""}></input>
+                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.endDate)} value={endDate?new Date(endDate).toISOString():""}></input>
                     </div>
                 </div>
                 <p>Vezes asistido</p>

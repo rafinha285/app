@@ -90,10 +90,10 @@ function prevEpUrl(eps, ani, ep) {
 exports.prevEpUrl = prevEpUrl;
 function DateToStringLocal(dat) {
     var date = new Date(dat);
-    console.log(date);
     var day = String(date.getDate()).padStart(2, '0');
     var month = String(date.getMonth() + 1).padStart(2, '0'); // O mês é baseado em zero
     var year = date.getFullYear();
+    console.log("".concat(day, "/").concat(month, "/").concat(year));
     // Retorna a data formatada como uma string
     return "".concat(day, "/").concat(month, "/").concat(year);
 }

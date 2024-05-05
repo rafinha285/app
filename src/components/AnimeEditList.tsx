@@ -111,9 +111,11 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                 <div>
                     <div>
                         <p>Data de começo: </p>
-                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.startDate)} value={startDate?DateToStringLocal(startDate):""}/>
+                        {/* startDate?DateToStringLocal(startDate):"" */}
+                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.startDate)} value={startDate?.toISOString()}/>
                         <p>Data de fim: </p>
-                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.endDate)} value={endDate?DateToStringLocal(endDate):""}></input>
+                        {/* endDate?DateToStringLocal(endDate):"" */}
+                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.endDate)} value={endDate?.toISOString()}></input>
                     </div>
                 </div>
                 <p>Vezes asistido</p>
@@ -124,7 +126,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                         <input value={rewatchedEpisodes} onChange={(e)=>handleChange(e,changeEnum.rewatchedEpisodes)}/>
                     </>
                 ):(<></>)}
-                <div>
+                <div className="status">
                     <p>Prioridade: </p>
                     <select value={priority} onChange={(e)=>handleChange(e,changeEnum.priority)}>
                         {Object.keys(priorityValue).map((v,i)=>(

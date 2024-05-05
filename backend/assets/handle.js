@@ -381,6 +381,7 @@ function checkToken(req, res, next) {
             catch (error) {
                 switch (error) {
                     case ErrorType.isLoggedElsewhere:
+                        console.log("aaaa erro logged elsewhere");
                         return sendError(res, ErrorType.isLoggedElsewhere);
                     default:
                         return sendError(res, ErrorType.default, 500, error);

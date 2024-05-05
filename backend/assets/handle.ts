@@ -273,6 +273,7 @@ export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) 
             } catch (error) {
                 switch(error){
                     case ErrorType.isLoggedElsewhere:
+                        console.log("aaaa erro logged elsewhere")
                         return sendError(res,ErrorType.isLoggedElsewhere)
                     default:
                         return sendError(res,ErrorType.default,500,error)

@@ -65,6 +65,7 @@ export enum ErrorType {
     invalidToken,
     invalidReCaptcha,
     invalidPassOrEmail,
+    invalidEmail,
     isLoggedElsewhere,
     unauthorized,
     default
@@ -101,6 +102,9 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
     function invalidPassOrEmail(res:e.Response){
         res.status(401).json({success:false,message:"Falha ao logar, senha ou email incorretos"})
     }
+    function invalidEmail(res:e.Response){
+        res.status(400).json({success:false,message:"Email Invalid"})
+    }
     function isLoggedElsewhere(res:e.Response){
         res.status(409).json({success:false,message:"Usuário já está logado em outro lugar."})
     }
@@ -128,6 +132,9 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
             break
         case ErrorType.invalidPassOrEmail:
             invalidPassOrEmail(res)
+            break
+        case ErrorType.invalidEmail:
+            invalidEmail(res)
             break
         case ErrorType.isLoggedElsewhere:
             isLoggedElsewhere(res)
@@ -294,8 +301,6 @@ export async function addUser(user:{
     const totalMangaPlanToRead:number = 0;
     const totalMangaOnHold = 0
     const totalMangaLiked:number = 0
-    const animeList: AnimeUser[] = [];
-    const mangaList: MangaUser[] = [];
     const result = await animeClient.query(
         `INSERT INTO users.users 
         (
@@ -316,8 +321,6 @@ export async function addUser(user:{
             totalmangacompleted, 
             totalmangadropped, 
             totalmangaplantoread, 
-            animeList, 
-            mangaList, 
             totalAnimeLiked, 
             totalMangaLiked,
             salt,
@@ -347,16 +350,12 @@ export async function addUser(user:{
             $19, 
             $20, 
             $21,
-            $22,
-            $23,
-            $24
+            $22
         ) RETURNING *`,
         [
             _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
             totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
-            totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
-            animeList || [],  // Se animeList for nulo, usa um array vazio
-            mangaList || [],  // Se mangaList for nulo, usa um array vazio
+            totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,  
             totalAnimeLiked || [],  // Se totalAnimeLiked for nulo, usa um array vazio
             totalMangaLiked || [],   // Se totalMangaLiked for nulo, usa um array vazio,
             salt,

@@ -13,7 +13,7 @@ import {User} from "../src/types/userType"
 // import * as nano from "nano"
 // const Nano = require('nano');
 // import { Anime } from '../../app_admin/src/types/animeModel'
-import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, openConnectionAnime, endConnectionAnime, checkToken} from "./assets/handle"
+import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, openConnectionAnime, endConnectionAnime, checkToken,priorityValue, userAnimeState} from "./assets/handle"
 // import { AnimeDocument, producers } from '../src/types/animeModel'
 import { Log } from '../src/types/logType'
 // import { animeClient } from './assets/Postgre'
@@ -31,8 +31,8 @@ import * as cookieParser from "cookie-parser"
 import * as jwt from "jsonwebtoken"
 import { reCaptchaSecretKey, secretKey } from './secret/config'
 import { JwtUser } from './types'
-import { priorityValue, userAnimeState } from './assets/handle'
-import * as bcrypt from "bcrypt"
+// import {  } from './assets/handle'
+// import * as bcrypt from "bcrypt"
 // import * as siteTypes from "../src/types/types"
 
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');

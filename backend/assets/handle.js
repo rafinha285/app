@@ -103,9 +103,10 @@ var ErrorType;
     ErrorType[ErrorType["invalidToken"] = 4] = "invalidToken";
     ErrorType[ErrorType["invalidReCaptcha"] = 5] = "invalidReCaptcha";
     ErrorType[ErrorType["invalidPassOrEmail"] = 6] = "invalidPassOrEmail";
-    ErrorType[ErrorType["isLoggedElsewhere"] = 7] = "isLoggedElsewhere";
-    ErrorType[ErrorType["unauthorized"] = 8] = "unauthorized";
-    ErrorType[ErrorType["default"] = 9] = "default";
+    ErrorType[ErrorType["invalidEmail"] = 7] = "invalidEmail";
+    ErrorType[ErrorType["isLoggedElsewhere"] = 8] = "isLoggedElsewhere";
+    ErrorType[ErrorType["unauthorized"] = 9] = "unauthorized";
+    ErrorType[ErrorType["default"] = 10] = "default";
 })(ErrorType || (exports.ErrorType = ErrorType = {}));
 function sendError(res, errorType, status, menssage) {
     if (errorType === void 0) { errorType = ErrorType.default; }
@@ -142,6 +143,9 @@ function sendError(res, errorType, status, menssage) {
     function invalidPassOrEmail(res) {
         res.status(401).json({ success: false, message: "Falha ao logar, senha ou email incorretos" });
     }
+    function invalidEmail(res) {
+        res.status(400).json({ success: false, message: "Email Invalid" });
+    }
     function isLoggedElsewhere(res) {
         res.status(409).json({ success: false, message: "Usuário já está logado em outro lugar." });
     }
@@ -169,6 +173,9 @@ function sendError(res, errorType, status, menssage) {
             break;
         case ErrorType.invalidPassOrEmail:
             invalidPassOrEmail(res);
+            break;
+        case ErrorType.invalidEmail:
+            invalidEmail(res);
             break;
         case ErrorType.isLoggedElsewhere:
             isLoggedElsewhere(res);
@@ -380,7 +387,7 @@ function checkToken(req, res, next) {
 exports.checkToken = checkToken;
 function addUser(user) {
     return __awaiter(this, void 0, void 0, function () {
-        var name, surname, username, birthDate, email, password, salt, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeOnHold, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaOnHold, totalMangaLiked, animeList, mangaList, result;
+        var name, surname, username, birthDate, email, password, salt, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeOnHold, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaOnHold, totalMangaLiked, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -401,14 +408,10 @@ function addUser(user) {
                     totalMangaPlanToRead = 0;
                     totalMangaOnHold = 0;
                     totalMangaLiked = 0;
-                    animeList = [];
-                    mangaList = [];
-                    return [4 /*yield*/, Postgre_1.animeClient.query("INSERT INTO users.users \n        (\n            _id, \n            username, \n            email, \n            password, \n            name, \n            surname, \n            birthdate, \n            totalanime, \n            totalanimewatching, \n            totalanimecompleted, \n            totalanimedropped, \n            totalanimeplantowatch, \n            totalmanga, \n            totalmangareading,\n            totalmangacompleted, \n            totalmangadropped, \n            totalmangaplantoread, \n            animeList, \n            mangaList, \n            totalAnimeLiked, \n            totalMangaLiked,\n            salt,\n            totalanimeonhold,\n            totalmangaonhold\n        ) \n        VALUES \n        (\n            $1, \n            $2, \n            $3, \n            $4, \n            $5, \n            $6, \n            $7, \n            $8, \n            $9, \n            $10, \n            $11, \n            $12, \n            $13, \n            $14, \n            $15, \n            $16, \n            $17, \n            $18, \n            $19, \n            $20, \n            $21,\n            $22,\n            $23,\n            $24\n        ) RETURNING *", [
+                    return [4 /*yield*/, Postgre_1.animeClient.query("INSERT INTO users.users \n        (\n            _id, \n            username, \n            email, \n            password, \n            name, \n            surname, \n            birthdate, \n            totalanime, \n            totalanimewatching, \n            totalanimecompleted, \n            totalanimedropped, \n            totalanimeplantowatch, \n            totalmanga, \n            totalmangareading,\n            totalmangacompleted, \n            totalmangadropped, \n            totalmangaplantoread, \n            totalAnimeLiked, \n            totalMangaLiked,\n            salt,\n            totalanimeonhold,\n            totalmangaonhold\n        ) \n        VALUES \n        (\n            $1, \n            $2, \n            $3, \n            $4, \n            $5, \n            $6, \n            $7, \n            $8, \n            $9, \n            $10, \n            $11, \n            $12, \n            $13, \n            $14, \n            $15, \n            $16, \n            $17, \n            $18, \n            $19, \n            $20, \n            $21,\n            $22\n        ) RETURNING *", [
                             _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
                             totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
                             totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
-                            animeList || [],
-                            mangaList || [],
                             totalAnimeLiked || [],
                             totalMangaLiked || [],
                             salt,

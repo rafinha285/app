@@ -32,9 +32,10 @@ export declare enum ErrorType {
     invalidToken = 4,
     invalidReCaptcha = 5,
     invalidPassOrEmail = 6,
-    isLoggedElsewhere = 7,
-    unauthorized = 8,
-    default = 9
+    invalidEmail = 7,
+    isLoggedElsewhere = 8,
+    unauthorized = 9,
+    default = 10
 }
 export declare function sendError(res: express.Response, errorType?: ErrorType, status?: number, menssage?: string): void;
 export declare function sendFile(): {

@@ -58,7 +58,8 @@ var Postgre_1 = require("./database/Postgre");
 var cookieParser = require("cookie-parser");
 var jwt = require("jsonwebtoken");
 var config_1 = require("./secret/config");
-var handle_2 = require("./assets/handle");
+// import {  } from './assets/handle'
+// import * as bcrypt from "bcrypt"
 // import * as siteTypes from "../src/types/types"
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 // const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
@@ -663,13 +664,13 @@ router.post("/user/anime/add/:id", handle_1.checkToken, function (req, res) { re
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n    INSERT INTO users.user_anime_list (\n        user_id,\n        anime_id,\n        status,\n        name,\n        start_date,\n        finish_date,\n        rate,\n        times_watched,\n        priority,\n        rewatched_episodes\n    ) VALUES(\n        $1,\n        $2,\n        $3,\n        $4,\n        $5,\n        $6,\n        $7,\n        $8,\n        $9,\n        $10\n    ) RETURNING TRUE\n\n    ", [
                         req.user._id,
                         req.params.id,
-                        Object.keys(handle_2.userAnimeState)[0],
+                        Object.keys(handle_1.userAnimeState)[0],
                         anime.name,
                         new Date(Date.now()),
                         null,
                         0.0,
                         0,
-                        Object.keys(handle_2.priorityValue)[0],
+                        Object.keys(handle_1.priorityValue)[0],
                         0
                     ])];
             case 3:

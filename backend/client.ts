@@ -617,11 +617,6 @@ router.get("/user/animelist/:id",checkToken,async(req,res)=>{
 })
 router.get("/user/animelist",checkToken,async(req,res)=>{
   try{
-    let verify = ((req.user as JwtUser).UserAgent === req.get("User-Agent")!&&
-                    (req.user as JwtUser).ip === req.socket.remoteAddress)
-                    console.log(!verify)
-                    console.log((req.user as JwtUser).UserAgent,(req.user as JwtUser).ip)
-                    console.log(req.get("User-Agent")!,req.socket.remoteAddress)
     let result = await animeClient.query(`
         SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id
         FROM users.user_anime_list

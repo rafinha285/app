@@ -784,16 +784,11 @@ router.get("/user/animelist/:id", handle_1.checkToken, function (req, res) { ret
     });
 }); });
 router.get("/user/animelist", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var verify, result, err_17;
+    var result, err_17;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                verify = (req.user.UserAgent === req.get("User-Agent") &&
-                    req.user.ip === req.socket.remoteAddress);
-                console.log(!verify);
-                console.log(req.user.UserAgent, req.user.ip);
-                console.log(req.get("User-Agent"), req.socket.remoteAddress);
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id\n        FROM users.user_anime_list\n        WHERE user_id = $1;\n  ", [req.user._id])];
             case 1:
                 result = _a.sent();

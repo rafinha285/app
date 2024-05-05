@@ -620,7 +620,7 @@ router.get("/user/animelist",checkToken,async(req,res)=>{
     let verify = ((req.user as JwtUser).UserAgent === req.get("User-Agent")!&&
                     (req.user as JwtUser).ip === req.socket.remoteAddress&&
                     (req.user as JwtUser).SecChUa === req.get("Sec-Ch-Ua")!)
-                    console.log(verify)
+                    console.log(!verify)
                     console.log((req.user as JwtUser).UserAgent,(req.user as JwtUser).ip,(req.user as JwtUser).SecChUa)
                     console.log(req.get("User-Agent")!,req.socket.remoteAddress,req.get("Sec-Ch-Ua")!)
     let result = await animeClient.query(`

@@ -263,10 +263,10 @@ export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) 
                     console.log(verify)
                     console.log(decodedToken.UserAgent,decodedToken.ip,decodedToken.SecChUa)
                     console.log(req.get("User-Agent")!,req.socket.remoteAddress,req.get("Sec-Ch-Ua")!)
-                    if(verify){
-                        req.user = decodedToken;
-                    }else{
+                    if(!verify){
                         throw ErrorType.isLoggedElsewhere
+                    }else{
+                        req.user = decodedToken;
                     }
                 } else {
                     req.user = usuario;

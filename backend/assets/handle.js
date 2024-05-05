@@ -362,12 +362,10 @@ function checkToken(req, res, next) {
                 // Decodifica o token JWT para obter as informações do usuário
                 var decodedToken = jwt.verify(usuario, segredo);
                 if (decodedToken) {
-                    var verify = (decodedToken.UserAgent === req.get("User-Agent") &&
-                        decodedToken.ip === req.socket.remoteAddress);
-                    console.log(verify);
                     console.log(decodedToken.UserAgent, decodedToken.ip);
                     console.log(req.get("User-Agent"), req.socket.remoteAddress);
-                    if (!verify) {
+                    if (!(decodedToken.UserAgent === req.get("User-Agent") &&
+                        decodedToken.ip === req.socket.remoteAddress)) {
                         throw ErrorType.isLoggedElsewhere;
                     }
                     else {

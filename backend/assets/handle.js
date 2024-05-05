@@ -103,7 +103,7 @@ var ErrorType;
     ErrorType[ErrorType["invalidToken"] = 4] = "invalidToken";
     ErrorType[ErrorType["invalidReCaptcha"] = 5] = "invalidReCaptcha";
     ErrorType[ErrorType["invalidPassOrEmail"] = 6] = "invalidPassOrEmail";
-    ErrorType[ErrorType["invalidEmail"] = 7] = "invalidEmail";
+    ErrorType[ErrorType["isLoggedElsewhere"] = 7] = "isLoggedElsewhere";
     ErrorType[ErrorType["unauthorized"] = 8] = "unauthorized";
     ErrorType[ErrorType["default"] = 9] = "default";
 })(ErrorType || (exports.ErrorType = ErrorType = {}));
@@ -142,8 +142,8 @@ function sendError(res, errorType, status, menssage) {
     function invalidPassOrEmail(res) {
         res.status(401).json({ success: false, message: "Falha ao logar, senha ou email incorretos" });
     }
-    function invalidEmail(res) {
-        res.status(401).json({ success: false, message: "O email n é valido" });
+    function isLoggedElsewhere(res) {
+        res.status(409).json({ success: false, message: "Usuário já está logado em outro lugar." });
     }
     function unauthorized(res) {
         res.status(401).json({ success: false, message: "Essa operação não é autorizada" });
@@ -169,6 +169,9 @@ function sendError(res, errorType, status, menssage) {
             break;
         case ErrorType.invalidPassOrEmail:
             invalidPassOrEmail(res);
+            break;
+        case ErrorType.isLoggedElsewhere:
+            isLoggedElsewhere(res);
             break;
         case ErrorType.unauthorized:
             unauthorized(res);
@@ -352,7 +355,13 @@ function checkToken(req, res, next) {
                 // Decodifica o token JWT para obter as informações do usuário
                 var decodedToken = jwt.verify(usuario, segredo);
                 if (decodedToken) {
-                    req.user = decodedToken;
+                    var verify = (decodedToken.UserAgent === req.get("User-Agent") && decodedToken.ip === req.socket.remoteAddress && decodedToken.SecChUa === req.get("Sec-Ch-Ua"));
+                    if (verify) {
+                        req.user = decodedToken;
+                    }
+                    else {
+                        throw ErrorType.isLoggedElsewhere;
+                    }
                 }
                 else {
                     req.user = usuario;

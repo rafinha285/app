@@ -65,7 +65,7 @@ export enum ErrorType {
     invalidToken,
     invalidReCaptcha,
     invalidPassOrEmail,
-    invalidEmail,
+    isLoggedElsewhere,
     unauthorized,
     default
 }
@@ -101,8 +101,8 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
     function invalidPassOrEmail(res:e.Response){
         res.status(401).json({success:false,message:"Falha ao logar, senha ou email incorretos"})
     }
-    function invalidEmail(res:e.Response){
-        res.status(401).json({success:false,message:"O email n é valido"})
+    function isLoggedElsewhere(res:e.Response){
+        res.status(409).json({success:false,message:"Usuário já está logado em outro lugar."})
     }
     function unauthorized(res:e.Response){
         res.status(401).json({success:false,message:"Essa operação não é autorizada"})
@@ -128,6 +128,9 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
             break
         case ErrorType.invalidPassOrEmail:
             invalidPassOrEmail(res)
+            break
+        case ErrorType.isLoggedElsewhere:
+            isLoggedElsewhere(res)
             break
         case ErrorType.unauthorized:
             unauthorized(res)
@@ -247,7 +250,12 @@ export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) 
                 // Decodifica o token JWT para obter as informações do usuário
                 const decodedToken = jwt.verify(usuario, segredo) as JwtUser | null;
                 if (decodedToken) {
-                    req.user = decodedToken;
+                    let verify = (decodedToken.UserAgent === req.get("User-Agent")!&&decodedToken.ip === req.socket.remoteAddress&&decodedToken.SecChUa === req.get("Sec-Ch-Ua")!)
+                    if(verify){
+                        req.user = decodedToken;
+                    }else{
+                        throw ErrorType.isLoggedElsewhere
+                    }
                 } else {
                     req.user = usuario;
                 }

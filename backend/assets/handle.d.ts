@@ -32,7 +32,7 @@ export declare enum ErrorType {
     invalidToken = 4,
     invalidReCaptcha = 5,
     invalidPassOrEmail = 6,
-    invalidEmail = 7,
+    isLoggedElsewhere = 7,
     unauthorized = 8,
     default = 9
 }

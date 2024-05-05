@@ -13,6 +13,9 @@ declare global{
 interface JwtUser {
     _id: string;
     username: string;
+    UserAgent:string;
+    ip:string;
+    SecChUa:string
 }
 interface TokenRequest extends e.Request{
     user?:JwtUser | jwt.JwtPayload |string

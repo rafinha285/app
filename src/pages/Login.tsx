@@ -8,7 +8,7 @@ import Cookies from "universal-cookie"
 // import { CookieSetOption } from "react-cookie";
 // import { useCookies } from "react-cookie";
 import axios from 'axios';
-import { genSalt, hashSync } from "bcryptjs";
+// import { genSalt, hashSync } from "bcryptjs";
 
 const cookiess = new Cookies();
 const Login:React.FC = ()=>{
@@ -25,18 +25,19 @@ const Login:React.FC = ()=>{
     const handleLogin = async()=>{
         if(recaptchaValue&&password&&email){
             try{
-                const salt = await genSalt(10)
-                const hashedPassword = hashSync(password,salt)
+                // const salt = await genSalt(10)
+                // const hashedPassword = hashSync(password,salt)
                 const response = await axios.post("/login",{
                     email,
-                    hashedPassword,
-                    salt,
+                    password,
+                    // hashedPassword,
+                    // salt,
                     recaptchaToken:recaptchaValue
                 })
                 
                 const token = response.data.token
                 // console.log(token,response,response.headers["set-cookie"])
-                // cookies.set("token",token,{path:"/",maxAge:86400, secure: true})
+                cookiess.set("token",token,{path:"/",maxAge:86400, secure: true})
                 // setCookie('token',token,{path:"/",maxAge:84600})
                 sessionStorage.setItem("token",token)
                 window.location.href = "/"

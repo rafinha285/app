@@ -671,7 +671,7 @@ app.use('/api',router)
 app.use(e.static(BUILD_PATH,{ maxAge: '1d' }))
 app.post('/login/',async(req,res)=>{
   try{
-    const {email,hashedPassword,recaptchaToken,salt} = req.body;
+    const {email,password,recaptchaToken} = req.body;
     if(!recaptchaToken){
       throw ErrorType.invalidReCaptcha
     }
@@ -684,48 +684,33 @@ app.post('/login/',async(req,res)=>{
     })
     const data = await response.json()
     if(data.success){
-      var hashedPasswordData = await animeClient.query(`
-        SELECT password FROM users.users WHERE email = $1
-      `,[email])
-      let {passwordDatabase} = hashedPasswordData.rows[0] 
-      Console.log(passwordDatabase,hashedPassword,req.body)
-      const passwordWithSalt = `${hashedPassword}.${salt}`;
-      let compare = bcrypt.compareSync(hashedPassword,passwordDatabase)
-      // let result = await animeClient.query(`
-      //   WITH hashed_password AS (
-      //     SELECT users.crypt($1, salt) AS hash
-      //     FROM users.users
-      //     WHERE email = $2
-      //   )
-      //   SELECT * FROM users.users
-      //   WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
-      // `,[password,email])
-      // Console.log(result.rows)
-      // if(result.rows.length < 1){
-      //   throw ErrorType.invalidPassOrEmail
-      // }
-      if(compare){
-        let result = await animeClient.query(`
-          SELECT _id,username FROM users.users WHERE email = $1
-        `,[email])
-        const token = jwt.sign({
-          _id:result.rows[0]._id,
-          username:result.rows[0].username,
-          UserAgent:req.get("User-Agent"),
-          ip:req.socket.remoteAddress,
-          SecChUa:req.get("Sec-Ch-Ua")
-        },secretKey,{expiresIn:"1d"})
-        res.cookie('token',token,{httpOnly:true,secure:true})
-        res.send({success:true,message:"Login Successful",token})
-      }else{
+      
+      let result = await animeClient.query(`
+        WITH hashed_password AS (
+          SELECT users.crypt($1, salt) AS hash
+          FROM users.users
+          WHERE email = $2
+        )
+        SELECT * FROM users.users
+        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
+      `,[password,email])
+      Console.log(result.rows)
+      if(result.rows.length < 1){
         throw ErrorType.invalidPassOrEmail
       }
-      
+      let tokenInfo:JwtUser ={
+        _id:result.rows[0]._id,
+        username:result.rows[0].username,
+        UserAgent:req.get("User-Agent")!,
+        ip:req.socket.remoteAddress!,
+        SecChUa:req.get("Sec-Ch-Ua")!
+      }
+      const token = jwt.sign(tokenInfo,secretKey,{expiresIn:"1d"})
+      res.cookie('token',token,{httpOnly:true,secure:true})
+      res.send({success:true,message:"Login Successful",token})
     }else{
       throw ErrorType.invalidReCaptcha
     }
-    
-
   }catch(err){
     switch(err){
       case ErrorType.invalidReCaptcha:

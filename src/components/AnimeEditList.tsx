@@ -117,9 +117,10 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                     ))}</select>
                 </div>
                 <div>
-                    {season?.map((v)=>(
-                        <AnimeListSeason season={v} onChange={handleSeasonChange} key={v.index}/>
-                    ))}
+                    {season?.map((v)=>{
+                        let currentSea = seasonsList?.find(vS=>vS.season_id===v.id)!
+                        return <AnimeListSeason season={v} onChange={handleSeasonChange} key={v.index} seasonList={currentSea}/>
+                    })}
                     {/* <p>Episódios Assistidos: </p>
                     <input type="number" value={watchedEpisodes} onChange={(e)=>handleChange(e,changeEnum.watchedEpisodes)}></input> */}
                 </div>

@@ -447,9 +447,9 @@ router.post("/new/user",async(req:e.Request,res:e.Response)=>{
   }
 })
 router.post('/log',async(req:e.Request,res:e.Response)=>{
-  var logData:Log = req.body
+  let logData:Log = req.body
   try{
-    var log = await addLog(logData)
+    let log = await addLog(logData)
     res.json(log)
   }catch(err){
     sendError(res,ErrorType.default,500,err)
@@ -604,6 +604,18 @@ router.post("/new/user",async(req,res)=>{
     }
   }
 })
+router.get("/user/animelist/season/:aniid",checkToken,async(req,res)=>{
+  try{
+    let result = await animeClient.query(`
+      SELECT * FROM users.user_anime_seasons
+      WHERE user_id = $1
+      AND anime_id = $2
+    `,[(req.user as JwtUser)._id,req.params.aniid])
+    res.json(result.rows)
+  }catch(err){
+    sendError(res,ErrorType.default,500,err)
+  }
+})
 router.get("/user/animelist/:id",checkToken,async(req,res)=>{
   try{
     // Console.log((req.user as JwtUser)._id,req.params.id)
@@ -693,7 +705,7 @@ app.get('/g/user',checkToken,async(req,res)=>{
 router.get("/g/seasons/:id",async(req,res)=>{
   try{
     var response = await req.db.execute("SELECT seasons FROM anime WHERE id = ?",[req.params.id],{prepare:true})
-    res.send(response.rows[0])
+    res.send(response.rows[0].seasons)
   }catch(err){
     sendError(res,ErrorType.default,500,err)
   }

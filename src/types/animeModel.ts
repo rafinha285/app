@@ -71,6 +71,13 @@ export interface Season{
     episodes: string[];
     index: number;
 }
+export interface SeasonList{
+	anime_id:string;
+	season_id:string;
+	total_episodes:number;
+	total_rewatched_episodes?:number;
+	id?:number;
+}
 export interface Anime{
     id:string;
 	name:string;

@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useState } from "react"
-import { Anime, AnimeUser, Season } from "../types/animeModel"
+import { Anime, AnimeUser, Season, SeasonList } from "../types/animeModel"
 import { priorityValue, userAnimeState } from "../types/types"
 import { Box, Rating } from "@mui/material"
-import { getLabelText } from "../functions/animeFunctions"
+import { getLabelText, tupleToSeason } from "../functions/animeFunctions"
 import AnimeStar from "./AnimeStart"
 import GlobalContext from "../GlobalContext"
 import { DateToStringInput, DateToStringLocal } from "../features/main"
 import axios from "axios"
+import AnimeListSeason from "../assets/AnimeList/AnimeSeason"
 
 interface props{
     onClose:()=>void
@@ -20,6 +21,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     const [state,setState] = useState<userAnimeState>(ani.state)
     // const [timesWatched,setTimesWatched] = useState<number|undefined>(ani.times_watched)
     const [season,setSeason] = useState<Season[]>()
+    const [seasonsList,setSeeasonsList] = useState<SeasonList[]>()
     const [priority,setPriority] = useState<priorityValue>(ani.priority)
     // const [watchedEpisodes,setWatchedEpisodes] = useState<number>(ani.watched_episodes)
     // const [rewatchedEpisodes,setRewatchedEpisodes] = useState<number|undefined>(ani.watched_episodes)
@@ -54,9 +56,24 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
         const handleGetSeasons = async()=>{
             await fetch(`/api/g/seasons/${ani.anime_id}`)
                 .then((response)=>response.json())
-                .then((data:Season[])=>setSeason(data))
+                .then((data:any)=>{
+                    setSeason(tupleToSeason(data))
+                })
+            await fetch(`/api/user/animelist/season/${ani.anime_id}`)
+                .then((response)=>response.json())
+                .then((data)=>setSeeasonsList(data))
         }
         handleGetSeasons()
+        // var arr:SeasonList[] = []
+        // for(let i = 0;i<season!.length!;i++){
+        //     let currentSeason = (season!)[i]
+        //     let currentSeasonList = seasonsList?.find((v,i)=>v.season_id === currentSeason.id)
+        //     var d:SeasonList ={
+        //         anime_id:ani.anime_id,
+        //         season_id:currentSeason.id,
+        //         total_episodes:currentSeasonList?.total_episodes!
+        //     }
+        // }
     },[])
     const handleUpdateList = async() =>{
         let body = {
@@ -67,6 +84,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
             rate:ratingValue,
             state,
             priority,
+            seasons:seasonsList!
             // times_watched:timesWatched,
             // rewatched_episodes:rewatchedEpisodes
         }
@@ -75,6 +93,10 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
             alert(res.data.message)
             onClose()
         })
+    }
+    const handleSeasonChange = (e:React.ChangeEvent<HTMLInputElement>,season:string) =>{ 
+        var currentSeason = seasonsList?.find(v=>v.season_id===season)!;
+        currentSeason.total_episodes = parseInt(e.target.value)
     }
     const handleDeleteList = async()=>{
 
@@ -95,6 +117,9 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                     ))}</select>
                 </div>
                 <div>
+                    {season?.map((v)=>(
+                        <AnimeListSeason season={v} onChange={handleSeasonChange} key={v.index}/>
+                    ))}
                     {/* <p>Episódios Assistidos: </p>
                     <input type="number" value={watchedEpisodes} onChange={(e)=>handleChange(e,changeEnum.watchedEpisodes)}></input> */}
                 </div>
@@ -114,7 +139,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                         <input type="date" onChange={(e)=>handleChange(e,changeEnum.endDate)} value={endDate?DateToStringInput(endDate):""}></input>
                     </div>
                 </div>
-                <p>Vezes asistido</p>
+                {/* <p>Vezes asistido</p> */}
                 {/* <input type="number" onChange={(e)=>handleChange(e,changeEnum.timesWatched)} value={timesWatched}></input> */}
                 {
                     

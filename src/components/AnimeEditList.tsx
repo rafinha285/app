@@ -1,5 +1,5 @@
-import React, { useContext, useState } from "react"
-import { Anime, AnimeUser } from "../types/animeModel"
+import React, { useContext, useEffect, useState } from "react"
+import { Anime, AnimeUser, Season } from "../types/animeModel"
 import { priorityValue, userAnimeState } from "../types/types"
 import { Box, Rating } from "@mui/material"
 import { getLabelText } from "../functions/animeFunctions"
@@ -18,10 +18,11 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     const [startDate,setStartDate] = useState<Date|undefined>(ani.start_date)
     const [endDate,setEndDate] = useState<Date|undefined>(ani.finish_date)
     const [state,setState] = useState<userAnimeState>(ani.state)
-    const [timesWatched,setTimesWatched] = useState<number|undefined>(ani.times_watched)
+    // const [timesWatched,setTimesWatched] = useState<number|undefined>(ani.times_watched)
+    const [season,setSeason] = useState<Season[]>()
     const [priority,setPriority] = useState<priorityValue>(ani.priority)
-    const [watchedEpisodes,setWatchedEpisodes] = useState<number>(ani.watched_episodes)
-    const [rewatchedEpisodes,setRewatchedEpisodes] = useState<number|undefined>(ani.watched_episodes)
+    // const [watchedEpisodes,setWatchedEpisodes] = useState<number>(ani.watched_episodes)
+    // const [rewatchedEpisodes,setRewatchedEpisodes] = useState<number|undefined>(ani.watched_episodes)
     const context = useContext(GlobalContext)!
     console.log(ani)
     enum changeEnum{
@@ -44,31 +45,30 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
             case changeEnum.state:
                 setState(e.target.value as userAnimeState)
                 break
-            case changeEnum.timesWatched:
-                setTimesWatched(parseInt(e.target.value))
-                break
             case changeEnum.priority:
                 setPriority(e.target.value as priorityValue)
                 break
-            case changeEnum.watchedEpisodes:
-                setWatchedEpisodes(parseInt(e.target.value))
-                break
-            case changeEnum.rewatchedEpisodes:
-                setRewatchedEpisodes(parseInt(e.target.value))
-                break
         }
     }
+    useEffect(()=>{
+        const handleGetSeasons = async()=>{
+            await fetch(`/api/g/seasons/${ani.anime_id}`)
+                .then((response)=>response.json())
+                .then((data:Season[])=>setSeason(data))
+        }
+        handleGetSeasons()
+    },[season])
     const handleUpdateList = async() =>{
         let body = {
             id:ani.id,
-            watched_episodes:watchedEpisodes,
+            // watched_episodes:watchedEpisodes,
             start_date:startDate,
             finish_date:endDate,
             rate:ratingValue,
             state,
             priority,
-            times_watched:timesWatched,
-            rewatched_episodes:rewatchedEpisodes
+            // times_watched:timesWatched,
+            // rewatched_episodes:rewatchedEpisodes
         }
         await axios.patch('/api/user/animelist/update',body)
         .then((res)=>{
@@ -95,8 +95,8 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                     ))}</select>
                 </div>
                 <div>
-                    <p>Episódios Assistidos: </p>
-                    <input type="number" value={watchedEpisodes} onChange={(e)=>handleChange(e,changeEnum.watchedEpisodes)}></input>
+                    {/* <p>Episódios Assistidos: </p>
+                    <input type="number" value={watchedEpisodes} onChange={(e)=>handleChange(e,changeEnum.watchedEpisodes)}></input> */}
                 </div>
                 <div>
                     <div>
@@ -115,13 +115,10 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                     </div>
                 </div>
                 <p>Vezes asistido</p>
-                <input type="number" onChange={(e)=>handleChange(e,changeEnum.timesWatched)} value={timesWatched}></input>
-                {ani.times_watched&&ani.times_watched>=1?(
-                    <>
-                        <p>Episodios Assistidos</p>
-                        <input value={rewatchedEpisodes} onChange={(e)=>handleChange(e,changeEnum.rewatchedEpisodes)}/>
-                    </>
-                ):(<></>)}
+                {/* <input type="number" onChange={(e)=>handleChange(e,changeEnum.timesWatched)} value={timesWatched}></input> */}
+                {
+                    
+                }
                 <div className="status">
                     <p>Prioridade: </p>
                     <select value={priority} onChange={(e)=>handleChange(e,changeEnum.priority)}>

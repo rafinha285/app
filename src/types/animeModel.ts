@@ -95,13 +95,13 @@ export interface AnimeUser{
 	id:number
 	anime_id:string
     name:string;
-    watched_episodes:number;
+    // watched_episodes:number;
 	start_date?:Date;
 	finish_date?:Date;
 	rate:number;
 	state:userAnimeState;
-	times_watched?:number;
-	rewatched_episodes?:number;
+	// times_watched?:number;
+	// rewatched_episodes?:number;
 	priority:priorityValue;
     last_ep:EpisodeUser[]
 }

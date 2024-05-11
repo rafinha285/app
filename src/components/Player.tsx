@@ -130,7 +130,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         ref.current!.plyr.currentTime = inEnd
     }
     const optionsPlyr:PlyrOptions = {
-        settings:["captions","quality","speed","loop"],
+        settings:["captions","quality","speed","loop",'volume','rewind','fast-forward','download'],
         controls:['play-large','play','progress','current-time','mute', 'volume', 'captions', 'settings', 'pip','fullscreen'],
         storage:{ enabled: true, key: 'plyr' },
         keyboard:{focused:true,global:true},

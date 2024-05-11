@@ -67,7 +67,7 @@ body::-webkit-scrollbar-thumb {
 }
 /* Color Theme Swatches in Hex */
 :root{
-    --body-purple:rgb(29, 0, 41);
+    --body-purple:#1d0029;
     --blue:#0a0844 !important;
     --lightpink:#D93B92;
     --pink:#AB05F2 !important;

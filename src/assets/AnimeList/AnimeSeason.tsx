@@ -7,11 +7,11 @@ interface props{
 }
 const AnimeListSeason:React.FC<props> = ({season, onChange}) =>{
     return(
-        <div>
+        <div style={{border:"1px white solid",borderRadius:"5px",margin:"10px 0"}}>
             <p>Season: {season.name}</p>
             <div>
-                <p>Episódios Assistidos: </p> 
-                <input type="number" max={season.episodes.length} onChange={(e)=>onChange(e,season.id)}/>/{season.episodes.length}
+                <p style={{fontSize:"10px"}}>Episódios Assistidos: </p> 
+                <input type="number" max={season.episodes.length} onChange={(e)=>onChange(e,season.id)}/><p>/{season.episodes.length}</p>
             </div>
         </div>
     )

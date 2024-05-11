@@ -7,6 +7,7 @@ interface props{
     seasonList:SeasonList
 }
 const AnimeListSeason:React.FC<props> = ({season, onChange,seasonList}) =>{
+    console.log(seasonList)
     return(
         <div style={{border:"1px white solid",borderRadius:"5px",margin:"10px 0"}}>
             <p>Season: {season.name}</p>

@@ -13,7 +13,7 @@ const AnimeListSeason:React.FC<props> = ({season, onChange,seasonList}) =>{
             <p>Season: {season.name}</p>
             <div>
                 <p style={{fontSize:"10px"}}>Episódios Assistidos: </p> 
-                <input type="number" max={season.episodes.length} value={seasonList?seasonList.total_episodes:0} onChange={(e)=>onChange(e,season.id)}/><p>/{season.episodes.length}</p>
+                <input type="number" max={season.episodes.length} value={seasonList?seasonList.total_episodes:0} onChange={(e)=>onChange(e,season.id)}/><p style={{display:"inline"}}>/{season.episodes.length}</p>
             </div>
         </div>
     )

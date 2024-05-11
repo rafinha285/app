@@ -4,7 +4,7 @@ import { Season, SeasonList } from "../../types/animeModel"
 interface props{
     season:Season
     onChange:(e:React.ChangeEvent<HTMLInputElement>,season:string)=>void;
-    seasonList:SeasonList
+    seasonList?:SeasonList
 }
 const AnimeListSeason:React.FC<props> = ({season, onChange,seasonList}) =>{
     console.log(seasonList)
@@ -13,7 +13,7 @@ const AnimeListSeason:React.FC<props> = ({season, onChange,seasonList}) =>{
             <p>Season: {season.name}</p>
             <div>
                 <p style={{fontSize:"10px"}}>Episódios Assistidos: </p> 
-                <input type="number" max={season.episodes.length} value={seasonList.total_episodes} onChange={(e)=>onChange(e,season.id)}/><p>/{season.episodes.length}</p>
+                <input type="number" max={season.episodes.length} value={seasonList?seasonList.total_episodes:0} onChange={(e)=>onChange(e,season.id)}/><p>/{season.episodes.length}</p>
             </div>
         </div>
     )

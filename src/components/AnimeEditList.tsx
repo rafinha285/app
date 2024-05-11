@@ -117,7 +117,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                     ))}</select>
                 </div>
                 <div>
-                    {season?.map((v)=>{
+                    {season?.sort((a,b)=>a.index - b.index).map((v)=>{
                         let currentSea = seasonsList?.find(vS=>vS.season_id===v.id)!
                         return <AnimeListSeason season={v} onChange={handleSeasonChange} seasonList={currentSea}/>
                     })}

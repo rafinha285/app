@@ -692,7 +692,7 @@ app.get('/g/user',checkToken,async(req,res)=>{
 })
 router.get("/g/seasons/:id",async(req,res)=>{
   try{
-    var response = await req.db.execute("SELECT seasons FROM anime WHERE = ?",[req.params.id],{prepare:true})
+    var response = await req.db.execute("SELECT seasons FROM anime WHERE id = ?",[req.params.id],{prepare:true})
     res.send(response.rows[0])
   }catch(err){
     sendError(res,ErrorType.default,500,err)

@@ -874,7 +874,7 @@ router.get("/g/seasons/:id", function (req, res) { return __awaiter(void 0, void
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, req.db.execute("SELECT seasons FROM anime WHERE = ?", [req.params.id], { prepare: true })];
+                return [4 /*yield*/, req.db.execute("SELECT seasons FROM anime WHERE id = ?", [req.params.id], { prepare: true })];
             case 1:
                 response = _a.sent();
                 res.send(response.rows[0]);

@@ -57,7 +57,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                 .then((data:Season[])=>setSeason(data))
         }
         handleGetSeasons()
-    },[!season])
+    },[])
     const handleUpdateList = async() =>{
         let body = {
             id:ani.id,

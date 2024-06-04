@@ -1,8 +1,10 @@
 /backend/src/secret.rs
-/backend/src/config.rs
+# /backend/src/config.rs
 /build
 /node_modules
 # /src/types/*.js
 /backend_old/node_modules/*
 /backend/target
 /backend/old_backend/node_modules
+.vs
+.vscode

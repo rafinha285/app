@@ -1,0 +1,11 @@
+use std::path::Path;
+pub const ANIME_PATH: &str = "../storage/anime";
+pub const MANGA_PATH: &str = "../storage/manga";
+pub const TEMP_PATH: &str = "../storage/temp";
+pub const FFMPEG_PATH: &str = "/usr/bin/ffmpeg";
+pub const FFPROBE_PATH: &str = "/usr/bin/ffprobe";
+pub const BUILD_PATH: &str = "../build";
+pub const BUILD_HTML: &str = "../build/index.html";
+pub const HTTPS_KEY_PATH: &str = "/etc/letsencrypt/live/animefoda.top/privkey.pem";
+pub const HTTPS_CERT_PATH: &str = "/etc/letsencrypt/live/animefoda.top/fullchain.pem";
+pub const IP_DATABASE: &str = "192.168.1.20";

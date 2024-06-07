@@ -121,7 +121,15 @@ router.get('/ani/img',async(req:e.Request,res:e.Response)=>{
       throw 1
     }
     sendFile().img(res)
-    res.sendFile(path.join(ANIME_PATH,(req.query.Id as string),"img",`${req.query.Id}.jpg`))
+    const typesImg = ["jpe","jpg","jpeg","png"]
+    let im = typesImg.length
+    for(let i = 0;i<im;i++){
+      let pathImg = path.join(ANIME_PATH,(req.query.Id as string),"img",`${req.query.Id}.${typesImg[i]}`)
+      if(fs.existsSync(pathImg)){
+        return res.sendFile(pathImg)
+      }
+    }
+    
   }catch(err){
     if(err == 1){
       sendError(res,ErrorType.undefined)

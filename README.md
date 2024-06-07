@@ -1,4 +1,2 @@
-# Meu site de anime foda
-
-O codiguinho fontinho do meu site de anime
-N reclame se estiver ruim
+# Site de anime
+## é para manter as atualizações, pode mudar tudo que quiser do codigo só crie uma branch.

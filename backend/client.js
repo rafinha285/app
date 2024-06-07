@@ -137,6 +137,7 @@ router.get('/ani/lan', function (req, res) { return __awaiter(void 0, void 0, vo
     });
 }); });
 router.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var typesImg, im, i, pathImg;
     return __generator(this, function (_a) {
         (0, handle_1.setHeader)(res);
         try {
@@ -144,7 +145,14 @@ router.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, vo
                 throw 1;
             }
             (0, handle_1.sendFile)().img(res);
-            res.sendFile(path.join(consts_1.ANIME_PATH, req.query.Id, "img", "".concat(req.query.Id, ".jpg")));
+            typesImg = ["jpe", "jpg", "jpeg", "png"];
+            im = typesImg.length;
+            for (i = 0; i < im; i++) {
+                pathImg = path.join(consts_1.ANIME_PATH, req.query.Id, "img", "".concat(req.query.Id, ".").concat(typesImg[i]));
+                if (fs.existsSync(pathImg)) {
+                    return [2 /*return*/, res.sendFile(pathImg)];
+                }
+            }
         }
         catch (err) {
             if (err == 1) {

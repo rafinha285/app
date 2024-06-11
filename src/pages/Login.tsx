@@ -17,7 +17,7 @@ const Login:React.FC = ()=>{
     const [password,setPassword] = useState<string>()
     const [email,setEmail] = useState<string>()
     // const [cookies,setCookie,removeCookie] = useCookies()
-    
+
     const handleRecaptchaChange = (value: string | null) => {
         setRecaptchaValue(value);
         console.log(value)
@@ -34,18 +34,19 @@ const Login:React.FC = ()=>{
                     // salt,
                     recaptchaToken:recaptchaValue
                 })
-                
+
                 const token = response.data.token
                 // console.log(token,response,response.headers["set-cookie"])
                 cookiess.set("token",token,{path:"/",maxAge:86400, secure: true})
                 // setCookie('token',token,{path:"/",maxAge:84600})
                 sessionStorage.setItem("token",token)
+                console.log(token)
                 window.location.href = "/"
             }catch(err){
                 console.log(err)
                 setError(true)
             }
-            
+
         }
     }
     enum enu{
@@ -82,7 +83,7 @@ const Login:React.FC = ()=>{
                     <button onClick={handleLogin} className="logBut">Entrar <i className="fa-solid fa-right-to-bracket"></i></button><br/>
                     <span>Criar conta:<Link to={"/register"}>Registrar-se</Link></span>
                 </div>
-                
+
             </div>
             <Footer></Footer>
         </html>

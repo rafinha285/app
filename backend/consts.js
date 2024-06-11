@@ -12,4 +12,4 @@ exports.BUILD_PATH = path.join(__dirname, '../', 'build');
 exports.BUILD_HTML = path.join(exports.BUILD_PATH, "index.html");
 exports.HTTPS_KEY_PATH = path.join('/', 'etc', 'letsencrypt', 'live', 'animefoda.top', 'privkey.pem');
 exports.HTTPS_CERT_PATH = path.join('/', 'etc', 'letsencrypt', 'live', 'animefoda.top', 'fullchain.pem');
-exports.IP_DATABASE = '192.168.1.20';
+exports.IP_DATABASE = '192.168.18.20';

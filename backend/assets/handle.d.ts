@@ -37,7 +37,7 @@ export declare enum ErrorType {
     unauthorized = 9,
     default = 10
 }
-export declare function sendError(res: express.Response, errorType?: ErrorType, status?: number, menssage?: string): void;
+export declare function sendError(res: express.Response, errorType?: ErrorType, status?: number, menssage?: any): void;
 export declare function sendFile(): {
     cssJs: (res: express.Response) => void;
     img: (res: express.Response) => void;

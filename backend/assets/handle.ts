@@ -70,7 +70,7 @@ export enum ErrorType {
     unauthorized,
     default
 }
-export function sendError(res:express.Response,errorType:ErrorType = ErrorType.default,status:number = 500,menssage:string = ""){
+export function sendError(res:express.Response,errorType:ErrorType = ErrorType.default,status:number = 500,menssage:any = ""){
     function error(res:express.Response,status:number,menssage:string){
         Console.error(menssage)
         res.status(status).json(menssage)
@@ -172,7 +172,7 @@ export async function mkDir(no:String,svData:string){
     }catch(err){
         Console.error(err)
     }
-    
+
 }
 export function id(num:number = 8){
     if(!Number.isNaN(num)){
@@ -181,7 +181,7 @@ export function id(num:number = 8){
         return Array.from(buffer, byte => byte.toString(16).padStart(2,'0')).join('')
     }else{
         return false
-    }    
+    }
 }
 
 // export async function checkSeason(Seasons:Season[],pathToVid:string){
@@ -365,7 +365,7 @@ export async function addUser(user:{
         [
             _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
             totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
-            totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,  
+            totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
             totalAnimeLiked || [],  // Se totalAnimeLiked for nulo, usa um array vazio
             totalMangaLiked || [],   // Se totalMangaLiked for nulo, usa um array vazio,
             salt,

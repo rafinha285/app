@@ -817,7 +817,7 @@ router.get("/user/animelist", handle_1.checkToken, function (req, res) { return 
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id\n        FROM users.user_anime_list\n        WHERE user_id = $1;\n  ", [req.user._id])];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id\n        FROM users.user_anime_list\n        WHERE user_id = $1;\n    ", [req.user._id])];
             case 1:
                 result = _a.sent();
                 res.send(result.rows);
@@ -837,7 +837,7 @@ router.patch('/user/animelist/update', handle_1.checkToken, function (req, res) 
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 _a = req.body, id = _a.id, watched_episodes = _a.watched_episodes, start_date = _a.start_date, finish_date = _a.finish_date, rate = _a.rate, state = _a.state, priority = _a.priority, times_watched = _a.times_watched, rewatched_episodes = _a.rewatched_episodes;
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n      UPDATE users.user_anime_list\n        SET \n          watched_episodes =$1\n          start_date = $2,\n          finish_date = $3,\n          rate = $4,\n          state = $5,\n          priority = $6,\n          times_watched = $7,\n          rewatched_episodes = $8\n        WHERE id = $9\n    ", [
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        UPDATE users.user_anime_list\n            SET \n                watched_episodes =$1\n                start_date = $2,\n                finish_date = $3,\n                rate = $4,\n                state = $5,\n                priority = $6,\n                times_watched = $7,\n                rewatched_episodes = $8\n        WHERE id = $9\n    ", [
                         watched_episodes,
                         start_date,
                         finish_date,
@@ -916,8 +916,54 @@ router.get("/g/seasons/:id", function (req, res) { return __awaiter(void 0, void
 }); });
 app.use('/api', router);
 app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
+app.post('/app/login', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, password, result, tokenInfo, token, err_22;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                _a = req.body, email = _a.email, password = _a.password;
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n            WITH hashed_password AS (\n                SELECT users.crypt($1,salt) AS hash\n                FROM users.users\n                WHERE email = $2\n            )\n            SELECT * FROM users.users\n            WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n        ", [password, email])];
+            case 1:
+                result = _b.sent();
+                handle_1.Console.log(result.rows);
+                if (result.rows.length < 1) {
+                    throw handle_1.ErrorType.invalidPassOrEmail;
+                }
+                tokenInfo = {
+                    _id: result.rows[0]._id,
+                    username: result.rows[0].username,
+                    UserAgent: req.get("User-Agent"),
+                    ip: req.socket.remoteAddress,
+                    // SecChUa:req.get("Sec-Ch-Ua")!
+                };
+                token = jwt.sign(tokenInfo, config_1.secretKey, { expiresIn: "1d" });
+                res.cookie('token', token, { httpOnly: true, secure: true });
+                res.send({ success: true, message: "Login Successful", token: token });
+                return [3 /*break*/, 3];
+            case 2:
+                err_22 = _b.sent();
+                switch (err_22) {
+                    case handle_1.ErrorType.invalidToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidToken);
+                        break;
+                    case handle_1.ErrorType.noToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
+                        break;
+                    case handle_1.ErrorType.invalidPassOrEmail:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidPassOrEmail);
+                        break;
+                    default:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_22);
+                        break;
+                }
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, recaptchaToken, response, data, result, tokenInfo, token, err_22;
+    var _a, email, password, recaptchaToken, response, data, result, tokenInfo, token, err_23;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -939,7 +985,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
             case 2:
                 data = _b.sent();
                 if (!data.success) return [3 /*break*/, 4];
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n        WITH hashed_password AS (\n          SELECT users.crypt($1, salt) AS hash\n          FROM users.users\n          WHERE email = $2\n        )\n        SELECT * FROM users.users\n        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n      ", [password, email])];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        WITH hashed_password AS (\n            SELECT users.crypt($1, salt) AS hash\n            FROM users.users\n            WHERE email = $2\n        )\n        SELECT * FROM users.users\n        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n        ", [password, email])];
             case 3:
                 result = _b.sent();
                 handle_1.Console.log(result.rows);
@@ -960,8 +1006,8 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
             case 4: throw handle_1.ErrorType.invalidReCaptcha;
             case 5: return [3 /*break*/, 7];
             case 6:
-                err_22 = _b.sent();
-                switch (err_22) {
+                err_23 = _b.sent();
+                switch (err_23) {
                     case handle_1.ErrorType.invalidReCaptcha:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidReCaptcha);
                         break;
@@ -975,7 +1021,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidPassOrEmail);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_22);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_23);
                         break;
                 }
                 return [3 /*break*/, 7];

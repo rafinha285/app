@@ -31,6 +31,7 @@ import * as cookieParser from "cookie-parser"
 import * as jwt from "jsonwebtoken"
 import { reCaptchaSecretKey, secretKey } from './secret/config'
 import { JwtUser } from './types'
+import {Anime} from "../src/types/animeModel";
 // import {  } from './assets/handle'
 // import * as bcrypt from "bcrypt"
 // import * as siteTypes from "../src/types/types"
@@ -327,7 +328,7 @@ router.get("/g/eps",async(req,res)=>{
         // Subtrai uma semana (7 dias) da data atual
         let semana = new Date(currentDate.valueOf() - 7 * 24 * 60 * 60 * 1000);
         var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;",[semana,count],{prepare:true})
-        Console.log(result)
+        // Console.log(result)
         await sleep(2)
         result.rows.forEach(async ee=>{
             // Console.log(ee)
@@ -490,8 +491,8 @@ router.get("/user/list/checkanime/:id",checkToken,async(req,res)=>{
 })
 router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
     try{
-        Console.log(req.user)
-        let anime = (await req.db.execute(`SELECT name FROM anime WHERE id = ?`,[req.params.id],{prepare:true})).rows[0]
+        // Console.log(req.user)
+        let anime = (await req.db.execute(`SELECT name,seasons FROM anime WHERE id = ?`,[req.params.id],{prepare:true})).rows[0]
         // anime.rows[0].name;
         let checkIfExists = await animeClient.query(`
         SELECT COUNT(*) AS num_animes
@@ -504,33 +505,33 @@ router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
             return res.status(403).json({success:false,message:"Anime ja existe na sua lista"})
         }
         let result = await animeClient.query(`
-    INSERT INTO users.user_anime_list (
-        user_id,
-        anime_id,
-        status,
-        name,
-        start_date,
-        finish_date,
-        rate,
-        times_watched,
-        priority,
-        rewatched_episodes,
-        watched_episodes
-    ) VALUES(
-        $1,
-        $2,
-        $3,
-        $4,
-        $5,
-        $6,
-        $7,
-        $8,
-        $9,
-        $10,
-        $11
-    ) RETURNING TRUE
-
-    `,[
+        INSERT INTO users.user_anime_list (
+            user_id,
+            anime_id,
+            status,
+            name,
+            start_date,
+            finish_date,
+            rate,
+            times_watched,
+            priority,
+            rewatched_episodes,
+            watched_episodes
+        ) VALUES(
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            $6,
+            $7,
+            $8,
+            $9,
+            $10,
+            $11
+        ) RETURNING TRUE
+        
+        `,[
             (req.user as JwtUser)._id,
             req.params.id,
             Object.keys(userAnimeState)[0],
@@ -543,6 +544,11 @@ router.post("/user/anime/add/:id",checkToken,async(req,res)=>{
             0,
             0
         ])
+        anime.seasons.forEach(season=>{
+            let result = animeClient.query(`
+                INSERT INTO users.user_anime_list ()
+            `)
+        })
         Console.log(result.rows)
         if(result.rows.length>0){
             res.status(201).json({success:true,message:"Anime adicionado a lista de anime"})
@@ -615,10 +621,10 @@ router.post("/new/user",async(req,res)=>{
 router.get("/user/animelist/season/:aniid",checkToken,async(req,res)=>{
     try{
         let result = await animeClient.query(`
-      SELECT * FROM users.user_anime_seasons
-      WHERE user_id = $1
-      AND anime_id = $2
-    `,[(req.user as JwtUser)._id,req.params.aniid])
+            SELECT * FROM users.user_anime_seasons
+            WHERE user_id = $1
+            AND anime_id = $2
+        `,[(req.user as JwtUser)._id,req.params.aniid])
         res.json(result.rows)
     }catch(err){
         sendError(res,ErrorType.default,500,err)
@@ -640,6 +646,7 @@ router.get("/user/animelist/:id",checkToken,async(req,res)=>{
 })
 router.get("/user/animelist",checkToken,async(req,res)=>{
     try{
+        Console.log(animeClient)
         let result = await animeClient.query(`
         SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id
         FROM users.user_anime_list
@@ -687,9 +694,9 @@ app.get('/g/checktoken',checkToken,(req,res)=>{
 })
 app.get('/g/user',checkToken,async(req,res)=>{
     try{
-        console.log(req.user)
-        console.log(req.headers)
-        console.log(req.cookies)
+        // console.log(req.user)
+        // console.log(req.headers)
+        // console.log(req.cookies)
         let result = await animeClient.query(`
       SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked,totalanimeonhold,totalmangaonhold
       FROM users.users
@@ -722,6 +729,10 @@ router.get("/g/seasons/:id",async(req,res)=>{
 app.use('/api',router)
 
 app.use(e.static(BUILD_PATH,{ maxAge: '1d' }))
+app.get('/verify',checkToken,async(req:e.Request,res:e.Response)=>{
+    console.log((req.user as JwtUser).username)
+    res.json({success:true})
+})
 app.post('/app/login',async(req:e.Request,res:e.Response)=>{
     try{
         const {email,password} = req.body;
@@ -734,7 +745,7 @@ app.post('/app/login',async(req:e.Request,res:e.Response)=>{
             SELECT * FROM users.users
             WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
         `,[password,email])
-        Console.log(result.rows)
+        // Console.log(result.rows)
         if(result.rows.length < 1){
             throw ErrorType.invalidPassOrEmail
         }
@@ -789,7 +800,7 @@ app.post('/login/',async(req:e.Request,res:e.Response)=>{
         SELECT * FROM users.users
         WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
         `,[password,email])
-            Console.log(result.rows)
+            // Console.log(result.rows)
             if(result.rows.length < 1){
                 throw ErrorType.invalidPassOrEmail
             }

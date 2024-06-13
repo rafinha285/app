@@ -32,7 +32,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
         endDate,
         state,
         timesWatched,
-        priority, 
+        priority,
         watchedEpisodes,
         rewatchedEpisodes
     }
@@ -57,11 +57,15 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
             await fetch(`/api/g/seasons/${ani.anime_id}`)
                 .then((response)=>response.json())
                 .then((data:any)=>{
+                    console.log(tupleToSeason(data))
                     setSeason(tupleToSeason(data))
                 })
             await fetch(`/api/user/animelist/season/${ani.anime_id}`)
                 .then((response)=>response.json())
-                .then((data)=>setSeeasonsList(data))
+                .then((data)=> {
+                    console.log(data)
+                    setSeeasonsList(data)
+                })
         }
         handleGetSeasons()
         // var arr:SeasonList[] = []
@@ -94,7 +98,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
             onClose()
         })
     }
-    const handleSeasonChange = (e:React.ChangeEvent<HTMLInputElement>,season:string) =>{ 
+    const handleSeasonChange = (e:React.ChangeEvent<HTMLInputElement>,season:string) =>{
         var currentSeason = seasonsList?.find(v=>v.season_id===season)!;
         currentSeason.total_episodes = parseInt(e.target.value)
     }
@@ -116,14 +120,15 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                         <option value={v} key={i}>{v}</option>
                     ))}</select>
                 </div>
-                <div>
-                    {season?.sort((a,b)=>a.index - b.index).map((v)=>{
-                        let currentSea = seasonsList?.find(vS=>vS.season_id===v.id)!
-                        return <AnimeListSeason season={v} onChange={handleSeasonChange} seasonList={currentSea}/>
-                    })}
-                    {/* <p>Episódios Assistidos: </p>
-                    <input type="number" value={watchedEpisodes} onChange={(e)=>handleChange(e,changeEnum.watchedEpisodes)}></input> */}
-                </div>
+                {/*<div>*/}
+                {/*    {season?.sort((a,b)=>a.index - b.index).map((v)=>{*/}
+                {/*        let currentSea = seasonsList?.find(vS=>vS.season_id===v.id)!*/}
+                {/*        console.log(seasonsList)*/}
+                {/*        return <AnimeListSeason season={v} onChange={handleSeasonChange} seasonList={currentSea}/>*/}
+                {/*    })}*/}
+                {/*    /!* <p>Episódios Assistidos: </p>*/}
+                {/*    <input type="number" value={watchedEpisodes} onChange={(e)=>handleChange(e,changeEnum.watchedEpisodes)}></input> *!/*/}
+                {/*</div>*/}
                 <div>
                     <div>
                         <p>Rating: </p>
@@ -143,7 +148,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                 {/* <p>Vezes asistido</p> */}
                 {/* <input type="number" onChange={(e)=>handleChange(e,changeEnum.timesWatched)} value={timesWatched}></input> */}
                 {
-                    
+
                 }
                 <div className="status">
                     <p>Prioridade: </p>

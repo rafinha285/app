@@ -23,17 +23,17 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
     // const ref = useRef<Plyr>(null)
     const res = ['1920x1080','1280x720', '854x480']
     console.log(ani,ep,eps)
-    
+
     // $.ajax({
     //     url:`/api/g/s/eps/${ani.id}/${seasonId}`
     // }).done((res:Episode[])=>{
     //     // eps = res
-        
+
     // })
     async function setPrevPosEp(){
         setTimeout(()=>{},5000)
         var prevEp = eps.find(v=>v.epindex === (ep.epindex-1))
-        console.log(prevEp,res,ep.epindex)
+        // console.log(prevEp,res,ep.epindex)
         if(prevEp){
             console.log(`/Anime/${ani.id}/watch/${seasonId}/${prevEp.id}`)
             $("#before").attr("href",`/Anime/${ani.id}/watch/${seasonId}/${prevEp.id}`)
@@ -43,13 +43,13 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             console.log(`/Anime/${ani.id}/watch/${seasonId}/${posEp.id}`)
             // var after:HTMLElement = document.getElementById("after")!
             // after.setAttribute("onclick",`window.location.href = /Anime/${ani.id}/watch/${seasonId}/${posEp.id}`)
-    
+
             $("#after").attr("href",`/Anime/${ani.id}/watch/${seasonId}/${posEp.id}`)
         }
     }
     setPrevPosEp()
-    
-    
+
+
     // const resolutions = (epResolution:quality):Plyr.Source[]=>{
     //     const index = res.findIndex((resolution) => epResolution.includes(resolution));
 
@@ -92,7 +92,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             tracks:captionPlyrTracks
         }
         console.log(d)
-        
+
         var epResoo = `${epReso[0].split("x")[1]}p`
         switch(epResoo){
             case quality.FULLHD:
@@ -124,7 +124,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         }
         return d
     }
-    
+
     const handleSkipIntro =(inEnd:number)=>{
         console.log(inEnd)
         ref.current!.plyr.currentTime = inEnd
@@ -144,7 +144,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         plyr.source = getResolutions(ep.resolution)
         console.log(ep.resolution)
         console.log(plyr.source)
-        
+
         var seasonEp = await getEpsFromSeason(ep.animeid,ep.seasonid)
 
         const opIni = ep.openingstart
@@ -169,14 +169,14 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         </div>)
         const skEButton = $(ReactDOMServer.renderToStaticMarkup(buEd)).prop("id", "outro").on("click",()=>handleNextEp(ani.id,seasonId,seasonEp,ep.epindex))
         intr.after(skEButton);
-        
-        
-        
+
+
+
         console.log(seasonEp,ep.epindex,ep.epindex !=  Math.min(...seasonEp.map((v)=>v.epindex)))
         // postLog(ani,true,ep.id,plyr.currentTime)
         function handleTimeUpdate() {
             const sec = plyr.currentTime;
-            console.log(`sec >= opIni && sec <= opFim:${sec >= opIni && sec <= opFim},\n sec: ${sec},\n opIni: ${opIni},\n sec >= opIni: ${sec >= opIni},\n opFim: ${opFim},\n sec <= opFim: ${sec <= opFim}`)
+            // console.log(`sec >= opIni && sec <= opFim:${sec >= opIni && sec <= opFim},\n sec: ${sec},\n opIni: ${opIni},\n sec >= opIni: ${sec >= opIni},\n opFim: ${opFim},\n sec <= opFim: ${sec <= opFim}`)
             // console.log(ep.epindex != Math.min(...seasonEp.map((v)=>v.index)),Math.min(...seasonEp.map((v)=>v.index)),ep.epindex)
             if (sec >= opIni && sec <= opFim && ep.epindex != Math.min(...seasonEp.map((v)=>v.epindex))) {
                 // console.log("skip-active ep")

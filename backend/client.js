@@ -418,12 +418,15 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                 eps = [];
                 currentDate = new Date();
                 semana = new Date(currentDate.valueOf() - 7 * 24 * 60 * 60 * 1000);
-                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;", [semana, count], { prepare: true })];
+                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;", [semana, count], { prepare: true })
+                    // Console.log(result)
+                ];
             case 1:
                 result = _a.sent();
-                handle_1.Console.log(result);
+                // Console.log(result)
                 return [4 /*yield*/, sleep(2)];
             case 2:
+                // Console.log(result)
                 _a.sent();
                 result.rows.forEach(function (ee) { return __awaiter(void 0, void 0, void 0, function () {
                     var id, animeid, seasonid, name, duration, resolution, date_added, aniS, ep;
@@ -658,8 +661,7 @@ router.post("/user/anime/add/:id", handle_1.checkToken, function (req, res) { re
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 4, , 5]);
-                handle_1.Console.log(req.user);
-                return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [req.params.id], { prepare: true })];
+                return [4 /*yield*/, req.db.execute("SELECT name,seasons FROM anime WHERE id = ?", [req.params.id], { prepare: true })];
             case 1:
                 anime = (_a.sent()).rows[0];
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT COUNT(*) AS num_animes\n        FROM users.user_anime_list\n        WHERE user_id = $1\n        AND anime_id = $2\n    ", [req.user._id, req.params.id])];
@@ -669,7 +671,7 @@ router.post("/user/anime/add/:id", handle_1.checkToken, function (req, res) { re
                 if (num_animes > 0) {
                     return [2 /*return*/, res.status(403).json({ success: false, message: "Anime ja existe na sua lista" })];
                 }
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n    INSERT INTO users.user_anime_list (\n        user_id,\n        anime_id,\n        status,\n        name,\n        start_date,\n        finish_date,\n        rate,\n        times_watched,\n        priority,\n        rewatched_episodes,\n        watched_episodes\n    ) VALUES(\n        $1,\n        $2,\n        $3,\n        $4,\n        $5,\n        $6,\n        $7,\n        $8,\n        $9,\n        $10,\n        $11\n    ) RETURNING TRUE\n\n    ", [
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        INSERT INTO users.user_anime_list (\n            user_id,\n            anime_id,\n            status,\n            name,\n            start_date,\n            finish_date,\n            rate,\n            times_watched,\n            priority,\n            rewatched_episodes,\n            watched_episodes\n        ) VALUES(\n            $1,\n            $2,\n            $3,\n            $4,\n            $5,\n            $6,\n            $7,\n            $8,\n            $9,\n            $10,\n            $11\n        ) RETURNING TRUE\n        \n        ", [
                         req.user._id,
                         req.params.id,
                         Object.keys(handle_1.userAnimeState)[0],
@@ -684,6 +686,9 @@ router.post("/user/anime/add/:id", handle_1.checkToken, function (req, res) { re
                     ])];
             case 3:
                 result = _a.sent();
+                anime.seasons.forEach(function (season) {
+                    var result = Postgre_1.animeClient.query("\n                INSERT INTO users.user_anime_list ()\n            ");
+                });
                 handle_1.Console.log(result.rows);
                 if (result.rows.length > 0) {
                     res.status(201).json({ success: true, message: "Anime adicionado a lista de anime" });
@@ -779,7 +784,7 @@ router.get("/user/animelist/season/:aniid", handle_1.checkToken, function (req, 
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT * FROM users.user_anime_seasons\n      WHERE user_id = $1\n      AND anime_id = $2\n    ", [req.user._id, req.params.aniid])];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n            SELECT * FROM users.user_anime_seasons\n            WHERE user_id = $1\n            AND anime_id = $2\n        ", [req.user._id, req.params.aniid])];
             case 1:
                 result = _a.sent();
                 res.json(result.rows);
@@ -817,6 +822,7 @@ router.get("/user/animelist", handle_1.checkToken, function (req, res) { return 
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
+                handle_1.Console.log(Postgre_1.animeClient);
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id\n        FROM users.user_anime_list\n        WHERE user_id = $1;\n    ", [req.user._id])];
             case 1:
                 result = _a.sent();
@@ -869,9 +875,6 @@ app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(v
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                console.log(req.user);
-                console.log(req.headers);
-                console.log(req.cookies);
                 return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked,totalanimeonhold,totalmangaonhold\n      FROM users.users\n      WHERE _id = $1;\n    ", [req.user._id])];
             case 1:
                 result = _a.sent();
@@ -916,6 +919,13 @@ router.get("/g/seasons/:id", function (req, res) { return __awaiter(void 0, void
 }); });
 app.use('/api', router);
 app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
+app.get('/verify', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        console.log(req.user.username);
+        res.json({ success: true });
+        return [2 /*return*/];
+    });
+}); });
 app.post('/app/login', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, email, password, result, tokenInfo, token, err_22;
     return __generator(this, function (_b) {
@@ -923,10 +933,12 @@ app.post('/app/login', function (req, res) { return __awaiter(void 0, void 0, vo
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 _a = req.body, email = _a.email, password = _a.password;
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n            WITH hashed_password AS (\n                SELECT users.crypt($1,salt) AS hash\n                FROM users.users\n                WHERE email = $2\n            )\n            SELECT * FROM users.users\n            WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n        ", [password, email])];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n            WITH hashed_password AS (\n                SELECT users.crypt($1,salt) AS hash\n                FROM users.users\n                WHERE email = $2\n            )\n            SELECT * FROM users.users\n            WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n        ", [password, email])
+                    // Console.log(result.rows)
+                ];
             case 1:
                 result = _b.sent();
-                handle_1.Console.log(result.rows);
+                // Console.log(result.rows)
                 if (result.rows.length < 1) {
                     throw handle_1.ErrorType.invalidPassOrEmail;
                 }
@@ -985,10 +997,12 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
             case 2:
                 data = _b.sent();
                 if (!data.success) return [3 /*break*/, 4];
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n        WITH hashed_password AS (\n            SELECT users.crypt($1, salt) AS hash\n            FROM users.users\n            WHERE email = $2\n        )\n        SELECT * FROM users.users\n        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n        ", [password, email])];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        WITH hashed_password AS (\n            SELECT users.crypt($1, salt) AS hash\n            FROM users.users\n            WHERE email = $2\n        )\n        SELECT * FROM users.users\n        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n        ", [password, email])
+                    // Console.log(result.rows)
+                ];
             case 3:
                 result = _b.sent();
-                handle_1.Console.log(result.rows);
+                // Console.log(result.rows)
                 if (result.rows.length < 1) {
                     throw handle_1.ErrorType.invalidPassOrEmail;
                 }

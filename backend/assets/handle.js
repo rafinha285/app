@@ -344,15 +344,16 @@ function addLog(log) {
 exports.addLog = addLog;
 function checkToken(req, res, next) {
     var _a;
-    var token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
+    var tokenHeader = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
     var tokencookie = req.cookies.token;
     // console.log(tokencookie)
+    var token = tokenHeader || tokencookie;
     var segredo = config_1.secretKey;
-    if (!tokencookie) {
+    if (!token) {
         sendError(res, ErrorType.noToken);
         return;
     }
-    jwt.verify(tokencookie, segredo, function (err, usuario) {
+    jwt.verify(token, segredo, function (err, usuario) {
         if (err) {
             sendError(res, ErrorType.invalidToken);
             return;
@@ -362,8 +363,8 @@ function checkToken(req, res, next) {
                 // Decodifica o token JWT para obter as informações do usuário
                 var decodedToken = jwt.verify(usuario, segredo);
                 if (decodedToken) {
-                    console.log(decodedToken.UserAgent, decodedToken.ip);
-                    console.log(req.get("User-Agent"), req.socket.remoteAddress);
+                    // console.log(decodedToken.UserAgent,decodedToken.ip)
+                    // console.log(req.get("User-Agent")!,req.socket.remoteAddress)
                     if (!(decodedToken.UserAgent === req.get("User-Agent") &&
                         decodedToken.ip === req.socket.remoteAddress)) {
                         throw ErrorType.isLoggedElsewhere;

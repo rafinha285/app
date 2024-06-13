@@ -239,15 +239,16 @@ export async function addLog(log:Log){
 
 
 export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) {
-    const token = req.headers.authorization?.split(" ")[1];
+    const tokenHeader = req.headers.authorization?.split(" ")[1];
     const tokencookie = req.cookies.token
     // console.log(tokencookie)
+    const token = tokenHeader || tokencookie;
     const segredo = secretKey
-    if(!tokencookie){
+    if(!token){
         sendError(res,ErrorType.noToken)
         return
     }
-    jwt.verify(tokencookie,segredo,(err,usuario)=>{
+    jwt.verify(token,segredo,(err:unknown,usuario:any)=>{
         if (err) {
             sendError(res, ErrorType.invalidToken);
             return;
@@ -257,8 +258,8 @@ export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) 
                 // Decodifica o token JWT para obter as informações do usuário
                 const decodedToken = jwt.verify(usuario, segredo) as JwtUser | null;
                 if (decodedToken) {
-                    console.log(decodedToken.UserAgent,decodedToken.ip)
-                    console.log(req.get("User-Agent")!,req.socket.remoteAddress)
+                    // console.log(decodedToken.UserAgent,decodedToken.ip)
+                    // console.log(req.get("User-Agent")!,req.socket.remoteAddress)
                     if(!(decodedToken.UserAgent === req.get("User-Agent")!&&
                     decodedToken.ip === req.socket.remoteAddress)){
                         throw ErrorType.isLoggedElsewhere

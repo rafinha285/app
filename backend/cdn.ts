@@ -36,7 +36,9 @@ app.get("/ep/:aniId/:season/:epId/:file",async(req,res)=>{
     res.set('Cache-Control', 'public, max-age=7200')
     res.sendFile(path.join(ANIME_PATH,aniId,"seasons",season,epId,file))
 })
-
+app.get('/favicon.ico',async(req:e.Request,res:e.Response)=>{
+    res.sendFile("../build/favicon.ico")
+})
 app.listen(8080,'0.0.0.0',()=>{
     Console.log(`http://0.0.0.0:8080`)
 })

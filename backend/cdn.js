@@ -82,6 +82,12 @@ app.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awaiter
         return [2 /*return*/];
     });
 }); });
+app.get('/favicon.ico', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        res.sendFile("../build/favicon.ico");
+        return [2 /*return*/];
+    });
+}); });
 app.listen(8080, '0.0.0.0', function () {
     handle_1.Console.log("http://0.0.0.0:8080");
 });

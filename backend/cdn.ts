@@ -10,18 +10,24 @@ const app = e()
 app.get('/ani/img',async(req:e.Request,res:e.Response)=>{
     setHeader(res)
     try{
-      
-      if(req.query.Id == null || req.query.Id == undefined){
-        throw 1
-      }
-      sendFile().img(res)
-      res.sendFile(path.join(ANIME_PATH,(req.query.Id as string),"img",`${req.query.Id}.jpg`))
+        if(req.query.Id == null || req.query.Id == undefined){
+            throw 1
+        }
+        sendFile().img(res)
+        const typesImg = ["jpe","jpg","jpeg","png"]
+        let im = typesImg.length
+        for(let i = 0;i<im;i++){
+            let pathImg = path.join(ANIME_PATH,(req.query.Id as string),"img",`${req.query.Id}.${typesImg[i]}`)
+            if(fs.existsSync(pathImg)){
+                return res.sendFile(pathImg)
+            }
+        }
     }catch(err){
-      if(err == 1){
-        sendError(res,ErrorType.undefined)
-      }else if(err == 2){
-        sendError(res,ErrorType.NotId)
-      }
+        if(err == 1){
+            sendError(res,ErrorType.undefined)
+        }else if(err == 2){
+            sendError(res,ErrorType.NotId)
+        }
     }
 })
 app.get("/ep/:aniId/:season/:epId/:file",async(req,res)=>{

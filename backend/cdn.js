@@ -38,11 +38,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
 var path = require("path");
+var fs = require("fs");
 var handle_1 = require("./assets/handle");
 var consts_1 = require("./consts");
 // import { Console } from 'console'
 var app = e();
 app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var typesImg, im, i, pathImg;
     return __generator(this, function (_a) {
         (0, handle_1.setHeader)(res);
         try {
@@ -50,7 +52,14 @@ app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 
                 throw 1;
             }
             (0, handle_1.sendFile)().img(res);
-            res.sendFile(path.join(consts_1.ANIME_PATH, req.query.Id, "img", "".concat(req.query.Id, ".jpg")));
+            typesImg = ["jpe", "jpg", "jpeg", "png"];
+            im = typesImg.length;
+            for (i = 0; i < im; i++) {
+                pathImg = path.join(consts_1.ANIME_PATH, req.query.Id, "img", "".concat(req.query.Id, ".").concat(typesImg[i]));
+                if (fs.existsSync(pathImg)) {
+                    return [2 /*return*/, res.sendFile(pathImg)];
+                }
+            }
         }
         catch (err) {
             if (err == 1) {

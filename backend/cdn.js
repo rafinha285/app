@@ -42,6 +42,7 @@ var fs = require("fs");
 var handle_1 = require("./assets/handle");
 var consts_1 = require("./consts");
 // import { Console } from 'console'
+// @ts-ignore
 var app = e();
 app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var typesImg, im, i, pathImg;

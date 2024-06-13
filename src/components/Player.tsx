@@ -81,7 +81,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
     }
     const getResolutions = (epReso:string[]):PlyrSource=>{
         const resolutions = ['1080p', '720p', '480p'];
-        const baseUrl = `/api/ep/${ani.id}/${seasonId}/${ep.id}`
+        const baseUrl = `https://cdn.${window.location.host}/api/ep/${ani.id}/${seasonId}/${ep.id}`
         console.log(ep.subtitlestracks)
         const captionPlyrTracks = createCaptionsTracks(ep.subtitlestracks!)
 

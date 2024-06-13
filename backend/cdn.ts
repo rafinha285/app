@@ -5,6 +5,7 @@ import { ErrorType, sendError, sendFile, setHeader , Console} from './assets/han
 import { ANIME_PATH } from './consts'
 // import { Console } from 'console'
 
+// @ts-ignore
 const app = e()
 
 app.get('/ani/img',async(req:e.Request,res:e.Response)=>{

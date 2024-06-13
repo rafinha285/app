@@ -39,11 +39,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
 var path = require("path");
 var fs = require("fs");
+var cors = require("cors");
 var handle_1 = require("./assets/handle");
 var consts_1 = require("./consts");
 // import { Console } from 'console'
 // @ts-ignore
 var app = e();
+app.use(cors({ credentials: true }));
 app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var typesImg, im, i, pathImg;
     return __generator(this, function (_a) {
@@ -86,6 +88,6 @@ app.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awaiter
 // app.get('/favicon.ico',async(req:e.Request,res:e.Response)=>{
 //     res.sendFile("../build/favicon.ico")
 // })
-app.listen(8080, '0.0.0.0', function () {
-    handle_1.Console.log("http://0.0.0.0:8080");
+app.listen(8060, '0.0.0.0', function () {
+    handle_1.Console.log("http://0.0.0.0:8060");
 });

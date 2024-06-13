@@ -1,4 +1,4 @@
-import * as e from 'express'
+import e from 'express'
 import * as path from 'path'
 import * as fs from 'fs'
 import { ErrorType, sendError, sendFile, setHeader , Console} from './assets/handle'
@@ -30,15 +30,15 @@ app.get('/ani/img',async(req:e.Request,res:e.Response)=>{
         }
     }
 })
-app.get("/ep/:aniId/:season/:epId/:file",async(req,res)=>{
+app.get("/ep/:aniId/:season/:epId/:file",async(req:e.Request,res:e.Response)=>{
     setHeader(res)
     var {aniId,season,epId,file} = req.params
     res.set('Cache-Control', 'public, max-age=7200')
     res.sendFile(path.join(ANIME_PATH,aniId,"seasons",season,epId,file))
 })
-app.get('/favicon.ico',async(req:e.Request,res:e.Response)=>{
-    res.sendFile("../build/favicon.ico")
-})
+// app.get('/favicon.ico',async(req:e.Request,res:e.Response)=>{
+//     res.sendFile("../build/favicon.ico")
+// })
 app.listen(8080,'0.0.0.0',()=>{
     Console.log(`http://0.0.0.0:8080`)
 })

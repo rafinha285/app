@@ -12,6 +12,7 @@ import { handleNextEp } from "../features/main";
 // import Flowplayer, { useFlowplayer } from "@flowplayer/react-flowplayer";
 import postLog from "../functions/logFunctions";
 import { getEpsFromSeason } from "../functions/animeFunctions";
+import {cdnUrl} from "../const.ts";
 interface prop{
     ani:Anime;
     seasonId:string;
@@ -74,14 +75,14 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                 kind: 'captions',
                 label: languageCode,
                 srcLang: subtitles[index], // Usa o código original
-                src: `/api/ep/${ani.id}/${seasonId}/${ep.id}/${ep.id}-${subtitles[index]}.vtt`,
+                src: `${cdnUrl}/ep/${ani.id}/${seasonId}/${ep.id}/${ep.id}-${subtitles[index]}.vtt`,
                 default: subtitles[index] === "por", // Define o português como padrão
             }));
         }
     }
     const getResolutions = (epReso:string[]):PlyrSource=>{
         const resolutions = ['1080p', '720p', '480p'];
-        const baseUrl = `https://cdn.${window.location.host}/api/ep/${ani.id}/${seasonId}/${ep.id}`
+        const baseUrl = `${cdnUrl}/ep/${ani.id}/${seasonId}/${ep.id}`
         console.log(ep.subtitlestracks)
         const captionPlyrTracks = createCaptionsTracks(ep.subtitlestracks!)
 

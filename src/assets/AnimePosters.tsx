@@ -6,6 +6,7 @@ import {getEpTime, trim} from "../features/main"
 import "../css/index.css"
 import '../css/base.css'
 import {genToArray} from "../functions/animeFunctions"
+import {cdnUrl} from "../const.ts";
 
 
 
@@ -32,7 +33,7 @@ const AnimePoster:React.FC<AnimePosterProps> = ({aniId,doc})=>{
             <article className="newanime-t">
                 <div className="highlight-hover" />
                 <div className="highlight-img">
-                    <img src={`/api/ani/img?Id=${aniId}`} alt={doc!.name}></img>
+                    <img src={`${cdnUrl}/ani/img?Id=${aniId}`} alt={doc!.name}></img>
                 </div>
                 <div className="highlight-body">
                     <div className="highlight-time">

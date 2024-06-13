@@ -8,16 +8,17 @@ import "../css/index.css"
 import "../css/base.css"
 import "../css/search.css"
 import { AnimeSearch } from "../types/animeModel";
+import {cdnUrl} from "../const.ts";
 
 interface searchProp{
     ser:AnimeSearch
 }
 
 const Searchh:React.FC<searchProp> = ({ser}) =>{
-    return( 
+    return(
         <Link to={`/Anime/${ser.id}`} className="search-item">
             <div className="search-img">
-                <img src={`/api/ani/img?Id=${ser.id}`}></img>
+                <img src={`${cdnUrl}/ani/img?Id=${ser.id}`}></img>
             </div>
             <div className="search-prop">
                 <h1>{ser.name}</h1>

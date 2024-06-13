@@ -1,4 +1,4 @@
-import e from 'express'
+import * as e from 'express'
 import * as path from 'path'
 import * as fs from 'fs'
 import { ErrorType, sendError, sendFile, setHeader , Console} from './assets/handle'

@@ -6,3 +6,4 @@
 # /src/types/*.js
 /backend_old/node_modules
 /backend/target
+.idea/discord.xml

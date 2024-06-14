@@ -7,3 +7,4 @@
 /backend_old/node_modules
 /backend/target
 .idea/discord.xml
+/.idea/.gitignore

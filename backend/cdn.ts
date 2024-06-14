@@ -49,6 +49,7 @@ app.get("/ep/:aniId/:season/:epId/:file",async(req:e.Request,res:e.Response)=>{
 app.get("/stream/:aniId/:season/:epId/:reso",async(req:e.Request,res:e.Response)=>{
     try{
         var {aniId,seasonId,epId,reso} = req.params
+        Console.log(epId,reso)
         var filePath = path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`)
 
         const stat = fs.statSync(filePath);

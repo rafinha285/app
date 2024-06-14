@@ -94,6 +94,7 @@ app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awa
     return __generator(this, function (_b) {
         try {
             _a = req.params, aniId = _a.aniId, seasonId = _a.seasonId, epId = _a.epId, reso = _a.reso;
+            handle_1.Console.log(epId, reso);
             filePath = path.join(consts_1.ANIME_PATH, aniId, "seasons", seasonId, epId, "".concat(epId, "-").concat(reso, ".mp4"));
             stat = fs.statSync(filePath);
             fileSize_1 = stat.size;

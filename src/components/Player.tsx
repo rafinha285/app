@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useRef} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import { Episode, SubtitlesTracks } from "../types/episodeModel";
 import { languages, quality } from "../types/types";
 import Plyr,{APITypes,PlyrOptions,PlyrSource} from "plyr-react";
@@ -27,6 +27,8 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
     console.log(ani,ep,eps)
 
     const context = useContext(globalContext)!;
+    const [loadedSeconds, setLoadedSeconds] = useState(0);
+    const [canPlay, setCanPlay] = useState(false);
     // $.ajax({
     //     url:`/api/g/s/eps/${ani.id}/${seasonId}`
     // }).done((res:Episode[])=>{
@@ -134,7 +136,23 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         ref.current!.plyr.currentTime = inEnd
     }
     const optionsPlyr:PlyrOptions = {
-        settings:["captions","quality","speed","loop",'volume','rewind','fast-forward','download'],
+        settings:['play-large', // The large play button in the center
+            'restart', // Restart playback
+            'rewind', // Rewind by the seek time (default 10 seconds)
+            'play', // Play/pause playback
+            'fast-forward', // Fast forward by the seek time (default 10 seconds)
+            'progress', // The progress bar and scrubber for playback and buffering
+            'current-time', // The current time of playback
+            'duration', // The full duration of the media
+            'mute', // Toggle mute
+            'volume', // Volume control
+            'captions', // Toggle captions
+            'settings', // Settings menu
+            'pip', // Picture-in-picture (currently Safari only)
+            'airplay', // Airplay (currently Safari only)
+            'download', // Show a download button with a link to either the current source or a custom URL you specify in your options
+            'fullscreen', // Toggle fullscreen]
+        ],
         controls:['play-large','play','progress','current-time','mute', 'volume', 'captions', 'settings', 'pip','fullscreen'],
         storage:{ enabled: true, key: 'plyr' },
         keyboard:{focused:true,global:true},
@@ -211,15 +229,43 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             //     lastLoggedTime.push(currentTimeInSeconds);
             // }
         }
+        const handleLoadedSeconds = ()=>{
+            const buffered = plyr.buffered;
+            const duration = plyr.duration;
+
+            if (duration) {
+                const loaded = buffered * duration;
+                setLoadedSeconds(loaded);
+
+                if (loaded >= 5 && !canPlay) {
+                    setCanPlay(true);
+                    plyr.play();
+                }
+            }
+        }
+
         // plyr.on()
         plyr.elements.container?.addEventListener("timeupdate",handleTimeUpdate)
         plyr.elements.container?.addEventListener("seeking",handleTimeUpdate)
+        plyr.elements.container?.addEventListener('seeking',handleLoadedSeconds)
         // const lastLoggedTime:number[] = [];
     }
 
     useEffect(()=>{
         initPlyr()
+        return()=>{
+            ref.current!.plyr.destroy()
+        }
     },[])
+    useEffect(() => {
+        if(ref.current){
+            if (canPlay) {
+                ref.current.plyr.play();
+            } else {
+                ref.current.plyr.pause();
+            }
+        }
+    }, [canPlay]);
     return(
         <Plyr source={{type:"video",sources:[]}} ref={ref}  options={optionsPlyr}></Plyr>
     )

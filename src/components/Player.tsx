@@ -264,7 +264,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                 ref.current?.plyr.pause();
             }
         }
-    }, [canPlay]);
+    }, [canPlay,ref.current]);
     return(
         <Plyr source={{type:"video",sources:[]}} ref={ref}  options={optionsPlyr}></Plyr>
     )

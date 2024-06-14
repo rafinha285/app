@@ -90,12 +90,13 @@ app.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awaiter
     });
 }); });
 app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, aniId, seasonId, epId, reso, filePath, stat, fileSize_1, readStream, uploadedBytes_1;
+    var _a, aniId, season, epId, reso, filePath, stat, fileSize_1, readStream, uploadedBytes_1;
     return __generator(this, function (_b) {
         try {
-            _a = req.params, aniId = _a.aniId, seasonId = _a.seasonId, epId = _a.epId, reso = _a.reso;
-            handle_1.Console.log(epId, reso);
-            filePath = path.join(consts_1.ANIME_PATH, aniId, "seasons", seasonId, epId, "".concat(epId, "-").concat(reso, ".mp4"));
+            _a = req.params, aniId = _a.aniId, season = _a.season, epId = _a.epId, reso = _a.reso;
+            handle_1.Console.log(epId, reso, typeof reso);
+            filePath = path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, "".concat(epId, "-").concat(reso, ".mp4"));
+            handle_1.Console.log(filePath);
             stat = fs.statSync(filePath);
             fileSize_1 = stat.size;
             readStream = fs.createReadStream(filePath);
@@ -124,6 +125,6 @@ app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awa
         return [2 /*return*/];
     });
 }); });
-app.listen(8080, '0.0.0.0', function () {
-    handle_1.Console.log("http://0.0.0.0:8080");
+app.listen(8081, '0.0.0.0', function () {
+    handle_1.Console.log("http://0.0.0.0:8081");
 });

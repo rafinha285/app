@@ -48,10 +48,10 @@ app.get("/ep/:aniId/:season/:epId/:file",async(req:e.Request,res:e.Response)=>{
 })
 app.get("/stream/:aniId/:season/:epId/:reso",async(req:e.Request,res:e.Response)=>{
     try{
-        var {aniId,seasonId,epId,reso} = req.params
-        Console.log(epId,reso)
-        var filePath = path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`)
-
+        var {aniId,season,epId,reso} = req.params
+        Console.log(epId,reso,typeof reso)
+        var filePath = path.join(ANIME_PATH,aniId,"seasons",season,epId,`${epId}-${reso}.mp4`)
+        Console.log(filePath)
         const stat = fs.statSync(filePath);
         const fileSize = stat.size;
 
@@ -82,6 +82,6 @@ app.get("/stream/:aniId/:season/:epId/:reso",async(req:e.Request,res:e.Response)
         sendError(res,ErrorType.default,500,err)
     }
 })
-app.listen(8080,'0.0.0.0',()=>{
-    Console.log(`http://0.0.0.0:8080`)
+app.listen(8081,'0.0.0.0',()=>{
+    Console.log(`http://0.0.0.0:8081`)
 })

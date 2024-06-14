@@ -8,7 +8,7 @@ import 'plyr/dist/plyr.css'
 import "../css/watch.css"
 // import NetInfo from "@react-native-community/netinfo"
 import { Anime } from "../types/animeModel";
-import { handleNextEp } from "../features/main";
+import {handleEpWatched, handleNextEp} from "../features/main";
 // import Flowplayer, { useFlowplayer } from "@flowplayer/react-flowplayer";
 import postLog from "../functions/logFunctions";
 import { getEpsFromSeason } from "../functions/animeFunctions";
@@ -192,6 +192,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             }
 
             if (sec >= ed) {
+                handleEpWatched(ani.id,seasonId,ep)
                 if (Math.max(...seasonEp.map((ep) => ep.epindex)) === ep.epindex) {
                     // console.log("not skip-active ed")
                     skEButton.removeClass("skip-active");

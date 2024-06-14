@@ -243,7 +243,6 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                 }
             }
         }
-
         // plyr.on()
         plyr.elements.container?.addEventListener("timeupdate",handleTimeUpdate)
         plyr.elements.container?.addEventListener("seeking",handleTimeUpdate)
@@ -260,9 +259,9 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
     useEffect(() => {
         if(ref.current){
             if (canPlay) {
-                ref.current.plyr.play();
+                ref.current?.plyr.play();
             } else {
-                ref.current.plyr.pause();
+                ref.current?.plyr.pause();
             }
         }
     }, [canPlay]);

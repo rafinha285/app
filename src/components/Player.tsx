@@ -85,6 +85,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
     const getResolutions = (epReso:string[]):PlyrSource=>{
         const resolutions = ['1080p', '720p', '480p'];
         const baseUrl = `${cdnUrl}/ep/${ani.id}/${seasonId}/${ep.id}`
+        const baseVideoUrl = `${cdnUrl}/stream/${ani.id}/${seasonId}/${ep.id}`
         console.log(ep.subtitlestracks)
         const captionPlyrTracks = createCaptionsTracks(ep.subtitlestracks!)
 
@@ -101,16 +102,16 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             case quality.FULLHD:
                 console.log("FULLHD")
                 d.sources = resolutions.map((reso,index)=>({
-                    src:`${baseUrl}/${ep.id}-${reso.replace("p","")}.mp4`,
-                    type:"video/mp4",
-                    label:reso,
-                    size:index === 0 ? 1080 : index === 1 ? 720 : 480
+                    src: `${baseVideoUrl}/${reso.replace("p","")}`,
+                    type: "video/mp4",
+                    label: reso,
+                    size: index === 0 ? 1080 : index === 1 ? 720 : 480
                 }))
                 break
             case quality.HD:
                 console.log("HD")
                 d.sources = resolutions.slice(0, 2).map((reso, index) => ({
-                    src: `${baseUrl}/${ep.id}-${reso.replace("p","")}.mp4`,
+                    src: `${baseVideoUrl}/${reso.replace("p","")}`,
                     type: 'video/mp4',
                     label: reso,
                     size: index === 0 ? 1080 : 720,
@@ -118,10 +119,10 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                 break
             case quality.SD:
                 d.sources = [resolutions[2]].map((reso,index)=>({
-                    src:`${baseUrl}/${ep.id}-${reso.replace("p","")}.mp4`,
-                    type:"video/mp4",
-                    label:reso,
-                    size:480
+                    src: `${baseVideoUrl}/${reso.replace("p","")}`,
+                    type: "video/mp4",
+                    label: reso,
+                    size: 480
                 }))
                 break
         }

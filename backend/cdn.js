@@ -90,33 +90,39 @@ app.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awaiter
     });
 }); });
 app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, aniId, season, epId, reso, filePath, stat, fileSize_1, readStream, uploadedBytes_1;
+    var _a, aniId, season, epId, reso, filePath;
     return __generator(this, function (_b) {
         try {
             _a = req.params, aniId = _a.aniId, season = _a.season, epId = _a.epId, reso = _a.reso;
-            handle_1.Console.log(epId, reso, typeof reso);
             filePath = path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, "".concat(epId, "-").concat(reso, ".mp4"));
-            handle_1.Console.log(filePath);
-            stat = fs.statSync(filePath);
-            fileSize_1 = stat.size;
-            readStream = fs.createReadStream(filePath);
-            res.setHeader('Content-Type', 'video/mp4');
-            res.setHeader('Content-Length', fileSize_1);
-            res.setHeader('Content-Disposition', "attachment; filename=".concat(epId, ".mp4"));
-            uploadedBytes_1 = 0;
-            readStream.on('data', function (chunk) {
-                uploadedBytes_1 += chunk.length;
-                var progress = (uploadedBytes_1 / fileSize_1) * 100;
-                // Envia o progresso para o cliente
-                res.write(chunk);
-            });
-            readStream.on('end', function () {
-                res.end();
-            });
-            readStream.on('error', function (err) {
-                console.error(err);
-                res.status(500).end();
-            });
+            // Console.log(filePath)
+            // const stat = fs.statSync(filePath);
+            // const fileSize = stat.size;
+            //
+            // const readStream = fs.createReadStream(filePath);
+            //
+            // res.setHeader('Content-Type', 'video/mp4');
+            // res.setHeader('Content-Length', fileSize);
+            // res.setHeader('Content-Disposition', `attachment; filename=${epId}.mp4`);
+            //
+            // let uploadedBytes = 0;
+            // readStream.on('data', (chunk) => {
+            //     uploadedBytes += chunk.length;
+            //     const progress = (uploadedBytes / fileSize) * 100;
+            //     // Envia o progresso para o cliente
+            //     res.status(206)
+            //     res.write(chunk);
+            // });
+            //
+            // readStream.on('end', () => {
+            //     res.end();
+            // });
+            //
+            // readStream.on('error', (err) => {
+            //     console.error(err);
+            //     res.status(500).end();
+            // });
+            res.sendFile(filePath);
             // res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
         }
         catch (err) {
@@ -125,6 +131,6 @@ app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awa
         return [2 /*return*/];
     });
 }); });
-app.listen(8081, '0.0.0.0', function () {
-    handle_1.Console.log("http://0.0.0.0:8081");
+app.listen(8080, '0.0.0.0', function () {
+    handle_1.Console.log("http://0.0.0.0:8080");
 });

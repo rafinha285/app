@@ -49,39 +49,41 @@ app.get("/ep/:aniId/:season/:epId/:file",async(req:e.Request,res:e.Response)=>{
 app.get("/stream/:aniId/:season/:epId/:reso",async(req:e.Request,res:e.Response)=>{
     try{
         var {aniId,season,epId,reso} = req.params
-        Console.log(epId,reso,typeof reso)
+        // Console.log(epId,reso,typeof reso)
         var filePath = path.join(ANIME_PATH,aniId,"seasons",season,epId,`${epId}-${reso}.mp4`)
-        Console.log(filePath)
-        const stat = fs.statSync(filePath);
-        const fileSize = stat.size;
-
-        const readStream = fs.createReadStream(filePath);
-
-        res.setHeader('Content-Type', 'video/mp4');
-        res.setHeader('Content-Length', fileSize);
-        res.setHeader('Content-Disposition', `attachment; filename=${epId}.mp4`);
-
-        let uploadedBytes = 0;
-        readStream.on('data', (chunk) => {
-            uploadedBytes += chunk.length;
-            const progress = (uploadedBytes / fileSize) * 100;
-            // Envia o progresso para o cliente
-            res.write(chunk);
-        });
-
-        readStream.on('end', () => {
-            res.end();
-        });
-
-        readStream.on('error', (err) => {
-            console.error(err);
-            res.status(500).end();
-        });
+        // Console.log(filePath)
+        // const stat = fs.statSync(filePath);
+        // const fileSize = stat.size;
+        //
+        // const readStream = fs.createReadStream(filePath);
+        //
+        // res.setHeader('Content-Type', 'video/mp4');
+        // res.setHeader('Content-Length', fileSize);
+        // res.setHeader('Content-Disposition', `attachment; filename=${epId}.mp4`);
+        //
+        // let uploadedBytes = 0;
+        // readStream.on('data', (chunk) => {
+        //     uploadedBytes += chunk.length;
+        //     const progress = (uploadedBytes / fileSize) * 100;
+        //     // Envia o progresso para o cliente
+        //     res.status(206)
+        //     res.write(chunk);
+        // });
+        //
+        // readStream.on('end', () => {
+        //     res.end();
+        // });
+        //
+        // readStream.on('error', (err) => {
+        //     console.error(err);
+        //     res.status(500).end();
+        // });
+        res.sendFile(filePath)
         // res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
     }catch(err){
         sendError(res,ErrorType.default,500,err)
     }
 })
-app.listen(8081,'0.0.0.0',()=>{
-    Console.log(`http://0.0.0.0:8081`)
+app.listen(8080,'0.0.0.0',()=>{
+    Console.log(`http://0.0.0.0:8080`)
 })

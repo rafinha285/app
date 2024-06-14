@@ -136,7 +136,8 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         ref.current!.plyr.currentTime = inEnd
     }
     const optionsPlyr:PlyrOptions = {
-        settings:['play-large', // The large play button in the center
+        settings:["captions","quality","speed","loop",'volume','rewind','fast-forward','download'],
+        controls:['play-large', // The large play button in the center
             'restart', // Restart playback
             'rewind', // Rewind by the seek time (default 10 seconds)
             'play', // Play/pause playback
@@ -151,9 +152,8 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             'pip', // Picture-in-picture (currently Safari only)
             'airplay', // Airplay (currently Safari only)
             'download', // Show a download button with a link to either the current source or a custom URL you specify in your options
-            'fullscreen', // Toggle fullscreen]
+            'fullscreen', // Toggle fullscreen
         ],
-        controls:['play-large','play','progress','current-time','mute', 'volume', 'captions', 'settings', 'pip','fullscreen'],
         storage:{ enabled: true, key: 'plyr' },
         keyboard:{focused:true,global:true},
         tooltips:{controls:true,seek:true}
@@ -246,7 +246,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         // plyr.on()
         plyr.elements.container?.addEventListener("timeupdate",handleTimeUpdate)
         plyr.elements.container?.addEventListener("seeking",handleTimeUpdate)
-        plyr.elements.container?.addEventListener('seeking',handleLoadedSeconds)
+        plyr.elements.container?.addEventListener('progress',handleLoadedSeconds)
         // const lastLoggedTime:number[] = [];
     }
 
@@ -256,15 +256,6 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             ref.current!.plyr.destroy()
         }
     },[])
-    useEffect(() => {
-        if(ref.current){
-            if (canPlay) {
-                ref.current?.plyr.play();
-            } else {
-                ref.current?.plyr.pause();
-            }
-        }
-    }, [canPlay,ref.current]);
     return(
         <Plyr source={{type:"video",sources:[]}} ref={ref}  options={optionsPlyr}></Plyr>
     )

@@ -136,9 +136,9 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         ref.current!.plyr.currentTime = inEnd
     }
     const optionsPlyr:PlyrOptions = {
-        settings:["captions","quality","speed","loop",'volume','rewind','fast-forward','download'],
+        settings:['captions', 'quality', 'speed', 'loop'],
         controls:['play-large', // The large play button in the center
-            'restart', // Restart playback
+            // 'restart', // Restart playback
             'rewind', // Rewind by the seek time (default 10 seconds)
             'play', // Play/pause playback
             'fast-forward', // Fast forward by the seek time (default 10 seconds)
@@ -151,7 +151,6 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             'settings', // Settings menu
             'pip', // Picture-in-picture (currently Safari only)
             'airplay', // Airplay (currently Safari only)
-            'download', // Show a download button with a link to either the current source or a custom URL you specify in your options
             'fullscreen', // Toggle fullscreen
         ],
         storage:{ enabled: true, key: 'plyr' },
@@ -229,24 +228,24 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             //     lastLoggedTime.push(currentTimeInSeconds);
             // }
         }
-        const handleLoadedSeconds = ()=>{
-            const buffered = plyr.buffered;
-            const duration = plyr.duration;
-
-            if (duration) {
-                const loaded = buffered * duration;
-                setLoadedSeconds(loaded);
-
-                if (loaded >= 5 && !canPlay) {
-                    setCanPlay(true);
-                    plyr.play();
-                }
-            }
-        }
+        // const handleLoadedSeconds = ()=>{
+        //     const buffered = plyr.buffered;
+        //     const duration = plyr.duration;
+        //
+        //     if (duration) {
+        //         const loaded = buffered * duration;
+        //         setLoadedSeconds(loaded);
+        //
+        //         if (loaded >= 5 && !canPlay) {
+        //             setCanPlay(true);
+        //             plyr.play();
+        //         }
+        //     }
+        // }
         // plyr.on()
         plyr.elements.container?.addEventListener("timeupdate",handleTimeUpdate)
         plyr.elements.container?.addEventListener("seeking",handleTimeUpdate)
-        plyr.elements.container?.addEventListener('progress',handleLoadedSeconds)
+        // plyr.elements.container?.addEventListener('progress',handleLoadedSeconds)
         // const lastLoggedTime:number[] = [];
     }
 

@@ -1,4 +1,4 @@
-import React,{useEffect, useRef} from "react";
+import React, {useContext, useEffect, useRef} from "react";
 import { Episode, SubtitlesTracks } from "../types/episodeModel";
 import { languages, quality } from "../types/types";
 import Plyr,{APITypes,PlyrOptions,PlyrSource} from "plyr-react";
@@ -13,6 +13,7 @@ import { handleNextEp } from "../features/main";
 import postLog from "../functions/logFunctions";
 import { getEpsFromSeason } from "../functions/animeFunctions";
 import {cdnUrl, proxyUrl} from "../const";
+import globalContext from "../GlobalContext";
 interface prop{
     ani:Anime;
     seasonId:string;
@@ -25,6 +26,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
     const res = ['1920x1080','1280x720', '854x480']
     console.log(ani,ep,eps)
 
+    const context = useContext(globalContext)!;
     // $.ajax({
     //     url:`/api/g/s/eps/${ani.id}/${seasonId}`
     // }).done((res:Episode[])=>{
@@ -164,11 +166,13 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         skIn.children(".plyr__volume").after(skIButton);
 
         const intr = $(plyr.elements.controls!).find("#intro");
-        var buEd = (<div className="skip-intro plyr__controls__item plyr__control" onClick={()=>handleNextEp(ani.id,seasonId,seasonEp,ep.epindex)}>
+        // @ts-ignore
+        var buEd = (<div className="skip-intro plyr__controls__item plyr__control" onClick={()=>handleNextEp(ani.id,seasonId,seasonEp,ep.epindex,context.isLogged)}>
             <span>Proximo episodio</span>
             <i className="fa-solid fa-chevron-right"></i>
         </div>)
-        const skEButton = $(ReactDOMServer.renderToStaticMarkup(buEd)).prop("id", "outro").on("click",()=>handleNextEp(ani.id,seasonId,seasonEp,ep.epindex))
+        // @ts-ignore
+        const skEButton = $(ReactDOMServer.renderToStaticMarkup(buEd)).prop("id", "outro").on("click",()=>handleNextEp(ani.id,seasonId,seasonEp,ep.epindex,context.isLogged));
         intr.after(skEButton);
 
 
@@ -177,7 +181,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         // postLog(ani,true,ep.id,plyr.currentTime)
         function handleTimeUpdate() {
             const sec = plyr.currentTime;
-            // console.log(`sec >= opIni && sec <= opFim:${sec >= opIni && sec <= opFim},\n sec: ${sec},\n opIni: ${opIni},\n sec >= opIni: ${sec >= opIni},\n opFim: ${opFim},\n sec <= opFim: ${sec <= opFim}`)
+            console.log(`sec >= opIni && sec <= opFim:${sec >= opIni && sec <= opFim},\n sec: ${sec},\n opIni: ${opIni},\n sec >= opIni: ${sec >= opIni},\n opFim: ${opFim},\n sec <= opFim: ${sec <= opFim}`)
             // console.log(ep.epindex != Math.min(...seasonEp.map((v)=>v.index)),Math.min(...seasonEp.map((v)=>v.index)),ep.epindex)
             if (sec >= opIni && sec <= opFim && ep.epindex != Math.min(...seasonEp.map((v)=>v.epindex))) {
                 // console.log("skip-active ep")

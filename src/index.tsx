@@ -25,7 +25,7 @@ return (
         <Route path='/Anime/:id/download/:seasonId/:epId' element={<Download/>}/>
         <Route path='/Anime/agenda' element={<Agenda/>}/>
         <Route path='/gen/:gen' element={<GenSearch />} />
-        <Route path='/prod/:prod'element={<ProdSearch/>}/>
+        <Route path='/prod/:prod' element={<ProdSearch/>}/>
         <Route path='/search' element={<MainSearch />} />
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>

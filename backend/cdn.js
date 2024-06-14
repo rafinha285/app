@@ -39,13 +39,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
 var path = require("path");
 var fs = require("fs");
-var cors = require("cors");
+// import * as cors from 'cors';
+// @ts-ignore
 var handle_1 = require("./assets/handle");
 var consts_1 = require("./consts");
 // import { Console } from 'console'
 // @ts-ignore
 var app = e();
-app.use(cors({ credentials: true }));
+// app.use(cors({credentials:true}));
 app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var typesImg, im, i, pathImg;
     return __generator(this, function (_a) {
@@ -80,14 +81,48 @@ app.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awaiter
     return __generator(this, function (_b) {
         (0, handle_1.setHeader)(res);
         _a = req.params, aniId = _a.aniId, season = _a.season, epId = _a.epId, file = _a.file;
+        if (file.split(".")[1] == "mp4") {
+            res.status(206);
+        }
         res.set('Cache-Control', 'public, max-age=7200');
         res.sendFile(path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, file));
         return [2 /*return*/];
     });
 }); });
-// app.get('/favicon.ico',async(req:e.Request,res:e.Response)=>{
-//     res.sendFile("../build/favicon.ico")
-// })
-app.listen(8060, '0.0.0.0', function () {
-    handle_1.Console.log("http://0.0.0.0:8060");
+app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, aniId, seasonId, epId, reso, filePath, stat, fileSize_1, readStream, uploadedBytes_1;
+    return __generator(this, function (_b) {
+        try {
+            _a = req.params, aniId = _a.aniId, seasonId = _a.seasonId, epId = _a.epId, reso = _a.reso;
+            filePath = path.join(consts_1.ANIME_PATH, aniId, "seasons", seasonId, epId, "".concat(epId, "-").concat(reso, ".mp4"));
+            stat = fs.statSync(filePath);
+            fileSize_1 = stat.size;
+            readStream = fs.createReadStream(filePath);
+            res.setHeader('Content-Type', 'video/mp4');
+            res.setHeader('Content-Length', fileSize_1);
+            res.setHeader('Content-Disposition', "attachment; filename=".concat(epId, ".mp4"));
+            uploadedBytes_1 = 0;
+            readStream.on('data', function (chunk) {
+                uploadedBytes_1 += chunk.length;
+                var progress = (uploadedBytes_1 / fileSize_1) * 100;
+                // Envia o progresso para o cliente
+                res.write(chunk);
+            });
+            readStream.on('end', function () {
+                res.end();
+            });
+            readStream.on('error', function (err) {
+                console.error(err);
+                res.status(500).end();
+            });
+            // res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
+        }
+        catch (err) {
+            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
+        }
+        return [2 /*return*/];
+    });
+}); });
+app.listen(8080, '0.0.0.0', function () {
+    handle_1.Console.log("http://0.0.0.0:8080");
 });

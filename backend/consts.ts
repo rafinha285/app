@@ -1,11 +1,11 @@
 import * as path from "path"
 export const IP_DATABASE:string = '192.168.18.20'
-// export const ANIME_PATH:string = path.join(__dirname,'../','../','storage','anime')
-// export const MANGA_PATH:string = path.join(__dirname,'../','../','storage','manga')
-// export const TEMP_PATH:string = path.join(__dirname,'../','../','storage','temp')
-export const ANIME_PATH:string = path.join(`\\\\${IP_DATABASE}`,'anime')
-export const MANGA_PATH:string = path.join(`\\\\${IP_DATABASE}`,'manga')
-export const TEMP_PATH:string = path.join(`\\\\${IP_DATABASE}`,'temp')
+export const ANIME_PATH:string = path.join(__dirname,'../','../','storage','anime')
+export const MANGA_PATH:string = path.join(__dirname,'../','../','storage','manga')
+export const TEMP_PATH:string = path.join(__dirname,'../','../','storage','temp')
+// export const ANIME_PATH:string = path.join(`\\\\${IP_DATABASE}`,'anime')
+// export const MANGA_PATH:string = path.join(`\\\\${IP_DATABASE}`,'manga')
+// export const TEMP_PATH:string = path.join(`\\\\${IP_DATABASE}`,'temp')
 export const FFMPEG_PATH:string = path.join('/','usr','bin','ffmpeg')
 export const FFPROBE_PATH:string = path.join('/','usr','bin','ffprobe')
 export const RESOLUTIONS:string[] = ['1920x1080','1280x720', '854x480']

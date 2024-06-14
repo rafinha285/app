@@ -58,6 +58,7 @@ var Postgre_1 = require("./database/Postgre");
 var cookieParser = require("cookie-parser");
 var jwt = require("jsonwebtoken");
 var config_1 = require("./secret/config");
+var epWatchedHandle_1 = require("./animelist/epWatchedHandle");
 // import {  } from './assets/handle'
 // import * as bcrypt from "bcrypt"
 // import * as siteTypes from "../src/types/types"
@@ -1048,6 +1049,17 @@ app.post('/logout', function (req, res) { return __awaiter(void 0, void 0, void 
         try {
             res.clearCookie('token');
             res.json({ success: true, message: "Logout successful" });
+        }
+        catch (err) {
+            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
+        }
+        return [2 /*return*/];
+    });
+}); });
+router.post('/log/watch/:aniId/:seasonId/:epId', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        try {
+            (0, epWatchedHandle_1.epWatchedHandle)(req, res, Postgre_1.animeClient, Postgre_1.logPool);
         }
         catch (err) {
             (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);

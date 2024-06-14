@@ -2,7 +2,7 @@ import e, * as express from 'express';
 import Cconsole from "./Console";
 import * as path from "path";
 import { User } from "../../src/types/userType";
-import {pool, animeClient, logPool} from "../database/Postgre";
+import {animeClient, logPool} from "../database/Postgre";
 import { Log, page } from "../../src/types/logType";
 const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg')

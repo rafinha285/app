@@ -26,12 +26,13 @@ import { EpisodeSim } from '../src/types/episodeModel'
 import {tupleToSeason} from "../src/functions/animeFunctions"
 import * as sleep from 'sleep-promise';
 // import WebSocket from 'ws';
-import { animeClient } from './database/Postgre'
+import {animeClient, logPool} from './database/Postgre'
 import * as cookieParser from "cookie-parser"
 import * as jwt from "jsonwebtoken"
 import { reCaptchaSecretKey, secretKey } from './secret/config'
 import { JwtUser } from './types'
 import {Anime} from "../src/types/animeModel";
+import {epWatchedHandle} from "./animelist/epWatchedHandle";
 // import {  } from './assets/handle'
 // import * as bcrypt from "bcrypt"
 // import * as siteTypes from "../src/types/types"
@@ -845,6 +846,13 @@ app.post('/logout',async(req,res)=>{
         sendError(res,ErrorType.default,500,err)
     }
 
+})
+router.post('/log/watch/:aniId/:seasonId/:epId',checkToken,async(req:e.Request,res:e.Response)=>{
+    try {
+        epWatchedHandle(req,res,animeClient,logPool);
+    }catch(err){
+        sendError(res,ErrorType.default,500,err)
+    }
 })
 
 app.get('*',(req:e.Request,res:e.Response)=>{

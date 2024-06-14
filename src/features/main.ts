@@ -58,7 +58,7 @@ export const getMonthName = (date:Date,short:boolean,locale = "pt-br"):string =>
 //var proximoEp = NextEp(ani,seasonId,ep)
 //window.location.href = `/Anime/${ani.id}/watch/${seasonId}/${proximoEp.id}`
 export async function handleEpWatched (ani:string,seasonId:string,ep:Episode){
-    await fetch(`/api/log/watch/${ani}/${seasonId}/${ep}`,{
+    await fetch(`/api/log/watch/${ani}/${seasonId}/${ep.id}`,{
         method: "POST",
         body: JSON.stringify({duration:ep.duration}),
         headers:{

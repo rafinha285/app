@@ -1,11 +1,11 @@
-import React, { useEffect, useState} from "react";
-import {Anime, Season} from "../types/animeModel";
+import React, { useContext, useEffect, useState} from "react";
+import {Anime, AnimeUser, Season} from "../types/animeModel";
 import "../css/index.css"
 import "../css/base.css"
 import "../css/anime.css"
 import "../css/anime_.css"
 import "../css/loading.css"
-import { getEpTime, getMonthName} from "../features/main";
+import { checkIsLogged, getEpTime, getMonthName} from "../features/main";
 import LikeButton from "../assets/LikeButton"
 import AniGeneros from "../assets/Animegenre";
 import { Link, useParams } from "react-router-dom";
@@ -19,10 +19,15 @@ import postLog from "../functions/logFunctions"
 import PersoCompo from "../components/Perso";
 import {Box, Rating} from "@mui/material"
 import StarIcon from '@mui/icons-material/Star';
-import { genToArray, tupleToProducer, tupleToSeason } from "../functions/animeFunctions";
+import { genToArray, getLabelText, handleRatingValue, tupleToProducer, tupleToSeason } from "../functions/animeFunctions";
 import AniProducers, { prodType } from "../assets/AnimeProd";
 import { types } from "cassandra-driver";
 import { Episode } from "../types/episodeModel";
+import GlobalContext from "../GlobalContext";
+import Popup from "reactjs-popup"
+import AnimeEditList from "../components/AnimeEditList";
+import { ratingLabel } from "../types/types";
+import {cdnUrl} from "../const";
 
 
 interface seasonDate{
@@ -32,11 +37,27 @@ interface seasonDate{
 }
 
 const AnimePage:React.FC = ()=>{
+    const context = useContext(GlobalContext)!
     const {id} = useParams()
     const [ani,setAni] = useState<Anime |null>(null)
+    const [userAni,setUserAni] = useState<AnimeUser>()
     const [err,setErr] = useState<boolean>(false)
     const [seasonD,setSeasonD] = useState<seasonDate>()
     const [episodes,setEpisodes] = useState<Episode[]>([])
+    const [isInList,setIsInList] = useState<boolean>(false)
+    const [isPopupOpen,setIsPopupOpen] = useState<boolean>()
+
+    let checkList=async()=>{
+        await fetch(`/api/user/list/checkanime/${ani?.id}`)
+            .then(response=>response.json())
+            .then(async data=>{
+                setIsInList(data.message)
+                await fetch(`/api/user/animelist/${ani?.id}`)
+                    .then(response => response.json())
+                    .then(data=>setUserAni(data))
+            })
+    }
+
     useEffect(()=>{
         if(!ani){
             $.ajax(`/api/ani/${id}`).done((res:Anime)=>{
@@ -65,14 +86,17 @@ const AnimePage:React.FC = ()=>{
                         throw new Error(`Erro ao buscar episódios da temporada ${season.id}`);
                     }
                 })
-                
+
             })
+            if(context.isLogged){
+                checkList()
+            }
         }
     },[ani,id])
     const [gen,setGen] = useState<string[]>([])
     // useEffect(()=>{
     //     console.log(ani?.releaseDate,ani)
-        
+
     //     // $.ajax({
     //     //     url:`/api/ani/season/?month=${ani?.releaseDate.getMonth()}&year=${ani?.releaseDate.getFullYear()}`,
     //     //     headers:{
@@ -84,7 +108,7 @@ const AnimePage:React.FC = ()=>{
     // },[])
     // (ani?.seasons! as Season[])
     // const [epsComponent,setEpsComponent] = useState<React.Component[]>()
-    
+
     const seasonChangeHandle = (e:React.ChangeEvent) =>{
         var s = $(e.target).val()
         $(".eps").children().each(function(i,p){
@@ -95,22 +119,25 @@ const AnimePage:React.FC = ()=>{
             }
         })
     }
-    const ratingLabel:{[index:string]:string} ={
-        0.5:"PUTA QUE PARIU",
-        1:"Horrivel",
-        1.5:"Muito Ruim",
-        2:"Ruim",
-        2.5:"Na Média",
-        3:"Ok",
-        3.5:"Bom",
-        4:"Muito Bom",
-        4.5:"Incrivel",
-        5:"Obra-prima"
+
+
+    const handleAddAnimeToList = async()=>{
+        checkIsLogged(context.isLogged)
+        await fetch(`/api/user/anime/add/${ani?.id!}`,{method:"POST"})
+            .then(res=>res.json())
+            .then((data)=>{
+                console.log(data)
+                checkList()
+            })
     }
-    function getLabelText(value: number) {
-        return `${value} Star${value !== 1 ? 's' : ''}, ${ratingLabel[value]}`;
+    const handleEditAnimePopup = async()=>{
+        checkIsLogged(context.isLogged)
+
     }
-    const [ratingValue,setRatingValue] = useState<number|null>(2)
+    const handleLike = ()=>{
+
+    }
+    const [ratingValue,setRatingValue] = useState<number|null>()
     const [ratingHover,setRatingHover] = useState(-1)
     console.log(ani)
     return(
@@ -176,9 +203,9 @@ const AnimePage:React.FC = ()=>{
                     </div>
                     <div className="contentR">
                         <div className="im">
-                            <img src={`/api/ani/img?Id=${ani.id}`} alt={ani.name} />
+                            <img src={`${cdnUrl}/ani/img?Id=${ani.id}`} alt={ani.name} />
                         </div>
-                        <Box sx={{p:"auto",border:"1px white solid",borderRadius:'5px'}} className="not">
+                        {/* <Box sx={{p:"auto",border:"1px white solid",borderRadius:'5px'}} className="not"> */}
                             {/* <select className="selectN">
                                 <option value="none">Selecione sua nota</option>
                                 <option value="10">(10) Obra-prima</option>
@@ -193,15 +220,15 @@ const AnimePage:React.FC = ()=>{
                                 <option value="1">(1) PUTA QUE PARIU</option>
                             </select>
                             <button className="aniSNota"><i className="fa-solid fa-star" style={{float:"none"}}></i> Submit</button> */}
-                            <Rating
+                            {/* <Rating
                                 className="rating"
                                 name="rating"
                                 defaultValue={0}
                                 value={ratingValue}
-                                precision={1}
-                                getLabelText={getLabelText}
+                                precision={0.5}
+                                getLabelText={(v)=>getLabelText(v,ratingLabel)}
                                 onChange={(event,newValue)=>{
-                                    setRatingValue(newValue)
+                                    handleRatingValue(newValue!,context,ani)
                                 }}
                                 onChangeActive={(event, newHover) => {
                                     setRatingHover(newHover);
@@ -210,9 +237,17 @@ const AnimePage:React.FC = ()=>{
                                 size="large"
                             />
                             {ratingValue!== null&&(
-                                <Box sx={{ml:2,color:"white"}}>{ratingLabel[ratingHover !== -1?ratingHover:ratingValue]}</Box>
+                                <Box sx={{ml:2,color:"white"}}>{ratingLabel[ratingHover! !== -1?ratingHover!:ratingValue!]}</Box>
                             )}
-                        </Box>
+                        </Box> */}
+                        <Popup open={isPopupOpen} onClose={()=>setIsPopupOpen(false)}>
+                            <AnimeEditList onClose={()=>setIsPopupOpen(false)} ani={userAni!}/>
+                        </Popup>
+                        {isInList?(
+                            <button className="addAnimeList" onClick={()=>setIsPopupOpen(true)}>Editar Lista</button>
+                        ):(
+                            <button className="addAnimeList" onClick={handleAddAnimeToList}>Adicionar a lista de anime<i className="fa-solid fa-plus"></i></button>
+                        )}
                     </div>
                     <div className="seasons">
                         <select onChange={seasonChangeHandle}>
@@ -255,7 +290,7 @@ const AnimePage:React.FC = ()=>{
                             <PersoCompo perso={v} aniId={ani.id} key={i}></PersoCompo>
                         ))}</div>
                     </div>
-                </div> 
+                </div>
                 ):err?(
                     <div className="main-loading">
                         <h1>Anime não encontrado</h1>

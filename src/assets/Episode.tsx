@@ -4,6 +4,7 @@ import "../css/episodes.css"
 import { getEpTime } from "../features/main";
 import { Link } from "react-router-dom";
 import { EpisodeSim } from "../types/episodeModel";
+import {cdnUrl} from "../const";
 
 interface props{
     ep:EpisodeSim
@@ -17,7 +18,7 @@ const Episode:React.FC<props> = ({ep}) =>{
             <div className="">
                 <div className="ep-hover"/>
                 <div className="ep-img">
-                    <img alt={ep.animename} src={`/api/ep/${ep.animeid}/${ep.seasonid}/${ep.id}/${ep.id}.jpg`}></img>
+                    <img alt={ep.animename} src={`${cdnUrl}/ep/${ep.animeid}/${ep.seasonid}/${ep.id}/${ep.id}.jpg`}></img>
                 </div>
                 <div className="ep-body">
                     <div className="ep-res">

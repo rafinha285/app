@@ -1,3 +1,4 @@
+export declare const IP_DATABASE: string;
 export declare const ANIME_PATH: string;
 export declare const MANGA_PATH: string;
 export declare const TEMP_PATH: string;
@@ -8,4 +9,3 @@ export declare const BUILD_PATH: string;
 export declare const BUILD_HTML: string;
 export declare const HTTPS_KEY_PATH: string;
 export declare const HTTPS_CERT_PATH: string;
-export declare const IP_DATABASE: string;

@@ -1,4 +1,4 @@
-import { Audio, quality } from "./types";
+import { Audio, quality, userAnimeState, priorityValue } from "./types";
 import { character } from "./characterModel";
 import { EpisodeUser } from "./episodeModel";
 import { types } from "cassandra-driver";
@@ -11,6 +11,13 @@ export interface Season {
     name: string;
     episodes: string[];
     index: number;
+}
+export interface SeasonList {
+    anime_id: string;
+    season_id: string;
+    total_episodes: number;
+    total_rewatched_episodes?: number;
+    id?: number;
 }
 export interface Anime {
     id: string;
@@ -32,10 +39,15 @@ export interface Anime {
     date_added?: Date;
 }
 export interface AnimeUser {
-    animeId: string;
+    id: number;
+    anime_id: string;
     name: string;
-    watchedEpisodes: number;
-    lastEp: EpisodeUser;
+    start_date?: Date;
+    finish_date?: Date;
+    rate: number;
+    state: userAnimeState;
+    priority: priorityValue;
+    last_ep: EpisodeUser[];
 }
 export interface AnimeSearch {
     id: string;

@@ -2,23 +2,34 @@ import e, * as express from 'express';
 import Cconsole from "./Console";
 import * as path from "path";
 import { User } from "../../src/types/userType";
-import {pool, animeClient, logPool} from "../database/Postgre";
+import {animeClient, logPool} from "../database/Postgre";
 import { Log, page } from "../../src/types/logType";
 const fs = require('fs')
 const ffmpeg = require('fluent-ffmpeg')
 ffmpeg.setFfmpegPath("D:/Site_anime/ffmpeg/bin/ffmpeg.exe")
 ffmpeg.setFfprobePath("D:/Site_anime/ffmpeg/bin/ffprobe.exe")
 import {v4 as uuidv4} from "uuid"
-import { AnimeUser } from "../../src/types/animeModel";
-import { MangaUser } from "../../src/types/mangaType";
 import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
 import * as fss from "fs"
 import { PoolClient } from 'pg';
+import { secretKey } from '../secret/config';
+import { JwtUser, TokenRequest } from '../types';
 // import { randomInt } from "crypto";
 
 
-
+export enum priorityValue{
+    LOW="Baixa",
+    MEDIUM="Media",
+    HIGH="Alta"
+}
+export enum userAnimeState{
+    watching="Assistindo",
+    completed="Completado",
+    on_hold="Em espera",
+    dropped="Desistido",
+    plan_to_watch="Pretendo assistir"
+}
 
 
 export const Console = Cconsole
@@ -52,10 +63,12 @@ export enum ErrorType {
     invalidToken,
     invalidReCaptcha,
     invalidPassOrEmail,
+    invalidEmail,
+    isLoggedElsewhere,
     unauthorized,
     default
 }
-export function sendError(res:express.Response,errorType:ErrorType = ErrorType.default,status:number = 500,menssage:string = ""){
+export function sendError(res:express.Response,errorType:ErrorType = ErrorType.default,status:number = 500,menssage:any = ""){
     function error(res:express.Response,status:number,menssage:string){
         Console.error(menssage)
         res.status(status).json(menssage)
@@ -87,6 +100,12 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
     function invalidPassOrEmail(res:e.Response){
         res.status(401).json({success:false,message:"Falha ao logar, senha ou email incorretos"})
     }
+    function invalidEmail(res:e.Response){
+        res.status(400).json({success:false,message:"Email Invalid"})
+    }
+    function isLoggedElsewhere(res:e.Response){
+        res.status(409).json({success:false,message:"Usuário já está logado em outro lugar."})
+    }
     function unauthorized(res:e.Response){
         res.status(401).json({success:false,message:"Essa operação não é autorizada"})
     }
@@ -111,6 +130,12 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
             break
         case ErrorType.invalidPassOrEmail:
             invalidPassOrEmail(res)
+            break
+        case ErrorType.invalidEmail:
+            invalidEmail(res)
+            break
+        case ErrorType.isLoggedElsewhere:
+            isLoggedElsewhere(res)
             break
         case ErrorType.unauthorized:
             unauthorized(res)
@@ -145,7 +170,7 @@ export async function mkDir(no:String,svData:string){
     }catch(err){
         Console.error(err)
     }
-    
+
 }
 export function id(num:number = 8){
     if(!Number.isNaN(num)){
@@ -154,7 +179,7 @@ export function id(num:number = 8){
         return Array.from(buffer, byte => byte.toString(16).padStart(2,'0')).join('')
     }else{
         return false
-    }    
+    }
 }
 
 // export async function checkSeason(Seasons:Season[],pathToVid:string){
@@ -209,25 +234,53 @@ export async function addLog(log:Log){
     )
     return result.rows[0]
 }
-interface TokenRequest extends e.Request{
-    usuario?:string | jwt.JwtPayload 
-}
-export async function loginUser(req:e.Request,res:e.Response) {
-    
-}
-export async function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) {
-    const token = req.headers.authorization;
-    const segredo = fss.readFileSync("D:/main/https/token/token.pem")
+
+
+export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) {
+    const tokenHeader = req.headers.authorization?.split(" ")[1];
+    const tokencookie = req.cookies.token
+    // console.log(tokencookie)
+    const token = tokenHeader || tokencookie;
+    const segredo = secretKey
     if(!token){
         sendError(res,ErrorType.noToken)
         return
     }
-    jwt.verify(token,segredo,(err,usuario)=>{
-        if(err){
-            sendError(res,ErrorType.invalidToken)
-            return
+    jwt.verify(token,segredo,(err:unknown,usuario:any)=>{
+        if (err) {
+            sendError(res, ErrorType.invalidToken);
+            return;
         }
-        req.usuario = usuario
+        if (typeof usuario === 'string') {
+            try {
+                // Decodifica o token JWT para obter as informações do usuário
+                const decodedToken = jwt.verify(usuario, segredo) as JwtUser | null;
+                if (decodedToken) {
+                    // console.log(decodedToken.UserAgent,decodedToken.ip)
+                    // console.log(req.get("User-Agent")!,req.socket.remoteAddress)
+                    if(!(decodedToken.UserAgent === req.get("User-Agent")!&&
+                    decodedToken.ip === req.socket.remoteAddress)){
+                        throw ErrorType.isLoggedElsewhere
+                    }else{
+                        req.user = decodedToken;
+                    }
+                } else {
+                    req.user = usuario;
+                }
+            } catch (error) {
+                switch(error){
+                    case ErrorType.isLoggedElsewhere:
+                        console.log("aaaa erro logged elsewhere")
+                        return sendError(res,ErrorType.isLoggedElsewhere)
+                    default:
+                        return sendError(res,ErrorType.default,500,error)
+                }
+                // return
+                // req.user = usuario;
+            }
+        } else {
+            req.user = usuario;
+        }
         next()
     })
 }
@@ -248,15 +301,15 @@ export async function addUser(user:{
     const totalAnimeCompleted:number = 0;
     const totalAnimeDropped:number = 0;
     const totalAnimePlanToWatch:number = 0;
+    const totalAnimeOnHold = 0;
     const totalAnimeLiked:number = 0;
     const totalManga:number = 0;
     const totalMangaReading:number = 0;
     const totalMangaCompleted:number = 0;
     const totalMangaDropped:number = 0;
     const totalMangaPlanToRead:number = 0;
+    const totalMangaOnHold = 0
     const totalMangaLiked:number = 0
-    const animeList: AnimeUser[] = [];
-    const mangaList: MangaUser[] = [];
     const result = await animeClient.query(
         `INSERT INTO users.users 
         (
@@ -267,21 +320,21 @@ export async function addUser(user:{
             name, 
             surname, 
             birthdate, 
-            totalAnime, 
-            totalAnimeWatching, 
-            totalAnimeCompleted, 
-            totalAnimeDropped, 
-            totalAnimePlanToWatch, 
-            totalManga, 
-            totalMangaReading,
-            totalMangaCompleted, 
-            totalMangaDropped, 
-            totalMangaPlanToRead, 
-            animeList, 
-            mangaList, 
+            totalanime, 
+            totalanimewatching, 
+            totalanimecompleted, 
+            totalanimedropped, 
+            totalanimeplantowatch, 
+            totalmanga, 
+            totalmangareading,
+            totalmangacompleted, 
+            totalmangadropped, 
+            totalmangaplantoread, 
             totalAnimeLiked, 
             totalMangaLiked,
-            salt
+            salt,
+            totalanimeonhold,
+            totalmangaonhold
         ) 
         VALUES 
         (
@@ -312,11 +365,11 @@ export async function addUser(user:{
             _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
             totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
             totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
-            animeList || [],  // Se animeList for nulo, usa um array vazio
-            mangaList || [],  // Se mangaList for nulo, usa um array vazio
             totalAnimeLiked || [],  // Se totalAnimeLiked for nulo, usa um array vazio
             totalMangaLiked || [],   // Se totalMangaLiked for nulo, usa um array vazio,
-            salt
+            salt,
+            totalAnimeOnHold,
+            totalMangaOnHold
         ]
     );
     return result.rows[0];

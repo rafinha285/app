@@ -38,11 +38,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
 var path = require("path");
+var fs = require("fs");
+// import * as cors from 'cors';
+// @ts-ignore
 var handle_1 = require("./assets/handle");
 var consts_1 = require("./consts");
 // import { Console } from 'console'
+// @ts-ignore
 var app = e();
+// app.use(cors({credentials:true}));
 app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var typesImg, im, i, pathImg;
     return __generator(this, function (_a) {
         (0, handle_1.setHeader)(res);
         try {
@@ -50,7 +56,14 @@ app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 
                 throw 1;
             }
             (0, handle_1.sendFile)().img(res);
-            res.sendFile(path.join(consts_1.ANIME_PATH, req.query.Id, "img", "".concat(req.query.Id, ".jpg")));
+            typesImg = ["jpe", "jpg", "jpeg", "png"];
+            im = typesImg.length;
+            for (i = 0; i < im; i++) {
+                pathImg = path.join(consts_1.ANIME_PATH, req.query.Id, "img", "".concat(req.query.Id, ".").concat(typesImg[i]));
+                if (fs.existsSync(pathImg)) {
+                    return [2 /*return*/, res.sendFile(pathImg)];
+                }
+            }
         }
         catch (err) {
             if (err == 1) {
@@ -68,8 +81,53 @@ app.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awaiter
     return __generator(this, function (_b) {
         (0, handle_1.setHeader)(res);
         _a = req.params, aniId = _a.aniId, season = _a.season, epId = _a.epId, file = _a.file;
+        if (file.split(".")[1] == "mp4") {
+            res.status(206);
+        }
         res.set('Cache-Control', 'public, max-age=7200');
         res.sendFile(path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, file));
+        return [2 /*return*/];
+    });
+}); });
+app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, aniId, season, epId, reso, filePath;
+    return __generator(this, function (_b) {
+        try {
+            _a = req.params, aniId = _a.aniId, season = _a.season, epId = _a.epId, reso = _a.reso;
+            filePath = path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, "".concat(epId, "-").concat(reso, ".mp4"));
+            // Console.log(filePath)
+            // const stat = fs.statSync(filePath);
+            // const fileSize = stat.size;
+            //
+            // const readStream = fs.createReadStream(filePath);
+            //
+            // res.setHeader('Content-Type', 'video/mp4');
+            // res.setHeader('Content-Length', fileSize);
+            // res.setHeader('Content-Disposition', `attachment; filename=${epId}.mp4`);
+            //
+            // let uploadedBytes = 0;
+            // readStream.on('data', (chunk) => {
+            //     uploadedBytes += chunk.length;
+            //     const progress = (uploadedBytes / fileSize) * 100;
+            //     // Envia o progresso para o cliente
+            //     res.status(206)
+            //     res.write(chunk);
+            // });
+            //
+            // readStream.on('end', () => {
+            //     res.end();
+            // });
+            //
+            // readStream.on('error', (err) => {
+            //     console.error(err);
+            //     res.status(500).end();
+            // });
+            res.sendFile(filePath);
+            // res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
+        }
+        catch (err) {
+            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
+        }
         return [2 /*return*/];
     });
 }); });

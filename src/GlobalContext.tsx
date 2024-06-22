@@ -2,7 +2,7 @@ import React, { createContext, ReactNode, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 // import jwt from 'jsonwebtoken';
 
-interface GlobalContextType {
+export interface GlobalContextType {
     isLogged: boolean;
 }
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);

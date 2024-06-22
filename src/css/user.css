@@ -1,0 +1,130 @@
+/* css for base of the page */
+.info{
+    display:flex;
+    padding: var(--user-padding);
+    justify-content:space-between;
+}
+.left{
+    display: flex;
+    flex-direction: column;
+    background:rgb(103 0 145);
+    padding:var(--user-padding);
+    border-radius:10px;
+}
+.right{
+    display: flex;
+    flex-direction: column;
+    background:rgb(103 0 145);
+    padding:var(--user-padding);
+    width:50%;
+    border-radius:10px;
+}
+/* left side */
+.user-img{
+    border:1px solid white;
+    width:var(--user-width);
+    height:var(--user-height);
+    border-radius:45em;
+}
+.left .user{
+    margin:0 auto
+}
+.left .birth-date{
+    font-size:10px;
+    margin:0 auto
+}
+/* role css*/
+.role{
+    display:flex;
+}
+.role-list{
+    display:flex;
+    padding:10px;
+    align-items:center
+}
+.role-list .role-div{
+    border:1px solid white;
+    margin:0 3px;
+    padding:5px;
+    border-radius:5px
+}
+.role-div p{
+    margin:0;
+}
+/* anime infos */
+.right .anime-infos{
+    padding-left:10px
+}
+.anime-infos p:first-child{
+    margin-top:0
+}
+/* anime list */
+.anime-list{
+    display:flex;
+    justify-content:center;
+}
+.anime-list .content{
+    width:var(--anime-width);
+    background-color:rgb(103 0 145);
+    padding:5em;
+    border-radius:10px;
+}
+.list{
+    padding:10px;
+}
+/* anime-div */
+.list .anime{
+    border:1px solid white;
+    min-height:1em;
+    border-radius:5px;
+    padding:20px;
+    display:flex;
+    margin:10px 0;
+}
+.anime p{
+    margin:0;
+}
+.anime-content{
+    width:33%;
+    padding:10px;
+    display:flex;
+    align-items: center;
+}
+.anime-content img{
+    aspect-ratio:9/16;
+    border:1px solid white;
+    height:7em;
+    border-radius:8px;
+    margin-right:10px
+}
+/* anime props */
+.props{
+    display:flex;
+    flex-direction: column;
+}
+.prop{
+    display:inline-flex;
+    margin:20px 0;
+    color: white;
+}
+.prop p{
+    margin: 0;
+}
+.prop-list{
+    display:inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.prop-item{
+    border:1px white solid;
+    border-radius:5px;
+    padding: 3px;
+    margin:2px 10px;
+}
+
+:root{
+    --user-width:15em;
+    --anime-width:80%;
+    --user-height:15em;
+    --user-padding:10em;
+}

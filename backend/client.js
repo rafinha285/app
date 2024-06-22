@@ -48,8 +48,6 @@ var body_parser_1 = require("body-parser");
 // const Nano = require('nano');
 // import { Anime } from '../../app_admin/src/types/animeModel'
 var handle_1 = require("./assets/handle");
-// import { animeClient } from './assets/Postgre'
-// import { Query, QueryConfig, QueryResult } from 'pg'
 var pool_1 = require("./database/pool");
 var consts_1 = require("./consts");
 var cassandra_driver_1 = require("cassandra-driver");
@@ -60,6 +58,10 @@ var Postgre_1 = require("./database/Postgre");
 var cookieParser = require("cookie-parser");
 var jwt = require("jsonwebtoken");
 var config_1 = require("./secret/config");
+var epWatchedHandle_1 = require("./animelist/epWatchedHandle");
+// import {  } from './assets/handle'
+// import * as bcrypt from "bcrypt"
+// import * as siteTypes from "../src/types/types"
 // const privateKey = fs.readFileSync(HTTPS_KEY_PATH, 'utf8');
 // const certificate = fs.readFileSync(HTTPS_CERT_PATH, 'utf8');
 // const credentials = { key: privateKey, cert: certificate };
@@ -70,11 +72,11 @@ var app = e();
 // const couch:nano.ServerScope = Nano('http://admin:285@127.0.0.1:5984');
 // const corsOptions = {
 //     origin: (origin, callback) => {
-//       // Verifica se a origem da solicitação corresponde à origem esperada
-//       if (origin === undefined || origin === `https://${ip_1}`|| origin === `https://${ip_2}`) {
-//         callback(null, true); // Permite a solicitação
+//       // Verificar se a origem é a mesma
+//       if (origin && origin === 'https://animefoda.top') {
+//         callback(null, true); // Permitir a origem
 //       } else {
-//         callback(new Error('Acesso bloqueado por política de CORS')); // Bloqueia a solicitação
+//         callback('Acesso não permitido'); // Recusar a origem
 //       }
 //     },
 //   };
@@ -213,8 +215,28 @@ router.get("/ani/agenda", function (req, res) { return __awaiter(void 0, void 0,
         }
     });
 }); });
+// get the props form anime (props = genre,studios,creators,producers) for the user page
+router.get('/ani/:id/props', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, err_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, req.db.execute("SELECT producers, creators, genre, studios FROM anime WHERE id = ?", [req.params.id], { prepare: true })];
+            case 1:
+                response = _a.sent();
+                res.send(response.rows[0]);
+                return [3 /*break*/, 3];
+            case 2:
+                err_4 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_4);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 router.get("/ani/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var query, err_4;
+    var query, err_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -232,7 +254,7 @@ router.get("/ani/:id", function (req, res) { return __awaiter(void 0, void 0, vo
                 _a.sent();
                 return [3 /*break*/, 3];
             case 2:
-                err_4 = _a.sent();
+                err_5 = _a.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.NotId);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
@@ -297,7 +319,7 @@ app.get("/ani/season/", function (req, res) {
     }
 });
 router.get("/ani/gen/:gen", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var docs, err_5;
+    var docs, err_6;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -308,8 +330,8 @@ router.get("/ani/gen/:gen", function (req, res) { return __awaiter(void 0, void 
                 res.send(docs.rows);
                 return [3 /*break*/, 3];
             case 2:
-                err_5 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_5);
+                err_6 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_6);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -343,7 +365,7 @@ router.get("/ani/gen/:gen", function (req, res) { return __awaiter(void 0, void 
 //   }
 // })
 router.get('/search', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var search, result, err_6;
+    var search, result, err_7;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -356,15 +378,15 @@ router.get('/search', function (req, res) { return __awaiter(void 0, void 0, voi
                 res.send(result.rows);
                 return [3 /*break*/, 3];
             case 2:
-                err_6 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_6);
+                err_7 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_7);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 router.get("/g/s/eps/:animeid/:seasonid", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, animeid, seasonid, result, err_7;
+    var _a, animeid, seasonid, result, err_8;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -380,15 +402,15 @@ router.get("/g/s/eps/:animeid/:seasonid", function (req, res) { return __awaiter
                 res.send(result.rows);
                 return [3 /*break*/, 4];
             case 3:
-                err_7 = _b.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_7);
+                err_8 = _b.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_8);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
 router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var count, eps, currentDate, semana, result, err_8;
+    var count, eps, currentDate, semana, result, err_9;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -397,12 +419,15 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                 eps = [];
                 currentDate = new Date();
                 semana = new Date(currentDate.valueOf() - 7 * 24 * 60 * 60 * 1000);
-                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;", [semana, count], { prepare: true })];
+                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;", [semana, count], { prepare: true })
+                    // Console.log(result)
+                ];
             case 1:
                 result = _a.sent();
-                handle_1.Console.log(result);
+                // Console.log(result)
                 return [4 /*yield*/, sleep(2)];
             case 2:
+                // Console.log(result)
                 _a.sent();
                 result.rows.forEach(function (ee) { return __awaiter(void 0, void 0, void 0, function () {
                     var id, animeid, seasonid, name, duration, resolution, date_added, aniS, ep;
@@ -448,8 +473,8 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                 res.send(eps);
                 return [3 /*break*/, 6];
             case 5:
-                err_8 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_8);
+                err_9 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_9);
                 return [3 /*break*/, 6];
             case 6: return [2 /*return*/];
         }
@@ -503,7 +528,7 @@ router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso", function (req, res) { 
     });
 }); });
 router.get("/g/aniD/:ani/:seasonId/:epId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, ani, seasonId, epId, result, seasons, episode, err_9;
+    var _a, ani, seasonId, epId, result, seasons, episode, err_10;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -528,13 +553,13 @@ router.get("/g/aniD/:ani/:seasonId/:epId", function (req, res) { return __awaite
                 });
                 return [3 /*break*/, 4];
             case 3:
-                err_9 = _b.sent();
-                switch (err_9) {
+                err_10 = _b.sent();
+                switch (err_10) {
                     case handle_1.ErrorType.undefined:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.undefined);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_9);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_10);
                         break;
                 }
                 return [3 /*break*/, 4];
@@ -553,7 +578,7 @@ router.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awai
     });
 }); });
 router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userData, user, err_10;
+    var userData, user, err_11;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -567,15 +592,15 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                 res.json(user);
                 return [3 /*break*/, 4];
             case 3:
-                err_10 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_10);
+                err_11 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_11);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
 router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var logData, log, err_11;
+    var logData, log, err_12;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -589,15 +614,111 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
                 res.json(log);
                 return [3 /*break*/, 4];
             case 3:
-                err_11 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_11);
+                err_12 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_12);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
+router.post("/user/anime/like", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        try {
+        }
+        catch (err) {
+            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
+        }
+        return [2 /*return*/];
+    });
+}); });
+router.get("/user/list/checkanime/:id", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var checkIfExists, num_animes, err_13;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n            SELECT COUNT(*) AS num_animes\n            FROM users.user_anime_list\n            WHERE user_id = $1\n            AND anime_id = $2\n        ", [req.user._id, req.params.id])];
+            case 1:
+                checkIfExists = _a.sent();
+                num_animes = checkIfExists.rows[0].num_animes;
+                if (num_animes > 0) {
+                    res.json({ success: true, message: true });
+                }
+                else {
+                    res.json({ success: true, message: false });
+                }
+                return [3 /*break*/, 3];
+            case 2:
+                err_13 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_13);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.post("/user/anime/add/:id", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var anime, checkIfExists, num_animes, result, err_14;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 4, , 5]);
+                return [4 /*yield*/, req.db.execute("SELECT name,seasons FROM anime WHERE id = ?", [req.params.id], { prepare: true })];
+            case 1:
+                anime = (_a.sent()).rows[0];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT COUNT(*) AS num_animes\n        FROM users.user_anime_list\n        WHERE user_id = $1\n        AND anime_id = $2\n    ", [req.user._id, req.params.id])];
+            case 2:
+                checkIfExists = _a.sent();
+                num_animes = checkIfExists.rows[0].num_animes;
+                if (num_animes > 0) {
+                    return [2 /*return*/, res.status(403).json({ success: false, message: "Anime ja existe na sua lista" })];
+                }
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        INSERT INTO users.user_anime_list (\n            user_id,\n            anime_id,\n            status,\n            name,\n            start_date,\n            finish_date,\n            rate,\n            times_watched,\n            priority,\n            rewatched_episodes,\n            watched_episodes\n        ) VALUES(\n            $1,\n            $2,\n            $3,\n            $4,\n            $5,\n            $6,\n            $7,\n            $8,\n            $9,\n            $10,\n            $11\n        ) RETURNING TRUE\n        \n        ", [
+                        req.user._id,
+                        req.params.id,
+                        Object.keys(handle_1.userAnimeState)[0],
+                        anime.name,
+                        new Date(Date.now()),
+                        null,
+                        0.0,
+                        0,
+                        Object.keys(handle_1.priorityValue)[0],
+                        0,
+                        0
+                    ])];
+            case 3:
+                result = _a.sent();
+                anime.seasons.forEach(function (season) {
+                    var result = Postgre_1.animeClient.query("\n                INSERT INTO users.user_anime_list ()\n            ");
+                });
+                handle_1.Console.log(result.rows);
+                if (result.rows.length > 0) {
+                    res.status(201).json({ success: true, message: "Anime adicionado a lista de anime" });
+                }
+                else {
+                    return [2 /*return*/, res.status(500).json({ success: false, message: "Falha ao adicionar anime na sua lista" })];
+                }
+                return [3 /*break*/, 5];
+            case 4:
+                err_14 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_14);
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); });
+router.get('/user/anime', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        try {
+            Postgre_1.animeClient.query("\n      \n    ");
+        }
+        catch (err) {
+            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
+        }
+        return [2 /*return*/];
+    });
+}); });
 router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, salt, response, data, userData, err_12;
+    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, salt, emailRegex, response, data, userData, err_15;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -605,6 +726,10 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                 _a = req.body, email = _a.email, name_1 = _a.name, surname = _a.surname, username = _a.username, birthDate = _a.birthDate, password = _a.password, recaptchaToken = _a.recaptchaToken, salt = _a.salt;
                 if (!recaptchaToken) {
                     throw handle_1.ErrorType.noToken;
+                }
+                emailRegex = /\S+@\S+\.\S+/;
+                if (!emailRegex.test(email)) {
+                    throw handle_1.ErrorType.invalidEmail;
                 }
                 return [4 /*yield*/, fetch('https://www.google.com/recaptcha/api/siteverify', {
                         method: "POST",
@@ -635,33 +760,123 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
             case 4: throw handle_1.ErrorType.invalidReCaptcha;
             case 5: return [3 /*break*/, 7];
             case 6:
-                err_12 = _b.sent();
-                switch (err_12) {
+                err_15 = _b.sent();
+                switch (err_15) {
                     case handle_1.ErrorType.noToken:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
                         break;
                     case handle_1.ErrorType.invalidToken:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidReCaptcha);
+                        break;
+                    case handle_1.ErrorType.invalidEmail:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidEmail);
+                        break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_12);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_15);
                 }
                 return [3 /*break*/, 7];
             case 7: return [2 /*return*/];
         }
     });
 }); });
-router.get('/user', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var token, decode, result, err_13;
+router.get("/user/animelist/season/:aniid", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, err_16;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                token = req.cookies.token;
-                if (!token) {
-                    throw handle_1.ErrorType.noToken;
-                }
-                decode = jwt.verify(token, config_1.secretKey);
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT * FROM user.users WHERE username = $1;\n    ", [decode.username])];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n            SELECT * FROM users.user_anime_seasons\n            WHERE user_id = $1\n            AND anime_id = $2\n        ", [req.user._id, req.params.aniid])];
+            case 1:
+                result = _a.sent();
+                res.json(result.rows);
+                return [3 /*break*/, 3];
+            case 2:
+                err_16 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_16);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.get("/user/animelist/:id", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, err_17;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT *\n      FROM users.user_anime_list\n      WHERE user_id = $1\n      AND anime_id = $2;\n    ", [req.user._id, req.params.id])];
+            case 1:
+                result = _a.sent();
+                res.json(result.rows[0]);
+                return [3 /*break*/, 3];
+            case 2:
+                err_17 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_17);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.get("/user/animelist", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, err_18;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                handle_1.Console.log(Postgre_1.animeClient);
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id\n        FROM users.user_anime_list\n        WHERE user_id = $1;\n    ", [req.user._id])];
+            case 1:
+                result = _a.sent();
+                res.send(result.rows);
+                return [3 /*break*/, 3];
+            case 2:
+                err_18 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_18);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.patch('/user/animelist/update', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, id, watched_episodes, start_date, finish_date, rate, state, priority, times_watched, rewatched_episodes, err_19;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                _a = req.body, id = _a.id, watched_episodes = _a.watched_episodes, start_date = _a.start_date, finish_date = _a.finish_date, rate = _a.rate, state = _a.state, priority = _a.priority, times_watched = _a.times_watched, rewatched_episodes = _a.rewatched_episodes;
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        UPDATE users.user_anime_list\n            SET \n                watched_episodes =$1\n                start_date = $2,\n                finish_date = $3,\n                rate = $4,\n                state = $5,\n                priority = $6,\n                times_watched = $7,\n                rewatched_episodes = $8\n        WHERE id = $9\n    ", [
+                        watched_episodes,
+                        start_date,
+                        finish_date,
+                        rate,
+                        state,
+                        priority,
+                        times_watched,
+                        rewatched_episodes,
+                        id
+                    ])];
+            case 1:
+                _b.sent();
+                res.json({ success: true, message: "Atualizado com sucesso" });
+                return [3 /*break*/, 3];
+            case 2:
+                err_19 = _b.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_19);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+app.get('/g/checktoken', handle_1.checkToken, function (req, res) {
+    res.json({ success: true });
+});
+app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, err_20;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n      SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked,totalanimeonhold,totalmangaonhold\n      FROM users.users\n      WHERE _id = $1;\n    ", [req.user._id])];
             case 1:
                 result = _a.sent();
                 if (result.rows.length < 1) {
@@ -670,13 +885,13 @@ router.get('/user', function (req, res) { return __awaiter(void 0, void 0, void 
                 res.send(result.rows[0]);
                 return [3 /*break*/, 3];
             case 2:
-                err_13 = _a.sent();
-                switch (err_13) {
+                err_20 = _a.sent();
+                switch (err_20) {
                     case handle_1.ErrorType.noToken:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_13);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_20);
                         break;
                 }
                 return [3 /*break*/, 3];
@@ -684,10 +899,84 @@ router.get('/user', function (req, res) { return __awaiter(void 0, void 0, void 
         }
     });
 }); });
+router.get("/g/seasons/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, err_21;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, req.db.execute("SELECT seasons FROM anime WHERE id = ?", [req.params.id], { prepare: true })];
+            case 1:
+                response = _a.sent();
+                res.send(response.rows[0].seasons);
+                return [3 /*break*/, 3];
+            case 2:
+                err_21 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_21);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 app.use('/api', router);
 app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
+app.get('/verify', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        console.log(req.user.username);
+        res.json({ success: true });
+        return [2 /*return*/];
+    });
+}); });
+app.post('/app/login', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, password, result, tokenInfo, token, err_22;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 2, , 3]);
+                _a = req.body, email = _a.email, password = _a.password;
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n            WITH hashed_password AS (\n                SELECT users.crypt($1,salt) AS hash\n                FROM users.users\n                WHERE email = $2\n            )\n            SELECT * FROM users.users\n            WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n        ", [password, email])
+                    // Console.log(result.rows)
+                ];
+            case 1:
+                result = _b.sent();
+                // Console.log(result.rows)
+                if (result.rows.length < 1) {
+                    throw handle_1.ErrorType.invalidPassOrEmail;
+                }
+                tokenInfo = {
+                    _id: result.rows[0]._id,
+                    username: result.rows[0].username,
+                    UserAgent: req.get("User-Agent"),
+                    ip: req.socket.remoteAddress,
+                    // SecChUa:req.get("Sec-Ch-Ua")!
+                };
+                token = jwt.sign(tokenInfo, config_1.secretKey, { expiresIn: "1d" });
+                res.cookie('token', token, { httpOnly: true, secure: true });
+                res.send({ success: true, message: "Login Successful", token: token });
+                return [3 /*break*/, 3];
+            case 2:
+                err_22 = _b.sent();
+                switch (err_22) {
+                    case handle_1.ErrorType.invalidToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidToken);
+                        break;
+                    case handle_1.ErrorType.noToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
+                        break;
+                    case handle_1.ErrorType.invalidPassOrEmail:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidPassOrEmail);
+                        break;
+                    default:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_22);
+                        break;
+                }
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, recaptchaToken, response, data, result, token, err_14;
+    var _a, email, password, recaptchaToken, response, data, result, tokenInfo, token, err_23;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -709,22 +998,31 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
             case 2:
                 data = _b.sent();
                 if (!data.success) return [3 /*break*/, 4];
-                return [4 /*yield*/, Postgre_1.animeClient.query("\n        WITH hashed_password AS (\n          SELECT users.crypt($1, salt) AS hash\n          FROM users.users\n          WHERE email = $2\n        )\n        SELECT * FROM users.users\n        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n      ", [password, email])];
+                return [4 /*yield*/, Postgre_1.animeClient.query("\n        WITH hashed_password AS (\n            SELECT users.crypt($1, salt) AS hash\n            FROM users.users\n            WHERE email = $2\n        )\n        SELECT * FROM users.users\n        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n        ", [password, email])
+                    // Console.log(result.rows)
+                ];
             case 3:
                 result = _b.sent();
-                handle_1.Console.log(result.rows);
+                // Console.log(result.rows)
                 if (result.rows.length < 1) {
                     throw handle_1.ErrorType.invalidPassOrEmail;
                 }
-                token = jwt.sign({ _id: result.rows[0]._id, username: result.rows[0].username }, config_1.secretKey, { expiresIn: "1d" });
+                tokenInfo = {
+                    _id: result.rows[0]._id,
+                    username: result.rows[0].username,
+                    UserAgent: req.get("User-Agent"),
+                    ip: req.socket.remoteAddress,
+                    // SecChUa:req.get("Sec-Ch-Ua")!
+                };
+                token = jwt.sign(tokenInfo, config_1.secretKey, { expiresIn: "1d" });
                 res.cookie('token', token, { httpOnly: true, secure: true });
                 res.send({ success: true, message: "Login Successful", token: token });
                 return [3 /*break*/, 5];
             case 4: throw handle_1.ErrorType.invalidReCaptcha;
             case 5: return [3 /*break*/, 7];
             case 6:
-                err_14 = _b.sent();
-                switch (err_14) {
+                err_23 = _b.sent();
+                switch (err_23) {
                     case handle_1.ErrorType.invalidReCaptcha:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidReCaptcha);
                         break;
@@ -738,7 +1036,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidPassOrEmail);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_14);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_23);
                         break;
                 }
                 return [3 /*break*/, 7];
@@ -751,6 +1049,17 @@ app.post('/logout', function (req, res) { return __awaiter(void 0, void 0, void 
         try {
             res.clearCookie('token');
             res.json({ success: true, message: "Logout successful" });
+        }
+        catch (err) {
+            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
+        }
+        return [2 /*return*/];
+    });
+}); });
+router.post('/log/watch/:aniId/:seasonId/:epId', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        try {
+            (0, epWatchedHandle_1.epWatchedHandle)(req, res, Postgre_1.animeClient, Postgre_1.logPool);
         }
         catch (err) {
             (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);

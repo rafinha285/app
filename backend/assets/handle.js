@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addUser = exports.checkToken = exports.loginUser = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = void 0;
+exports.addUser = exports.checkToken = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = exports.userAnimeState = exports.priorityValue = void 0;
 var Console_1 = require("./Console");
 var path = require("path");
 var Postgre_1 = require("../database/Postgre");
@@ -46,8 +46,22 @@ ffmpeg.setFfmpegPath("D:/Site_anime/ffmpeg/bin/ffmpeg.exe");
 ffmpeg.setFfprobePath("D:/Site_anime/ffmpeg/bin/ffprobe.exe");
 var uuid_1 = require("uuid");
 var jwt = require("jsonwebtoken");
-var fss = require("fs");
+var config_1 = require("../secret/config");
 // import { randomInt } from "crypto";
+var priorityValue;
+(function (priorityValue) {
+    priorityValue["LOW"] = "Baixa";
+    priorityValue["MEDIUM"] = "Media";
+    priorityValue["HIGH"] = "Alta";
+})(priorityValue || (exports.priorityValue = priorityValue = {}));
+var userAnimeState;
+(function (userAnimeState) {
+    userAnimeState["watching"] = "Assistindo";
+    userAnimeState["completed"] = "Completado";
+    userAnimeState["on_hold"] = "Em espera";
+    userAnimeState["dropped"] = "Desistido";
+    userAnimeState["plan_to_watch"] = "Pretendo assistir";
+})(userAnimeState || (exports.userAnimeState = userAnimeState = {}));
 exports.Console = Console_1.default;
 // export const epModel = mongoose.model<episode>('aniEp',aniEpS)
 function setHeader(res) {
@@ -89,8 +103,10 @@ var ErrorType;
     ErrorType[ErrorType["invalidToken"] = 4] = "invalidToken";
     ErrorType[ErrorType["invalidReCaptcha"] = 5] = "invalidReCaptcha";
     ErrorType[ErrorType["invalidPassOrEmail"] = 6] = "invalidPassOrEmail";
-    ErrorType[ErrorType["unauthorized"] = 7] = "unauthorized";
-    ErrorType[ErrorType["default"] = 8] = "default";
+    ErrorType[ErrorType["invalidEmail"] = 7] = "invalidEmail";
+    ErrorType[ErrorType["isLoggedElsewhere"] = 8] = "isLoggedElsewhere";
+    ErrorType[ErrorType["unauthorized"] = 9] = "unauthorized";
+    ErrorType[ErrorType["default"] = 10] = "default";
 })(ErrorType || (exports.ErrorType = ErrorType = {}));
 function sendError(res, errorType, status, menssage) {
     if (errorType === void 0) { errorType = ErrorType.default; }
@@ -127,6 +143,12 @@ function sendError(res, errorType, status, menssage) {
     function invalidPassOrEmail(res) {
         res.status(401).json({ success: false, message: "Falha ao logar, senha ou email incorretos" });
     }
+    function invalidEmail(res) {
+        res.status(400).json({ success: false, message: "Email Invalid" });
+    }
+    function isLoggedElsewhere(res) {
+        res.status(409).json({ success: false, message: "Usuário já está logado em outro lugar." });
+    }
     function unauthorized(res) {
         res.status(401).json({ success: false, message: "Essa operação não é autorizada" });
     }
@@ -151,6 +173,12 @@ function sendError(res, errorType, status, menssage) {
             break;
         case ErrorType.invalidPassOrEmail:
             invalidPassOrEmail(res);
+            break;
+        case ErrorType.invalidEmail:
+            invalidEmail(res);
+            break;
+        case ErrorType.isLoggedElsewhere:
+            isLoggedElsewhere(res);
             break;
         case ErrorType.unauthorized:
             unauthorized(res);
@@ -314,40 +342,63 @@ function addLog(log) {
     });
 }
 exports.addLog = addLog;
-function loginUser(req, res) {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/];
-        });
-    });
-}
-exports.loginUser = loginUser;
 function checkToken(req, res, next) {
-    return __awaiter(this, void 0, void 0, function () {
-        var token, segredo;
-        return __generator(this, function (_a) {
-            token = req.headers.authorization;
-            segredo = fss.readFileSync("D:/main/https/token/token.pem");
-            if (!token) {
-                sendError(res, ErrorType.noToken);
-                return [2 /*return*/];
-            }
-            jwt.verify(token, segredo, function (err, usuario) {
-                if (err) {
-                    sendError(res, ErrorType.invalidToken);
-                    return;
+    var _a;
+    var tokenHeader = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
+    var tokencookie = req.cookies.token;
+    // console.log(tokencookie)
+    var token = tokenHeader || tokencookie;
+    var segredo = config_1.secretKey;
+    if (!token) {
+        sendError(res, ErrorType.noToken);
+        return;
+    }
+    jwt.verify(token, segredo, function (err, usuario) {
+        if (err) {
+            sendError(res, ErrorType.invalidToken);
+            return;
+        }
+        if (typeof usuario === 'string') {
+            try {
+                // Decodifica o token JWT para obter as informações do usuário
+                var decodedToken = jwt.verify(usuario, segredo);
+                if (decodedToken) {
+                    // console.log(decodedToken.UserAgent,decodedToken.ip)
+                    // console.log(req.get("User-Agent")!,req.socket.remoteAddress)
+                    if (!(decodedToken.UserAgent === req.get("User-Agent") &&
+                        decodedToken.ip === req.socket.remoteAddress)) {
+                        throw ErrorType.isLoggedElsewhere;
+                    }
+                    else {
+                        req.user = decodedToken;
+                    }
                 }
-                req.usuario = usuario;
-                next();
-            });
-            return [2 /*return*/];
-        });
+                else {
+                    req.user = usuario;
+                }
+            }
+            catch (error) {
+                switch (error) {
+                    case ErrorType.isLoggedElsewhere:
+                        console.log("aaaa erro logged elsewhere");
+                        return sendError(res, ErrorType.isLoggedElsewhere);
+                    default:
+                        return sendError(res, ErrorType.default, 500, error);
+                }
+                // return
+                // req.user = usuario;
+            }
+        }
+        else {
+            req.user = usuario;
+        }
+        next();
     });
 }
 exports.checkToken = checkToken;
 function addUser(user) {
     return __awaiter(this, void 0, void 0, function () {
-        var name, surname, username, birthDate, email, password, salt, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaLiked, animeList, mangaList, result;
+        var name, surname, username, birthDate, email, password, salt, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeOnHold, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaOnHold, totalMangaLiked, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -359,24 +410,24 @@ function addUser(user) {
                     totalAnimeCompleted = 0;
                     totalAnimeDropped = 0;
                     totalAnimePlanToWatch = 0;
+                    totalAnimeOnHold = 0;
                     totalAnimeLiked = 0;
                     totalManga = 0;
                     totalMangaReading = 0;
                     totalMangaCompleted = 0;
                     totalMangaDropped = 0;
                     totalMangaPlanToRead = 0;
+                    totalMangaOnHold = 0;
                     totalMangaLiked = 0;
-                    animeList = [];
-                    mangaList = [];
-                    return [4 /*yield*/, Postgre_1.animeClient.query("INSERT INTO users.users \n        (\n            _id, \n            username, \n            email, \n            password, \n            name, \n            surname, \n            birthdate, \n            totalAnime, \n            totalAnimeWatching, \n            totalAnimeCompleted, \n            totalAnimeDropped, \n            totalAnimePlanToWatch, \n            totalManga, \n            totalMangaReading,\n            totalMangaCompleted, \n            totalMangaDropped, \n            totalMangaPlanToRead, \n            animeList, \n            mangaList, \n            totalAnimeLiked, \n            totalMangaLiked,\n            salt\n        ) \n        VALUES \n        (\n            $1, \n            $2, \n            $3, \n            $4, \n            $5, \n            $6, \n            $7, \n            $8, \n            $9, \n            $10, \n            $11, \n            $12, \n            $13, \n            $14, \n            $15, \n            $16, \n            $17, \n            $18, \n            $19, \n            $20, \n            $21,\n            $22\n        ) RETURNING *", [
+                    return [4 /*yield*/, Postgre_1.animeClient.query("INSERT INTO users.users \n        (\n            _id, \n            username, \n            email, \n            password, \n            name, \n            surname, \n            birthdate, \n            totalanime, \n            totalanimewatching, \n            totalanimecompleted, \n            totalanimedropped, \n            totalanimeplantowatch, \n            totalmanga, \n            totalmangareading,\n            totalmangacompleted, \n            totalmangadropped, \n            totalmangaplantoread, \n            totalAnimeLiked, \n            totalMangaLiked,\n            salt,\n            totalanimeonhold,\n            totalmangaonhold\n        ) \n        VALUES \n        (\n            $1, \n            $2, \n            $3, \n            $4, \n            $5, \n            $6, \n            $7, \n            $8, \n            $9, \n            $10, \n            $11, \n            $12, \n            $13, \n            $14, \n            $15, \n            $16, \n            $17, \n            $18, \n            $19, \n            $20, \n            $21,\n            $22\n        ) RETURNING *", [
                             _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
                             totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
                             totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
-                            animeList || [],
-                            mangaList || [],
                             totalAnimeLiked || [],
                             totalMangaLiked || [],
-                            salt
+                            salt,
+                            totalAnimeOnHold,
+                            totalMangaOnHold
                         ])];
                 case 1:
                     result = _a.sent();

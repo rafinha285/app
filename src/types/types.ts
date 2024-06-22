@@ -20,4 +20,40 @@ export enum state{
 	COMPLETED="Completo",
 	CANCELED= "Cancelado"
 }
+export enum userAnimeState{
+    watching="Assistindo",
+    completed="Completado",
+    on_hold="Em espera",
+    dropped="Desistido",
+    plan_to_watch="Pretendo assistir"
+}
+export enum userMangaState{
+    reading="Lendo",
+    completed="Completado",
+    on_hold="Em espera",
+    dropped="Desistido",
+    plan_to_read="Pretendo ler"
+}
+export enum roles{
+    adm = "Administrador",
+    client = "Cliente",
+    creator = "Criador"
+}
+export enum priorityValue{
+    LOW="Baixa",
+    MEDIUM="Media",
+    HIGH="Alta"
+}
 export type StateType = "ONGOING" | "HIATUS" | "COMPLETED" | "CANCELED";
+export const ratingLabel:{[index:string]:string} ={
+    0.5:"PUTA QUE PARIU",
+    1:"Horrivel",
+    1.5:"Muito Ruim",
+    2:"Ruim",
+    2.5:"Na Média",
+    3:"Ok",
+    3.5:"Bom",
+    4:"Muito Bom",
+    4.5:"Incrivel",
+    5:"Obra-prima"
+}

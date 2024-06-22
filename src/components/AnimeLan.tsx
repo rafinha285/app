@@ -14,7 +14,7 @@ const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
     const [Aniposters,AnisetPosters] = useState<JSX.Element[]>([])
     const [Manposters,MansetPosters] = useState<JSX.Element[]>([])
     useEffect(()=>{
-        console.log("aaa") 
+        console.log("aaa")
         fetch("/api/ani/lan").then((res)=>res.json())
         .then((data:Anime[])=>{
             console.log(data)
@@ -32,7 +32,7 @@ const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
             console.error(err)
         })
     },[])
-    if(manga ===true){
+    if(manga){
         return(
             <div className="newanime">
                 <div className="newanimetitle">
@@ -61,7 +61,7 @@ const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
             </div>
         )
     }
-    
+
 }
 
 export default AnimeLan;

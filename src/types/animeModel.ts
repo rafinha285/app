@@ -1,4 +1,4 @@
-import { Audio , state,quality, StateType} from "./types" 
+import { Audio , state,quality, StateType, userAnimeState, priorityValue} from "./types" 
 import { character } from "./characterModel"
 // import {Season} from "./seasonModel"
 import { Episode } from "./episodeModel";
@@ -71,6 +71,13 @@ export interface Season{
     episodes: string[];
     index: number;
 }
+export interface SeasonList{
+	anime_id:string;
+	season_id:string;
+	total_episodes:number;
+	total_rewatched_episodes?:number;
+	id?:number;
+}
 export interface Anime{
     id:string;
 	name:string;
@@ -92,10 +99,18 @@ export interface Anime{
 	date_added?:Date;
 }
 export interface AnimeUser{
-	animeId:string
+	id:number
+	anime_id:string
     name:string;
-    watchedEpisodes:number;
-    lastEp:EpisodeUser
+    // watched_episodes:number;
+	start_date?:Date;
+	finish_date?:Date;
+	rate:number;
+	state:userAnimeState;
+	// times_watched?:number;
+	// rewatched_episodes?:number;
+	priority:priorityValue;
+    last_ep:EpisodeUser[]
 }
 export interface AnimeSearch{
 	id:string;

@@ -23,7 +23,7 @@ body p{
     margin-top: 0;
     margin-bottom: 1rem;
     font-weight: 400;
-    line-height: 1.5;
+    line-height: 1.75;
 }
 button{
     /* -webkit-appearance: button; */
@@ -67,7 +67,7 @@ body::-webkit-scrollbar-thumb {
 }
 /* Color Theme Swatches in Hex */
 :root{
-    --body-purple:rgb(29, 0, 41);
+    --body-purple:#1d0029;
     --blue:#0a0844 !important;
     --lightpink:#D93B92;
     --pink:#AB05F2 !important;

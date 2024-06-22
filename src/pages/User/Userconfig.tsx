@@ -1,11 +1,10 @@
 import React from "react";
 
-
-const UserPage:React.FC = () =>{
+const UserPageConfig:React.FC = () =>{
     return(
         <html>
 
         </html>
     )
 }
-export default UserPage
+export default UserPageConfig

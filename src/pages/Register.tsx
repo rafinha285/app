@@ -69,7 +69,8 @@ const Register:React.FC = ()=>{
                 
                 // var hashedPasswordConfirm = pbkdf2Sync(cs,_id,interations,32,"sha256").toString("hex")
                 console.log(name,surname,s===cs)
-                if(s == cs){
+                const emailRegex = /\S+@\S+\.\S+/;
+                if(emailRegex.test(email)&&s == cs){
                     $.ajax("/api/new/user",{
                         method:"POST",
                         data:{

@@ -1,5 +1,7 @@
+import { useContext } from "react"
 import { Anime } from "../types/animeModel"
 import { Episode, languages } from "../types/episodeModel"
+import GlobalContext, { GlobalContextType } from "../GlobalContext"
 
 export function getEpTime(ee:number):string{
     var e = Math.round(ee)
@@ -55,7 +57,20 @@ export const getMonthName = (date:Date,short:boolean,locale = "pt-br"):string =>
 // }
 //var proximoEp = NextEp(ani,seasonId,ep)
 //window.location.href = `/Anime/${ani.id}/watch/${seasonId}/${proximoEp.id}`
-export const handleNextEp = (ani:string,seasonId:string,eps:Episode[],index:number)=>{
+export async function handleEpWatched (ani:string,seasonId:string,ep:Episode){
+    await fetch(`/api/log/watch/${ani}/${seasonId}/${ep.id}`,{
+        method: "POST",
+        body: JSON.stringify({duration:ep.duration}),
+        headers:{
+            "Accept":"application/json, text/plain, */*",
+            "Content-Type":"application/json"
+        }
+    });
+}
+export const handleNextEp = (ani:string,seasonId:string,eps:Episode[],index:number,isLogged:boolean)=>{
+    if(isLogged){
+        handleEpWatched(ani,seasonId,eps.sort((a,b)=>a.epindex-b.epindex)[index])
+    }
     console.log(eps)
     var p = eps.find((v)=>v.epindex === (index+1))
     console.log(p)
@@ -88,14 +103,25 @@ declare global{
         daysOfWeek(language?:languages):string[];
     }
 }
-
-export function DateToStringLocal(date:Date){
+export function DateToStringInput(dat:Date):string{
+    let date:Date = new Date(dat)
+    return date.toISOString().split("T")[0]
+}
+export function DateToStringLocal(dat:Date){
+    let date:Date = new Date(dat)
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0'); // O mês é baseado em zero
     const year = date.getFullYear();
+    console.log(`${day}/${month}/${year}`)
 
   // Retorna a data formatada como uma string
   return `${day}/${month}/${year}`;
+}
+export function checkIsLogged(isLogged:boolean){
+    if(!isLogged){
+        alert("Nenhuma conta conectada")
+        window.location.href = '/login/'
+    }
 }
 
 Date.prototype.getDayOfWeekName = function(){

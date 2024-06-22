@@ -7,8 +7,9 @@ import { Episode } from "../types/episodeModel"
 
 function postLog(ani:Anime,episode:boolean,epid:string|null = null,plyrDuration:number|null = null){
     console.log(ani,episode,epid,plyrDuration)
+    let data:Log
     if(episode){
-        var data:Log = {
+        data = {
             // _id:uuid(),
             date:new Date(Date.now()),
             anime:ani?.id,
@@ -23,7 +24,7 @@ function postLog(ani:Anime,episode:boolean,epid:string|null = null,plyrDuration:
             data:data
         })
     }else{
-        var data:Log = {
+        data = {
             // _id:uuid(),
             date:new Date(Date.now()),
             anime:ani?.id,
@@ -36,6 +37,6 @@ function postLog(ani:Anime,episode:boolean,epid:string|null = null,plyrDuration:
             data:data
         })
     }
-    
+
 }
 export default postLog

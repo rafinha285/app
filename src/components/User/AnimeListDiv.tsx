@@ -54,7 +54,7 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
                 </div>
                 <div className="anime-content">
                     <div className="anime-date">
-                        <p>Data de começo: {DateToStringLocal(ani.start_date)}</p>
+                        <p>Data de começo: {DateToStringLocal(ani.start_date!)}</p>
                         <p>Data de Fim: {ani.finish_date?DateToStringLocal(ani.finish_date):"Não terminado ainda"}</p>
                     </div>
                 </div>

@@ -27,6 +27,7 @@ import GlobalContext from "../GlobalContext";
 import Popup from "reactjs-popup"
 import AnimeEditList from "../components/AnimeEditList";
 import { ratingLabel } from "../types/types";
+import {cdnUrl} from "../const";
 
 
 interface seasonDate{
@@ -56,7 +57,7 @@ const AnimePage:React.FC = ()=>{
                     .then(data=>setUserAni(data))
             })
     }
-    
+
     useEffect(()=>{
         if(!ani){
             $.ajax(`/api/ani/${id}`).done((res:Anime)=>{
@@ -85,7 +86,7 @@ const AnimePage:React.FC = ()=>{
                         throw new Error(`Erro ao buscar episódios da temporada ${season.id}`);
                     }
                 })
-                
+
             })
             if(context.isLogged){
                 checkList()
@@ -95,7 +96,7 @@ const AnimePage:React.FC = ()=>{
     const [gen,setGen] = useState<string[]>([])
     // useEffect(()=>{
     //     console.log(ani?.releaseDate,ani)
-        
+
     //     // $.ajax({
     //     //     url:`/api/ani/season/?month=${ani?.releaseDate.getMonth()}&year=${ani?.releaseDate.getFullYear()}`,
     //     //     headers:{
@@ -107,7 +108,7 @@ const AnimePage:React.FC = ()=>{
     // },[])
     // (ani?.seasons! as Season[])
     // const [epsComponent,setEpsComponent] = useState<React.Component[]>()
-    
+
     const seasonChangeHandle = (e:React.ChangeEvent) =>{
         var s = $(e.target).val()
         $(".eps").children().each(function(i,p){
@@ -118,8 +119,8 @@ const AnimePage:React.FC = ()=>{
             }
         })
     }
-    
-    
+
+
     const handleAddAnimeToList = async()=>{
         checkIsLogged(context.isLogged)
         await fetch(`/api/user/anime/add/${ani?.id!}`,{method:"POST"})
@@ -202,7 +203,7 @@ const AnimePage:React.FC = ()=>{
                     </div>
                     <div className="contentR">
                         <div className="im">
-                            <img src={`/api/ani/img?Id=${ani.id}`} alt={ani.name} />
+                            <img src={`${cdnUrl}/ani/img?Id=${ani.id}`} alt={ani.name} />
                         </div>
                         {/* <Box sx={{p:"auto",border:"1px white solid",borderRadius:'5px'}} className="not"> */}
                             {/* <select className="selectN">
@@ -289,7 +290,7 @@ const AnimePage:React.FC = ()=>{
                             <PersoCompo perso={v} aniId={ani.id} key={i}></PersoCompo>
                         ))}</div>
                     </div>
-                </div> 
+                </div>
                 ):err?(
                     <div className="main-loading">
                         <h1>Anime não encontrado</h1>

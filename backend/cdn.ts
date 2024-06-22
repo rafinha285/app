@@ -16,7 +16,7 @@ const app = e()
 app.get('/ani/img',async(req:e.Request,res:e.Response)=>{
     setHeader(res)
     try{
-        if(req.query.Id == null || req.query.Id == undefined){
+        if(req.query.Id == null){
             throw 1
         }
         sendFile().img(res)

@@ -4,7 +4,7 @@ import "../css/episodes.css"
 import { getEpTime } from "../features/main";
 import { Link } from "react-router-dom";
 import { EpisodeSim } from "../types/episodeModel";
-import {cdnUrl} from "../const.ts";
+import {cdnUrl} from "../const";
 
 interface props{
     ep:EpisodeSim

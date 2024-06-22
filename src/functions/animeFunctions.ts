@@ -39,7 +39,7 @@ export function tupleToSeason(data:any[]):Season[]{
             }))
         }
     }
-    
+
 }
 export async function getEpsFromSeason(ani:string,season:string):Promise<Episode[]>{
     return await (await fetch(`/api/g/s/eps/${ani}/${season}`)).json()
@@ -67,7 +67,7 @@ export function getLabelText(value: number,ratingValue:{[index:string]:string}) 
 }
 export const handleRatingValue = async(value:number,context:GlobalContextType,ani:string,setRatingValue:React.Dispatch<React.SetStateAction<number>>) =>{
     checkIsLogged(context.isLogged)
-    const response = await fetch(`/api/user/anime/${ani}/editrating`,{method:"POST",body:({ratingValue:value}).toString()})
+    await fetch(`/api/user/anime/${ani}/editrating`,{method:"POST",body:({ratingValue:value}).toString()})
         .then(response =>response.json())
         .then(data=>{
             if(data.success){

@@ -1,2 +1,2 @@
-export const cdnUrl = `https://cdn.${window.location.host}`;
+export const cdnUrl = `https://cdn.animefoda.top`;
 export const proxyUrl = `/proxy`

@@ -14,12 +14,13 @@ import EpisodeDropdown from "../assets/EpisodeDropdown";
 import { Log } from "../types/logType";
 import { DateToStringLocal, handleNextEp, nextEpUrl, prevEpUrl } from "../features/main";
 import { getEpsFromSeason ,tupleToSeason} from "../functions/animeFunctions";
+import Loading from "../components/Loading";
 
 
 
 
 const Watch:React.FC = () =>{
-    
+
     const {id,epId} = useParams()
     const seasonId = window.location.href.split("/")[6]
     const [ep,setEp] = useState<Episode|null>(null)
@@ -28,9 +29,16 @@ const Watch:React.FC = () =>{
     const [eps,setEps] = useState<Episode[]>()
     const [nextUrl,setNextUrl] = useState<string>()
     const [prevUrl,setPrevUrl] = useState<string>()
+    const [epsMap,setEpsMap] = useState<Map<number, Episode>>(new Map())
     const fetchEps = useCallback(async(ani:Anime,ep:Episode) =>{
         var res = await fetch(`/api/g/s/eps/${ani.id}/${ep?.seasonid}`)
-        setEps(await res.json())
+        let data = await res.json()
+        let epsMapTemp = new Map<number, Episode>();
+        for(let i =0 ;i<data.length;i++){
+            epsMapTemp.set(data[i].epindex, data[i]);
+        }
+        setEpsMap(epsMapTemp);
+        setEps(data)
     },[!eps])
     // var prevEp = ""
     // const [prevEp,setPrevEp] = useState<string>("")
@@ -57,9 +65,9 @@ const Watch:React.FC = () =>{
             setEp(res)
             console.log(ani)
             // setEpIndex(tupleToSeason(ani!.seasons!).find(e=>e.id == seasonId)?.episodes.findIndex(e=>e===ep?.id)!)
-            
+
         })
-        
+
         $.ajax({
             url:`/api/ani/${id}`
         }).done((res)=>{
@@ -73,22 +81,22 @@ const Watch:React.FC = () =>{
                     if(eps&&ep){
                         // console.log(id,ani?._id,seasonId,epIndex,ani)
                         // console.log(ep)
-                        
+
                         // console.log(`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[epIndex-1]._id}`)
                         // if(Math.min())
                         // $("#before").attr("href",`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[epIndex-1]._id}`)
                         // $("#after").attr("href",`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[ep?.index!+1]._id!}`)
                         // if()
-                        
+
                         setNextUrl(nextEpUrl(eps,ani.id,ep))
                         setPrevUrl(prevEpUrl(eps,ani.id,ep))
                         console.log(`/Anime/${ani.id}/watch/${ep?.seasonid}/${eps.find(v=>v.epindex === (ep.epindex+1))!.id}`)
                     }
                 })
             }
-            
+
         })
-        
+
         $("#linkAnime").css("margin","2em auto 7em auto")
         // console.log(`/Anime/${ani!._id}/watch/${seasonId!}/${ani?.seasons?.find(s=>s._id==seasonId)!._id}`)
     },[!ani,fetch])
@@ -96,13 +104,30 @@ const Watch:React.FC = () =>{
         e.preventDefault()
         $("#epSelDrop").toggleClass("ep-sel-show")
     }
-    $("#after").on("click",()=>handleNextEp(ani?.id!,seasonId,eps!,ep?.epindex!))
+
+
+
+
+    const nextEpHandle = (e:React.MouseEvent) =>{
+        e.preventDefault();
+        console.log("nextEpHandle", epsMap)
+        if(epsMap.has(ep?.epindex!+1)){
+            window.location.href = `/Anime/${ani?.id}/watch/${ep?.seasonid}/${epsMap.get(ep?.epindex! + 1)!.id}`
+        }
+    }
+    const prevEpHandle = (e:React.MouseEvent) =>{
+        e.preventDefault();
+        if(epsMap.has(ep?.epindex!-1)){
+            window.location.href = `/Anime/${ani?.id}/watch/${ep?.seasonid}/${epsMap.get(ep?.epindex! - 1)!.id}`
+        }
+    }
+    // $("#after").on("click",()=>handleNextEp(ani?.id!,seasonId,eps!,ep?.epindex!))
     return(
         <>
             {ani&&eps?(
                 <html lang="pt-BR">
                 <Helmet>
-                    <title>Assistir:{} {ep?.name}</title>
+                    <title>Assistir:{ani.name}, {ep?.name}</title>
                 </Helmet>
                 <Header></Header>
                 <Link style={{width:"fit-content",margin:"3em auto"}} to={`/Anime/${id}`} id="linkAnime">
@@ -136,20 +161,19 @@ const Watch:React.FC = () =>{
                     </div>
                     <div className="ep-select">
                         <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
-                            <a id="before" aria-disabled={isFirstEp(eps)} href={prevUrl}>
-                                <button className="ep-sel-but" disabled={isFirstEp(eps)}>
-                                    <i className="fa-solid fa-arrow-left"></i>
-                                </button>
-                            </a>
+
+                            <button className="ep-sel-but" onClick={prevEpHandle} disabled={isFirstEp(eps)}>
+                                <i className="fa-solid fa-arrow-left"></i>
+                            </button>
+
                             <button className="ep-sel-but" onClick={handleChangeClass}>
                                 <i className="fa-solid fa-bars"></i>
                             </button>
-                            <a id="after" onClick={()=>nextEp?handleNextEp(ani.id,seasonId,eps!,ep?.epindex!):null} aria-disabled={nextEp!?true:false} href={nextUrl}>
-                            {/* href={`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id===seasonId)?.episodes[ep?.index!+1]._id}`} */}
-                                <button className="ep-sel-but" disabled={isLastEp(eps)}>
-                                    <i className="fa-solid fa-arrow-right"></i>
-                                </button>
-                            </a>
+
+                            <button className="ep-sel-but" onClick={nextEpHandle} disabled={isLastEp(eps)}>
+                                <i className="fa-solid fa-arrow-right"></i>
+                            </button>
+
                         </div>
                         <div>
                             <div id="epSelDrop" className="ep-sel-dropdown">
@@ -165,7 +189,7 @@ const Watch:React.FC = () =>{
                 <Footer></Footer>
             </html>
             ):(
-                <></>
+                <Loading/>
             )}
         </>
     )

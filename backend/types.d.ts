@@ -1,6 +1,6 @@
 import { Client } from "cassandra-driver";
 import * as jwt from "jsonwebtoken"
-import e, * as express from 'express';
+import e from 'express';
 
 declare global{
     namespace Express {

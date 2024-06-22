@@ -1,18 +1,14 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import { Episode, SubtitlesTracks } from "../types/episodeModel";
-import { languages, quality } from "../types/types";
+import { Episode } from "../types/episodeModel";
+import { quality } from "../types/types";
 import Plyr,{APITypes,PlyrOptions,PlyrSource} from "plyr-react";
-// import Plyr from "@rocketseat/react-plyr";
 import ReactDOMServer from 'react-dom/server';
 import 'plyr/dist/plyr.css'
 import "../css/watch.css"
-// import NetInfo from "@react-native-community/netinfo"
 import { Anime } from "../types/animeModel";
 import {handleEpWatched, handleNextEp} from "../features/main";
-// import Flowplayer, { useFlowplayer } from "@flowplayer/react-flowplayer";
-import postLog from "../functions/logFunctions";
 import { getEpsFromSeason } from "../functions/animeFunctions";
-import {cdnUrl, proxyUrl} from "../const";
+import {cdnUrl} from "../const";
 import globalContext from "../GlobalContext";
 interface prop{
     ani:Anime;
@@ -27,8 +23,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
     console.log(ani,ep,eps)
 
     const context = useContext(globalContext)!;
-    const [loadedSeconds, setLoadedSeconds] = useState(0);
-    const [canPlay, setCanPlay] = useState(false);
+    const [logSent,setLogSent]=useState(false);
     // $.ajax({
     //     url:`/api/g/s/eps/${ani.id}/${seasonId}`
     // }).done((res:Episode[])=>{
@@ -210,7 +205,9 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             }
 
             if (sec >= ed) {
-                handleEpWatched(ani.id,seasonId,ep)
+                if(!logSent && context.isLogged){
+                    handleEpWatched(ani.id,seasonId,ep)
+                }
                 if (Math.max(...seasonEp.map((ep) => ep.epindex)) === ep.epindex) {
                     // console.log("not skip-active ed")
                     skEButton.removeClass("skip-active");

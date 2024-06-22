@@ -6,7 +6,7 @@ import {getEpTime, trim} from "../features/main"
 import "../css/index.css"
 import '../css/base.css'
 import {genToArray} from "../functions/animeFunctions"
-import {cdnUrl} from "../const.ts";
+import {cdnUrl} from "../const";
 
 
 

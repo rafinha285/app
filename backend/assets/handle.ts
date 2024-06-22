@@ -9,8 +9,6 @@ const ffmpeg = require('fluent-ffmpeg')
 ffmpeg.setFfmpegPath("D:/Site_anime/ffmpeg/bin/ffmpeg.exe")
 ffmpeg.setFfprobePath("D:/Site_anime/ffmpeg/bin/ffprobe.exe")
 import {v4 as uuidv4} from "uuid"
-import { AnimeUser } from "../../src/types/animeModel";
-import { MangaUser } from "../../src/types/mangaType";
 import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
 import * as fss from "fs"

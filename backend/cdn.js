@@ -52,7 +52,7 @@ app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 
     return __generator(this, function (_a) {
         (0, handle_1.setHeader)(res);
         try {
-            if (req.query.Id == null || req.query.Id == undefined) {
+            if (req.query.Id == null) {
                 throw 1;
             }
             (0, handle_1.sendFile)().img(res);
@@ -131,6 +131,9 @@ app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awa
         return [2 /*return*/];
     });
 }); });
+app.get("/", function (req, res) {
+    res.redirect("https://animefoda.top");
+});
 app.listen(8080, '0.0.0.0', function () {
     handle_1.Console.log("http://0.0.0.0:8080");
 });

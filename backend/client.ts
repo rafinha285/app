@@ -32,7 +32,7 @@ import {ANIME_PATH, BUILD_HTML, BUILD_PATH} from './consts'
 import {types} from 'cassandra-driver'
 import {EpisodeSim} from '../src/types/episodeModel'
 import {tupleToSeason} from "../src/functions/animeFunctions"
-import sleep from 'sleep-promise'
+import * as sleep from 'sleep-promise'
 // import WebSocket from 'ws';
 import {animeClient, logPool} from './database/Postgre'
 import * as cookieParser from "cookie-parser"

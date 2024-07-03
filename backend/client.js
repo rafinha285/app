@@ -54,7 +54,7 @@ var pool_1 = require("./database/pool");
 var consts_1 = require("./consts");
 var cassandra_driver_1 = require("cassandra-driver");
 var animeFunctions_1 = require("../src/functions/animeFunctions");
-var sleep_promise_1 = require("sleep-promise");
+var sleep = require("sleep-promise");
 // import WebSocket from 'ws';
 var Postgre_1 = require("./database/Postgre");
 var cookieParser = require("cookie-parser");
@@ -397,7 +397,7 @@ router.get("/g/s/eps/:animeid/:seasonid", function (req, res) { return __awaiter
                 return [4 /*yield*/, req.db.execute("SELECT * FROM episodes WHERE animeid = ? AND seasonid = ? ALLOW FILTERING", [cassandra_driver_1.types.Uuid.fromString(animeid), cassandra_driver_1.types.Uuid.fromString(seasonid)])];
             case 1:
                 result = _b.sent();
-                return [4 /*yield*/, (0, sleep_promise_1.default)(50)];
+                return [4 /*yield*/, sleep(50)];
             case 2:
                 _b.sent();
                 handle_1.Console.log(result.rows);
@@ -430,7 +430,7 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                 result = _d.sent();
                 // var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes LIMIT ? ALLOW FILTERING;",[count],{prepare:true})
                 // Console.log(result)
-                return [4 /*yield*/, (0, sleep_promise_1.default)(2)];
+                return [4 /*yield*/, sleep(2)];
             case 2:
                 // var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes LIMIT ? ALLOW FILTERING;",[count],{prepare:true})
                 // Console.log(result)
@@ -444,7 +444,7 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
                 return [4 /*yield*/, req.db.execute("SELECT name, seasons FROM anime WHERE id = ?", [animeid], { prepare: true })];
             case 4:
                 aniS = _d.sent();
-                return [4 /*yield*/, (0, sleep_promise_1.default)(20)];
+                return [4 /*yield*/, sleep(20)];
             case 5:
                 _d.sent();
                 ep = {
@@ -464,11 +464,11 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
             case 6:
                 _i++;
                 return [3 /*break*/, 3];
-            case 7: return [4 /*yield*/, (0, sleep_promise_1.default)(20)];
+            case 7: return [4 /*yield*/, sleep(20)];
             case 8:
                 _d.sent();
                 eps.sort(function (a, b) { return new Date(b.date_added).valueOf() - new Date(a.date_added).valueOf(); });
-                return [4 /*yield*/, (0, sleep_promise_1.default)(20)];
+                return [4 /*yield*/, sleep(20)];
             case 9:
                 _d.sent();
                 res.send(eps);

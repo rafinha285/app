@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.editEpisode = exports.editSeason = exports.addSeason = exports.epWatchedHandle = void 0;
+exports.checkAnimeList = exports.editEpisode = exports.editSeason = exports.addSeason = exports.epWatchedHandle = void 0;
 var Postgre_1 = require("../database/Postgre");
 var animeFunctions_1 = require("../../src/functions/animeFunctions");
 var handle_1 = require("../assets/handle");
@@ -104,13 +104,10 @@ function epWatchedHandle(req, res, anime, log) {
                     switch (e_1) {
                         case handle_1.ErrorType.default:
                             return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, e_1)];
-                            break;
                         case handle_1.ErrorType.undefined:
                             return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.undefined)];
-                            break;
                         default:
                             return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, e_1)];
-                            break;
                     }
                     return [3 /*break*/, 16];
                 case 16: return [2 /*return*/];
@@ -206,3 +203,17 @@ function editEpisode(user, aniId, ep, mud) {
     });
 }
 exports.editEpisode = editEpisode;
+function checkAnimeList(user, animeId) {
+    return __awaiter(this, void 0, void 0, function () {
+        var result;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT \n    ")];
+                case 1:
+                    result = (_a.sent());
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.checkAnimeList = checkAnimeList;

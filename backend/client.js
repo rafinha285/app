@@ -48,6 +48,8 @@ var body_parser_1 = require("body-parser");
 // const Nano = require('nano');
 // import { Anime } from '../../app_admin/src/types/animeModel'
 var handle_1 = require("./assets/handle");
+// import { animeClient } from './assets/Postgre'
+// import { Query, QueryConfig, QueryResult } from 'pg'
 var pool_1 = require("./database/pool");
 var consts_1 = require("./consts");
 var cassandra_driver_1 = require("cassandra-driver");
@@ -143,7 +145,7 @@ router.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, vo
     return __generator(this, function (_a) {
         (0, handle_1.setHeader)(res);
         try {
-            if (req.query.Id == null || req.query.Id == undefined) {
+            if (req.query.Id == null) {
                 throw 1;
             }
             (0, handle_1.sendFile)().img(res);
@@ -410,73 +412,69 @@ router.get("/g/s/eps/:animeid/:seasonid", function (req, res) { return __awaiter
     });
 }); });
 router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var count, eps, currentDate, semana, result, err_9;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var count, eps, currentDate, semana, result, _i, _a, ee, id, animeid, seasonid, name, duration, resolution, date_added, aniS, ep, err_9;
+    var _b, _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
             case 0:
-                _a.trys.push([0, 5, , 6]);
+                _d.trys.push([0, 10, , 11]);
                 count = req.query.count;
                 eps = [];
                 currentDate = new Date();
                 semana = new Date(currentDate.valueOf() - 7 * 24 * 60 * 60 * 1000);
-                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;", [semana, count], { prepare: true })
+                return [4 /*yield*/, req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes LIMIT ? ALLOW FILTERING;", [count], { prepare: true })
                     // Console.log(result)
                 ];
             case 1:
-                result = _a.sent();
+                result = _d.sent();
                 // Console.log(result)
                 return [4 /*yield*/, sleep(2)];
             case 2:
                 // Console.log(result)
-                _a.sent();
-                result.rows.forEach(function (ee) { return __awaiter(void 0, void 0, void 0, function () {
-                    var id, animeid, seasonid, name, duration, resolution, date_added, aniS, ep;
-                    var _a;
-                    return __generator(this, function (_b) {
-                        switch (_b.label) {
-                            case 0:
-                                id = ee.id, animeid = ee.animeid, seasonid = ee.seasonid, name = ee.name, duration = ee.duration, resolution = ee.resolution, date_added = ee.date_added;
-                                return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [animeid], { prepare: true })
-                                    // Console.log(aniS)
-                                ];
-                            case 1:
-                                aniS = _b.sent();
-                                // Console.log(aniS)
-                                return [4 /*yield*/, sleep(20)];
-                            case 2:
-                                // Console.log(aniS)
-                                _b.sent();
-                                ep = {
-                                    id: id,
-                                    animeid: animeid,
-                                    seasonid: seasonid,
-                                    name: name,
-                                    duration: duration,
-                                    resolution: resolution,
-                                    animename: (_a = aniS.rows[0]) === null || _a === void 0 ? void 0 : _a.name,
-                                    // seasonname:season.name,
-                                    date_added: new Date(date_added)
-                                };
-                                // console.log(ep)
-                                eps.push(ep);
-                                return [2 /*return*/];
-                        }
-                    });
-                }); });
-                return [4 /*yield*/, sleep(20)];
+                _d.sent();
+                _i = 0, _a = result.rows;
+                _d.label = 3;
             case 3:
-                _a.sent();
+                if (!(_i < _a.length)) return [3 /*break*/, 7];
+                ee = _a[_i];
+                id = ee.id, animeid = ee.animeid, seasonid = ee.seasonid, name = ee.name, duration = ee.duration, resolution = ee.resolution, date_added = ee.date_added;
+                return [4 /*yield*/, req.db.execute("SELECT name, seasons FROM anime WHERE id = ?", [animeid], { prepare: true })];
+            case 4:
+                aniS = _d.sent();
+                return [4 /*yield*/, sleep(20)];
+            case 5:
+                _d.sent();
+                ep = {
+                    id: id,
+                    animeid: animeid,
+                    seasonid: seasonid,
+                    name: name,
+                    duration: duration,
+                    resolution: resolution,
+                    animename: (_b = aniS.rows[0]) === null || _b === void 0 ? void 0 : _b.name,
+                    seasonname: (0, animeFunctions_1.tupleToSeason)((_c = aniS.rows[0]) === null || _c === void 0 ? void 0 : _c.seasons)[0].name,
+                    date_added: new Date(date_added)
+                };
+                // console.log(ep)
+                eps.push(ep);
+                _d.label = 6;
+            case 6:
+                _i++;
+                return [3 /*break*/, 3];
+            case 7: return [4 /*yield*/, sleep(20)];
+            case 8:
+                _d.sent();
                 eps.sort(function (a, b) { return new Date(b.date_added).valueOf() - new Date(a.date_added).valueOf(); });
                 return [4 /*yield*/, sleep(20)];
-            case 4:
-                _a.sent();
+            case 9:
+                _d.sent();
                 res.send(eps);
-                return [3 /*break*/, 6];
-            case 5:
-                err_9 = _a.sent();
+                return [3 /*break*/, 11];
+            case 10:
+                err_9 = _d.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_9);
-                return [3 /*break*/, 6];
-            case 6: return [2 /*return*/];
+                return [3 /*break*/, 11];
+            case 11: return [2 /*return*/];
         }
     });
 }); });
@@ -490,6 +488,50 @@ router.get("/g/eps", function (req, res) { return __awaiter(void 0, void 0, void
 //     sendError(res,ErrorType.default,500,err)
 //   }
 // })
+router.get("/g/ani/name/:aniId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, err_10;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, req.db.execute("SELECT name FROM anime WHERE id = ?", [req.params.aniId], { prepare: true })];
+            case 1:
+                result = _a.sent();
+                res.send({ name: result.rows[0].name });
+                return [3 /*break*/, 3];
+            case 2:
+                err_10 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_10);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+router.get("/g/sea/name/:aniId/:seasonId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var result, seasons, season, err_11;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, req.db.execute("SELECT seasons FROM anime WHERE id = ?", [req.params.aniId])];
+            case 1:
+                result = _a.sent();
+                seasons = (0, animeFunctions_1.tupleToSeason)(result.rows[0].seasons);
+                season = seasons.find(function (season) {
+                    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+                    return season.id.toString() == req.params.seasonId;
+                });
+                // Console.log(season)
+                res.send({ name: season === null || season === void 0 ? void 0 : season.name });
+                return [3 /*break*/, 3];
+            case 2:
+                err_11 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_11);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
 // const downloadwss = new WebSocket.Server({ server: httpsServer });
 // downloadwss.on("connection",(ws)=>{
 // })
@@ -528,7 +570,7 @@ router.get("/g/ep/download/:aniId/:seasonId/:epId/:reso", function (req, res) { 
     });
 }); });
 router.get("/g/aniD/:ani/:seasonId/:epId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, ani, seasonId, epId, result, seasons, episode, err_10;
+    var _a, ani, seasonId, epId, result, seasons, episode, err_12;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -553,13 +595,13 @@ router.get("/g/aniD/:ani/:seasonId/:epId", function (req, res) { return __awaite
                 });
                 return [3 /*break*/, 4];
             case 3:
-                err_10 = _b.sent();
-                switch (err_10) {
+                err_12 = _b.sent();
+                switch (err_12) {
                     case handle_1.ErrorType.undefined:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.undefined);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_10);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_12);
                         break;
                 }
                 return [3 /*break*/, 4];
@@ -578,7 +620,7 @@ router.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awai
     });
 }); });
 router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var userData, user, err_11;
+    var userData, user, err_13;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -592,15 +634,15 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                 res.json(user);
                 return [3 /*break*/, 4];
             case 3:
-                err_11 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_11);
+                err_13 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_13);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
     });
 }); });
 router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var logData, log, err_12;
+    var logData, log, err_14;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -614,8 +656,8 @@ router.post('/log', function (req, res) { return __awaiter(void 0, void 0, void 
                 res.json(log);
                 return [3 /*break*/, 4];
             case 3:
-                err_12 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_12);
+                err_14 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_14);
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }
@@ -632,7 +674,7 @@ router.post("/user/anime/like", handle_1.checkToken, function (req, res) { retur
     });
 }); });
 router.get("/user/list/checkanime/:id", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var checkIfExists, num_animes, err_13;
+    var checkIfExists, num_animes, err_15;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -649,15 +691,15 @@ router.get("/user/list/checkanime/:id", handle_1.checkToken, function (req, res)
                 }
                 return [3 /*break*/, 3];
             case 2:
-                err_13 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_13);
+                err_15 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_15);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 router.post("/user/anime/add/:id", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var anime, checkIfExists, num_animes, result, err_14;
+    var anime, checkIfExists, num_animes, result, err_16;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -699,8 +741,8 @@ router.post("/user/anime/add/:id", handle_1.checkToken, function (req, res) { re
                 }
                 return [3 /*break*/, 5];
             case 4:
-                err_14 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_14);
+                err_16 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_16);
                 return [3 /*break*/, 5];
             case 5: return [2 /*return*/];
         }
@@ -718,7 +760,7 @@ router.get('/user/anime', handle_1.checkToken, function (req, res) { return __aw
     });
 }); });
 router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, salt, emailRegex, response, data, userData, err_15;
+    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, salt, emailRegex, response, data, userData, err_17;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -760,8 +802,8 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
             case 4: throw handle_1.ErrorType.invalidReCaptcha;
             case 5: return [3 /*break*/, 7];
             case 6:
-                err_15 = _b.sent();
-                switch (err_15) {
+                err_17 = _b.sent();
+                switch (err_17) {
                     case handle_1.ErrorType.noToken:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
                         break;
@@ -772,7 +814,7 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidEmail);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_15);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_17);
                 }
                 return [3 /*break*/, 7];
             case 7: return [2 /*return*/];
@@ -780,7 +822,7 @@ router.post("/new/user", function (req, res) { return __awaiter(void 0, void 0, 
     });
 }); });
 router.get("/user/animelist/season/:aniid", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, err_16;
+    var result, err_18;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -791,15 +833,15 @@ router.get("/user/animelist/season/:aniid", handle_1.checkToken, function (req, 
                 res.json(result.rows);
                 return [3 /*break*/, 3];
             case 2:
-                err_16 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_16);
+                err_18 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_18);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 router.get("/user/animelist/:id", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, err_17;
+    var result, err_19;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -810,15 +852,15 @@ router.get("/user/animelist/:id", handle_1.checkToken, function (req, res) { ret
                 res.json(result.rows[0]);
                 return [3 /*break*/, 3];
             case 2:
-                err_17 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_17);
+                err_19 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_19);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 router.get("/user/animelist", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, err_18;
+    var result, err_20;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -830,15 +872,15 @@ router.get("/user/animelist", handle_1.checkToken, function (req, res) { return 
                 res.send(result.rows);
                 return [3 /*break*/, 3];
             case 2:
-                err_18 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_18);
+                err_20 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_20);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 router.patch('/user/animelist/update', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, id, watched_episodes, start_date, finish_date, rate, state, priority, times_watched, rewatched_episodes, err_19;
+    var _a, id, watched_episodes, start_date, finish_date, rate, state, priority, times_watched, rewatched_episodes, err_21;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -860,8 +902,8 @@ router.patch('/user/animelist/update', handle_1.checkToken, function (req, res) 
                 res.json({ success: true, message: "Atualizado com sucesso" });
                 return [3 /*break*/, 3];
             case 2:
-                err_19 = _b.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_19);
+                err_21 = _b.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_21);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -871,7 +913,7 @@ app.get('/g/checktoken', handle_1.checkToken, function (req, res) {
     res.json({ success: true });
 });
 app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, err_20;
+    var result, err_22;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -885,13 +927,13 @@ app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(v
                 res.send(result.rows[0]);
                 return [3 /*break*/, 3];
             case 2:
-                err_20 = _a.sent();
-                switch (err_20) {
+                err_22 = _a.sent();
+                switch (err_22) {
                     case handle_1.ErrorType.noToken:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_20);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_22);
                         break;
                 }
                 return [3 /*break*/, 3];
@@ -900,7 +942,7 @@ app.get('/g/user', handle_1.checkToken, function (req, res) { return __awaiter(v
     });
 }); });
 router.get("/g/seasons/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var response, err_21;
+    var response, err_23;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -911,8 +953,8 @@ router.get("/g/seasons/:id", function (req, res) { return __awaiter(void 0, void
                 res.send(response.rows[0].seasons);
                 return [3 /*break*/, 3];
             case 2:
-                err_21 = _a.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_21);
+                err_23 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_23);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -928,7 +970,7 @@ app.get('/verify', handle_1.checkToken, function (req, res) { return __awaiter(v
     });
 }); });
 app.post('/app/login', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, result, tokenInfo, token, err_22;
+    var _a, email, password, result, tokenInfo, token, err_24;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -955,8 +997,8 @@ app.post('/app/login', function (req, res) { return __awaiter(void 0, void 0, vo
                 res.send({ success: true, message: "Login Successful", token: token });
                 return [3 /*break*/, 3];
             case 2:
-                err_22 = _b.sent();
-                switch (err_22) {
+                err_24 = _b.sent();
+                switch (err_24) {
                     case handle_1.ErrorType.invalidToken:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidToken);
                         break;
@@ -967,7 +1009,7 @@ app.post('/app/login', function (req, res) { return __awaiter(void 0, void 0, vo
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidPassOrEmail);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_22);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_24);
                         break;
                 }
                 return [3 /*break*/, 3];
@@ -976,7 +1018,7 @@ app.post('/app/login', function (req, res) { return __awaiter(void 0, void 0, vo
     });
 }); });
 app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, recaptchaToken, response, data, result, tokenInfo, token, err_23;
+    var _a, email, password, recaptchaToken, response, data, result, tokenInfo, token, err_25;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -1021,8 +1063,8 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
             case 4: throw handle_1.ErrorType.invalidReCaptcha;
             case 5: return [3 /*break*/, 7];
             case 6:
-                err_23 = _b.sent();
-                switch (err_23) {
+                err_25 = _b.sent();
+                switch (err_25) {
                     case handle_1.ErrorType.invalidReCaptcha:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidReCaptcha);
                         break;
@@ -1036,7 +1078,7 @@ app.post('/login/', function (req, res) { return __awaiter(void 0, void 0, void 
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidPassOrEmail);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_23);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_25);
                         break;
                 }
                 return [3 /*break*/, 7];

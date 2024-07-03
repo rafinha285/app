@@ -94,22 +94,28 @@ exports.getMonthName = getMonthName;
 //window.location.href = `/Anime/${ani.id}/watch/${seasonId}/${proximoEp.id}`
 function handleEpWatched(ani, seasonId, ep) {
     return __awaiter(this, void 0, void 0, function () {
-        var response;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, fetch("/api/log/watch/".concat(ani, "/").concat(seasonId, "/").concat(ep), {
+                case 0: return [4 /*yield*/, fetch("/api/log/watch/".concat(ani, "/").concat(seasonId, "/").concat(ep.id), {
                         method: "POST",
                         body: JSON.stringify({ duration: ep.duration }),
+                        headers: {
+                            "Accept": "application/json, text/plain, */*",
+                            "Content-Type": "application/json"
+                        }
                     })];
                 case 1:
-                    response = _a.sent();
+                    _a.sent();
                     return [2 /*return*/];
             }
         });
     });
 }
 exports.handleEpWatched = handleEpWatched;
-var handleNextEp = function (ani, seasonId, eps, index) {
+var handleNextEp = function (ani, seasonId, eps, index, isLogged) {
+    if (isLogged) {
+        handleEpWatched(ani, seasonId, eps.sort(function (a, b) { return a.epindex - b.epindex; })[index]);
+    }
     console.log(eps);
     var p = eps.find(function (v) { return v.epindex === (index + 1); });
     console.log(p);

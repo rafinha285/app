@@ -1,4 +1,4 @@
-import nano from "nano"; 
+import nano from "nano";
 import { quality } from "./types";
 export enum languages{
     Japanese = 'ja',
@@ -59,6 +59,6 @@ export interface EpisodeSim{
     duration:number;
     resolution:string[];
     animename:string;
-    // seasonname:string;
+    seasonname:string;
     date_added:Date
 }

@@ -46,6 +46,11 @@ app.get("/ep/:aniId/:season/:epId/:file",async(req:e.Request,res:e.Response)=>{
     res.set('Cache-Control', 'public, max-age=7200')
     res.sendFile(path.join(ANIME_PATH,aniId,"seasons",season,epId,file))
 })
+app.get("/epPoster/:aniId/:season/:epId",async(req:e.Request,res:e.Response)=>{
+    var {aniId,season,epId} = req.params
+    res.set('Cache-Control', 'public, max-age=7200');
+    res.sendFile(path.join(ANIME_PATH,aniId,"seasons",season,epId,`${epId}.jpg`))
+})
 app.get("/stream/:aniId/:season/:epId/:reso",async(req:e.Request,res:e.Response)=>{
     try{
         var {aniId,season,epId,reso} = req.params
@@ -87,6 +92,6 @@ app.get("/stream/:aniId/:season/:epId/:reso",async(req:e.Request,res:e.Response)
 app.get("/",(req:Request,res:e.Response)=>{
     res.redirect("https://animefoda.top")
 })
-app.listen(8080,'0.0.0.0',()=>{
+app.listen(8082,'0.0.0.0',()=>{
     Console.log(`http://0.0.0.0:8080`)
 })

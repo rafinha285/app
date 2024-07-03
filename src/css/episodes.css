@@ -60,7 +60,8 @@
     position: absolute;
 }
 .ep-animeseason{
-    bottom: calc(30% - 35px);
+    bottom: calc(30% - 20px);
+    font-size: 13px!important;
     position: absolute;
 }
 .ep-time{

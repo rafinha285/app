@@ -19,7 +19,7 @@ export function tupleToProducer(data:any[]):Producer[]{
     }))
 }
 export function tupleToSeason(data:any[]):Season[]{
-    console.log(data)
+    // console.log(data)
     if(data == null){
         return []
     }else{

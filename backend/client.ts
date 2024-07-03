@@ -1,38 +1,46 @@
 import * as e from 'express'
 // import * as ip from 'ip'
 import * as path from 'path'
-import * as cors from 'cors'
 import * as fs from 'fs'
 // import * as https from "https"
 import * as http from 'http'
-import helmet from "helmet"
-import bodyParser,{urlencoded,json} from "body-parser"
+import {json, urlencoded} from "body-parser"
 // import {pool} from './assets/Postgre'
 import {User} from "../src/types/userType"
 // import mongoose from "mongoose"
 // import * as nano from "nano"
 // const Nano = require('nano');
 // import { Anime } from '../../app_admin/src/types/animeModel'
-import {sendError, sendFile,Console,cut,setHeader, ErrorType, addUser,addLog, openConnectionAnime, endConnectionAnime, checkToken,priorityValue, userAnimeState} from "./assets/handle"
+import {
+    addLog,
+    addUser,
+    checkToken,
+    Console,
+    ErrorType,
+    priorityValue,
+    sendError,
+    sendFile,
+    setHeader,
+    userAnimeState
+} from "./assets/handle"
 // import { AnimeDocument, producers } from '../src/types/animeModel'
-import { Log } from '../src/types/logType'
+import {Log} from '../src/types/logType'
 // import { animeClient } from './assets/Postgre'
 // import { Query, QueryConfig, QueryResult } from 'pg'
-import { types as pgtypes } from 'pg'
-import { client } from './database/pool'
-import { ANIME_PATH, BUILD_HTML, BUILD_PATH, HTTPS_CERT_PATH, HTTPS_KEY_PATH } from './consts'
-import { types } from 'cassandra-driver'
-import { EpisodeSim } from '../src/types/episodeModel'
+import {client} from './database/pool'
+import {ANIME_PATH, BUILD_HTML, BUILD_PATH} from './consts'
+import {types} from 'cassandra-driver'
+import {EpisodeSim} from '../src/types/episodeModel'
 import {tupleToSeason} from "../src/functions/animeFunctions"
-import * as sleep from 'sleep-promise';
+import sleep from 'sleep-promise'
 // import WebSocket from 'ws';
 import {animeClient, logPool} from './database/Postgre'
 import * as cookieParser from "cookie-parser"
 import * as jwt from "jsonwebtoken"
-import { reCaptchaSecretKey, secretKey } from './secret/config'
-import { JwtUser } from './types'
-import {Anime} from "../src/types/animeModel";
+import {reCaptchaSecretKey, secretKey} from './secret/config'
+import {JwtUser} from './types'
 import {epWatchedHandle} from "./animelist/epWatchedHandle";
+import {Season} from "../src/types/animeModel";
 // import {  } from './assets/handle'
 // import * as bcrypt from "bcrypt"
 // import * as siteTypes from "../src/types/types"
@@ -328,14 +336,14 @@ router.get("/g/eps",async(req,res)=>{
 
         // Subtrai uma semana (7 dias) da data atual
         let semana = new Date(currentDate.valueOf() - 7 * 24 * 60 * 60 * 1000);
-        var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;",[semana,count],{prepare:true})
+        // var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;",[semana,count],{prepare:true})
+        var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes LIMIT ? ALLOW FILTERING;",[count],{prepare:true})
         // Console.log(result)
         await sleep(2)
-        result.rows.forEach(async ee=>{
+        for (const ee of result.rows) {
             // Console.log(ee)
             var {id,animeid,seasonid,name,duration,resolution,date_added} = ee
-            var aniS = await req.db.execute("SELECT name FROM anime WHERE id = ?",[animeid],{prepare:true})
-            // Console.log(aniS)
+            var aniS = await req.db.execute("SELECT name, seasons FROM anime WHERE id = ?",[animeid],{prepare:true})
             await sleep(20)
 
             var ep:EpisodeSim={
@@ -346,13 +354,13 @@ router.get("/g/eps",async(req,res)=>{
                 duration,
                 resolution,
                 animename:aniS.rows[0]?.name,
-                // seasonname:season.name,
+                seasonname:tupleToSeason(aniS.rows[0]?.seasons)[0].name,
                 date_added:new Date(date_added)
             }
             // console.log(ep)
             eps.push(ep)
             // Console.log(eps)
-        })
+        }
         await sleep(20)
         eps.sort((a,b)=>new Date(b.date_added).valueOf() - new Date(a.date_added).valueOf())
         await sleep(20)
@@ -374,6 +382,29 @@ router.get("/g/eps",async(req,res)=>{
 //   }
 // })
 
+router.get("/g/ani/name/:aniId",async(req,res)=>{
+    try{
+        let result = await req.db.execute(`SELECT name FROM anime WHERE id = ?`,[req.params.aniId],{prepare:true})
+        res.send({name:result.rows[0].name})
+    }catch(err){
+        sendError(res,ErrorType.default,500,err);
+    }
+})
+router.get("/g/sea/name/:aniId/:seasonId",async (req,res)=>{
+    try{
+        let result = await req.db.execute(`SELECT seasons FROM anime WHERE id = ?`,[req.params.aniId])
+        let seasons:Season[] = tupleToSeason(result.rows[0].seasons);
+        // Console.log(seasons[0].id.toString())
+        let season = seasons.find(season=>
+            // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+            season.id.toString() == req.params.seasonId
+        )
+        // Console.log(season)
+        res.send({name:season?.name});
+    }catch (err){
+        sendError(res,ErrorType.default,500,err)
+    }
+})
 
 // const downloadwss = new WebSocket.Server({ server: httpsServer });
 // downloadwss.on("connection",(ws)=>{

@@ -7,3 +7,4 @@ export declare function epWatchedHandle(req: Request, res: Response, anime: type
 export declare function addSeason(seasonId: string, req: Request, ep: types.Row, aniId: string): Promise<void>;
 export declare function editSeason(seasonId: string, req: Request, aniId: string, ep: types.Row): Promise<import("pg").QueryResult<any>>;
 export declare function editEpisode(user: JwtUser, aniId: string, ep: types.Row, mud: number): Promise<import("pg").QueryResult<any>>;
+export declare function checkAnimeList(user: JwtUser, animeId: string): boolean;

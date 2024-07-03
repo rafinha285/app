@@ -53,7 +53,7 @@ function tupleToProducer(data) {
 }
 exports.tupleToProducer = tupleToProducer;
 function tupleToSeason(data) {
-    console.log(data);
+    // console.log(data)
     if (data == null) {
         return [];
     }
@@ -111,7 +111,6 @@ function getLabelText(value, ratingValue) {
 }
 exports.getLabelText = getLabelText;
 var handleRatingValue = function (value, context, ani, setRatingValue) { return __awaiter(void 0, void 0, void 0, function () {
-    var response;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -127,7 +126,7 @@ var handleRatingValue = function (value, context, ani, setRatingValue) { return 
                         }
                     })];
             case 1:
-                response = _a.sent();
+                _a.sent();
                 return [2 /*return*/];
         }
     });

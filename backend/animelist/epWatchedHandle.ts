@@ -1,5 +1,5 @@
 import {animeClient,logPool} from "../database/Postgre";
-import e, {Request, Response} from "express";
+import {Request, Response} from "express";
 import {Season} from "../../src/types/animeModel";
 import {tupleToSeason} from "../../src/functions/animeFunctions";
 import {JwtUser} from "../types";
@@ -83,13 +83,10 @@ export async function epWatchedHandle(req:Request,res:Response,anime:typeof anim
         switch (e){
             case ErrorType.default:
                 return sendError(res,ErrorType.default,500,e);
-                break;
             case ErrorType.undefined:
                 return sendError(res,ErrorType.undefined);
-                break
             default:
                 return sendError(res,ErrorType.default,500,e);
-                break
         }
     }
 
@@ -174,4 +171,9 @@ export async function editEpisode(user:JwtUser,aniId:string,ep:types.Row,mud:num
         Console.error("Edit Episode: "+e)
         throw e
     }
+}
+export async function checkAnimeList(user:JwtUser,animeId:string):boolean{
+    let result = (await animeClient.query(`
+        SELECT 
+    `))
 }

@@ -89,6 +89,15 @@ app.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awaiter
         return [2 /*return*/];
     });
 }); });
+app.get("/epPoster/:aniId/:season/:epId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, aniId, season, epId;
+    return __generator(this, function (_b) {
+        _a = req.params, aniId = _a.aniId, season = _a.season, epId = _a.epId;
+        res.set('Cache-Control', 'public, max-age=7200');
+        res.sendFile(path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, "".concat(epId, ".jpg")));
+        return [2 /*return*/];
+    });
+}); });
 app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, aniId, season, epId, reso, filePath;
     return __generator(this, function (_b) {
@@ -134,6 +143,6 @@ app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awa
 app.get("/", function (req, res) {
     res.redirect("https://animefoda.top");
 });
-app.listen(8080, '0.0.0.0', function () {
+app.listen(8082, '0.0.0.0', function () {
     handle_1.Console.log("http://0.0.0.0:8080");
 });

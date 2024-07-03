@@ -74,7 +74,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                 kind: 'captions',
                 label: languageCode,
                 srcLang: subtitles[index], // Usa o código original
-                src: `/api/ep/${ani.id}/${seasonId}/${ep.id}/${ep.id}-${subtitles[index]}.vtt`,
+                src: `${cdnUrl}/ep/${ani.id}/${seasonId}/${ep.id}/${ep.id}-${subtitles[index]}.vtt`,
                 default: subtitles[index] === "por", // Define o português como padrão
             }));
         }

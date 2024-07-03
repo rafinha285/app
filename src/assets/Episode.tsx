@@ -12,7 +12,7 @@ interface props{
 const Episode:React.FC<props> = ({ep}) =>{
 
     // console.log(ep,`/api/ep/${ep.anime}/${ep.season}/${ep.ep}/${ep.ep}.jpg`)
-    // console.log(ep.seasonname)
+    console.log(ep)
     return(
         <Link className="episodes-link" to={`/Anime/${ep.animeid}/watch/${ep.seasonid}/${ep.id}`}>
             <div className="">
@@ -31,9 +31,9 @@ const Episode:React.FC<props> = ({ep}) =>{
                     <div className="ep-animetitle">
                     {ep.animename}
                     </div>
-                    {/* <div className="ep-animeseason">
+                    <div className="ep-animeseason">
                         {ep.seasonname}
-                    </div> */}
+                    </div>
                     <div className="ep-title">
                     {ep.name}
                     </div>

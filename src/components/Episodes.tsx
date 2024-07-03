@@ -3,12 +3,13 @@ import "../css/episodes.css"
 import { epLog } from "../types/logType";
 import Episode from "../assets/Episode";
 import { Link } from "react-router-dom";
+import {EpisodeSim} from "../types/episodeModel.ts";
 
 interface prop{
     count:number|undefined
 }
 const Episodes:React.FC<prop> = ({count}) =>{
-    const [eps,setEps] = useState<epLog[]>()
+    const [eps,setEps] = useState<EpisodeSim[]>()
     useEffect(()=>{
         if(count){
             $.ajax({
@@ -25,7 +26,7 @@ const Episodes:React.FC<prop> = ({count}) =>{
                 setEps(res)
             })
         }
-        
+
     },[!eps])
     return(
         <div className="episodes">

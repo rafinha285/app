@@ -336,8 +336,8 @@ router.get("/g/eps",async(req,res)=>{
 
         // Subtrai uma semana (7 dias) da data atual
         let semana = new Date(currentDate.valueOf() - 7 * 24 * 60 * 60 * 1000);
-        // var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;",[semana,count],{prepare:true})
-        var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes LIMIT ? ALLOW FILTERING;",[count],{prepare:true})
+        var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes WHERE date_added >= ? LIMIT ? ALLOW FILTERING;",[semana,count],{prepare:true})
+        // var result = await req.db.execute("SELECT id, animeid, seasonid, name, duration, resolution, date_added FROM episodes LIMIT ? ALLOW FILTERING;",[count],{prepare:true})
         // Console.log(result)
         await sleep(2)
         for (const ee of result.rows) {

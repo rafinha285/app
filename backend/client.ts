@@ -112,7 +112,7 @@ router.get('/ani/lan',async(req,res)=>{
         var query = `SELECT id, name, description, genre, averageeptime FROM anime;`
 
         await req.db.execute(query).then((v)=>{
-            Console.log(v.rows)
+            // Console.log(v.rows)
             res.send(v.rows)
         }).catch((err)=>{
             throw new Error(err)
@@ -194,10 +194,10 @@ router.get("/ani/:id",async(req:e.Request,res:e.Response)=>{
         var query =`SELECT * FROM anime WHERE id = ${req.params.id};`
         await req.db.execute(query).then((v)=>{
             setHeader(res)
-            Console.log(v.rows[0])
+            // Console.log(v.rows[0])
             res.send(v.rows[0])
         }).catch((err)=>{
-            Console.log(err)
+            Console.error(err)
             throw new Error(err)
         })
 
@@ -303,7 +303,7 @@ router.get("/ani/gen/:gen",async(req:e.Request,res:e.Response)=>{
 router.get('/search',async (req:e.Request,res:e.Response)=>{
     try{
         var search= req.query.s
-        Console.log(search)
+        // Console.log(search)
         //[`'%${search}%'`,`'%${search}%'`]
         var result = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE name LIKE '%${search}%' OR name2 LIKE '%${search}%' ALLOW FILTERING`,[],{prepare:true})
         res.send(result.rows)
@@ -318,7 +318,7 @@ router.get("/g/s/eps/:animeid/:seasonid",async(req,res)=>{
         const {animeid,seasonid} = req.params
         var result = await req.db.execute("SELECT * FROM episodes WHERE animeid = ? AND seasonid = ? ALLOW FILTERING",[types.Uuid.fromString(animeid),types.Uuid.fromString(seasonid)])
         await sleep(50)
-        Console.log(result.rows)
+        // Console.log(result.rows)
         res.send(result.rows)
     }catch(err){
         sendError(res,ErrorType.default,500,err)
@@ -453,7 +453,7 @@ router.get("/g/aniD/:ani/:seasonId/:epId",async(req,res)=>{
         }
         var result = await req.db.execute(`SELECT name, seasons FROM anime WHERE id = ?`,[ani],{prepare:true})
         var seasons = tupleToSeason(result.rows[0].seasons)
-        Console.log(result.rows[0].seasons,seasons,seasons.find((v)=>v.id == seasonId))
+        // Console.log(result.rows[0].seasons,seasons,seasons.find((v)=>v.id == seasonId))
         var episode = await req.db.execute(`SELECT name, resolution FROM episodes WHERE id = ?`,[epId])
         res.json({
             aniName:result.rows[0].name,

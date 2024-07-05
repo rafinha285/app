@@ -123,7 +123,7 @@ router.get('/ani/lan', function (req, res) { return __awaiter(void 0, void 0, vo
                 res.setHeader("Cache-Control", "public, max-age:60");
                 query = "SELECT id, name, description, genre, averageeptime FROM anime;";
                 return [4 /*yield*/, req.db.execute(query).then(function (v) {
-                        handle_1.Console.log(v.rows);
+                        // Console.log(v.rows)
                         res.send(v.rows);
                     }).catch(function (err) {
                         throw new Error(err);
@@ -246,10 +246,10 @@ router.get("/ani/:id", function (req, res) { return __awaiter(void 0, void 0, vo
                 query = "SELECT * FROM anime WHERE id = ".concat(req.params.id, ";");
                 return [4 /*yield*/, req.db.execute(query).then(function (v) {
                         (0, handle_1.setHeader)(res);
-                        handle_1.Console.log(v.rows[0]);
+                        // Console.log(v.rows[0])
                         res.send(v.rows[0]);
                     }).catch(function (err) {
-                        handle_1.Console.log(err);
+                        handle_1.Console.error(err);
                         throw new Error(err);
                     })];
             case 1:
@@ -373,7 +373,6 @@ router.get('/search', function (req, res) { return __awaiter(void 0, void 0, voi
             case 0:
                 _a.trys.push([0, 2, , 3]);
                 search = req.query.s;
-                handle_1.Console.log(search);
                 return [4 /*yield*/, req.db.execute("SELECT id, name, description,rating FROM anime WHERE name LIKE '%".concat(search, "%' OR name2 LIKE '%").concat(search, "%' ALLOW FILTERING"), [], { prepare: true })];
             case 1:
                 result = _a.sent();
@@ -397,10 +396,12 @@ router.get("/g/s/eps/:animeid/:seasonid", function (req, res) { return __awaiter
                 return [4 /*yield*/, req.db.execute("SELECT * FROM episodes WHERE animeid = ? AND seasonid = ? ALLOW FILTERING", [cassandra_driver_1.types.Uuid.fromString(animeid), cassandra_driver_1.types.Uuid.fromString(seasonid)])];
             case 1:
                 result = _b.sent();
-                return [4 /*yield*/, sleep(50)];
+                return [4 /*yield*/, sleep(50)
+                    // Console.log(result.rows)
+                ];
             case 2:
                 _b.sent();
-                handle_1.Console.log(result.rows);
+                // Console.log(result.rows)
                 res.send(result.rows);
                 return [3 /*break*/, 4];
             case 3:
@@ -586,7 +587,6 @@ router.get("/g/aniD/:ani/:seasonId/:epId", function (req, res) { return __awaite
             case 1:
                 result = _b.sent();
                 seasons = (0, animeFunctions_1.tupleToSeason)(result.rows[0].seasons);
-                handle_1.Console.log(result.rows[0].seasons, seasons, seasons.find(function (v) { return v.id == seasonId; }));
                 return [4 /*yield*/, req.db.execute("SELECT name, resolution FROM episodes WHERE id = ?", [epId])];
             case 2:
                 episode = _b.sent();

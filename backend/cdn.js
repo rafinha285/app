@@ -143,6 +143,6 @@ app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awa
 app.get("/", function (req, res) {
     res.redirect("https://animefoda.top");
 });
-app.listen(8082, '0.0.0.0', function () {
+app.listen(8080, '0.0.0.0', function () {
     handle_1.Console.log("http://0.0.0.0:8080");
 });

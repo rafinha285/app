@@ -7,7 +7,15 @@ import {Episode, EpisodeSim} from "../../src/types/episodeModel";
 import {Console, ErrorType, sendError} from "../assets/handle";
 import {types} from "cassandra-driver";
 import user from "../../src/pages/User/User";
+//TODO fazer ele checar se o anime ja existe no animeList
+//se nao existir adicionar
+//se tiver update
 
+//TODO fazer ele checar se ja existe o ep no episode list
+//se nao existir adicionar
+//se tiver update
+
+//TODO fazer ele adicionar ao log o ep
 export async function epWatchedHandle(req:Request,res:Response,anime:typeof animeClient,log:typeof logPool) {
     let {aniId, seasonId, epId} = req.params;
     try{

@@ -23,7 +23,7 @@ app.get('/ani/img',async(req:e.Request,res:e.Response)=>{
         const typesImg = ["jpe","jpg","jpeg","png"]
         let im = typesImg.length
         for(let i = 0;i<im;i++){
-            // Console.log(path.join(ANIME_PATH,(req.query.Id as string),"img",`${req.query.Id}.${typesImg[i]}`))
+            Console.log(path.join(ANIME_PATH,(req.query.Id as string),"img",`${req.query.Id}.${typesImg[i]}`))
             let pathImg = path.join(ANIME_PATH,(req.query.Id as string),"img",`${req.query.Id}.${typesImg[i]}`)
             if(fs.existsSync(pathImg)){
                 return res.sendFile(pathImg)

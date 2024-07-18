@@ -59,6 +59,7 @@ app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 
             typesImg = ["jpe", "jpg", "jpeg", "png"];
             im = typesImg.length;
             for (i = 0; i < im; i++) {
+                handle_1.Console.log(path.join(consts_1.ANIME_PATH, req.query.Id, "img", "".concat(req.query.Id, ".").concat(typesImg[i])));
                 pathImg = path.join(consts_1.ANIME_PATH, req.query.Id, "img", "".concat(req.query.Id, ".").concat(typesImg[i]));
                 if (fs.existsSync(pathImg)) {
                     return [2 /*return*/, res.sendFile(pathImg)];

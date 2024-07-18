@@ -89,9 +89,9 @@ app.get("/stream/:aniId/:season/:epId/:reso",async(req:e.Request,res:e.Response)
         sendError(res,ErrorType.default,500,err)
     }
 })
-// app.get("/",(req:Request,res:e.Response)=>{
-//     res.redirect("https://animefoda.top")
-// })
+app.get("/",(req:Request,res:e.Response)=>{
+    res.redirect("https://animefoda.top")
+})
 app.listen(8080,'0.0.0.0',()=>{
     Console.log(`http://0.0.0.0:8080`)
 })

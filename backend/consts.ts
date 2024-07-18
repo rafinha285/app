@@ -1,8 +1,8 @@
 import * as path from "path"
 export const IP_DATABASE:string = '192.168.18.20'
-export const ANIME_PATH:string = path.join('/','home','abacate','mnt','storage','anime')
-export const MANGA_PATH:string = path.join('/','home','abacate','mnt','storage','manga')
-export const TEMP_PATH:string = path.join('/','home','abacate','mnt','temp')
+export const ANIME_PATH:string = path.join('/','mnt','storage','anime')
+export const MANGA_PATH:string = path.join('/','mnt','storage','manga')
+export const TEMP_PATH:string = path.join('/','mnt','temp')
 // export const ANIME_PATH:string = path.join(`\\\\${IP_DATABASE}`,'anime')
 // export const MANGA_PATH:string = path.join(`\\\\${IP_DATABASE}`,'manga')
 // export const TEMP_PATH:string = path.join(`\\\\${IP_DATABASE}`,'temp')

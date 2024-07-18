@@ -57,19 +57,25 @@ export const getMonthName = (date:Date,short:boolean,locale = "pt-br"):string =>
 // }
 //var proximoEp = NextEp(ani,seasonId,ep)
 //window.location.href = `/Anime/${ani.id}/watch/${seasonId}/${proximoEp.id}`
-export async function handleEpWatched (ani:string,seasonId:string,ep:Episode){
+export async function handleEpWatching(ani:string, seasonId:string, ep:Episode,droppedOn:number,watched:boolean) {
+    console.log(ep.id,watched,droppedOn)
     await fetch(`/api/log/watch/${ani}/${seasonId}/${ep.id}`,{
         method: "POST",
-        body: JSON.stringify({duration:ep.duration}),
+        body: JSON.stringify({
+            duration:ep.duration,
+            watched,
+            droppedOn:droppedOn,
+            ep_index:ep.epindex,
+        }),
         headers:{
             "Accept":"application/json, text/plain, */*",
             "Content-Type":"application/json"
         }
     });
 }
-export const handleNextEp = (ani:string,seasonId:string,eps:Episode[],index:number,isLogged:boolean)=>{
+export const handleNextEp = (ani:string,seasonId:string,eps:Episode[],index:number,isLogged:boolean,time:number,interval:NodeJS.Timeout)=>{
     if(isLogged){
-        handleEpWatched(ani,seasonId,eps.sort((a,b)=>a.epindex-b.epindex)[index])
+        handleEpWatching(ani,seasonId,eps.sort((a,b)=>a.epindex-b.epindex)[index],time,true)
     }
     console.log(eps)
     var p = eps.find((v)=>v.epindex === (index+1))

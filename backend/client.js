@@ -1104,11 +1104,17 @@ app.post('/logout', function (req, res) { return __awaiter(void 0, void 0, void 
 router.post('/log/watch/:aniId/:seasonId/:epId', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         try {
-            (0, epWatchedHandle_1.epWatchedHandle)(req, res, Postgre_1.animeClient, Postgre_1.logPool);
+            (0, epWatchedHandle_1.epWatchedHandle)(req, res, Postgre_1.animeClient, Postgre_1.logPool, req.user);
         }
         catch (err) {
             (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
         }
+        return [2 /*return*/];
+    });
+}); });
+app.get('/easteregg', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        res.redirect('https://youtu.be/xvFZjo5PgG0?si=UNy9hc1yJFPGlSz-');
         return [2 /*return*/];
     });
 }); });

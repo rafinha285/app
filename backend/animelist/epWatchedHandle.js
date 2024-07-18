@@ -36,184 +36,208 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkAnimeList = exports.editEpisode = exports.editSeason = exports.addSeason = exports.epWatchedHandle = void 0;
-var Postgre_1 = require("../database/Postgre");
-var animeFunctions_1 = require("../../src/functions/animeFunctions");
+exports.getAllEpsList = exports.insertEpList = exports.insertAnimeList = exports.checkEpList = exports.checkAnimeList = exports.epWatchedHandle = void 0;
+var animeModel_1 = require("../../src/types/animeModel");
 var handle_1 = require("../assets/handle");
-function epWatchedHandle(req, res, anime, log) {
+var pg = require("pg");
+//TODO fazer ele checar se o anime ja existe no animeList
+//se nao existir adicionar
+//se tiver update
+//^feito
+//TODO fazer ele checar se ja existe o ep no episode list
+//se nao existir adicionar
+//se tiver update
+//TODO fazer ele adicionar ao log o ep
+//TODO deletar o last_ep da anime list
+function epWatchedHandle(req, res, animeC, log, user) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, aniId, seasonId, epId, ep, epResult, result, e_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var _a, aniId, seasonId, epId, _b, droppedOn, duration, ep_index, watched, anime, animeCheck, epCheck, e_1;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
                 case 0:
                     _a = req.params, aniId = _a.aniId, seasonId = _a.seasonId, epId = _a.epId;
-                    _b.label = 1;
+                    _b = req.body, droppedOn = _b.droppedOn, duration = _b.duration, ep_index = _b.ep_index, watched = _b.watched;
+                    _c.label = 1;
                 case 1:
-                    _b.trys.push([1, 15, , 16]);
-                    return [4 /*yield*/, req.db.execute("SELECT * FROM episodes WHERE id = ".concat(epId))];
+                    _c.trys.push([1, 16, , 17]);
+                    if (!aniId || !seasonId || !epId) {
+                        throw handle_1.ErrorType.undefined;
+                    }
+                    if (!user) {
+                        throw handle_1.ErrorType.unauthorized;
+                    }
+                    return [4 /*yield*/, req.db.execute("SELECT name, id FROM anime WHERE id = ?", [aniId])];
                 case 2:
-                    ep = (_b.sent()).rows[0];
-                    handle_1.Console.log(ep);
-                    return [4 /*yield*/, Postgre_1.animeClient.query("\n            SELECT * FROM users.user_episode_list WHERE episode_id = $1\n        ", [epId])];
+                    anime = (_c.sent()).rows[0];
+                    console.log(anime);
+                    //Checa se o anime existe na lista do individuo hehe
+                    handle_1.Console.log(user);
+                    return [4 /*yield*/, checkAnimeList(user, aniId, animeC)];
                 case 3:
-                    epResult = _b.sent();
-                    if (!(epResult.rows.length == 0)) return [3 /*break*/, 5];
-                    return [4 /*yield*/, Postgre_1.animeClient.query("\n                INSERT INTO users.user_episode_list (\n                    episode_id,\n                    dropped_on,\n                    season_id,\n                    anime_id,\n                    user_id,\n                    duration\n                ) VALUES (\n                    $1,\n                    $2,\n                    $3,\n                    $4,\n                    $5,\n                    $6\n                ) RETURNING *;\n            ", [
-                            epId,
-                            req.body.duration,
-                            seasonId,
-                            aniId,
-                            req.user._id,
-                            ep.duration
-                        ])];
+                    animeCheck = _c.sent();
+                    handle_1.Console.log(animeCheck);
+                    if (!animeCheck) return [3 /*break*/, 5];
+                    //Atualiza o estado do anime para assistindo
+                    return [4 /*yield*/, animeC.query("\n                UPDATE users.user_anime_list\n                    SET status='watching'\n                    WHERE user_id = $1 AND anime_id = $2;\n            ", [user._id, aniId])];
                 case 4:
-                    _b.sent();
+                    //Atualiza o estado do anime para assistindo
+                    _c.sent();
                     return [3 /*break*/, 7];
-                case 5: return [4 /*yield*/, editEpisode(req.user, aniId, ep, req.body.duration)];
+                case 5:
+                    handle_1.Console.log("inseri");
+                    //Coloca na lista o anime do episodio q foi assistido
+                    return [4 /*yield*/, insertAnimeList(animeC, anime, user, animeModel_1.animeListStatus.watching)];
                 case 6:
-                    _b.sent();
-                    _b.label = 7;
-                case 7: return [4 /*yield*/, log.query("\n            INSERT INTO public.log (\n                date,\n                anime,\n                duration,\n                ep,\n                season\n        ) VALUES(\n            $1,\n            $2,\n            $3,\n            $4,\n            $5\n        ) RETURNING TRUE\n        ", [
-                        new Date(Date.now()),
-                        aniId,
-                        req.body.duration,
-                        epId,
-                        seasonId
-                    ])];
+                    //Coloca na lista o anime do episodio q foi assistido
+                    _c.sent();
+                    _c.label = 7;
+                case 7: return [4 /*yield*/, checkEpList(user, aniId, epId, animeC)];
                 case 8:
-                    _b.sent();
-                    return [4 /*yield*/, Postgre_1.animeClient.query("\n            SELECT season_id\n                FROM users.user_season_list\n                WHERE season_id = $1 AND user_id = $2;\n        ", [seasonId, req.user._id])];
+                    epCheck = _c.sent();
+                    handle_1.Console.log(epCheck);
+                    if (!epCheck) return [3 /*break*/, 13];
+                    if (!watched) return [3 /*break*/, 10];
+                    return [4 /*yield*/, animeC.query("\n                    UPDATE users.user_episode_list\n                        SET dropped_on = $1,\n                        date = now(),\n                        watched = TRUE\n                    WHERE user_id = $2 AND anime_id = $3 AND episode_id = $4;\n                ", [duration, user._id, aniId, epId])];
                 case 9:
-                    result = _b.sent();
-                    if (!(result.rows.length < 1)) return [3 /*break*/, 11];
-                    return [4 /*yield*/, addSeason(seasonId, req, ep, aniId)];
-                case 10:
-                    _b.sent();
-                    return [3 /*break*/, 14];
+                    _c.sent();
+                    return [3 /*break*/, 12];
+                case 10: return [4 /*yield*/, animeC.query("\n                    UPDATE users.user_episode_list\n                        SET dropped_on = $1,\n                            date = now(),\n                            watched = FALSE\n                        WHERE user_id = $2 AND anime_id = $3 AND episode_id = $4;\n                ", [droppedOn, user._id, aniId, epId])];
                 case 11:
-                    if (!(result.rows.length > 1)) return [3 /*break*/, 12];
-                    handle_1.Console.error("fudeo");
-                    throw result.rows[0];
-                case 12: return [4 /*yield*/, editSeason(seasonId, req, aniId, ep)];
-                case 13:
-                    _b.sent();
-                    _b.label = 14;
-                case 14: return [2 /*return*/, res.status(200).send("Log" + req.user._id)];
+                    _c.sent();
+                    _c.label = 12;
+                case 12: return [3 /*break*/, 15];
+                case 13: return [4 /*yield*/, insertEpList(animeC, aniId, seasonId, epId, droppedOn, ep_index, duration, user, watched)];
+                case 14:
+                    _c.sent();
+                    _c.label = 15;
                 case 15:
-                    e_1 = _b.sent();
+                    // await log.query(`
+                    //     INSERT INTO log (date, anime, page, duration, ep, season)
+                    //     VALUES (
+                    //         now(),
+                    //         $1,
+                    //         'watch',
+                    //         $2,
+                    //         $3,
+                    //         $4
+                    //       );
+                    // `,[aniId,duration,epId,seasonId])
+                    res.send({ success: true, message: "Log adicionado para user" + user.username });
+                    return [3 /*break*/, 17];
+                case 16:
+                    e_1 = _c.sent();
                     switch (e_1) {
                         case handle_1.ErrorType.default:
                             return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, e_1)];
                         case handle_1.ErrorType.undefined:
                             return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.undefined)];
+                        case handle_1.ErrorType.unauthorized:
+                            return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.unauthorized)];
                         default:
                             return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, e_1)];
                     }
-                    return [3 /*break*/, 16];
-                case 16: return [2 /*return*/];
+                    return [3 /*break*/, 17];
+                case 17: return [2 /*return*/];
             }
         });
     });
 }
 exports.epWatchedHandle = epWatchedHandle;
-function addSeason(seasonId, req, ep, aniId) {
+//TODO update da season com o epIndex
+//^salvar o episodio para a season pelo epindex e nao pelo id
+//Checa se o anime esta na lista
+function checkAnimeList(user, animeId, animeC) {
     return __awaiter(this, void 0, void 0, function () {
-        var seasons, _a, season, e_2;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    _b.trys.push([0, 3, , 4]);
-                    _a = animeFunctions_1.tupleToSeason;
-                    return [4 /*yield*/, req.db.execute("SELECT seasons FROM anime WHERE id = ".concat(aniId))];
-                case 1:
-                    seasons = _a.apply(void 0, [(_b.sent()).rows[0].seasons]);
-                    season = seasons.find(function (v) { return v.id == seasonId; });
-                    handle_1.Console.log(season, aniId);
-                    return [4 /*yield*/, Postgre_1.animeClient.query("\n                INSERT INTO users.user_season_list (\n                    anime_id, season_id, total_episodes, user_id, total_episodes_watched,  total_rewatched_episodes\n                ) VALUES($1,$2,$3,$4,$5,$6)\n                RETURNING TRUE;\n            ", [
-                            aniId,
-                            seasonId,
-                            season.episodes.length,
-                            req.user._id,
-                            ep.epindex,
-                            0
-                        ])];
-                case 2:
-                    _b.sent();
-                    return [3 /*break*/, 4];
-                case 3:
-                    e_2 = _b.sent();
-                    handle_1.Console.error("Add Season: " + e_2);
-                    throw e_2;
-                case 4: return [2 /*return*/];
-            }
-        });
-    });
-}
-exports.addSeason = addSeason;
-function editSeason(seasonId, req, aniId, ep) {
-    return __awaiter(this, void 0, void 0, function () {
-        var seasons, _a, season, rewatched, e_3;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    _b.trys.push([0, 6, , 7]);
-                    _a = animeFunctions_1.tupleToSeason;
-                    return [4 /*yield*/, req.db.execute("SELECT seasons FROM anime WHERE id = ".concat(aniId))];
-                case 1:
-                    seasons = _a.apply(void 0, [(_b.sent()).rows[0].seasons]);
-                    season = seasons.find(function (v) { return v.id == seasonId; });
-                    handle_1.Console.log(ep);
-                    return [4 /*yield*/, Postgre_1.animeClient.query("\n            SELECT episode_id,\n                   dropped_on,\n                   season_id,\n                   anime_id,\n                   user_id,\n                   id,\n                   date,\n                   duration\n            FROM users.user_episode_list\n            WHERE user_id = $1\n              AND episode_id = $2\n              AND season_id = $3\n              AND anime_id = $4;\n        ", [req.user._id, ep.id.toString(), seasonId, aniId])];
-                case 2:
-                    rewatched = (_b.sent()).rows.length == 1;
-                    if (!rewatched) return [3 /*break*/, 4];
-                    return [4 /*yield*/, Postgre_1.animeClient.query("\n                UPDATE users.user_season_list\n                    SET total_rewatched_episodes=$1, \n                    total_episodes_watched=$2\n                    WHERE season_id=$3 AND user_id=$4;\n            ", [ep.epindex, season.episodes.length, seasonId, req.user._id])];
-                case 3: return [2 /*return*/, _b.sent()];
-                case 4: return [4 /*yield*/, Postgre_1.animeClient.query("\n            UPDATE users.user_season_list\n                SET total_episodes_watched=$1 \n                WHERE season_id=$2 AND user_id=$3;\n        ", [ep.epindex, seasonId, req.user._id])];
-                case 5: return [2 /*return*/, _b.sent()];
-                case 6:
-                    e_3 = _b.sent();
-                    handle_1.Console.error(e_3);
-                    throw e_3;
-                case 7: return [2 /*return*/];
-            }
-        });
-    });
-}
-exports.editSeason = editSeason;
-function editEpisode(user, aniId, ep, mud) {
-    return __awaiter(this, void 0, void 0, function () {
-        var e_4;
+        var checkAnime;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    _a.trys.push([0, 2, , 3]);
-                    if (!mud) {
-                        throw handle_1.ErrorType.undefined;
-                    }
-                    return [4 /*yield*/, Postgre_1.animeClient.query("\n            UPDATE users.user_episode_list \n            SET dropped_on = $1,\n                date = now()\n            WHERE user_id = $2\n            AND episode_id = $3\n            AND anime_id = $4\n        ", [mud, user._id, ep.id.toString(), aniId])];
-                case 1: return [2 /*return*/, _a.sent()];
-                case 2:
-                    e_4 = _a.sent();
-                    handle_1.Console.error("Edit Episode: " + e_4);
-                    throw e_4;
-                case 3: return [2 /*return*/];
-            }
-        });
-    });
-}
-exports.editEpisode = editEpisode;
-function checkAnimeList(user, animeId) {
-    return __awaiter(this, void 0, void 0, function () {
-        var result;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, Postgre_1.animeClient.query("\n        SELECT \n    ")];
+                case 0: return [4 /*yield*/, animeC.query("\n        SELECT name FROM users.user_anime_list WHERE anime_id = $1 AND user_id = $2;\n    ", [animeId, user._id])];
                 case 1:
-                    result = (_a.sent());
-                    return [2 /*return*/];
+                    checkAnime = _a.sent();
+                    return [2 /*return*/, (checkAnime.rowCount) > 0];
             }
         });
     });
 }
 exports.checkAnimeList = checkAnimeList;
+//Checa se o ep esta na lista
+function checkEpList(user, animeId, epId, animeC) {
+    return __awaiter(this, void 0, void 0, function () {
+        var checkEp;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, animeC.query("\n        SELECT ep_index FROM users.user_episode_list WHERE anime_id = $1 AND user_id=$2 AND episode_id=$3;\n    ", [animeId, user._id, epId])];
+                case 1:
+                    checkEp = _a.sent();
+                    return [2 /*return*/, (checkEp.rowCount) > 0];
+            }
+        });
+    });
+}
+exports.checkEpList = checkEpList;
+//Coloca anime na lista de anime
+function insertAnimeList(animeC, anime, user, status) {
+    return __awaiter(this, void 0, void 0, function () {
+        var err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    handle_1.Console.log(anime.id.toString(), user);
+                    pg.Query;
+                    return [4 /*yield*/, animeC.query("\n            insert into users.user_anime_list (user_id, anime_id, status, name, start_date)\n            values ($1,$2,$3,$4,now());\n        ", [user._id, anime.id.toString(), 'watching', anime.name])];
+                case 1:
+                    _a.sent();
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_1 = _a.sent();
+                    throw err_1;
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.insertAnimeList = insertAnimeList;
+//Coloca o ep na lista
+function insertEpList(animeC, animeId, seasonId, epId, droppedOn, epIndex, duration, user, watched) {
+    return __awaiter(this, void 0, void 0, function () {
+        var err_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    return [4 /*yield*/, animeC.query("\n            INSERT INTO \n                users.user_episode_list \n                (episode_id,dropped_on,season_id,anime_id,user_id,date,duration,ep_index,watched)\n            VALUES\n                ($1,$2,$3,$4,$5,now(),$6,$7,$8)\n        ", [
+                            epId,
+                            droppedOn,
+                            seasonId,
+                            animeId,
+                            user._id,
+                            duration,
+                            epIndex,
+                            watched
+                        ])
+                        // return true
+                    ];
+                case 1:
+                    _a.sent();
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_2 = _a.sent();
+                    throw err_2;
+                case 3: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.insertEpList = insertEpList;
+function getAllEpsList(animeId, seasonId, user, animeC) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, animeC.query("\n        SELECT * FROM users.user_episode_list\n            WHERE user_id = $1 AND anime_id = $2 AND season_id = $3\n    ", [user._id, animeId, seasonId])];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+exports.getAllEpsList = getAllEpsList;

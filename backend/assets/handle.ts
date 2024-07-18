@@ -9,9 +9,7 @@ const ffmpeg = require('fluent-ffmpeg')
 ffmpeg.setFfmpegPath("D:/Site_anime/ffmpeg/bin/ffmpeg.exe")
 ffmpeg.setFfprobePath("D:/Site_anime/ffmpeg/bin/ffprobe.exe")
 import {v4 as uuidv4} from "uuid"
-import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
-import * as fss from "fs"
 import { PoolClient } from 'pg';
 import { secretKey } from '../secret/config';
 import { JwtUser, TokenRequest } from '../types';

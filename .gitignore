@@ -8,3 +8,8 @@
 /backend/target
 .idea/discord.xml
 /.idea/.gitignore
+.idea/dataSources.xml
+.idea/sqldialects.xml
+.idea/runConfigurations/Client.xml
+.idea/runConfigurations/TSC_Client.xml
+.idea/dataSources.xml

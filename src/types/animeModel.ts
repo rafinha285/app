@@ -1,4 +1,4 @@
-import { Audio , state,quality, StateType, userAnimeState, priorityValue} from "./types" 
+import { Audio , state,quality, StateType, userAnimeState, priorityValue} from "./types"
 import { character } from "./characterModel"
 // import {Season} from "./seasonModel"
 import { Episode } from "./episodeModel";
@@ -124,4 +124,7 @@ export interface AnimeAgenda{
 	description:string;
 	rating:number;
 	weekday:string
+}
+export enum animeListStatus{
+	'watching', 'completed', 'on_hold', 'dropped', 'plan_to_watch'
 }

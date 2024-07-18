@@ -880,10 +880,14 @@ app.post('/logout',async(req,res)=>{
 })
 router.post('/log/watch/:aniId/:seasonId/:epId',checkToken,async(req:e.Request,res:e.Response)=>{
     try {
-        epWatchedHandle(req,res,animeClient,logPool);
+        
+        epWatchedHandle(req,res,animeClient,logPool,req.user);
     }catch(err){
         sendError(res,ErrorType.default,500,err)
     }
+})
+app.get('/easteregg',async(req,res)=>{
+    res.redirect('https://youtu.be/xvFZjo5PgG0?si=UNy9hc1yJFPGlSz-')
 })
 
 app.get('*',(req:e.Request,res:e.Response)=>{

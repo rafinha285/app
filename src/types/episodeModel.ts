@@ -45,11 +45,17 @@ export interface Episode{
 //     resolution:quality;
 // }
 export interface EpisodeUser{
-    id:string
-    seasonid:string
-    name:string;
+    episode_id:string;
     dropped_on:number;
-    date_watched:Date;
+    season_id:string
+    anime_id:string;
+    user_id:string;
+    id:string;
+    date:Date;
+    duration:number;
+    ep_index:number;
+    name:string;
+    season_name:string;
 }
 export interface EpisodeSim{
     id:string

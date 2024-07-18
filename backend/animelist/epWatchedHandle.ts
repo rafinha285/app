@@ -1,98 +1,100 @@
-import {animeClient,logPool} from "../database/Postgre";
+import {animeClient, logPool} from "../database/Postgre";
 import {Request, Response} from "express";
-import {Season} from "../../src/types/animeModel";
+import {Anime, animeListStatus, Season} from "../../src/types/animeModel";
 import {tupleToSeason} from "../../src/functions/animeFunctions";
 import {JwtUser} from "../types";
-import {Episode, EpisodeSim} from "../../src/types/episodeModel";
+import {Episode, EpisodeSim, EpisodeUser} from "../../src/types/episodeModel";
 import {Console, ErrorType, sendError} from "../assets/handle";
 import {types} from "cassandra-driver";
-import user from "../../src/pages/User/User";
+import { QueryResult } from "pg";
+import { JwtPayload } from "jsonwebtoken";
+import * as pg from 'pg'
 //TODO fazer ele checar se o anime ja existe no animeList
 //se nao existir adicionar
 //se tiver update
+
+//^feito
 
 //TODO fazer ele checar se ja existe o ep no episode list
 //se nao existir adicionar
 //se tiver update
 
 //TODO fazer ele adicionar ao log o ep
-export async function epWatchedHandle(req:Request,res:Response,anime:typeof animeClient,log:typeof logPool) {
+
+//TODO deletar o last_ep da anime list
+export async function epWatchedHandle(req:Request,res:Response,animeC:typeof animeClient,log:typeof logPool,user:string | JwtUser | JwtPayload | undefined) {
     let {aniId, seasonId, epId} = req.params;
+    let {droppedOn, duration, ep_index,watched}= req.body
     try{
-        let ep = (await req.db.execute(`SELECT * FROM episodes WHERE id = ${epId}`)).rows[0]
-        Console.log(ep)
-        let epResult = await animeClient.query(`
-            SELECT * FROM users.user_episode_list WHERE episode_id = $1
-        `,[epId])
-        if(epResult.rows.length == 0){
-            await animeClient.query(`
-                INSERT INTO users.user_episode_list (
-                    episode_id,
-                    dropped_on,
-                    season_id,
-                    anime_id,
-                    user_id,
-                    duration
-                ) VALUES (
-                    $1,
-                    $2,
-                    $3,
-                    $4,
-                    $5,
-                    $6
-                ) RETURNING *;
-            `,[
-                epId,
-                req.body.duration,
-                seasonId,
-                aniId,
-                (req.user as JwtUser)._id,
-                ep.duration
-            ])
-        }else{
-            await editEpisode(req.user as JwtUser,aniId,ep,req.body.duration)
+        if(!aniId||!seasonId||!epId){
+            throw ErrorType.undefined;
         }
-        await log.query(`
-            INSERT INTO public.log (
-                date,
-                anime,
-                duration,
-                ep,
-                season
-        ) VALUES(
-            $1,
-            $2,
-            $3,
-            $4,
-            $5
-        ) RETURNING TRUE
-        `,[
-            new Date(Date.now()),
-            aniId,
-            req.body.duration,
-            epId,
-            seasonId
-        ])
-        let result = await animeClient.query(`
-            SELECT season_id
-                FROM users.user_season_list
-                WHERE season_id = $1 AND user_id = $2;
-        `,[seasonId,(req.user as JwtUser)._id]);
-        if(result.rows.length < 1){
-            await addSeason(seasonId,req,ep,aniId)
-        }else if(result.rows.length > 1){
-            Console.error("fudeo")
-            throw result.rows[0]
-        }else{
-            await editSeason(seasonId,req,aniId,ep)
+        if(!user){
+            throw ErrorType.unauthorized;
         }
-        return res.status(200).send("Log"+(req.user as JwtUser)._id)
+        let anime = (await req.db.execute(`SELECT name, id FROM anime WHERE id = ?`,[aniId])).rows[0]
+        console.log(anime)
+        //Checa se o anime existe na lista do individuo hehe
+        Console.log(user)
+        let animeCheck = await checkAnimeList(user as JwtUser,aniId,animeC)
+        Console.log(animeCheck)
+        if(animeCheck){
+            //Atualiza o estado do anime para assistindo
+            await animeC.query(`
+                UPDATE users.user_anime_list
+                    SET status='watching'
+                    WHERE user_id = $1 AND anime_id = $2;
+            `,[(user as JwtUser)._id,aniId])
+            
+        }else{
+            Console.log("inseri")
+            //Coloca na lista o anime do episodio q foi assistido
+            await insertAnimeList(animeC,anime,(user as JwtUser),animeListStatus.watching)
+        }
+        let epCheck = await checkEpList((user as JwtUser),aniId,epId,animeC)
+        Console.log(epCheck)
+        if(epCheck){
+            //Modifica o ep na database
+            if(watched){
+                await animeC.query(`
+                    UPDATE users.user_episode_list
+                        SET dropped_on = $1,
+                        date = now(),
+                        watched = TRUE
+                    WHERE user_id = $2 AND anime_id = $3 AND episode_id = $4;
+                `,[duration,(user as JwtUser)._id,aniId,epId])
+            }else{
+                await animeC.query(`
+                    UPDATE users.user_episode_list
+                        SET dropped_on = $1,
+                            date = now(),
+                            watched = FALSE
+                        WHERE user_id = $2 AND anime_id = $3 AND episode_id = $4;
+                `,[droppedOn,(user as JwtUser)._id,aniId,epId])
+            }
+        }else{
+            await insertEpList(animeC,aniId,seasonId,epId,droppedOn,ep_index,duration,(user as JwtUser),watched);
+        }
+        // await log.query(`
+        //     INSERT INTO log (date, anime, page, duration, ep, season)
+        //     VALUES (
+        //         now(),
+        //         $1,
+        //         'watch',
+        //         $2,
+        //         $3,
+        //         $4
+        //       );
+        // `,[aniId,duration,epId,seasonId])
+        res.send({success:true,message:"Log adicionado para user"+(user as JwtUser).username})
     }catch(e){
         switch (e){
             case ErrorType.default:
                 return sendError(res,ErrorType.default,500,e);
             case ErrorType.undefined:
                 return sendError(res,ErrorType.undefined);
+            case ErrorType.unauthorized :
+                return sendError(res,ErrorType.unauthorized);
             default:
                 return sendError(res,ErrorType.default,500,e);
         }
@@ -100,88 +102,74 @@ export async function epWatchedHandle(req:Request,res:Response,anime:typeof anim
 
 }
 
-export async function addSeason(seasonId:string, req:Request, ep:types.Row, aniId:string){
-    try {
-        let seasons = tupleToSeason((await req.db.execute(`SELECT seasons FROM anime WHERE id = ${aniId}`)).rows[0].seasons)
-        let season = seasons.find(v=>v.id == seasonId)!
-        Console.log(season,aniId)
-        await animeClient.query(`
-                INSERT INTO users.user_season_list (
-                    anime_id, season_id, total_episodes, user_id, total_episodes_watched,  total_rewatched_episodes
-                ) VALUES($1,$2,$3,$4,$5,$6)
-                RETURNING TRUE;
-            `,[
-                aniId,
-                seasonId,
-                season.episodes.length,
-                (req.user as JwtUser)._id,
-                ep.epindex,
-                0
-        ])
-    }catch (e){
-        Console.error("Add Season: "+e)
-        throw e
-    }
-}
-export async function editSeason(seasonId:string,req:Request,aniId:string,ep:types.Row){
-    try {
-        let seasons = tupleToSeason((await req.db.execute(`SELECT seasons FROM anime WHERE id = ${aniId}`)).rows[0].seasons)
-        let season = seasons.find(v=>v.id == seasonId)!
-        Console.log(ep)
-        let rewatched = (await animeClient.query(`
-            SELECT episode_id,
-                   dropped_on,
-                   season_id,
-                   anime_id,
-                   user_id,
-                   id,
-                   date,
-                   duration
-            FROM users.user_episode_list
-            WHERE user_id = $1
-              AND episode_id = $2
-              AND season_id = $3
-              AND anime_id = $4;
-        `, [(req.user as JwtUser)._id, ep.id.toString(), seasonId, aniId])).rows.length == 1
+//TODO update da season com o epIndex
+//^salvar o episodio para a season pelo epindex e nao pelo id
 
-        if(rewatched){
-            return await animeClient.query(`
-                UPDATE users.user_season_list
-                    SET total_rewatched_episodes=$1, 
-                    total_episodes_watched=$2
-                    WHERE season_id=$3 AND user_id=$4;
-            `,[ep.epindex,season.episodes.length,seasonId,(req.user as JwtUser)._id])
-        }
-        return await animeClient.query(`
-            UPDATE users.user_season_list
-                SET total_episodes_watched=$1 
-                WHERE season_id=$2 AND user_id=$3;
-        `,[ep.epindex,seasonId,(req.user as JwtUser)._id])
-    }catch (e){
-        Console.error(e);
-        throw e
+//Checa se o anime esta na lista
+export async function checkAnimeList(user:JwtUser,animeId:string,animeC:typeof animeClient):Promise<boolean>{
+    let checkAnime = await animeC.query(`
+        SELECT name FROM users.user_anime_list WHERE anime_id = $1 AND user_id = $2;
+    `,[animeId,user._id])
+    return (checkAnime.rowCount!) > 0;
+}
+//Checa se o ep esta na lista
+export async function checkEpList(user:JwtUser,animeId:string,epId:string,animeC:typeof animeClient):Promise<boolean>{
+    let checkEp = await animeC.query(`
+        SELECT ep_index FROM users.user_episode_list WHERE anime_id = $1 AND user_id=$2 AND episode_id=$3;
+    `,[animeId,user._id,epId])
+    return (checkEp.rowCount!) > 0;
+}
+//Coloca anime na lista de anime
+export async function insertAnimeList(animeC:typeof animeClient,anime:any,user:JwtUser,status:animeListStatus){
+    try{
+        Console.log(anime.id.toString(),user)
+        pg.Query
+        await animeC.query(`
+            insert into users.user_anime_list (user_id, anime_id, status, name, start_date)
+            values ($1,$2,$3,$4,now());
+        `,[user._id,anime.id.toString(),'watching',anime.name])
+    }catch(err){
+        throw err;
     }
 }
-export async function editEpisode(user:JwtUser,aniId:string,ep:types.Row,mud:number){
-    try {
-        if(!mud){
-            throw ErrorType.undefined
-        }
-        return await animeClient.query(`
-            UPDATE users.user_episode_list 
-            SET dropped_on = $1,
-                date = now()
-            WHERE user_id = $2
-            AND episode_id = $3
-            AND anime_id = $4
-        `,[mud,user._id,ep.id.toString(),aniId])
-    }catch (e){
-        Console.error("Edit Episode: "+e)
-        throw e
+//Coloca o ep na lista
+export async function insertEpList(
+    animeC:typeof animeClient,
+    animeId:string,
+    seasonId:string,
+    epId:string,
+    droppedOn:number,
+    epIndex:number,
+    duration:number,
+    user:JwtUser,
+    watched:boolean
+):Promise<void>{
+    try{
+        await animeC.query(`
+            INSERT INTO 
+                users.user_episode_list 
+                (episode_id,dropped_on,season_id,anime_id,user_id,date,duration,ep_index,watched)
+            VALUES
+                ($1,$2,$3,$4,$5,now(),$6,$7,$8)
+        `,[
+            epId,
+            droppedOn,
+            seasonId,
+            animeId,
+            user._id,
+            duration,
+            epIndex,
+            watched
+        ])
+        // return true
+    }catch(err){
+        throw err;
     }
 }
-export async function checkAnimeList(user:JwtUser,animeId:string):boolean{
-    let result = (await animeClient.query(`
-        SELECT 
-    `))
+export async function getAllEpsList(animeId:string,seasonId:string,user:JwtUser,animeC:typeof animeClient):Promise<QueryResult<EpisodeUser[]>>{
+    return await animeC.query(`
+        SELECT * FROM users.user_episode_list
+            WHERE user_id = $1 AND anime_id = $2 AND season_id = $3
+    `,[user._id,animeId,seasonId])
+
 }

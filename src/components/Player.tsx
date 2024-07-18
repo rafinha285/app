@@ -6,7 +6,7 @@ import ReactDOMServer from 'react-dom/server';
 import 'plyr/dist/plyr.css'
 import "../css/watch.css"
 import { Anime } from "../types/animeModel";
-import {handleEpWatched, handleNextEp} from "../features/main";
+import {handleEpWatching, handleNextEp} from "../features/main";
 import { getEpsFromSeason } from "../functions/animeFunctions";
 import {cdnUrl} from "../const";
 import globalContext from "../GlobalContext";
@@ -74,7 +74,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                 kind: 'captions',
                 label: languageCode,
                 srcLang: subtitles[index], // Usa o código original
-                src: `/api/ep/${ani.id}/${seasonId}/${ep.id}/${ep.id}-${subtitles[index]}.vtt`,
+                src: `${cdnUrl}/ep/${ani.id}/${seasonId}/${ep.id}/${ep.id}-${subtitles[index]}.vtt`,
                 default: subtitles[index] === "por", // Define o português como padrão
             }));
         }
@@ -125,7 +125,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         }
         return d
     }
-
+    let intervalwatching:any = null;
     const handleSkipIntro =(inEnd:number)=>{
         console.log(inEnd)
         ref.current!.plyr.currentTime = inEnd
@@ -153,6 +153,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         tooltips:{controls:true,seek:true}
     }
     const initPlyr = async()=>{
+        let lastEpWatchCallTime = 0;
         while (!ref.current || !ref.current.plyr || !ref.current.plyr.elements) {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
@@ -188,13 +189,17 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         const skEButton = $(ReactDOMServer.renderToStaticMarkup(buEd)).prop("id", "outro").on("click",()=>handleNextEp(ani.id,seasonId,seasonEp,ep.epindex,context.isLogged));
         intr.after(skEButton);
 
-
-
         console.log(seasonEp,ep.epindex,ep.epindex !=  Math.min(...seasonEp.map((v)=>v.epindex)))
         // postLog(ani,true,ep.id,plyr.currentTime)
         function handleTimeUpdate() {
             const sec = plyr.currentTime;
-            console.log(`sec >= opIni && sec <= opFim:${sec >= opIni && sec <= opFim},\n sec: ${sec},\n opIni: ${opIni},\n sec >= opIni: ${sec >= opIni},\n opFim: ${opFim},\n sec <= opFim: ${sec <= opFim}`)
+            // console.log(`sec >= opIni && sec <= opFim:${sec >= opIni && sec <= opFim},\n
+            //     sec: ${sec},\n
+            //     opIni: ${opIni},\n
+            //     sec >= opIni: ${sec >= opIni},\n
+            //     opFim: ${opFim},\n 
+            //     sec <= opFim: ${sec <= opFim}
+            // `)
             // console.log(ep.epindex != Math.min(...seasonEp.map((v)=>v.index)),Math.min(...seasonEp.map((v)=>v.index)),ep.epindex)
             if (sec >= opIni && sec <= opFim && ep.epindex != Math.min(...seasonEp.map((v)=>v.epindex))) {
                 // console.log("skip-active ep")
@@ -203,10 +208,18 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                 // console.log("not skip-active op")
                 skIButton.removeClass("skip-active");
             }
-
+            if (plyr.duration && sec / plyr.duration >= 0.05) {
+                // Verifique se passaram 10 segundos desde a última chamada de handleEpWatching
+                if (sec >= lastEpWatchCallTime + 10) {
+                    handleEpWatching(ani.id, seasonId, ep, sec, false);
+                    lastEpWatchCallTime = sec;
+                }
+            }
             if (sec >= ed) {
-                if(!logSent && context.isLogged){
-                    handleEpWatched(ani.id,seasonId,ep)
+                if(context.isLogged){
+                    clearInterval(intervalwatching!)
+                    intervalwatching = null
+                    handleEpWatching(ani.id,seasonId,ep,plyr.currentTime,true)
                 }
                 if (Math.max(...seasonEp.map((ep) => ep.epindex)) === ep.epindex) {
                     // console.log("not skip-active ed")
@@ -252,6 +265,9 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
             ref.current!.plyr.destroy()
         }
     },[])
+    window.addEventListener("beforeunload",function(e){
+        handleEpWatching(ani.id, seasonId, ep, ref.current?.plyr?.currentTime!, ref.current?.plyr.currentTime!>= ep.ending);
+    })
     return(
         <Plyr source={{type:"video",sources:[]}} ref={ref}  options={optionsPlyr}></Plyr>
     )

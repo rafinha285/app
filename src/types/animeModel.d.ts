@@ -62,3 +62,10 @@ export interface AnimeAgenda {
     rating: number;
     weekday: string;
 }
+export declare enum animeListStatus {
+    'watching' = 0,
+    'completed' = 1,
+    'on_hold' = 2,
+    'dropped' = 3,
+    'plan_to_watch' = 4
+}

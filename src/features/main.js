@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkIsLogged = exports.DateToStringLocal = exports.DateToStringInput = exports.prevEpUrl = exports.nextEpUrl = exports.handleNextEp = exports.handleEpWatched = exports.getMonthName = exports.trim = exports.getEpTime = void 0;
+exports.checkIsLogged = exports.DateToStringLocal = exports.DateToStringInput = exports.prevEpUrl = exports.nextEpUrl = exports.handleNextEp = exports.handleEpWatching = exports.getMonthName = exports.trim = exports.getEpTime = void 0;
 var episodeModel_1 = require("../types/episodeModel");
 function getEpTime(ee) {
     var e = Math.round(ee);
@@ -92,18 +92,25 @@ exports.getMonthName = getMonthName;
 // }
 //var proximoEp = NextEp(ani,seasonId,ep)
 //window.location.href = `/Anime/${ani.id}/watch/${seasonId}/${proximoEp.id}`
-function handleEpWatched(ani, seasonId, ep) {
+function handleEpWatching(ani, seasonId, ep, droppedOn, watched) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, fetch("/api/log/watch/".concat(ani, "/").concat(seasonId, "/").concat(ep.id), {
-                        method: "POST",
-                        body: JSON.stringify({ duration: ep.duration }),
-                        headers: {
-                            "Accept": "application/json, text/plain, */*",
-                            "Content-Type": "application/json"
-                        }
-                    })];
+                case 0:
+                    console.log(ep.id, watched, droppedOn);
+                    return [4 /*yield*/, fetch("/api/log/watch/".concat(ani, "/").concat(seasonId, "/").concat(ep.id), {
+                            method: "POST",
+                            body: JSON.stringify({
+                                duration: ep.duration,
+                                watched: watched,
+                                droppedOn: droppedOn,
+                                ep_index: ep.epindex,
+                            }),
+                            headers: {
+                                "Accept": "application/json, text/plain, */*",
+                                "Content-Type": "application/json"
+                            }
+                        })];
                 case 1:
                     _a.sent();
                     return [2 /*return*/];
@@ -111,10 +118,10 @@ function handleEpWatched(ani, seasonId, ep) {
         });
     });
 }
-exports.handleEpWatched = handleEpWatched;
-var handleNextEp = function (ani, seasonId, eps, index, isLogged) {
+exports.handleEpWatching = handleEpWatching;
+var handleNextEp = function (ani, seasonId, eps, index, isLogged, time, interval) {
     if (isLogged) {
-        handleEpWatched(ani, seasonId, eps.sort(function (a, b) { return a.epindex - b.epindex; })[index]);
+        handleEpWatching(ani, seasonId, eps.sort(function (a, b) { return a.epindex - b.epindex; })[index], time, true);
     }
     console.log(eps);
     var p = eps.find(function (v) { return v.epindex === (index + 1); });

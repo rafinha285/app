@@ -12,9 +12,10 @@ import Footer from "../components/Footer";
 import Header from "../components/Header";
 import EpisodeDropdown from "../assets/EpisodeDropdown";
 import { Log } from "../types/logType";
-import { DateToStringLocal, handleNextEp, nextEpUrl, prevEpUrl } from "../features/main";
+import { DateToStringLocal, nextEpUrl, prevEpUrl } from "../features/main";
 import { getEpsFromSeason ,tupleToSeason} from "../functions/animeFunctions";
 import Loading from "../components/Loading";
+import { cdnUrl } from "../const";
 
 
 
@@ -127,7 +128,7 @@ const Watch:React.FC = () =>{
             {ani&&eps?(
                 <html lang="pt-BR">
                 <Helmet>
-                    <title>Assistir:{ani.name}, {ep?.name}</title>
+                    <title>Assistir: {ani.name}, {ep?.name}</title>
                 </Helmet>
                 <Header></Header>
                 <Link style={{width:"fit-content",margin:"3em auto"}} to={`/Anime/${id}`} id="linkAnime">
@@ -149,7 +150,7 @@ const Watch:React.FC = () =>{
                             </div>
                         </div>
                         <div className="card-img">
-                            <img src={`/api/ani/img?Id=${ani?.id}`} alt={ani?.name}></img>
+                            <img src={`${cdnUrl}/ani/img?Id=${ani?.id}`} alt={ani?.name}></img>
                         </div>
                     </div>
                 </Link>

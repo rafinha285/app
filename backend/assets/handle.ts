@@ -4,7 +4,7 @@ import * as path from "path";
 import { User } from "../../src/types/userType";
 import {animeClient, logPool} from "../database/Postgre";
 import { Log, page } from "../../src/types/logType";
-const fs = require('fs')
+import * as fs from 'fs'
 const ffmpeg = require('fluent-ffmpeg')
 ffmpeg.setFfmpegPath("D:/Site_anime/ffmpeg/bin/ffmpeg.exe")
 ffmpeg.setFfprobePath("D:/Site_anime/ffmpeg/bin/ffprobe.exe")
@@ -13,6 +13,7 @@ import * as jwt from "jsonwebtoken"
 import { PoolClient } from 'pg';
 import { secretKey } from '../secret/config';
 import { JwtUser, TokenRequest } from '../types';
+import { HDD_ANIME_PATH, SSD_ANIME_PATH } from '../consts';
 // import { randomInt } from "crypto";
 
 
@@ -206,6 +207,13 @@ export function id(num:number = 8){
 //         }
 //     }
 // }
+export function witchStorageAnime(p:string):string{
+    if(fs.existsSync(path.join(SSD_ANIME_PATH,p))){
+        return path.join(SSD_ANIME_PATH,p)
+    }else{
+        return path.join(HDD_ANIME_PATH,p)
+    }
+}
 export async function openConnectionAnime(){
     return await animeClient.connect()
     // await animeClient.query("BEGIN")

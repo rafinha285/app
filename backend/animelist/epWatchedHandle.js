@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAllEpsList = exports.insertEpList = exports.insertAnimeList = exports.checkEpList = exports.checkAnimeList = exports.epWatchedHandle = void 0;
 var animeModel_1 = require("../../src/types/animeModel");
+var animeFunctions_1 = require("../../src/functions/animeFunctions");
 var handle_1 = require("../assets/handle");
 var pg = require("pg");
 //TODO fazer ele checar se o anime ja existe no animeList
@@ -51,7 +52,7 @@ var pg = require("pg");
 //TODO deletar o last_ep da anime list
 function epWatchedHandle(req, res, animeC, log, user) {
     return __awaiter(this, void 0, void 0, function () {
-        var _a, aniId, seasonId, epId, _b, droppedOn, duration, ep_index, watched, anime, animeCheck, epCheck, e_1;
+        var _a, aniId, seasonId, epId, _b, droppedOn, duration, ep_index, watched, anime, epName, season, animeCheck, epCheck, e_1;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
@@ -59,58 +60,62 @@ function epWatchedHandle(req, res, animeC, log, user) {
                     _b = req.body, droppedOn = _b.droppedOn, duration = _b.duration, ep_index = _b.ep_index, watched = _b.watched;
                     _c.label = 1;
                 case 1:
-                    _c.trys.push([1, 16, , 17]);
+                    _c.trys.push([1, 17, , 18]);
                     if (!aniId || !seasonId || !epId) {
                         throw handle_1.ErrorType.undefined;
                     }
                     if (!user) {
                         throw handle_1.ErrorType.unauthorized;
                     }
-                    return [4 /*yield*/, req.db.execute("SELECT name, id FROM anime WHERE id = ?", [aniId])];
+                    return [4 /*yield*/, req.db.execute("SELECT name, id, seasons FROM anime WHERE id = ?", [aniId])];
                 case 2:
                     anime = (_c.sent()).rows[0];
+                    return [4 /*yield*/, req.db.execute("SELECT name FROM episodes WHERE id = ?", [epId])];
+                case 3:
+                    epName = (_c.sent()).rows[0];
+                    season = (0, animeFunctions_1.tupleToSeason)(anime.seasons).find(function (v) { return v.id === seasonId; });
                     console.log(anime);
                     //Checa se o anime existe na lista do individuo hehe
                     handle_1.Console.log(user);
                     return [4 /*yield*/, checkAnimeList(user, aniId, animeC)];
-                case 3:
+                case 4:
                     animeCheck = _c.sent();
                     handle_1.Console.log(animeCheck);
-                    if (!animeCheck) return [3 /*break*/, 5];
+                    if (!animeCheck) return [3 /*break*/, 6];
                     //Atualiza o estado do anime para assistindo
                     return [4 /*yield*/, animeC.query("\n                UPDATE users.user_anime_list\n                    SET status='watching'\n                    WHERE user_id = $1 AND anime_id = $2;\n            ", [user._id, aniId])];
-                case 4:
+                case 5:
                     //Atualiza o estado do anime para assistindo
                     _c.sent();
-                    return [3 /*break*/, 7];
-                case 5:
+                    return [3 /*break*/, 8];
+                case 6:
                     handle_1.Console.log("inseri");
                     //Coloca na lista o anime do episodio q foi assistido
                     return [4 /*yield*/, insertAnimeList(animeC, anime, user, animeModel_1.animeListStatus.watching)];
-                case 6:
+                case 7:
                     //Coloca na lista o anime do episodio q foi assistido
                     _c.sent();
-                    _c.label = 7;
-                case 7: return [4 /*yield*/, checkEpList(user, aniId, epId, animeC)];
-                case 8:
+                    _c.label = 8;
+                case 8: return [4 /*yield*/, checkEpList(user, aniId, epId, animeC)];
+                case 9:
                     epCheck = _c.sent();
                     handle_1.Console.log(epCheck);
-                    if (!epCheck) return [3 /*break*/, 13];
-                    if (!watched) return [3 /*break*/, 10];
+                    if (!epCheck) return [3 /*break*/, 14];
+                    if (!watched) return [3 /*break*/, 11];
                     return [4 /*yield*/, animeC.query("\n                    UPDATE users.user_episode_list\n                        SET dropped_on = $1,\n                        date = now(),\n                        watched = TRUE\n                    WHERE user_id = $2 AND anime_id = $3 AND episode_id = $4;\n                ", [duration, user._id, aniId, epId])];
-                case 9:
+                case 10:
                     _c.sent();
-                    return [3 /*break*/, 12];
-                case 10: return [4 /*yield*/, animeC.query("\n                    UPDATE users.user_episode_list\n                        SET dropped_on = $1,\n                            date = now(),\n                            watched = FALSE\n                        WHERE user_id = $2 AND anime_id = $3 AND episode_id = $4;\n                ", [droppedOn, user._id, aniId, epId])];
-                case 11:
+                    return [3 /*break*/, 13];
+                case 11: return [4 /*yield*/, animeC.query("\n                    UPDATE users.user_episode_list\n                        SET dropped_on = $1,\n                            date = now(),\n                            watched = FALSE\n                        WHERE user_id = $2 AND anime_id = $3 AND episode_id = $4;\n                ", [droppedOn, user._id, aniId, epId])];
+                case 12:
                     _c.sent();
-                    _c.label = 12;
-                case 12: return [3 /*break*/, 15];
-                case 13: return [4 /*yield*/, insertEpList(animeC, aniId, seasonId, epId, droppedOn, ep_index, duration, user, watched)];
-                case 14:
-                    _c.sent();
-                    _c.label = 15;
+                    _c.label = 13;
+                case 13: return [3 /*break*/, 16];
+                case 14: return [4 /*yield*/, insertEpList(animeC, aniId, seasonId, epId, droppedOn, ep_index, duration, user, watched, ep)];
                 case 15:
+                    _c.sent();
+                    _c.label = 16;
+                case 16:
                     // await log.query(`
                     //     INSERT INTO log (date, anime, page, duration, ep, season)
                     //     VALUES (
@@ -123,8 +128,8 @@ function epWatchedHandle(req, res, animeC, log, user) {
                     //       );
                     // `,[aniId,duration,epId,seasonId])
                     res.send({ success: true, message: "Log adicionado para user" + user.username });
-                    return [3 /*break*/, 17];
-                case 16:
+                    return [3 /*break*/, 18];
+                case 17:
                     e_1 = _c.sent();
                     switch (e_1) {
                         case handle_1.ErrorType.default:
@@ -136,8 +141,8 @@ function epWatchedHandle(req, res, animeC, log, user) {
                         default:
                             return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, e_1)];
                     }
-                    return [3 /*break*/, 17];
-                case 17: return [2 /*return*/];
+                    return [3 /*break*/, 18];
+                case 18: return [2 /*return*/];
             }
         });
     });
@@ -199,14 +204,14 @@ function insertAnimeList(animeC, anime, user, status) {
 }
 exports.insertAnimeList = insertAnimeList;
 //Coloca o ep na lista
-function insertEpList(animeC, animeId, seasonId, epId, droppedOn, epIndex, duration, user, watched) {
+function insertEpList(animeC, animeId, seasonId, epId, droppedOn, epIndex, duration, user, watched, epName, seasonName) {
     return __awaiter(this, void 0, void 0, function () {
         var err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    return [4 /*yield*/, animeC.query("\n            INSERT INTO \n                users.user_episode_list \n                (episode_id,dropped_on,season_id,anime_id,user_id,date,duration,ep_index,watched)\n            VALUES\n                ($1,$2,$3,$4,$5,now(),$6,$7,$8)\n        ", [
+                    return [4 /*yield*/, animeC.query("\n            INSERT INTO \n                users.user_episode_list \n                (\n                    episode_id,\n                    dropped_on,\n                    season_id,\n                    anime_id,\n                    user_id,\n                    date,\n                    duration,\n                    ep_index,\n                    watched,\n                    name,\n                    season_name\n                )\n            VALUES\n                ($1,$2,$3,$4,$5,now(),$6,$7,$8,$9,$10)\n        ", [
                             epId,
                             droppedOn,
                             seasonId,
@@ -214,7 +219,9 @@ function insertEpList(animeC, animeId, seasonId, epId, droppedOn, epIndex, durat
                             user._id,
                             duration,
                             epIndex,
-                            watched
+                            watched,
+                            epName,
+                            seasonName
                         ])
                         // return true
                     ];

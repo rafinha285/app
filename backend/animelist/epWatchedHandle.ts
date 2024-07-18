@@ -32,7 +32,9 @@ export async function epWatchedHandle(req:Request,res:Response,animeC:typeof ani
         if(!user){
             throw ErrorType.unauthorized;
         }
-        let anime = (await req.db.execute(`SELECT name, id FROM anime WHERE id = ?`,[aniId])).rows[0]
+        let anime = (await req.db.execute(`SELECT name, id, seasons FROM anime WHERE id = ?`,[aniId])).rows[0]
+        let epName = (await req.db.execute(`SELECT name FROM episodes WHERE id = ?`,[epId])).rows[0]
+        let season = tupleToSeason(anime.seasons).find((v)=>v.id === seasonId);
         console.log(anime)
         //Checa se o anime existe na lista do individuo hehe
         Console.log(user)
@@ -73,7 +75,7 @@ export async function epWatchedHandle(req:Request,res:Response,animeC:typeof ani
                 `,[droppedOn,(user as JwtUser)._id,aniId,epId])
             }
         }else{
-            await insertEpList(animeC,aniId,seasonId,epId,droppedOn,ep_index,duration,(user as JwtUser),watched);
+            await insertEpList(animeC,aniId,seasonId,epId,droppedOn,ep_index,duration,(user as JwtUser),watched,ep);
         }
         // await log.query(`
         //     INSERT INTO log (date, anime, page, duration, ep, season)
@@ -142,15 +144,29 @@ export async function insertEpList(
     epIndex:number,
     duration:number,
     user:JwtUser,
-    watched:boolean
+    watched:boolean,
+    epName:string,
+    seasonName:string
 ):Promise<void>{
     try{
         await animeC.query(`
             INSERT INTO 
                 users.user_episode_list 
-                (episode_id,dropped_on,season_id,anime_id,user_id,date,duration,ep_index,watched)
+                (
+                    episode_id,
+                    dropped_on,
+                    season_id,
+                    anime_id,
+                    user_id,
+                    date,
+                    duration,
+                    ep_index,
+                    watched,
+                    name,
+                    season_name
+                )
             VALUES
-                ($1,$2,$3,$4,$5,now(),$6,$7,$8)
+                ($1,$2,$3,$4,$5,now(),$6,$7,$8,$9,$10)
         `,[
             epId,
             droppedOn,
@@ -159,7 +175,9 @@ export async function insertEpList(
             user._id,
             duration,
             epIndex,
-            watched
+            watched,
+            epName,
+            seasonName
         ])
         // return true
     }catch(err){

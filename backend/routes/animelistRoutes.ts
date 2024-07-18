@@ -24,9 +24,13 @@ animeListRouter.get('/animelist',checkToken, async (req:express.Request, res:exp
 
     }
 });
-animeListRouter.get('/season/eps/:seaId',checkToken,async(req:express.Request,res:express.Response)=>{
+animeListRouter.get('/season/eps/:aniId/:seaId',checkToken,async(req:express.Request,res:express.Response)=>{
     try{
-        
+        const {aniid,seaId} = req.params;
+        await animeClient.query(`
+            SELECT * FROM user_episode_list
+                WHERE user_id = 
+        `)
     }catch(err){
 
     }

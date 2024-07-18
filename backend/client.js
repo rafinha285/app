@@ -613,12 +613,13 @@ router.get("/g/aniD/:ani/:seasonId/:epId", function (req, res) { return __awaite
     });
 }); });
 router.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, aniId, season, epId, file;
+    var _a, aniId, season, epId, file, epPath;
     return __generator(this, function (_b) {
         (0, handle_1.setHeader)(res);
         _a = req.params, aniId = _a.aniId, season = _a.season, epId = _a.epId, file = _a.file;
         res.set('Cache-Control', 'public, max-age=7200');
-        res.sendFile(path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, file));
+        epPath = path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, file);
+        res.sendFile(epPath);
         return [2 /*return*/];
     });
 }); });

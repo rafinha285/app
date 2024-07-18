@@ -44,6 +44,7 @@ export declare function sendFile(): {
 };
 export declare function mkDir(no: String, svData: string): Promise<void>;
 export declare function id(num?: number): string | false;
+export declare function witchStorageAnime(p: string): string;
 export declare function openConnectionAnime(): Promise<PoolClient>;
 export declare function rollbackAnime(): Promise<void>;
 export declare function endConnectionAnime(client: PoolClient): Promise<void>;

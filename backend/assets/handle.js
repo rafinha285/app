@@ -36,17 +36,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addUser = exports.checkToken = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = exports.userAnimeState = exports.priorityValue = void 0;
+exports.addUser = exports.checkToken = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.witchStorageAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = exports.userAnimeState = exports.priorityValue = void 0;
 var Console_1 = require("./Console");
 var path = require("path");
 var Postgre_1 = require("../database/Postgre");
-var fs = require('fs');
+var fs = require("fs");
 var ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath("D:/Site_anime/ffmpeg/bin/ffmpeg.exe");
 ffmpeg.setFfprobePath("D:/Site_anime/ffmpeg/bin/ffprobe.exe");
 var uuid_1 = require("uuid");
 var jwt = require("jsonwebtoken");
 var config_1 = require("../secret/config");
+var consts_1 = require("../consts");
 // import { randomInt } from "crypto";
 var priorityValue;
 (function (priorityValue) {
@@ -273,6 +274,15 @@ exports.id = id;
 //         }
 //     }
 // }
+function witchStorageAnime(p) {
+    if (fs.existsSync(path.join(consts_1.SSD_ANIME_PATH, p))) {
+        return path.join(consts_1.SSD_ANIME_PATH, p);
+    }
+    else {
+        return path.join(consts_1.HDD_ANIME_PATH, p);
+    }
+}
+exports.witchStorageAnime = witchStorageAnime;
 function openConnectionAnime() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {

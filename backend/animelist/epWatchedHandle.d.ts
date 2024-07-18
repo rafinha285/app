@@ -10,5 +10,5 @@ export declare function epWatchedHandle(req: Request, res: Response, animeC: typ
 export declare function checkAnimeList(user: JwtUser, animeId: string, animeC: typeof animeClient): Promise<boolean>;
 export declare function checkEpList(user: JwtUser, animeId: string, epId: string, animeC: typeof animeClient): Promise<boolean>;
 export declare function insertAnimeList(animeC: typeof animeClient, anime: any, user: JwtUser, status: animeListStatus): Promise<void>;
-export declare function insertEpList(animeC: typeof animeClient, animeId: string, seasonId: string, epId: string, droppedOn: number, epIndex: number, duration: number, user: JwtUser, watched: boolean): Promise<void>;
+export declare function insertEpList(animeC: typeof animeClient, animeId: string, seasonId: string, epId: string, droppedOn: number, epIndex: number, duration: number, user: JwtUser, watched: boolean, epName: string, seasonName: string): Promise<void>;
 export declare function getAllEpsList(animeId: string, seasonId: string, user: JwtUser, animeC: typeof animeClient): Promise<QueryResult<EpisodeUser[]>>;

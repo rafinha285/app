@@ -618,7 +618,7 @@ router.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awai
         (0, handle_1.setHeader)(res);
         _a = req.params, aniId = _a.aniId, season = _a.season, epId = _a.epId, file = _a.file;
         res.set('Cache-Control', 'public, max-age=7200');
-        epPath = path.join('/', 'home', 'abacate', 'mnt', 'storage', 'anime', aniId, "seasons", season, epId, file);
+        epPath = path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, file);
         handle_1.Console.log(epPath);
         res.sendFile(epPath);
         return [2 /*return*/];

@@ -477,7 +477,7 @@ router.get("/ep/:aniId/:season/:epId/:file",async(req,res)=>{
     setHeader(res)
     var {aniId,season,epId,file} = req.params
     res.set('Cache-Control', 'public, max-age=7200')
-    var epPath = path.join('/','home','abacate','mnt','storage','anime',aniId,"seasons",season,epId,file)
+    var epPath = path.join(ANIME_PATH,aniId,"seasons",season,epId,file)
     Console.log(epPath)
     res.sendFile(epPath)
 })

@@ -619,6 +619,7 @@ router.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awai
         _a = req.params, aniId = _a.aniId, season = _a.season, epId = _a.epId, file = _a.file;
         res.set('Cache-Control', 'public, max-age=7200');
         epPath = path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, file);
+        console.log(epPath);
         res.sendFile(epPath);
         return [2 /*return*/];
     });

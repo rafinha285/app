@@ -3,9 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.HTTPS_CERT_PATH = exports.HTTPS_KEY_PATH = exports.BUILD_HTML = exports.BUILD_PATH = exports.RESOLUTIONS = exports.FFPROBE_PATH = exports.FFMPEG_PATH = exports.TEMP_PATH = exports.MANGA_PATH = exports.ANIME_PATH = exports.IP_DATABASE = void 0;
 var path = require("path");
 exports.IP_DATABASE = '192.168.18.20';
-exports.ANIME_PATH = path.join('/', 'mnt', 'storage', 'anime');
-exports.MANGA_PATH = path.join('/', 'mnt', 'storage', 'manga');
-exports.TEMP_PATH = path.join('/', 'mnt', 'temp');
+exports.ANIME_PATH = path.join('/', 'home', 'abacate', 'mnt', 'storage', 'anime');
+exports.MANGA_PATH = path.join('/', 'home', 'abacate', 'mnt', 'storage', 'manga');
+exports.TEMP_PATH = path.join('/', 'home', 'abacate', 'mnt', 'temp');
 // export const ANIME_PATH:string = path.join(`\\\\${IP_DATABASE}`,'anime')
 // export const MANGA_PATH:string = path.join(`\\\\${IP_DATABASE}`,'manga')
 // export const TEMP_PATH:string = path.join(`\\\\${IP_DATABASE}`,'temp')

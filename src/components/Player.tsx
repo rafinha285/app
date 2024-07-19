@@ -208,7 +208,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                 // console.log("not skip-active op")
                 skIButton.removeClass("skip-active");
             }
-            if (plyr.duration && sec / plyr.duration >= 0.05) {
+            if (plyr.duration && sec / plyr.duration >= 0.05 && context.isLogged) {
                 // Verifique se passaram 10 segundos desde a última chamada de handleEpWatching
                 if (sec >= lastEpWatchCallTime + 10) {
                     handleEpWatching(ani.id, seasonId, ep, sec, false);

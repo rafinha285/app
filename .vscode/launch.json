@@ -5,13 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Video",
+            "program": "E:/main/app_admin/backend/video.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Client",
             "skipFiles": [
                 "<node_internals>/**"
             ],
-            "program": "${workspaceFolder}\\backend\\client.js",
+            "program": "E:\\main\\app\\backend\\client.js",
             "outFiles": [
                 "${workspaceFolder}/**/*.js"
             ]

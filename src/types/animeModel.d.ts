@@ -28,24 +28,27 @@ export interface Anime {
     language: Audio;
     state: string;
     releasedate: Date;
-    studios: types.Tuple[] | string[][] | string[];
-    producers: types.Tuple[] | string[][] | string[];
-    creators: types.Tuple[] | string[][] | string[];
+    studios: Producer[];
+    producers: Producer[];
+    creators: Producer[];
     genre: string[];
     seasons?: Season[] | types.Tuple[];
     rating?: number;
     characters?: character[];
     averageeptime?: number;
     date_added?: Date;
+    visible: boolean;
+    weekday: string;
 }
 export interface AnimeUser {
+    user_id: string;
     id: number;
     anime_id: string;
     name: string;
     start_date?: Date;
     finish_date?: Date;
     rate: number;
-    state: userAnimeState;
+    status: userAnimeState;
     priority: priorityValue;
     last_ep: EpisodeUser[];
 }

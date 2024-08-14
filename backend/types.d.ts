@@ -1,11 +1,11 @@
-import { Client } from "cassandra-driver";
 import * as jwt from "jsonwebtoken"
 import e from 'express';
+import { PoolClient } from "pg";
 
 declare global{
     namespace Express {
         interface Request{
-            db:Client
+            db:PoolClient
             user?:JwtUser | jwt.JwtPayload |string
         }
     }

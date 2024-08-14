@@ -22,6 +22,7 @@ export interface Episode {
     subtitlestracks?: string[];
     seasonid: string;
     resolution: string[];
+    date_added: Date;
 }
 export interface EpisodeUser {
     episode_id: string;

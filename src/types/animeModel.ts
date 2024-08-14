@@ -87,9 +87,9 @@ export interface Anime{
 	language:Audio;
 	state:string;
 	releasedate:Date;
-	studios:types.Tuple[]|string[][]|string[];
-	producers:types.Tuple[]|string[][]|string[];
-	creators:types.Tuple[]|string[][]|string[];
+	studios:Producer[];
+	producers:Producer[];
+	creators:Producer[];
 	genre:string[];
 	seasons?:Season[]|types.Tuple[];
 	rating?:number;
@@ -97,8 +97,45 @@ export interface Anime{
 	// path?:string;
 	averageeptime?:number;
 	date_added?:Date;
+	visible:boolean;
+	weekday:string
 }
+// export class AnimeClass implements Anime{
+// 	id:string;
+// 	name:string;
+// 	name2:string;
+// 	description:string;
+// 	quality:quality;
+// 	language:Audio;
+// 	state:string;
+// 	releasedate:Date;
+// 	studios:types.Tuple[]|string[][]|string[];
+// 	producers:types.Tuple[]|string[][]|string[];
+// 	creators:types.Tuple[]|string[][]|string[];
+// 	genre:string[];
+// 	seasons?:Season[]|types.Tuple[];
+// 	rating?:number;
+// 	characters?:character[];
+// 	// path?:string;
+// 	averageeptime?:number;
+// 	date_added?:Date;
+
+// 	constructor(
+// 		id:string,
+// 		name:string,
+// 		name2:string,
+// 		description:string,
+// 		quality:quality,
+// 		language:Audio,
+// 		state:string,
+// 		releasedate:Date,
+// 		studios:
+// 	){
+// 		this.id = id
+// 	}
+// }
 export interface AnimeUser{
+	user_id:string;
 	id:number
 	anime_id:string
     name:string;
@@ -106,7 +143,7 @@ export interface AnimeUser{
 	start_date?:Date;
 	finish_date?:Date;
 	rate:number;
-	state:userAnimeState;
+	status:userAnimeState;
 	// times_watched?:number;
 	// rewatched_episodes?:number;
 	priority:priorityValue;

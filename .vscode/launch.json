@@ -5,6 +5,15 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Main Client",
+            "program": "E:\\main\\app\\backend\\main.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "node"
+        },
+        {
             "name": "Video",
             "program": "E:/main/app_admin/backend/video.js",
             "request": "launch",

@@ -27,6 +27,7 @@ export interface Episode{
     subtitlestracks?:string[];
     seasonid:string
     resolution:string[]
+    date_added:Date;
 }
 // export interface EpisodeDocument extends nano.DocumentGetResponse{
 //     _id:string

@@ -1,5 +1,4 @@
 import * as e from 'express'
-// import * as ip from 'ip'
 import * as path from 'path'
 import * as fs from 'fs'
 // import * as https from "https"
@@ -304,9 +303,9 @@ router.get("/ani/gen/:gen",async(req:e.Request,res:e.Response)=>{
 router.get('/search',async (req:e.Request,res:e.Response)=>{
     try{
         var search= req.query.s
-        // Console.log(search)
+        Console.log(search)
         //[`'%${search}%'`,`'%${search}%'`]
-        var result = await req.db.execute(`SELECT id, name, description,rating FROM anime WHERE name LIKE '%${search}%' OR name2 LIKE '%${search}%' ALLOW FILTERING`,[],{prepare:true})
+        var result = await req.db.execute(`SELECT id, name, description, rating FROM anime WHERE name ~ '${search}' ALLOW FILTERING`,[],{prepare:true})
         res.send(result.rows)
 
     }catch(err){

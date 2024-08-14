@@ -1,7 +1,8 @@
 import { ObjectId } from "mongoose";
 import { AnimeUser } from "./animeModel"
 import { MangaUser } from "./mangaType";
-import { roles } from "./types";
+import { priorityValue, roles, userAnimeState } from "./types";
+import { EpisodeUser } from "./episodeModel";
 
 interface GoogleLogin{
     idToken:string;

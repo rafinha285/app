@@ -141,6 +141,40 @@ app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awa
         return [2 /*return*/];
     });
 }); });
+//rota pro download do ep
+app.get('/download/:aniid/:seasonid/:epid/:reso', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, aniid, seasonid, epid, reso, filePath, stat, fileSize_1, readStream, uploadedBytes_1;
+    return __generator(this, function (_b) {
+        try {
+            _a = req.params, aniid = _a.aniid, seasonid = _a.seasonid, epid = _a.epid, reso = _a.reso;
+            filePath = path.join(consts_1.ANIME_PATH, aniid, 'seasons', seasonid, epid, "".concat(epid, "-").concat(reso, ".mp4"));
+            stat = fs.statSync(filePath);
+            fileSize_1 = stat.size;
+            readStream = fs.createReadStream(filePath);
+            res.setHeader('Content-Type', 'video/mp4');
+            res.setHeader('Content-Length', fileSize_1);
+            res.setHeader('Content-Disposition', "attachment; filename=".concat(epid, ".mp4"));
+            uploadedBytes_1 = 0;
+            readStream.on('data', function (chunk) {
+                uploadedBytes_1 += chunk.length;
+                var progress = (uploadedBytes_1 / fileSize_1) * 100;
+                // Envia o progresso para o cliente
+                res.write(chunk);
+            });
+            readStream.on('end', function () {
+                res.end();
+            });
+            readStream.on('error', function (err) {
+                console.error(err);
+                res.status(500).end();
+            });
+        }
+        catch (err) {
+            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
+        }
+        return [2 /*return*/];
+    });
+}); });
 app.get("/", function (req, res) {
     res.redirect("https://animefoda.top");
 });

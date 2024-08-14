@@ -12,7 +12,6 @@ import userGetRouter from './routes/userGetRoutes'
 import { BUILD_HTML, BUILD_PATH } from './consts'
 import { pgClient } from './database/Postgre'
 import animeGetRouter from './routes/animeGetRoutes'
-import animePostRouter from './routes/animePostRoutes'
 import animeListRouter from './routes/animelistRoutes'
 import episodesGetRouter from './routes/episodesgetRoutes'
 
@@ -49,9 +48,9 @@ app.use('/user/g/',userGetRouter)
 app.use('/user/animelist',animeListRouter)
 //rotas para anime
 app.use('/ani/g/',animeGetRouter)
-app.use('/ani/p/',animePostRouter)
 //rotas para episodios
 app.use('/ep/g/',episodesGetRouter)
+//rotas para o log de eps assistidos
 
 
 app.use(e.static(BUILD_PATH,{ maxAge: '1d' }))

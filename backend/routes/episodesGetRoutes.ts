@@ -1,5 +1,5 @@
 import * as e from "express";
-import { ErrorType, sendError } from "../assets/handle";
+import { ErrorType, sendError, setHeader } from "../assets/handle";
 import { pgClient } from "../database/Postgre";
 import sleep from "sleep-promise";
 import * as path from "path";
@@ -75,6 +75,20 @@ episodesGetRouter.get('/lan',async(req,res)=>{
                 e.date_added DESC
             LIMIT $1;
         `,[count])).rows)
+    }catch(err){
+        sendError(res,ErrorType.default,500,err)
+    }
+})
+//rota para pegar a legenda
+//nao sei pq n da pra pegar do cdn entao tem q fazer essa maracutaia,
+//tomara q n adicione mt peso em cima do backend
+episodesGetRouter.get('/caption/:aniid/:seasonid/:epid/:lang',(req,res)=>{
+    try{
+        setHeader(res)
+        let {aniid,seasonid,epid,lang} = req.params
+        res.set('Cache-Control','public, max-age=7200')
+        let epPath = path.join(ANIME_PATH,aniid,'seasons',seasonid,epid,`${epid}-${lang}.vtt`)
+        res.sendFile(epPath)
     }catch(err){
         sendError(res,ErrorType.default,500,err)
     }

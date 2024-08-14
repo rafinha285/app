@@ -45,7 +45,6 @@ var userGetRoutes_1 = require("./routes/userGetRoutes");
 var consts_1 = require("./consts");
 var Postgre_1 = require("./database/Postgre");
 var animeGetRoutes_1 = require("./routes/animeGetRoutes");
-var animePostRoutes_1 = require("./routes/animePostRoutes");
 var animelistRoutes_1 = require("./routes/animelistRoutes");
 var episodesgetRoutes_1 = require("./routes/episodesgetRoutes");
 var app = e();
@@ -80,9 +79,9 @@ app.use('/user/g/', userGetRoutes_1.default);
 app.use('/user/animelist', animelistRoutes_1.default);
 //rotas para anime
 app.use('/ani/g/', animeGetRoutes_1.default);
-app.use('/ani/p/', animePostRoutes_1.default);
 //rotas para episodios
 app.use('/ep/g/', episodesgetRoutes_1.default);
+//rotas para o log de eps assistidos
 app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
 //kkkkkk risos risos risonho
 app.get('/easteregg', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {

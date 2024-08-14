@@ -176,4 +176,67 @@ userPostRouter.post('/logout', function (req, res) { return __awaiter(void 0, vo
         return [2 /*return*/];
     });
 }); });
+//Rota para criar um usuario novo
+userPostRouter.post('/new/user', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, salt, emailRegex, response, data, userData, err_3;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _b.trys.push([0, 6, , 7]);
+                _a = req.body, email = _a.email, name_1 = _a.name, surname = _a.surname, username = _a.username, birthDate = _a.birthDate, password = _a.password, recaptchaToken = _a.recaptchaToken, salt = _a.salt;
+                if (!recaptchaToken) {
+                    throw handle_1.ErrorType.noToken;
+                }
+                emailRegex = /\S+@\S+\.\S+/;
+                if (!emailRegex.test(email)) {
+                    throw handle_1.ErrorType.invalidEmail;
+                }
+                return [4 /*yield*/, fetch('https://www.google.com/recaptcha/api/siteverify', {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: "secret=".concat(config_1.reCaptchaSecretKey, "&response=").concat(recaptchaToken)
+                    })];
+            case 1:
+                response = _b.sent();
+                return [4 /*yield*/, response.json()];
+            case 2:
+                data = _b.sent();
+                if (!data.success) return [3 /*break*/, 4];
+                userData = {
+                    name: name_1,
+                    email: email,
+                    surname: surname,
+                    username: username,
+                    birthDate: birthDate,
+                    password: password,
+                    salt: salt
+                };
+                return [4 /*yield*/, (0, handle_1.addUser)(userData)];
+            case 3:
+                _b.sent();
+                return [2 /*return*/, res.send(200).json({ success: true, message: 'Usuário registrado com sucesso' })];
+            case 4: throw handle_1.ErrorType.invalidReCaptcha;
+            case 5: return [3 /*break*/, 7];
+            case 6:
+                err_3 = _b.sent();
+                switch (err_3) {
+                    case handle_1.ErrorType.noToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
+                        break;
+                    case handle_1.ErrorType.invalidToken:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidReCaptcha);
+                        break;
+                    case handle_1.ErrorType.invalidEmail:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.invalidEmail);
+                        break;
+                    default:
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_3);
+                }
+                return [3 /*break*/, 7];
+            case 7: return [2 /*return*/];
+        }
+    });
+}); });
 exports.default = userPostRouter;

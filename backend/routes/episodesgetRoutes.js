@@ -39,6 +39,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
 var handle_1 = require("../assets/handle");
 var sleep_promise_1 = require("sleep-promise");
+var path = require("path");
+var consts_1 = require("../consts");
 var episodesGetRouter = e.Router();
 //rota para pegar um episodio
 episodesGetRouter.get('/ep/:animeId/:seasonId/:epId', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -127,4 +129,19 @@ episodesGetRouter.get('/lan', function (req, res) { return __awaiter(void 0, voi
         }
     });
 }); });
+//rota para pegar a legenda
+//nao sei pq n da pra pegar do cdn entao tem q fazer essa maracutaia,
+//tomara q n adicione mt peso em cima do backend
+episodesGetRouter.get('/caption/:aniid/:seasonid/:epid/:lang', function (req, res) {
+    try {
+        (0, handle_1.setHeader)(res);
+        var _a = req.params, aniid = _a.aniid, seasonid = _a.seasonid, epid = _a.epid, lang = _a.lang;
+        res.set('Cache-Control', 'public, max-age=7200');
+        var epPath = path.join(consts_1.ANIME_PATH, aniid, 'seasons', seasonid, epid, "".concat(epid, "-").concat(lang, ".vtt"));
+        res.sendFile(epPath);
+    }
+    catch (err) {
+        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
+    }
+});
 exports.default = episodesGetRouter;

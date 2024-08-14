@@ -1,9 +1,10 @@
 import * as e from "express";
-import { ErrorType, sendError } from "../assets/handle";
+import { addUser, ErrorType, sendError } from "../assets/handle";
 import { reCaptchaSecretKey, secretKey } from "../secret/config";
 import { pgClient } from "../database/Postgre";
 import { JwtUser } from "../types";
 import * as jwt from "jsonwebtoken"
+import { User } from "../../src/types/userType";
 
 const userPostRouter = e.Router()
 
@@ -124,6 +125,56 @@ userPostRouter.post('/logout',async(req,res)=>{
         sendError(res,ErrorType.default,500,err)
     }
 
+})
+//Rota para criar um usuario novo
+userPostRouter.post('/new/user',async(req,res)=>{
+    try{
+        const { email, name, surname, username, birthDate, password, recaptchaToken, salt} = req.body;
+        if(!recaptchaToken){
+            throw ErrorType.noToken
+        }
+        const emailRegex = /\S+@\S+\.\S+/;
+        if(!emailRegex.test(email)){
+            throw ErrorType.invalidEmail
+        }
+        const response = await fetch('https://www.google.com/recaptcha/api/siteverify',{
+            method:"POST",
+            headers:{
+                'Content-Type':'application/x-www-form-urlencoded',
+            },
+            body: `secret=${reCaptchaSecretKey}&response=${recaptchaToken}`
+        })
+        const data = await response.json()
+        if(data.success){
+            let userData = {
+                name,
+                email,
+                surname,
+                username,
+                birthDate,
+                password,
+                salt
+            }
+            await addUser(userData)
+            return res.send(200).json({success:true,message: 'Usuário registrado com sucesso' })
+        }else{
+            throw ErrorType.invalidReCaptcha
+        }
+    }catch(err:any|ErrorType){
+        switch(err){
+            case ErrorType.noToken:
+                sendError(res,ErrorType.noToken);
+                break
+            case ErrorType.invalidToken:
+                sendError(res,ErrorType.invalidReCaptcha)
+                break
+            case ErrorType.invalidEmail:
+                sendError(res,ErrorType.invalidEmail)
+                break
+            default:
+                sendError(res,ErrorType.default,500,err)
+        }
+    }
 })
 
 export default userPostRouter

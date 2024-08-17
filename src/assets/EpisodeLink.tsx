@@ -12,17 +12,13 @@ interface prop{
 const EpisodeLink:React.FC<prop> = ({ani,s,ep})=>{
     // const [episode,setEpisode] = useState<Episode>()
     // useEffect(()=>{
-    //     $.ajax({
-    //         url:`/api/g/eps/${ani.id}/${s.id}/${(ep as Episode).id||(ep as string)}`
-    //     }).done((res:Episode)=>{
-    //         setEpisode(res)
-    //     })
+
     // },[!episode])
     return(
         <>
             {ep?(
-                <div className="ep" key={ep.epindex}>
-                    <span>{ep.name}</span>
+                <div className="ep" key={ep?.epindex}>
+                    <span>{ep?.name}</span>
                     <div>
                         <button><i className="far fa-eye"></i> Visto</button>
                         <Link to={`/Anime/${ani.id}/watch/${s.id}/${ep.id}`}><button><i className="fa-solid fa-play"></i> Assistir</button></Link>

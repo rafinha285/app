@@ -185,7 +185,7 @@ async function insertAnime({
         creators,
         quality,
         rating,
-        visible,
+        releasedate,
         weekday,  
     }:Anime) {
         Console.log("insert anime")
@@ -203,7 +203,8 @@ async function insertAnime({
                     quality,
                     rating,
                     visible,
-                    weekday
+                    weekday,
+                    releasedate
                 ) VALUES (
                     $1,
                     $2,
@@ -216,7 +217,8 @@ async function insertAnime({
                     $9,
                     $10,
                     $11,
-                    $12
+                    $12,
+                    $13
                 )
             `,[
                 id,
@@ -230,7 +232,8 @@ async function insertAnime({
                 quality,
                 rating,
                 true,
-                weekday
+                weekday,
+                new Date(releasedate)
             ])
         }else{
             Console.log("cuzao")

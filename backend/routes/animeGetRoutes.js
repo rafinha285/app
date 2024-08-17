@@ -43,20 +43,21 @@ var animeGetRouter = e.Router();
 //scylla nao tem muitas funções q seriam boas para bom funcionamento da database
 //rota para lançamentos (usado para pegar todos os animes)
 animeGetRouter.get("/lan", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var query, err_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
+    var query, _a, _b, err_1;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
             case 0:
-                _a.trys.push([0, 2, , 3]);
+                _c.trys.push([0, 2, , 3]);
                 (0, handle_1.setHeader)(res);
                 res.setHeader("Cache-Control", "public, max-age:60");
-                query = "SELECT id, name, description, genre, averageeptime FROM anime;";
+                query = "SELECT id, name, description, genre, averageeptime FROM anime.anime;";
+                _b = (_a = res).send;
                 return [4 /*yield*/, req.db.query(query)];
             case 1:
-                _a.sent();
+                _b.apply(_a, [(_c.sent()).rows]);
                 return [3 /*break*/, 3];
             case 2:
-                err_1 = _a.sent();
+                err_1 = _c.sent();
                 handle_1.Console.error(err_1);
                 (0, handle_1.sendError)(res, handle_1.ErrorType.undefined);
                 return [3 /*break*/, 3];
@@ -118,21 +119,21 @@ animeGetRouter.get('/prods/:id', function (req, res) { return __awaiter(void 0, 
         }
     });
 }); });
-//rota para pegar anime
-animeGetRouter.get("/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+//rota para pegar seasons de um anime
+animeGetRouter.get("/seasons/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, _b, err_4;
     return __generator(this, function (_c) {
         switch (_c.label) {
             case 0:
                 _c.trys.push([0, 2, , 3]);
                 _b = (_a = res).send;
-                return [4 /*yield*/, req.db.query("SELECT * FROM anime.anime WHERE id = $1", [req.params.id])];
+                return [4 /*yield*/, req.db.query("SELECT * FROM anime.seasons WHERE anime_id = $1", [req.params.id])];
             case 1:
-                _b.apply(_a, [_c.sent()]);
+                _b.apply(_a, [(_c.sent()).rows]);
                 return [3 /*break*/, 3];
             case 2:
                 err_4 = _c.sent();
-                (0, handle_1.sendError)(res, handle_1.ErrorType.NotId);
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_4);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
@@ -146,7 +147,7 @@ animeGetRouter.get("/gen/:gen", function (req, res) { return __awaiter(void 0, v
             case 0:
                 _c.trys.push([0, 2, , 3]);
                 _b = (_a = res).send;
-                return [4 /*yield*/, req.db.query("SELECT id, name, description, rating FROM anime.anime WHERE EXISTS (\n            SELECT 1 \n            FROM unnest(genre) AS g \n            WHERE g LIKE '%$1%'\n        );", [req.params.gen])];
+                return [4 /*yield*/, req.db.query("SELECT id, name, description, rating FROM anime.anime WHERE EXISTS (\n            SELECT 1 \n            FROM unnest(genre) AS g \n            WHERE g LIKE $1\n        );", ["%".concat(req.params.gen, "%")])];
             case 1:
                 _b.apply(_a, [(_c.sent()).rows]);
                 return [3 /*break*/, 3];
@@ -179,7 +180,7 @@ animeGetRouter.get("/prod/:prod", function (req, res) { return __awaiter(void 0,
     });
 }); });
 //rota para pegar animes de acordo com os criadores
-animeGetRouter.get("/cria/:cria", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+animeGetRouter.get("/crea/:cria", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, _b, err_7;
     return __generator(this, function (_c) {
         switch (_c.label) {
@@ -228,7 +229,7 @@ animeGetRouter.get("/search/:s", function (req, res) { return __awaiter(void 0, 
                 s = req.params.s;
                 // Console.log(s)
                 _b = (_a = res).send;
-                return [4 /*yield*/, req.db.query("SELECT id,name,description,rating FROM anime.anime WHERE name ILIKE $1 OR name2 ILIKE $1", ["%".concat(s, "%")])];
+                return [4 /*yield*/, req.db.query("SELECT id, name, description, rating FROM anime.anime WHERE name ILIKE $1 OR name2 ILIKE $1", ["%".concat(s, "%")])];
             case 1:
                 // Console.log(s)
                 _b.apply(_a, [(_c.sent()).rows]);
@@ -236,6 +237,27 @@ animeGetRouter.get("/search/:s", function (req, res) { return __awaiter(void 0, 
             case 2:
                 err_9 = _c.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_9);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+//rota para pegar anime
+//esse sempre em ultimo nas rotas
+animeGetRouter.get("/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, _b, err_10;
+    return __generator(this, function (_c) {
+        switch (_c.label) {
+            case 0:
+                _c.trys.push([0, 2, , 3]);
+                _b = (_a = res).send;
+                return [4 /*yield*/, req.db.query("SELECT id, averageeptime, date_added, description, genre, language, name, name2, quality, rating, weekday, state, releasedate\n\tFROM anime.anime WHERE id = $1;", [req.params.id])];
+            case 1:
+                _b.apply(_a, [(_c.sent()).rows[0]]);
+                return [3 /*break*/, 3];
+            case 2:
+                err_10 = _c.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.NotId);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

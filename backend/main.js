@@ -44,6 +44,7 @@ var userPostRoutes_1 = require("./routes/userPostRoutes");
 var userGetRoutes_1 = require("./routes/userGetRoutes");
 var consts_1 = require("./consts");
 var Postgre_1 = require("./database/Postgre");
+var pg = require("pg");
 var animeGetRoutes_1 = require("./routes/animeGetRoutes");
 var animelistRoutes_1 = require("./routes/animelistRoutes");
 var episodesgetRoutes_1 = require("./routes/episodesgetRoutes");
@@ -51,6 +52,7 @@ var app = e();
 app.use((0, body_parser_1.json)());
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
 app.use(cookieParser());
+pg.defaults.poolSize = 5;
 app.use(function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         // client.connect()
@@ -62,13 +64,15 @@ app.use(function (req, res, next) { return __awaiter(void 0, void 0, void 0, fun
         //         Console.error(err);
         //         sendError(res,ErrorType.default,500,"Erro na database");
         //     })
-        Postgre_1.pgClient.connect().then(function (v) {
-            req.db = v;
-            next();
-        }).catch(function (err) {
-            handle_1.Console.error(err);
-            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, "Erro na database");
-        });
+        // pgClient.connect().then((v)=>{
+        //     req.db = v
+        //     next()
+        // }).catch(err=>{
+        //     Console.error(err);
+        //     sendError(res,ErrorType.default,500,"Erro na database");
+        // })
+        req.db = Postgre_1.pgClient;
+        next();
         return [2 /*return*/];
     });
 }); });

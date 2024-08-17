@@ -15,7 +15,7 @@ const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
     const [Manposters,MansetPosters] = useState<JSX.Element[]>([])
     useEffect(()=>{
         console.log("aaa")
-        fetch("/api/ani/lan").then((res)=>res.json())
+        fetch("/ani/g/lan").then((res)=>res.json())
         .then((data:Anime[])=>{
             console.log(data)
             const posterList = data.map((anime,index:number)=>(

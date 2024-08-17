@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState} from "react";
-import {Anime, AnimeUser, Season} from "../types/animeModel";
+import {Anime, AnimeUser, Producer, Season} from "../types/animeModel";
 import "../css/index.css"
 import "../css/base.css"
 import "../css/anime.css"
@@ -35,7 +35,6 @@ interface seasonDate{
     year:number,
     season:string
 }
-
 const AnimePage:React.FC = ()=>{
     const context = useContext(GlobalContext)!
     const {id} = useParams()
@@ -43,9 +42,16 @@ const AnimePage:React.FC = ()=>{
     const [userAni,setUserAni] = useState<AnimeUser>()
     const [err,setErr] = useState<boolean>(false)
     const [seasonD,setSeasonD] = useState<seasonDate>()
-    const [episodes,setEpisodes] = useState<Episode[]>([])
+    interface EpisodeState{
+        [seasonId:string]: Episode[]
+    }
+    const [episodes,setEpisodes] = useState<EpisodeState>({})
     const [isInList,setIsInList] = useState<boolean>(false)
     const [isPopupOpen,setIsPopupOpen] = useState<boolean>()
+    const [seasons,setSeasons] = useState<Season[]>([])
+    const [producers,setProducers] = useState<Producer[]>([])
+    const [creators,setCreators] = useState<Producer[]>([])
+    const [studios,setStudios] = useState<Producer[]>([])
 
     let checkList=async()=>{
         await fetch(`/api/user/list/checkanime/${ani?.id}`)
@@ -60,7 +66,7 @@ const AnimePage:React.FC = ()=>{
 
     useEffect(()=>{
         if(!ani){
-            $.ajax(`/api/ani/${id}`).done((res:Anime)=>{
+            $.ajax(`/ani/g/${id}`).done((res:Anime)=>{
                 const animeData:Anime = res
                 setAni(animeData)
             }).fail((e:any)=>{
@@ -72,42 +78,48 @@ const AnimePage:React.FC = ()=>{
         if(ani){
             // postLog(ani,false)
             setGen(ani.genre)
-            ani.seasons = tupleToSeason(ani.seasons as types.Tuple[])
-            console.log(ani.seasons)
-            ani.seasons?.forEach((season)=>{
-                season.episodes?.forEach(async ep=>{
-                    const response = await fetch(`/api/g/eps/${ani!.id}/${season.id}/${ep}`)
-                    if (response.ok) {
-                        const data = await response.json();
-                        // Aqui você pode fazer algo com os episódios, como atualizar o estado ou armazená-los de alguma forma
-                        console.log(`Episódios da temporada ${season.id}:`, data);
-                        setEpisodes((prevEpisodes) => [...prevEpisodes, data]);
-                    } else {
-                        throw new Error(`Erro ao buscar episódios da temporada ${season.id}`);
-                    }
-                })
+            const fetchPS = async()=>{
+                await fetch(`/ani/g/prods/${ani.id}`)
+                    .then(response=>response.json())
+                    .then(data=>{
+                        console.log(data)
+                        setCreators(data.creators)
+                        setProducers(data.producers)
+                        setStudios(data.studios)
+                    })
+                await fetch(`/ani/g/seasons/${ani.id}`)
+                    .then(response =>response.json())
+                    .then(data=>{
+                        data.forEach(async (element:Season) => {
+                            const fetchedEps = await fetchEp(ani,element)
+                            setEpisodes(prev=>({...prev,[element.id]:fetchedEps}))
+                        });
+                        setSeasons(data)
+                    })
+            }
+            fetchPS()
+            // ani.seasons = tupleToSeason(ani.seasons as types.Tuple[])
+            // console.log(ani.seasons)
+            // ani.seasons?.forEach((season)=>{
+            //     season.episodes?.forEach(async ep=>{
+            //         const response = await fetch(`/api/g/eps/${ani!.id}/${season.id}/${ep}`)
+            //         if (response.ok) {
+            //             const data = await response.json();
+            //             // Aqui você pode fazer algo com os episódios, como atualizar o estado ou armazená-los de alguma forma
+            //             console.log(`Episódios da temporada ${season.id}:`, data);
+            //             setEpisodes((prevEpisodes) => [...prevEpisodes, data]);
+            //         } else {
+            //             throw new Error(`Erro ao buscar episódios da temporada ${season.id}`);
+            //         }
+            //     })
 
-            })
+            // })
             if(context.isLogged){
                 checkList()
             }
         }
     },[ani,id])
     const [gen,setGen] = useState<string[]>([])
-    // useEffect(()=>{
-    //     console.log(ani?.releaseDate,ani)
-
-    //     // $.ajax({
-    //     //     url:`/api/ani/season/?month=${ani?.releaseDate.getMonth()}&year=${ani?.releaseDate.getFullYear()}`,
-    //     //     headers:{
-    //     //         "GetCurrentSeason":'false'
-    //     //     }
-    //     // }).done((res:seasonDate)=>{
-    //     //     setSeasonD(res)
-    //     // })
-    // },[])
-    // (ani?.seasons! as Season[])
-    // const [epsComponent,setEpsComponent] = useState<React.Component[]>()
 
     const seasonChangeHandle = (e:React.ChangeEvent) =>{
         var s = $(e.target).val()
@@ -129,6 +141,11 @@ const AnimePage:React.FC = ()=>{
                 console.log(data)
                 checkList()
             })
+    }
+    const fetchEp =async(ani:Anime,s:Season)=>{
+        const res = await fetch(`/ep/g/season/${ani.id}/${s.id}`)
+        const data: Episode[] = await res.json();
+        return data
     }
     const handleEditAnimePopup = async()=>{
         checkIsLogged(context.isLogged)
@@ -173,15 +190,15 @@ const AnimePage:React.FC = ()=>{
                         <div style={{marginBottom:"1em"}}>
                             <p style={{display:"inline"}}>Produtores: </p>
                             <div style={{display:"inline"}}>
-                                {tupleToProducer(ani.producers).map((v,i)=>(
+                                {producers.map((v,i)=>(
                                     <AniProducers prod={v} index={i} typee={prodType.prod}/>
                                 ))}
                             </div>
                         </div>
                         <div style={{marginBottom:"1em"}}>
-                            <p style={{display:"inline"}}>{tupleToProducer(ani.creators).length>1?"Criador: ":"Criadores: "}</p>
+                            <p style={{display:"inline"}}>{creators.length>1?"Criador: ":"Criadores: "}</p>
                             <div style={{display:"inline"}}>
-                                {tupleToProducer(ani.creators).map((v,i)=>(
+                                {creators.map((v,i)=>(
                                     <AniProducers prod={v} index={i} typee={prodType.crea}/>
                                 ))}
                             </div>
@@ -189,7 +206,7 @@ const AnimePage:React.FC = ()=>{
                         <div style={{marginBottom:"1em"}}>
                             <p style={{display:"inline"}}>Studios: </p>
                             <div style={{display:"inline"}}>
-                                {tupleToProducer(ani.studios).map((v,i)=>(
+                                {studios.map((v,i)=>(
                                     <AniProducers prod={v} index={i} typee={prodType.stud}/>
                                 ))}
                             </div>
@@ -251,28 +268,28 @@ const AnimePage:React.FC = ()=>{
                     </div>
                     <div className="seasons">
                         <select onChange={seasonChangeHandle}>
-                            {(ani.seasons! as Season[])?.sort((a,b)=>a.index-b.index).map((s)=>(
+                            {seasons.sort((a,b)=>a.index-b.index).map((s)=>(
                                 <option value={s.id} key={s.index}>{s.name}</option>
                             ))}
                         </select>
                     </div>
                     <div className="eps">
-                        {(ani.seasons as Season[])?.map((season,i,arr)=>(
+                        {seasons.map((season,i,arr)=>(
                             <div style={{display:season.index === Math.min(...arr.map(v=>v.index))?"block":"none"}} id={season.id} key={season.index}>
-                                {episodes.filter((episodes)=>episodes.seasonid == season.id)?.sort((a,b)=>a.epindex - b.epindex).map((ep)=>{
+                                {/* //TODO Fazer o display de episodios de acordo com a temporada
+                                    tem q fazer o backend pegar o nome do ep e o index dele de acordo com o id da season, faça com loop
+                                    vou fazer no EpisodeLink, e passar somente o id
+                                */}
+                                {/* {episodes.filter((episodes)=>episodes.season_id == season.id)?.sort((a,b)=>a.epindex - b.epindex).map((ep)=>{
                                     // console.log(episodes.filter((episodes)=>episodes.seasonid == season.id))
                                     console.log(ep.name,ep.epindex)
                                     return <EpisodeLink ani={ani} s={season} ep={ep} key={ep.epindex}/>
-                                })}
+                                })} */}
+                                {episodes[season.id]?.sort((a,b)=>a.epindex-b.epindex).map(v=>(
+                                    <EpisodeLink ani={ani} s={season} ep={v}/>
+                                ))}
                             </div>
                         ))}
-                        {/* {(ani.seasons! as Season[])?.map((s)=>(
-                            <div style={{display: s.index === 1?'block':"none"}} id={s.id} key={s.index}>
-                                {s.episodes?.map((ep,i)=>{
-                                    return(<EpisodeLink ep={ep} s={s} ani={ani} key={i}></EpisodeLink>)
-                                })}
-                            </div>
-                        ))} */}
                     </div>
                     <div className="personagens">
                         <div style={{display:"flex",justifyContent:"space-between",marginBottom:"1em"}}>

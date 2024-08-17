@@ -12,10 +12,8 @@ animeGetRouter.get("/lan" ,async(req,res)=>{
         setHeader(res)
         res.setHeader("Cache-Control","public, max-age:60")
         //WHERE date_added BETWEEN CURRENT_TIMESTAMP - INTERVAL '7 days' AND CURRENT_TIMESTAMP;
-        var query = `SELECT id, name, description, genre, averageeptime FROM anime;`
-
-        await req.db.query(query)
-
+        var query = `SELECT id, name, description, genre, averageeptime FROM anime.anime;`
+        res.send((await req.db.query(query)).rows)
     }catch(err){
         Console.error(err)
         sendError(res,ErrorType.undefined)
@@ -72,12 +70,12 @@ animeGetRouter.get('/prods/:id',async(req,res)=>{
         sendError(res,ErrorType.default,500,err)
     }
 })
-//rota para pegar anime
-animeGetRouter.get("/:id",async(req,res)=>{
+//rota para pegar seasons de um anime
+animeGetRouter.get("/seasons/:id",async(req,res)=>{
     try{
-        res.send(await req.db.query("SELECT * FROM anime.anime WHERE id = $1",[req.params.id]))
+        res.send((await req.db.query(`SELECT * FROM anime.seasons WHERE anime_id = $1`,[req.params.id])).rows)
     }catch(err){
-        sendError(res,ErrorType.NotId)
+        sendError(res,ErrorType.default,500,err)
     }
 })
 //rota para pegar animes de acordo com o genero
@@ -86,8 +84,8 @@ animeGetRouter.get("/gen/:gen",async(req,res)=>{
         res.send((await req.db.query(`SELECT id, name, description, rating FROM anime.anime WHERE EXISTS (
             SELECT 1 
             FROM unnest(genre) AS g 
-            WHERE g LIKE '%$1%'
-        );`,[req.params.gen])).rows)
+            WHERE g LIKE $1
+        );`,[`%${req.params.gen}%`])).rows)
     }catch(err){
         sendError(res,ErrorType.default,500,err)
     }
@@ -103,7 +101,7 @@ animeGetRouter.get("/prod/:prod",async(req,res)=>{
     }
 })
 //rota para pegar animes de acordo com os criadores
-animeGetRouter.get("/cria/:cria",async(req,res)=>{
+animeGetRouter.get("/crea/:cria",async(req,res)=>{
     try{
         res.send((await req.db.query(`SELECT id, name, description, rating 
             FROM anime.anime 
@@ -127,9 +125,19 @@ animeGetRouter.get("/search/:s",async(req,res)=>{
     try{
         var s = req.params.s
         // Console.log(s)
-        res.send((await req.db.query(`SELECT id,name,description,rating FROM anime.anime WHERE name ILIKE $1 OR name2 ILIKE $1`,[`%${s}%`])).rows)
+        res.send((await req.db.query(`SELECT id, name, description, rating FROM anime.anime WHERE name ILIKE $1 OR name2 ILIKE $1`,[`%${s}%`])).rows)
     }catch(err){
         sendError(res,ErrorType.default,500,err)
+    }
+})
+//rota para pegar anime
+//esse sempre em ultimo nas rotas
+animeGetRouter.get("/:id",async(req,res)=>{
+    try{
+        res.send((await req.db.query(`SELECT id, averageeptime, date_added, description, genre, language, name, name2, quality, rating, weekday, state, releasedate
+	FROM anime.anime WHERE id = $1;`,[req.params.id])).rows[0])
+    }catch(err){
+        sendError(res,ErrorType.NotId)
     }
 })
 

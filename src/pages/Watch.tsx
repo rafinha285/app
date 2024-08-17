@@ -32,7 +32,7 @@ const Watch:React.FC = () =>{
     const [prevUrl,setPrevUrl] = useState<string>()
     const [epsMap,setEpsMap] = useState<Map<number, Episode>>(new Map())
     const fetchEps = useCallback(async(ani:Anime,ep:Episode) =>{
-        var res = await fetch(`/api/g/s/eps/${ani.id}/${ep?.seasonid}`)
+        var res = await fetch(`/ep/g/season/${ani?.id}/${ep?.season_id}`)
         let data = await res.json()
         let epsMapTemp = new Map<number, Episode>();
         for(let i =0 ;i<data.length;i++){
@@ -60,7 +60,7 @@ const Watch:React.FC = () =>{
     var nextEp:Episode|null
     useEffect(()=>{
         $.ajax({
-            url:`/api/g/eps/${id}/${seasonId}/${epId}`
+            url:`/ep/g/${id}/${seasonId}/${epId}`
         }).done((res)=>{
             console.log(res)
             setEp(res)
@@ -70,7 +70,7 @@ const Watch:React.FC = () =>{
         })
 
         $.ajax({
-            url:`/api/ani/${id}`
+            url:`/ani/g/${id}`
         }).done((res)=>{
             setAni(res)
             if(ani&&ep){
@@ -91,7 +91,7 @@ const Watch:React.FC = () =>{
 
                         setNextUrl(nextEpUrl(eps,ani.id,ep))
                         setPrevUrl(prevEpUrl(eps,ani.id,ep))
-                        console.log(`/Anime/${ani.id}/watch/${ep?.seasonid}/${eps.find(v=>v.epindex === (ep.epindex+1))!.id}`)
+                        console.log(`/Anime/${ani.id}/watch/${ep?.season_id}/${eps.find(v=>v.epindex === (ep.epindex+1))!.id}`)
                     }
                 })
             }
@@ -113,13 +113,13 @@ const Watch:React.FC = () =>{
         e.preventDefault();
         console.log("nextEpHandle", epsMap)
         if(epsMap.has(ep?.epindex!+1)){
-            window.location.href = `/Anime/${ani?.id}/watch/${ep?.seasonid}/${epsMap.get(ep?.epindex! + 1)!.id}`
+            window.location.href = `/Anime/${ani?.id}/watch/${ep?.season_id}/${epsMap.get(ep?.epindex! + 1)!.id}`
         }
     }
     const prevEpHandle = (e:React.MouseEvent) =>{
         e.preventDefault();
         if(epsMap.has(ep?.epindex!-1)){
-            window.location.href = `/Anime/${ani?.id}/watch/${ep?.seasonid}/${epsMap.get(ep?.epindex! - 1)!.id}`
+            window.location.href = `/Anime/${ani?.id}/watch/${ep?.season_id}/${epsMap.get(ep?.epindex! - 1)!.id}`
         }
     }
     // $("#after").on("click",()=>handleNextEp(ani?.id!,seasonId,eps!,ep?.epindex!))

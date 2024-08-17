@@ -1,11 +1,11 @@
 import * as jwt from "jsonwebtoken"
 import e from 'express';
-import { PoolClient } from "pg";
+import { Pool, PoolClient } from "pg";
 
 declare global{
     namespace Express {
         interface Request{
-            db:PoolClient
+            db:Pool
             user?:JwtUser | jwt.JwtPayload |string
         }
     }

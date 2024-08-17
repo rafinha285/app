@@ -22,9 +22,9 @@ const Searchh:React.FC<searchProp> = ({ser}) =>{
             </div>
             <div className="search-prop">
                 <h1>{ser.name}</h1>
-                <div className="search-stars">
+                {/* <div className="search-stars">
                     <span><b style={{fontSize:"20px"}}>Nota:{ser.rating?ser.rating:0}/5</b><i style={{fontSize:"20px"}} className="fa-solid fa-star"></i></span>
-                </div>
+                </div> */}
                 {/* <LikeButton></LikeButton> */}
                 <p>{trim(ser.description,450)}</p>
             </div>

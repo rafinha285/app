@@ -16,7 +16,7 @@ export interface Episode{
     id:string
     epindex:number;
     name:string;
-    animeid:string;
+    anime_id:string;
     releasedate:Date;
     views?:number;
     duration?:number;
@@ -25,7 +25,7 @@ export interface Episode{
     ending:number;
     audiotracks:languages[];
     subtitlestracks?:string[];
-    seasonid:string
+    season_id:string
     resolution:string[]
     date_added:Date;
 }
@@ -60,8 +60,8 @@ export interface EpisodeUser{
 }
 export interface EpisodeSim{
     id:string
-    animeid:string;
-    seasonid:string;
+    anime_id:string;
+    season_id:string;
     name:string;
     duration:number;
     resolution:string[];

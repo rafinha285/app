@@ -14,11 +14,11 @@ const Episode:React.FC<props> = ({ep}) =>{
     // console.log(ep,`/api/ep/${ep.anime}/${ep.season}/${ep.ep}/${ep.ep}.jpg`)
     console.log(ep)
     return(
-        <Link className="episodes-link" to={`/Anime/${ep.animeid}/watch/${ep.seasonid}/${ep.id}`}>
+        <Link className="episodes-link" to={`/Anime/${ep.anime_id}/watch/${ep.season_id}/${ep.id}`}>
             <div className="">
                 <div className="ep-hover"/>
                 <div className="ep-img">
-                    <img alt={ep.animename} src={`${cdnUrl}/ep/${ep.animeid}/${ep.seasonid}/${ep.id}/${ep.id}.jpg`}></img>
+                    <img alt={ep.animename} src={`${cdnUrl}/ep/${ep.anime_id}/${ep.season_id}/${ep.id}/${ep.id}.jpg`}></img>
                 </div>
                 <div className="ep-body">
                     <div className="ep-res">

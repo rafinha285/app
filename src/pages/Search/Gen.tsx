@@ -14,7 +14,7 @@ const GenSearch:React.FC = ()=>{
     const [gens,setGens] = useState<Anime[]>()
 
     useEffect(()=>{
-        $.ajax(`/api/ani/gen/${gen}`)
+        $.ajax(`/ani/g/gen/${gen}`)
             .done((res:Anime[])=>{
                 setGens(res)
             })

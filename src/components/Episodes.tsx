@@ -14,14 +14,14 @@ const Episodes:React.FC<prop> = ({count}) =>{
         if(count){
             $.ajax({
                 method:"GET",
-                url:`/api/g/eps?count=${count}`
+                url:`/ep/g/lan?count=${count}`
             }).done((res)=>{
                 setEps(res)
             })
         }else{
             $.ajax({
                 method:"GET",
-                url:`/api/g/eps`
+                url:`/ep/g/lan`
             }).done((res)=>{
                 setEps(res)
             })

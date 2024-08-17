@@ -11,6 +11,7 @@ import { client } from './database/pool'
 import userGetRouter from './routes/userGetRoutes'
 import { BUILD_HTML, BUILD_PATH } from './consts'
 import { pgClient } from './database/Postgre'
+import * as pg from "pg"
 import animeGetRouter from './routes/animeGetRoutes'
 import animeListRouter from './routes/animelistRoutes'
 import episodesGetRouter from './routes/episodesgetRoutes'
@@ -20,6 +21,8 @@ const app = e()
 app.use(json());
 app.use(urlencoded({ extended: true }));
 app.use(cookieParser())
+
+pg.defaults.poolSize = 5
 
 app.use(async (req,res,next)=>{
     // client.connect()
@@ -31,13 +34,15 @@ app.use(async (req,res,next)=>{
     //         Console.error(err);
     //         sendError(res,ErrorType.default,500,"Erro na database");
     //     })
-    pgClient.connect().then((v)=>{
-        req.db = v
-        next()
-    }).catch(err=>{
-        Console.error(err);
-        sendError(res,ErrorType.default,500,"Erro na database");
-    })
+    // pgClient.connect().then((v)=>{
+    //     req.db = v
+    //     next()
+    // }).catch(err=>{
+    //     Console.error(err);
+    //     sendError(res,ErrorType.default,500,"Erro na database");
+    // })
+    req.db = pgClient
+    next()
 })
 
 

@@ -243,7 +243,7 @@ function insertSeasons(season, animeId) {
     });
 }
 function insertAnime(_a) {
-    var id = _a.id, averageeptime = _a.averageeptime, date_added = _a.date_added, description = _a.description, genre = _a.genre, language = _a.language, name = _a.name, name2 = _a.name2, producers = _a.producers, studios = _a.studios, creators = _a.creators, quality = _a.quality, rating = _a.rating, visible = _a.visible, weekday = _a.weekday;
+    var id = _a.id, averageeptime = _a.averageeptime, date_added = _a.date_added, description = _a.description, genre = _a.genre, language = _a.language, name = _a.name, name2 = _a.name2, producers = _a.producers, studios = _a.studios, creators = _a.creators, quality = _a.quality, rating = _a.rating, releasedate = _a.releasedate, weekday = _a.weekday;
     return __awaiter(this, void 0, void 0, function () {
         var producerIds, creatorIds, studioIds;
         return __generator(this, function (_b) {
@@ -255,7 +255,7 @@ function insertAnime(_a) {
                 case 2:
                     if (!!((_b.sent()).rows.length > 0)) return [3 /*break*/, 5];
                     return [4 /*yield*/, con];
-                case 3: return [4 /*yield*/, (_b.sent()).query("\n                INSERT INTO anime.anime (\n                    id,\n                    averageeptime,\n                    date_added,\n                    description,\n                    genre,\n                    language,\n                    name,\n                    name2,\n                    quality,\n                    rating,\n                    visible,\n                    weekday\n                ) VALUES (\n                    $1,\n                    $2,\n                    $3,\n                    $4,\n                    $5,\n                    $6,\n                    $7,\n                    $8,\n                    $9,\n                    $10,\n                    $11,\n                    $12\n                )\n            ", [
+                case 3: return [4 /*yield*/, (_b.sent()).query("\n                INSERT INTO anime.anime (\n                    id,\n                    averageeptime,\n                    date_added,\n                    description,\n                    genre,\n                    language,\n                    name,\n                    name2,\n                    quality,\n                    rating,\n                    visible,\n                    weekday,\n                    releasedate\n                ) VALUES (\n                    $1,\n                    $2,\n                    $3,\n                    $4,\n                    $5,\n                    $6,\n                    $7,\n                    $8,\n                    $9,\n                    $10,\n                    $11,\n                    $12,\n                    $13\n                )\n            ", [
                         id,
                         averageeptime,
                         date_added,
@@ -267,7 +267,8 @@ function insertAnime(_a) {
                         quality,
                         rating,
                         true,
-                        weekday
+                        weekday,
+                        new Date(releasedate)
                     ])];
                 case 4:
                     _b.sent();

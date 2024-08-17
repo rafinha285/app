@@ -1,0 +1,4 @@
+TODO
+    fazer um sistemas de noticias para aparecer no inicio do site
+    fazer um blog e uma wiki com chats
+    criar o sistema de lista de anime

@@ -5,13 +5,14 @@ import { Helmet } from "react-helmet";
 import { epLog } from "../types/logType";
 import Episode from "../assets/Episode";
 import {isMobile} from "react-device-detect"
+import { EpisodeSim } from "../types/episodeModel";
 
 const LancamentosPage:React.FC = () =>{
-    const [eps,setEps] = useState<epLog[]>()
+    const [eps,setEps] = useState<EpisodeSim[]>()
     useEffect(()=>{
         $.ajax({
             method:"GET",
-            url:`/api/g/eps?count=20`
+            url:`/ep/g/lan?count=20`
         }).done((res)=>{
             setEps(res)
         })    
@@ -30,7 +31,7 @@ const LancamentosPage:React.FC = () =>{
                         <h2>Episódios recem-adicionados</h2>
                     </div>
                     <div style={{display:"flex",padding:"1em",flexWrap:"wrap"}}>
-                        {eps?.map((v,i)=>(
+                        {eps?.map((v)=>(
                             <Episode ep={v}></Episode>
                         ))}
                     </div>

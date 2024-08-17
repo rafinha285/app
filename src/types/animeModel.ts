@@ -153,7 +153,7 @@ export interface AnimeSearch{
 	id:string;
 	name:string;
 	description:string;
-	rating:number;
+	// rating:number;
 }
 export interface AnimeAgenda{
 	id:string;

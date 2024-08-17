@@ -3,7 +3,7 @@ import { useLocation} from "react-router-dom";
 import Searchh from "../../components/Searchh";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { animeType } from "../../types/AnimeType";
+import { Anime } from "../../types/animeModel";
 import {Helmet} from "react-helmet";
 
 const MainSearch:React.FC =()=>{
@@ -11,12 +11,13 @@ const MainSearch:React.FC =()=>{
     const searchParams = new URLSearchParams(location.search)
     const param = searchParams.get("s")
 
-    const [sear,setSear] = useState<animeType[]>()
+    const [sear,setSear] = useState<Anime[]>()
     console.log(param)
     useEffect(()=>{
         if (!param) return; // If param is falsy, return early
-        $.ajax(`/api/search?s=${param}`).done((res:animeType[])=>{
-            setSear(res)
+        fetch(`/ani/g/search/${param}`).then(res=>res.json())
+        .then((data:Anime[])=>{
+            setSear(data)
         })
     },[param])
     return(

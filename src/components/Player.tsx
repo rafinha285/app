@@ -74,7 +74,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                 kind: 'captions',
                 label: languageCode,
                 srcLang: subtitles[index], // Usa o código original
-                src: `/api/ep/${ani.id}/${seasonId}/${ep.id}/${ep.id}-${subtitles[index]}.vtt`,
+                src: `/ep/g/caption/${ani.id}/${seasonId}/${ep.id}/${subtitles[index]}`,
                 default: subtitles[index] === "por", // Define o português como padrão
             }));
         }
@@ -88,7 +88,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
 
         const d:PlyrSource = {
             type:"video",
-            poster:`${baseUrl}/${ep.id}.jpg`,
+            poster:`${cdnUrl}/epPoster/${ani.id}/${seasonId}/${ep.id}`,
             sources:[],
             tracks:captionPlyrTracks
         }
@@ -162,7 +162,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         console.log(ep.resolution)
         console.log(plyr.source)
 
-        var seasonEp = await getEpsFromSeason(ep.animeid,ep.seasonid)
+        var seasonEp = await getEpsFromSeason(ep.anime_id,ep.season_id)
 
         const opIni = ep.openingstart
         const opFim = ep.openingend

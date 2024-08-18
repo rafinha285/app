@@ -37,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
-// import * as ip from 'ip'
 var path = require("path");
 var fs = require("fs");
 // import * as https from "https"

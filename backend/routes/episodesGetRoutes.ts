@@ -35,6 +35,7 @@ episodesGetRouter.get('/lan',async(req,res)=>{
     try{
         var {count} = req.query
         if(count !== null){
+            console
             res.send((await req.db.query(`
                 SELECT 
                     a.name AS animename,

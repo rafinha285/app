@@ -42,7 +42,7 @@ export function tupleToSeason(data:any[]):Season[]{
 
 }
 export async function getEpsFromSeason(ani:string,season:string):Promise<Episode[]>{
-    return await (await fetch(`/api/g/s/eps/${ani}/${season}`)).json()
+    return await (await fetch(`/ep/g/season/${ani}/${season}`)).json()
 }
 export const parseAnime = (animeString:string) => {
     const animeValues = animeString.replace(/[\(\)"]/g, '').split(',');

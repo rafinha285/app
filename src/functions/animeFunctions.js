@@ -81,7 +81,7 @@ function getEpsFromSeason(ani, season) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, fetch("/api/g/s/eps/".concat(ani, "/").concat(season))];
+                case 0: return [4 /*yield*/, fetch("/ep/g/season/".concat(ani, "/").concat(season))];
                 case 1: return [4 /*yield*/, (_a.sent()).json()];
                 case 2: return [2 /*return*/, _a.sent()];
             }

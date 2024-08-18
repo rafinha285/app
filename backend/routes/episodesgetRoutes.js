@@ -83,6 +83,7 @@ episodesGetRouter.get('/lan', function (req, res) { return __awaiter(void 0, voi
                 _e.trys.push([0, 5, , 6]);
                 count = req.query.count;
                 if (!(count !== null)) return [3 /*break*/, 2];
+                console;
                 _b = (_a = res).send;
                 return [4 /*yield*/, req.db.query("\n                SELECT \n                    a.name AS animename,\n                    s.name AS seasonname,\n                    e.name,\n                    e.id,\n                    e.anime_id,\n                    e.season_id,\n                    e.duration,\n                    array_to_json(e.resolution) as resolution,\n                    e.date_added\n                FROM \n                    anime.episodes e\n                JOIN \n                    anime.seasons s ON e.season_id = s.id\n                JOIN \n                    anime.anime a ON s.anime_id = a.id \n                WHERE \n                    e.date_added >= NOW() - INTERVAL '7 days'\n                ORDER BY \n                    e.date_added DESC\n                LIMIT $1;\n            ", [count])];
             case 1:

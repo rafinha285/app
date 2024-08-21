@@ -50,12 +50,18 @@ episodesGetRouter.get("/season/:animeid/:seasonid", function (req, res) { return
                 _b.trys.push([0, 2, , 3]);
                 _a = req.params, animeid = _a.animeid, seasonid = _a.seasonid;
                 handle_1.Console.log(animeid, seasonid);
-                return [4 /*yield*/, req.db.query("SELECT * FROM anime.episodes WHERE season_id = $1 AND anime_id = $2;", [seasonid, animeid])];
+                return [4 /*yield*/, req.db.query("SELECT * FROM anime.episodes WHERE season_id = $1 AND anime_id = $2;", [seasonid, animeid])
+                    // if(result.rows.length === 0){
+                    //     throw ErrorType.NotId
+                    // }
+                    // await sleep(50)
+                    // Console.log(result.rows)
+                ];
             case 1:
                 result = _b.sent();
-                if (result.rows.length === 0) {
-                    throw handle_1.ErrorType.NotId;
-                }
+                // if(result.rows.length === 0){
+                //     throw ErrorType.NotId
+                // }
                 // await sleep(50)
                 // Console.log(result.rows)
                 res.send(result.rows);

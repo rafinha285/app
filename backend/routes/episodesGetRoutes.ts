@@ -12,9 +12,9 @@ episodesGetRouter.get("/season/:animeid/:seasonid",async(req,res)=>{
         const {animeid,seasonid} = req.params
         Console.log(animeid,seasonid)
         var result = await req.db.query(`SELECT * FROM anime.episodes WHERE season_id = $1 AND anime_id = $2;`,[seasonid,animeid])
-        if(result.rows.length === 0){
-            throw ErrorType.NotId
-        }
+        // if(result.rows.length === 0){
+        //     throw ErrorType.NotId
+        // }
         // await sleep(50)
         // Console.log(result.rows)
         res.send(result.rows)

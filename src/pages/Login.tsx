@@ -27,7 +27,7 @@ const Login:React.FC = ()=>{
             try{
                 // const salt = await genSalt(10)
                 // const hashedPassword = hashSync(password,salt)
-                const response = await axios.post("/login",{
+                const response = await axios.post("/user/p/login",{
                     email,
                     password,
                     // hashedPassword,

@@ -71,7 +71,7 @@ const Register:React.FC = ()=>{
                 console.log(name,surname,s===cs)
                 const emailRegex = /\S+@\S+\.\S+/;
                 if(emailRegex.test(email)&&s == cs){
-                    $.ajax("/api/new/user",{
+                    $.ajax("/user/p/new/user",{
                         method:"POST",
                         data:{
                             _id:_id,

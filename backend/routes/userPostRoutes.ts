@@ -129,7 +129,7 @@ userPostRouter.post('/logout',async(req,res)=>{
 //Rota para criar um usuario novo
 userPostRouter.post('/new/user',async(req,res)=>{
     try{
-        const { email, name, surname, username, birthDate, password, recaptchaToken, salt} = req.body;
+        const { email, name, surname, username, birthDate, password, recaptchaToken, salt } = req.body;
         if(!recaptchaToken){
             throw ErrorType.noToken
         }

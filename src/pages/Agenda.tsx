@@ -10,7 +10,7 @@ const Agenda:React.FC = () =>{
 
     useEffect(()=>{
         const fetchData = async() =>{
-            var response = await fetch(`/api/ani/agenda`)
+            var response = await fetch(`/ani/g/agenda`)
             setAnis(await response.json())
         }
         fetchData()

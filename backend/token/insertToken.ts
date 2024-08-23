@@ -1,8 +1,9 @@
 import * as e from "express";
-
-export default async function insertToken(req:e.Request){
+import { JwtUser } from "../types";
+export default async function insertToken(req:e.Request,user:JwtUser){
     try{
-        req.db.query(``)
+        req.db.query(`INSERT`)
+        //use o crypto para mandar de volta o token
     }catch(err){
 
     }

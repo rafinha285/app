@@ -1,13 +1,9 @@
 import * as e from 'express'
 import * as path from 'path'
-import * as fs from 'fs'
-import * as http from 'http'
-import {types} from 'cassandra-driver'
 import { Console, ErrorType, sendError, sendFile } from "./assets/handle"
 import {json, urlencoded} from "body-parser"
 import * as cookieParser from "cookie-parser"
 import userPostRouter from './routes/userPostRoutes'
-import { client } from './database/pool'
 import userGetRouter from './routes/userGetRoutes'
 import { BUILD_HTML, BUILD_PATH } from './consts'
 import { pgClient } from './database/Postgre'
@@ -62,6 +58,9 @@ app.use(e.static(BUILD_PATH,{ maxAge: '1d' }))
 //kkkkkk risos risos risonho
 app.get('/easteregg',async(req,res)=>{
     res.redirect('https://youtu.be/xvFZjo5PgG0?si=UNy9hc1yJFPGlSz-')
+})
+app.get("/public-key",(req,res)=>{
+    res.sendFile(path.join('E:\\main\\app\\backend\\secret\\public_key.pem'))
 })
 //para q todos os requests
 app.get('*',(req:e.Request,res:e.Response)=>{

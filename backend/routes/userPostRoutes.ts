@@ -1,15 +1,26 @@
 import * as e from "express";
-import { addUser, ErrorType, sendError } from "../assets/handle";
-import { reCaptchaSecretKey, secretKey } from "../secret/config";
+import { addUser, Console, ErrorType, sendError } from "../assets/handle";
+import { reCaptchaSecretKey } from "../secret/config";
 import { pgClient } from "../database/Postgre";
 import { JwtUser } from "../types";
 import * as jwt from "jsonwebtoken"
-import { User } from "../../src/types/userType";
+import * as fs from 'fs'
+import * as path from 'path'
+// import * as crypto from 'crypto'
+import * as NodeRSA from 'node-rsa'
 
 const userPostRouter = e.Router()
+const privateKey = fs.readFileSync(path.join(__dirname,'../','secret','private_key_decrypted.pem'), 'utf8');
+const key = new NodeRSA(privateKey);
+function decryptData(encryptedData:string) {
+    Console.log(privateKey)
+    key.decrypt(encryptedData,'utf8')
+}
 
 userPostRouter.post("/login",async(req:e.Request,res:e.Response)=>{
     try{
+        console.log(req.body.encryptedData)
+        console.log(decryptData(req.body.encryptedData))
         const {email,password,recaptchaToken} = req.body;
         if(!recaptchaToken){
             throw ErrorType.invalidReCaptcha
@@ -43,9 +54,9 @@ userPostRouter.post("/login",async(req:e.Request,res:e.Response)=>{
                 ip:req.socket.remoteAddress!,
                 // SecChUa:req.get("Sec-Ch-Ua")!
             }
-            const token = jwt.sign(tokenInfo,secretKey,{expiresIn:"1d"})
-            res.cookie('token',token,{httpOnly:true,secure:true})
-            res.send({success:true,message:"Login Successful",token})
+            // const token = jwt.sign(tokenInfo,await importPrivateKey(),{expiresIn:"1d"})
+            // res.cookie('token',token,{httpOnly:true,secure:true})
+            // res.send({success:true,message:"Login Successful",token})
         }else{
             throw ErrorType.invalidReCaptcha
         }
@@ -94,9 +105,9 @@ userPostRouter.post('/app/login',async(req:e.Request,res:e.Response)=>{
             ip:req.socket.remoteAddress!,
             // SecChUa:req.get("Sec-Ch-Ua")!
         }
-        const token = jwt.sign(tokenInfo,secretKey,{expiresIn:"1d"})
-        res.cookie('token',token,{httpOnly:true,secure:true})
-        res.send({success:true,message:"Login Successful",token})
+        // const token = jwt.sign(tokenInfo,secretKey,{expiresIn:"1d"})
+        // res.cookie('token',token,{httpOnly:true,secure:true})
+        // res.send({success:true,message:"Login Successful",token})
     }catch(err){
         switch(err){
             case ErrorType.invalidToken:

@@ -40,14 +40,25 @@ var e = require("express");
 var handle_1 = require("../assets/handle");
 var config_1 = require("../secret/config");
 var Postgre_1 = require("../database/Postgre");
-var jwt = require("jsonwebtoken");
+var fs = require("fs");
+var path = require("path");
+// import * as crypto from 'crypto'
+var NodeRSA = require("node-rsa");
 var userPostRouter = e.Router();
+var privateKey = fs.readFileSync(path.join(__dirname, '../', 'secret', 'private_key_decrypted.pem'), 'utf8');
+var key = new NodeRSA(privateKey);
+function decryptData(encryptedData) {
+    handle_1.Console.log(privateKey);
+    key.decrypt(encryptedData, 'utf8');
+}
 userPostRouter.post("/login", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, recaptchaToken, response, data, result, tokenInfo, token, err_1;
+    var _a, email, password, recaptchaToken, response, data, result, tokenInfo, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 6, , 7]);
+                console.log(req.body.encryptedData);
+                console.log(decryptData(req.body.encryptedData));
                 _a = req.body, email = _a.email, password = _a.password, recaptchaToken = _a.recaptchaToken;
                 if (!recaptchaToken) {
                     throw handle_1.ErrorType.invalidReCaptcha;
@@ -81,9 +92,6 @@ userPostRouter.post("/login", function (req, res) { return __awaiter(void 0, voi
                     ip: req.socket.remoteAddress,
                     // SecChUa:req.get("Sec-Ch-Ua")!
                 };
-                token = jwt.sign(tokenInfo, config_1.secretKey, { expiresIn: "1d" });
-                res.cookie('token', token, { httpOnly: true, secure: true });
-                res.send({ success: true, message: "Login Successful", token: token });
                 return [3 /*break*/, 5];
             case 4: throw handle_1.ErrorType.invalidReCaptcha;
             case 5: return [3 /*break*/, 7];
@@ -114,7 +122,7 @@ userPostRouter.post("/login", function (req, res) { return __awaiter(void 0, voi
 //TODO colocar o recaptcha no app
 //nao da pra deixar essa requisição sem segurança aberta assim
 userPostRouter.post('/app/login', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, result, tokenInfo, token, err_2;
+    var _a, email, password, result, tokenInfo, err_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
@@ -136,9 +144,6 @@ userPostRouter.post('/app/login', function (req, res) { return __awaiter(void 0,
                     ip: req.socket.remoteAddress,
                     // SecChUa:req.get("Sec-Ch-Ua")!
                 };
-                token = jwt.sign(tokenInfo, config_1.secretKey, { expiresIn: "1d" });
-                res.cookie('token', token, { httpOnly: true, secure: true });
-                res.send({ success: true, message: "Login Successful", token: token });
                 return [3 /*break*/, 3];
             case 2:
                 err_2 = _b.sent();

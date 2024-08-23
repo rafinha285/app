@@ -5,6 +5,11 @@ import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import "../css/login.css"
 import Cookies from "universal-cookie"
+import {
+    encryptDataWithPublicKey, 
+    fetchPublicKey,
+    getDeviceIndentifier
+} from '../functions/userFunctions'
 // import { CookieSetOption } from "react-cookie";
 // import { useCookies } from "react-cookie";
 import axios from 'axios';
@@ -23,31 +28,36 @@ const Login:React.FC = ()=>{
         console.log(value)
     };
     const handleLogin = async()=>{
-        if(recaptchaValue&&password&&email){
+        // if(recaptchaValue&&password&&email){
             try{
                 // const salt = await genSalt(10)
                 // const hashedPassword = hashSync(password,salt)
-                const response = await axios.post("/user/p/login",{
+                // const publicKey = await fetchPublicKey();  
+                const body = JSON.stringify({
                     email,
                     password,
-                    // hashedPassword,
-                    // salt,
                     recaptchaToken:recaptchaValue
                 })
+                const encryptedData = encryptDataWithPublicKey(body)
+                const response = await axios.post("/user/p/login",{encryptedData})
 
-                const token = response.data.token
-                // console.log(token,response,response.headers["set-cookie"])
-                cookiess.set("token",token,{path:"/",maxAge:86400, secure: true})
-                // setCookie('token',token,{path:"/",maxAge:84600})
-                sessionStorage.setItem("token",token)
-                console.log(token)
-                window.location.href = "/"
+                if(response.status === 200){
+                    const token = response.data.token
+                    // console.log(token,response,response.headers["set-cookie"])
+                    cookiess.set("token",token,{path:"/",maxAge:86400, secure: true})
+                    // setCookie('token',token,{path:"/",maxAge:84600})
+                    sessionStorage.setItem("token",token)
+                    console.log(token)
+                    window.location.href = "/"
+                }else{
+                    alert('cu')
+                }
             }catch(err){
                 console.log(err)
                 setError(true)
             }
 
-        }
+        // }
     }
     enum enu{
         password,

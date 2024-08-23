@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
+var path = require("path");
 var handle_1 = require("./assets/handle");
 var body_parser_1 = require("body-parser");
 var cookieParser = require("cookie-parser");
@@ -94,6 +95,9 @@ app.get('/easteregg', function (req, res) { return __awaiter(void 0, void 0, voi
         return [2 /*return*/];
     });
 }); });
+app.get("/public-key", function (req, res) {
+    res.sendFile(path.join('E:\\main\\app\\backend\\secret\\public_key.pem'));
+});
 //para q todos os requests
 app.get('*', function (req, res) {
     (0, handle_1.sendFile)().cssJs(res);

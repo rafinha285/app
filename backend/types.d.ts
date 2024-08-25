@@ -13,8 +13,12 @@ declare global{
 interface JwtUser {
     _id: string;
     username: string;
-    UserAgent:string;
-    ip:string;
+    user_agent:string;
+    expires_at:Date;
+    time_zone:string;
+    web_gl_vendor:string;
+    web_gl_renderer:string;
+    // ip:string;
     // SecChUa:string
 }
 interface TokenRequest extends e.Request{

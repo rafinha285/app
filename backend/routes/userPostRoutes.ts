@@ -4,24 +4,21 @@ import { reCaptchaSecretKey } from "../secret/config";
 import { pgClient } from "../database/Postgre";
 import { JwtUser } from "../types";
 import * as jwt from "jsonwebtoken"
+import {v4 as uuidv4} from "uuid"
 import * as fs from 'fs'
 import * as path from 'path'
 // import * as crypto from 'crypto'
 import * as NodeRSA from 'node-rsa'
+import insertToken from "../token/insertToken";
+import deleteToken from "../token/deleteToken";
 
 const userPostRouter = e.Router()
-const privateKey = fs.readFileSync(path.join(__dirname,'../','secret','private_key_decrypted.pem'), 'utf8');
-const key = new NodeRSA(privateKey);
-function decryptData(encryptedData:string) {
-    Console.log(privateKey)
-    key.decrypt(encryptedData,'utf8')
-}
 
 userPostRouter.post("/login",async(req:e.Request,res:e.Response)=>{
     try{
-        console.log(req.body.encryptedData)
-        console.log(decryptData(req.body.encryptedData))
-        const {email,password,recaptchaToken} = req.body;
+        console.log(typeof ErrorType)
+        // console.log(decryptData(req.body.encryptedData))
+        const {email,password,recaptchaToken,userAgent,timeZone,WebGLVendor,WebGLRenderer} = req.body;
         if(!recaptchaToken){
             throw ErrorType.invalidReCaptcha
         }
@@ -47,16 +44,18 @@ userPostRouter.post("/login",async(req:e.Request,res:e.Response)=>{
             if(result.rows.length < 1){
                 throw ErrorType.invalidPassOrEmail
             }
-            let tokenInfo:JwtUser ={
+            let tokenInfo ={
                 _id:result.rows[0]._id,
                 username:result.rows[0].username,
-                UserAgent:req.get("User-Agent")!,
-                ip:req.socket.remoteAddress!,
-                // SecChUa:req.get("Sec-Ch-Ua")!
+                user_agent:userAgent,
+                time_zone:timeZone,
+                web_gl_vendor:WebGLVendor,
+                web_gl_renderer:WebGLRenderer,
             }
+            const token = await insertToken(req,tokenInfo)
             // const token = jwt.sign(tokenInfo,await importPrivateKey(),{expiresIn:"1d"})
-            // res.cookie('token',token,{httpOnly:true,secure:true})
-            // res.send({success:true,message:"Login Successful",token})
+            res.cookie('token',token,{httpOnly:true,secure:true})
+            res.send({success:true,message:"Login Successful",token})
         }else{
             throw ErrorType.invalidReCaptcha
         }
@@ -82,6 +81,7 @@ userPostRouter.post("/login",async(req:e.Request,res:e.Response)=>{
 })
 //TODO colocar o recaptcha no app
 //nao da pra deixar essa requisição sem segurança aberta assim
+//terminar como o sistema de cima
 userPostRouter.post('/app/login',async(req:e.Request,res:e.Response)=>{
     try{
         const {email,password} = req.body;
@@ -98,12 +98,13 @@ userPostRouter.post('/app/login',async(req:e.Request,res:e.Response)=>{
         if(result.rows.length < 1){
             throw ErrorType.invalidPassOrEmail
         }
-        let tokenInfo:JwtUser ={
+        let tokenInfo ={
             _id:result.rows[0]._id,
             username:result.rows[0].username,
-            UserAgent:req.get("User-Agent")!,
-            ip:req.socket.remoteAddress!,
-            // SecChUa:req.get("Sec-Ch-Ua")!
+            user_agent:userAgent,
+            time_zone:timeZone,
+            web_gl_vendor:WebGLVendor,
+            web_gl_renderer:WebGLRenderer,
         }
         // const token = jwt.sign(tokenInfo,secretKey,{expiresIn:"1d"})
         // res.cookie('token',token,{httpOnly:true,secure:true})
@@ -130,6 +131,8 @@ userPostRouter.post('/logout',async(req,res)=>{
     try{
         //TODO fazer um jeito de o jwt destruir o token quando ele sai pelo logout
         // provavelmente mais facil e seguro fazer no pg, tem q ver se nao vai usar muita memoria para isso
+        await deleteToken(req)
+        Console.log('logout',req.user)
         res.clearCookie('token')
         res.json({success:true,message:"Logout successful"})
     }catch(err){
@@ -140,6 +143,7 @@ userPostRouter.post('/logout',async(req,res)=>{
 //Rota para criar um usuario novo
 userPostRouter.post('/new/user',async(req,res)=>{
     try{
+        Console.log(req.body)
         const { email, name, surname, username, birthDate, password, recaptchaToken, salt } = req.body;
         if(!recaptchaToken){
             throw ErrorType.noToken
@@ -157,18 +161,91 @@ userPostRouter.post('/new/user',async(req,res)=>{
         })
         const data = await response.json()
         if(data.success){
-            let userData = {
-                name,
-                email,
-                surname,
-                username,
-                birthDate,
-                password,
-                salt
+            var _id = uuidv4()
+            const totalAnime:number = 0;
+            const totalAnimeWatching:number = 0;
+            const totalAnimeCompleted:number = 0;
+            const totalAnimeDropped:number = 0;
+            const totalAnimePlanToWatch:number = 0;
+            const totalAnimeOnHold = 0;
+            const totalAnimeLiked:number = 0;
+            const totalManga:number = 0;
+            const totalMangaReading:number = 0;
+            const totalMangaCompleted:number = 0;
+            const totalMangaDropped:number = 0;
+            const totalMangaPlanToRead:number = 0;
+            const totalMangaOnHold = 0
+            const totalMangaLiked:number = 0
+            const result = await pgClient.query(
+                `INSERT INTO users.users 
+                (
+                    _id, 
+                    username, 
+                    email, 
+                    password, 
+                    name, 
+                    surname, 
+                    birthdate, 
+                    totalanime, 
+                    totalanimewatching, 
+                    totalanimecompleted, 
+                    totalanimedropped, 
+                    totalanimeplantowatch, 
+                    totalmanga, 
+                    totalmangareading,
+                    totalmangacompleted, 
+                    totalmangadropped, 
+                    totalmangaplantoread, 
+                    totalAnimeLiked, 
+                    totalMangaLiked,
+                    salt,
+                    totalanimeonhold,
+                    totalmangaonhold
+                ) 
+                VALUES 
+                (
+                    $1, 
+                    $2, 
+                    $3, 
+                    $4, 
+                    $5, 
+                    $6, 
+                    $7, 
+                    $8, 
+                    $9, 
+                    $10, 
+                    $11, 
+                    $12, 
+                    $13, 
+                    $14, 
+                    $15, 
+                    $16, 
+                    $17, 
+                    $18, 
+                    $19, 
+                    $20, 
+                    $21,
+                    $22
+                ) RETURNING *`,
+                [
+                    _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
+                    totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
+                    totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
+                    totalAnimeLiked || [],  // Se totalAnimeLiked for nulo, usa um array vazio
+                    totalMangaLiked || [],   // Se totalMangaLiked for nulo, usa um array vazio,
+                    salt,
+                    totalAnimeOnHold,
+                    totalMangaOnHold
+                ]
+            );
+            Console.log(result)
+            if(result.rows.length !== 0){
+                res.status(200).json({success:true,message: 'Usuário registrado com sucesso' })
+            }else{
+                throw "Erro ao criar a conta"
             }
-            await addUser(userData)
-            return res.send(200).json({success:true,message: 'Usuário registrado com sucesso' })
         }else{
+            Console.log("GAY")
             throw ErrorType.invalidReCaptcha
         }
     }catch(err:any|ErrorType){

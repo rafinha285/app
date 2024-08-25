@@ -21,7 +21,7 @@ import {Box, Rating} from "@mui/material"
 import StarIcon from '@mui/icons-material/Star';
 import { genToArray, getLabelText, handleRatingValue, tupleToProducer, tupleToSeason } from "../functions/animeFunctions";
 import AniProducers, { prodType } from "../assets/AnimeProd";
-import { types } from "cassandra-driver";
+import { useCookies } from "react-cookie";
 import { Episode } from "../types/episodeModel";
 import GlobalContext from "../GlobalContext";
 import Popup from "reactjs-popup"
@@ -42,6 +42,7 @@ const AnimePage:React.FC = ()=>{
     const [userAni,setUserAni] = useState<AnimeUser>()
     const [err,setErr] = useState<boolean>(false)
     const [seasonD,setSeasonD] = useState<seasonDate>()
+    const [cookies,setCookie] = useCookies(['token'])
     interface EpisodeState{
         [seasonId:string]: Episode[]
     }
@@ -54,11 +55,11 @@ const AnimePage:React.FC = ()=>{
     const [studios,setStudios] = useState<Producer[]>([])
 
     let checkList=async()=>{
-        await fetch(`/api/user/list/checkanime/${ani?.id}`)
+        await fetch(`/user/animelist/checklist/${ani?.id}`)
             .then(response=>response.json())
             .then(async data=>{
-                setIsInList(data.message)
-                await fetch(`/api/user/animelist/${ani?.id}`)
+                setIsInList(data.success)
+                await fetch(`/user/animelist/${ani?.id}`)
                     .then(response => response.json())
                     .then(data=>setUserAni(data))
             })
@@ -98,6 +99,9 @@ const AnimePage:React.FC = ()=>{
                     })
             }
             fetchPS()
+            if(sessionStorage.getItem("token")){
+                setCookie('token', sessionStorage.getItem("token"), { path: '/' });
+            }
             // ani.seasons = tupleToSeason(ani.seasons as types.Tuple[])
             // console.log(ani.seasons)
             // ani.seasons?.forEach((season)=>{
@@ -135,7 +139,9 @@ const AnimePage:React.FC = ()=>{
 
     const handleAddAnimeToList = async()=>{
         checkIsLogged(context.isLogged)
-        await fetch(`/api/user/anime/add/${ani?.id!}`,{method:"POST"})
+        const token = sessionStorage.getItem("token")
+        console.log(token)
+        await fetch(`/user/animelist/insert/${ani?.id!}`,{method:"POST","headers":{'Authorization':`Bearer ${token}`}})
             .then(res=>res.json())
             .then((data)=>{
                 console.log(data)

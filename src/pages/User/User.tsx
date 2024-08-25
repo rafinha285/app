@@ -15,21 +15,23 @@ const UserPage:React.FC = () =>{
     let [animelist,setAnimelist] = useState<AnimeUser[]>([])
     const handleGetUser =async()=>{
         const token = sessionStorage.getItem('token');
+        
         // let user:User
         const headers: HeadersInit ={
             'Authorization':`Bearer ${token}`
         }
-        const check:{success:boolean} = await fetch("/g/checktoken",{headers})
+        //,{headers}
+        const check:{success:boolean} = await fetch("/user/g/verify")
             .then(response=>response.json())
         if(check.success){
-            await fetch("/g/user",{headers})
+            await fetch("/user/g/")
             .then(response => response.json())
             .then((data:User)=>{
                 // animelist = data.animelist.map(parseAnime)
                 setUser(data)
             })
             .catch((error:any)=>console.error('Error fetching user data:', error))
-            await fetch("/api/user/animelist")
+            await fetch("/user/animelist/")
                 .then(response=>response.json())
                 .then((data:AnimeUser[])=>{
                     setAnimelist(data)

@@ -40,26 +40,18 @@ var e = require("express");
 var handle_1 = require("../assets/handle");
 var config_1 = require("../secret/config");
 var Postgre_1 = require("../database/Postgre");
-var fs = require("fs");
-var path = require("path");
-// import * as crypto from 'crypto'
-var NodeRSA = require("node-rsa");
+var uuid_1 = require("uuid");
+var insertToken_1 = require("../token/insertToken");
+var deleteToken_1 = require("../token/deleteToken");
 var userPostRouter = e.Router();
-var privateKey = fs.readFileSync(path.join(__dirname, '../', 'secret', 'private_key_decrypted.pem'), 'utf8');
-var key = new NodeRSA(privateKey);
-function decryptData(encryptedData) {
-    handle_1.Console.log(privateKey);
-    key.decrypt(encryptedData, 'utf8');
-}
 userPostRouter.post("/login", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, password, recaptchaToken, response, data, result, tokenInfo, err_1;
+    var _a, email, password, recaptchaToken, userAgent, timeZone, WebGLVendor, WebGLRenderer, response, data, result, tokenInfo, token, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 6, , 7]);
-                console.log(req.body.encryptedData);
-                console.log(decryptData(req.body.encryptedData));
-                _a = req.body, email = _a.email, password = _a.password, recaptchaToken = _a.recaptchaToken;
+                _b.trys.push([0, 7, , 8]);
+                console.log(typeof handle_1.ErrorType);
+                _a = req.body, email = _a.email, password = _a.password, recaptchaToken = _a.recaptchaToken, userAgent = _a.userAgent, timeZone = _a.timeZone, WebGLVendor = _a.WebGLVendor, WebGLRenderer = _a.WebGLRenderer;
                 if (!recaptchaToken) {
                     throw handle_1.ErrorType.invalidReCaptcha;
                 }
@@ -75,7 +67,7 @@ userPostRouter.post("/login", function (req, res) { return __awaiter(void 0, voi
                 return [4 /*yield*/, response.json()];
             case 2:
                 data = _b.sent();
-                if (!data.success) return [3 /*break*/, 4];
+                if (!data.success) return [3 /*break*/, 5];
                 return [4 /*yield*/, Postgre_1.pgClient.query("\n        WITH hashed_password AS (\n            SELECT users.crypt($1, salt) AS hash\n            FROM users.users\n            WHERE email = $2\n        )\n        SELECT * FROM users.users\n        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)\n        ", [password, email])
                     // Console.log(result.rows)
                 ];
@@ -88,14 +80,23 @@ userPostRouter.post("/login", function (req, res) { return __awaiter(void 0, voi
                 tokenInfo = {
                     _id: result.rows[0]._id,
                     username: result.rows[0].username,
-                    UserAgent: req.get("User-Agent"),
-                    ip: req.socket.remoteAddress,
-                    // SecChUa:req.get("Sec-Ch-Ua")!
+                    user_agent: userAgent,
+                    time_zone: timeZone,
+                    web_gl_vendor: WebGLVendor,
+                    web_gl_renderer: WebGLRenderer,
                 };
-                return [3 /*break*/, 5];
-            case 4: throw handle_1.ErrorType.invalidReCaptcha;
-            case 5: return [3 /*break*/, 7];
-            case 6:
+                return [4 /*yield*/, (0, insertToken_1.default)(req, tokenInfo)
+                    // const token = jwt.sign(tokenInfo,await importPrivateKey(),{expiresIn:"1d"})
+                ];
+            case 4:
+                token = _b.sent();
+                // const token = jwt.sign(tokenInfo,await importPrivateKey(),{expiresIn:"1d"})
+                res.cookie('token', token, { httpOnly: true, secure: true });
+                res.send({ success: true, message: "Login Successful", token: token });
+                return [3 /*break*/, 6];
+            case 5: throw handle_1.ErrorType.invalidReCaptcha;
+            case 6: return [3 /*break*/, 8];
+            case 7:
                 err_1 = _b.sent();
                 switch (err_1) {
                     case handle_1.ErrorType.invalidReCaptcha:
@@ -114,13 +115,14 @@ userPostRouter.post("/login", function (req, res) { return __awaiter(void 0, voi
                         (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_1);
                         break;
                 }
-                return [3 /*break*/, 7];
-            case 7: return [2 /*return*/];
+                return [3 /*break*/, 8];
+            case 8: return [2 /*return*/];
         }
     });
 }); });
 //TODO colocar o recaptcha no app
 //nao da pra deixar essa requisição sem segurança aberta assim
+//terminar como o sistema de cima
 userPostRouter.post('/app/login', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, email, password, result, tokenInfo, err_2;
     return __generator(this, function (_b) {
@@ -140,9 +142,10 @@ userPostRouter.post('/app/login', function (req, res) { return __awaiter(void 0,
                 tokenInfo = {
                     _id: result.rows[0]._id,
                     username: result.rows[0].username,
-                    UserAgent: req.get("User-Agent"),
-                    ip: req.socket.remoteAddress,
-                    // SecChUa:req.get("Sec-Ch-Ua")!
+                    user_agent: userAgent,
+                    time_zone: timeZone,
+                    web_gl_vendor: WebGLVendor,
+                    web_gl_renderer: WebGLRenderer,
                 };
                 return [3 /*break*/, 3];
             case 2:
@@ -168,26 +171,38 @@ userPostRouter.post('/app/login', function (req, res) { return __awaiter(void 0,
 }); });
 //Rota para deslogar o cliente
 userPostRouter.post('/logout', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var err_3;
     return __generator(this, function (_a) {
-        try {
-            //TODO fazer um jeito de o jwt destruir o token quando ele sai pelo logout
-            // provavelmente mais facil e seguro fazer no pg, tem q ver se nao vai usar muita memoria para isso
-            res.clearCookie('token');
-            res.json({ success: true, message: "Logout successful" });
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                //TODO fazer um jeito de o jwt destruir o token quando ele sai pelo logout
+                // provavelmente mais facil e seguro fazer no pg, tem q ver se nao vai usar muita memoria para isso
+                return [4 /*yield*/, (0, deleteToken_1.default)(req)];
+            case 1:
+                //TODO fazer um jeito de o jwt destruir o token quando ele sai pelo logout
+                // provavelmente mais facil e seguro fazer no pg, tem q ver se nao vai usar muita memoria para isso
+                _a.sent();
+                handle_1.Console.log('logout', req.user);
+                res.clearCookie('token');
+                res.json({ success: true, message: "Logout successful" });
+                return [3 /*break*/, 3];
+            case 2:
+                err_3 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_3);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
         }
-        catch (err) {
-            (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
-        }
-        return [2 /*return*/];
     });
 }); });
 //Rota para criar um usuario novo
 userPostRouter.post('/new/user', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, salt, emailRegex, response, data, userData, err_3;
+    var _a, email, name_1, surname, username, birthDate, password, recaptchaToken, salt, emailRegex, response, data, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeOnHold, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaOnHold, totalMangaLiked, result, err_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 6, , 7]);
+                handle_1.Console.log(req.body);
                 _a = req.body, email = _a.email, name_1 = _a.name, surname = _a.surname, username = _a.username, birthDate = _a.birthDate, password = _a.password, recaptchaToken = _a.recaptchaToken, salt = _a.salt;
                 if (!recaptchaToken) {
                     throw handle_1.ErrorType.noToken;
@@ -209,24 +224,48 @@ userPostRouter.post('/new/user', function (req, res) { return __awaiter(void 0, 
             case 2:
                 data = _b.sent();
                 if (!data.success) return [3 /*break*/, 4];
-                userData = {
-                    name: name_1,
-                    email: email,
-                    surname: surname,
-                    username: username,
-                    birthDate: birthDate,
-                    password: password,
-                    salt: salt
-                };
-                return [4 /*yield*/, (0, handle_1.addUser)(userData)];
+                _id = (0, uuid_1.v4)();
+                totalAnime = 0;
+                totalAnimeWatching = 0;
+                totalAnimeCompleted = 0;
+                totalAnimeDropped = 0;
+                totalAnimePlanToWatch = 0;
+                totalAnimeOnHold = 0;
+                totalAnimeLiked = 0;
+                totalManga = 0;
+                totalMangaReading = 0;
+                totalMangaCompleted = 0;
+                totalMangaDropped = 0;
+                totalMangaPlanToRead = 0;
+                totalMangaOnHold = 0;
+                totalMangaLiked = 0;
+                return [4 /*yield*/, Postgre_1.pgClient.query("INSERT INTO users.users \n                (\n                    _id, \n                    username, \n                    email, \n                    password, \n                    name, \n                    surname, \n                    birthdate, \n                    totalanime, \n                    totalanimewatching, \n                    totalanimecompleted, \n                    totalanimedropped, \n                    totalanimeplantowatch, \n                    totalmanga, \n                    totalmangareading,\n                    totalmangacompleted, \n                    totalmangadropped, \n                    totalmangaplantoread, \n                    totalAnimeLiked, \n                    totalMangaLiked,\n                    salt,\n                    totalanimeonhold,\n                    totalmangaonhold\n                ) \n                VALUES \n                (\n                    $1, \n                    $2, \n                    $3, \n                    $4, \n                    $5, \n                    $6, \n                    $7, \n                    $8, \n                    $9, \n                    $10, \n                    $11, \n                    $12, \n                    $13, \n                    $14, \n                    $15, \n                    $16, \n                    $17, \n                    $18, \n                    $19, \n                    $20, \n                    $21,\n                    $22\n                ) RETURNING *", [
+                        _id, username, email, password, name_1, surname, new Date(birthDate).toISOString(),
+                        totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
+                        totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
+                        totalAnimeLiked || [],
+                        totalMangaLiked || [],
+                        salt,
+                        totalAnimeOnHold,
+                        totalMangaOnHold
+                    ])];
             case 3:
-                _b.sent();
-                return [2 /*return*/, res.send(200).json({ success: true, message: 'Usuário registrado com sucesso' })];
-            case 4: throw handle_1.ErrorType.invalidReCaptcha;
+                result = _b.sent();
+                handle_1.Console.log(result);
+                if (result.rows.length !== 0) {
+                    res.status(200).json({ success: true, message: 'Usuário registrado com sucesso' });
+                }
+                else {
+                    throw "Erro ao criar a conta";
+                }
+                return [3 /*break*/, 5];
+            case 4:
+                handle_1.Console.log("GAY");
+                throw handle_1.ErrorType.invalidReCaptcha;
             case 5: return [3 /*break*/, 7];
             case 6:
-                err_3 = _b.sent();
-                switch (err_3) {
+                err_4 = _b.sent();
+                switch (err_4) {
                     case handle_1.ErrorType.noToken:
                         (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
                         break;
@@ -237,7 +276,7 @@ userPostRouter.post('/new/user', function (req, res) { return __awaiter(void 0, 
                         (0, handle_1.sendError)(res, handle_1.ErrorType.invalidEmail);
                         break;
                     default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_3);
+                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_4);
                 }
                 return [3 /*break*/, 7];
             case 7: return [2 /*return*/];

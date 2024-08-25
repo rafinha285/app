@@ -6,8 +6,6 @@ import ReCAPTCHA from "react-google-recaptcha";
 import "../css/login.css"
 import Cookies from "universal-cookie"
 import {
-    encryptDataWithPublicKey, 
-    fetchPublicKey,
     getDeviceIndentifier
 } from '../functions/userFunctions'
 // import { CookieSetOption } from "react-cookie";
@@ -33,13 +31,17 @@ const Login:React.FC = ()=>{
                 // const salt = await genSalt(10)
                 // const hashedPassword = hashSync(password,salt)
                 // const publicKey = await fetchPublicKey();  
-                const body = JSON.stringify({
+                const userIndentifier = getDeviceIndentifier()
+                // const encryptedData = encryptDataWithPublicKey(body)
+                const response = await axios.post("/user/p/login",{
                     email,
                     password,
-                    recaptchaToken:recaptchaValue
+                    recaptchaToken:recaptchaValue,
+                    userAgent:userIndentifier.userAgent,
+                    timeZone:userIndentifier.timeZone,
+                    WebGLVendor:userIndentifier.WegGl?.vendor,
+                    WebGLRenderer:userIndentifier.WegGl?.renderer
                 })
-                const encryptedData = encryptDataWithPublicKey(body)
-                const response = await axios.post("/user/p/login",{encryptedData})
 
                 if(response.status === 200){
                     const token = response.data.token

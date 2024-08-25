@@ -1,7 +1,7 @@
 import {AnimeUser} from '../../src/types/animeModel'
 import { EpisodeUser } from '../../src/types/episodeModel';
 import { priorityValue, userAnimeState } from '../../src/types/types';
-import { animeClient } from '../../backend/database/Postgre'
+import { pgClient } from '../../backend/database/Postgre'
 export class UserAnimeList implements AnimeUser{
     user_id: string;
     id: number;
@@ -38,7 +38,7 @@ export class UserAnimeList implements AnimeUser{
         this.finish_date = finish_date;
     }
     async save():Promise<void> {
-        let con = await animeClient.connect()
+        let con = await pgClient.connect()
         try{
             await con.query(`INSERT INTO users.user_anime_list
                 (

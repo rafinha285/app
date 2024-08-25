@@ -1,22 +1,3 @@
-import { JSEncrypt } from 'jsencrypt';
-import NodeRsa from 'node-rsa'
-export async function encryptDataWithPublicKey(data:any) {
-    // const encryptor = new JSEncrypt();
-
-    // encryptor.setPublicKey(publicKey);
-
-    // const encrypted = encryptor.encrypt('hello world');
-    // console.log(encrypted)
-
-    // if (!encrypted) {
-    //     throw new Error('Encryption failed');
-    // }
-    
-    // return encrypted;
-    const key = new NodeRsa().importKey(await fetchPublicKey(),'public');
-    return key.encrypt(data,'base64');
-
-}
 export async function fetchPublicKey(){
     return await fetch("/public-key").then(r=>r.text())
 }

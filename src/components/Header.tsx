@@ -11,6 +11,7 @@ import GlobalContext from "../GlobalContext";
 const cookies = new Cookies();
 const Header = ()=>{
     const [searchTerm, setSearchTerm] = useState("");
+    const [cookies,setCookie,removeCookie] = useCookies(['token'])
     const navigate = useNavigate()
 
     const handleKeyPress = (event:React.KeyboardEvent<HTMLInputElement>)=>{
@@ -28,15 +29,15 @@ const Header = ()=>{
     }
     // const [cookies,setCookie,removeCookie] = useCookies(['token'])
     const handleLogout = async()=>{
+        fetch('/user/p/logout/',{method:"POST"})
+        .then(response=>response.json())
+        .then(data=>console.log(data))
+        
         sessionStorage.removeItem("token")
-        fetch('/logout/')
-            .then(response=>response.json())
-            .then(data=>console.log(data))
-
+        removeCookie('token')
         window.location.href='/'
     }
-    console.log(document.cookie)
-    console.log(cookies.getAll())
+    // console.log(document.cookie)
     const context = useContext(GlobalContext);
     if(!context){
         return <div>O contexto global não está definido</div>;

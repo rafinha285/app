@@ -71,10 +71,10 @@ const Register:React.FC = ()=>{
                 console.log(name,surname,s===cs)
                 const emailRegex = /\S+@\S+\.\S+/;
                 if(emailRegex.test(email)&&s == cs){
-                    $.ajax("/user/p/new/user",{
+                    let response = $.ajax("/user/p/new/user",{
                         method:"POST",
                         data:{
-                            _id:_id,
+                            // _id,
                             name:name,
                             surname:surname,
                             email:email,
@@ -85,11 +85,9 @@ const Register:React.FC = ()=>{
                             salt
                         }
                     })
-                    .done((res)=>{
-                        console.log(res)
+                    if(response.status === 200){
                         window.location.href = '/login'
-                    })
-                    $(document).ajaxSend(()=>{send=true})
+                    }
                 }
             }
         }

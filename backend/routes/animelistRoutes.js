@@ -39,51 +39,34 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
 var Postgre_1 = require("../database/Postgre");
 var handle_1 = require("../assets/handle");
+var checkToken_1 = require("../token/checkToken");
 var animeListRouter = express.Router();
-animeListRouter.get('/animelist', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var response, err_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT \n                episode_id,\n                dropped_on,\n                season_id, \n                anime_id, \n                date,\n                duration,\n                ep_index,\n                name, \n                season_name\n            FROM user_anime_list WHERE user_id = $1;\n        ", [req.user])];
-            case 1:
-                response = _a.sent();
-                res.send(response.rows);
-                return [3 /*break*/, 3];
-            case 2:
-                err_1 = _a.sent();
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
-    });
-}); });
-animeListRouter.get('/season/eps/:aniId/:seaId', handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, aniid, seaId, err_2;
+animeListRouter.get('/season/eps/:aniId/:seaId', checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, aniid, seaId, err_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 _a = req.params, aniid = _a.aniid, seaId = _a.seaId;
-                return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT * FROM users.user_episode_list\n                WHERE user_id = \n        ")];
+                return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT * FROM users.user_episode_list\n            WHERE user_id = \n            ")];
             case 1:
                 _b.sent();
                 return [3 /*break*/, 3];
             case 2:
-                err_2 = _b.sent();
+                err_1 = _b.sent();
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
-animeListRouter.patch("/update", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, id, watched_episodes, start_date, finish_date, rate, state, priority, times_watched, rewatched_episodes, err_3;
+animeListRouter.patch("/update", checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, id, watched_episodes, start_date, finish_date, rate, state, priority, times_watched, rewatched_episodes, err_2;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
                 _a = req.body, id = _a.id, watched_episodes = _a.watched_episodes, start_date = _a.start_date, finish_date = _a.finish_date, rate = _a.rate, state = _a.state, priority = _a.priority, times_watched = _a.times_watched, rewatched_episodes = _a.rewatched_episodes;
-                return [4 /*yield*/, Postgre_1.pgClient.query("\n        UPDATE users.user_anime_list\n            SET \n                watched_episodes =$1\n                start_date = $2,\n                finish_date = $3,\n                rate = $4,\n                state = $5,\n                priority = $6,\n                times_watched = $7,\n                rewatched_episodes = $8\n        WHERE id = $9\n    ", [
+                return [4 /*yield*/, Postgre_1.pgClient.query("\n            UPDATE users.user_anime_list\n                SET \n                watched_episodes =$1\n                start_date = $2,\n                finish_date = $3,\n                rate = $4,\n                state = $5,\n                priority = $6,\n                times_watched = $7,\n                rewatched_episodes = $8\n            WHERE id = $9\n        ", [
                         watched_episodes,
                         start_date,
                         finish_date,
@@ -99,8 +82,93 @@ animeListRouter.patch("/update", handle_1.checkToken, function (req, res) { retu
                 res.json({ success: true, message: "Atualizado com sucesso" });
                 return [3 /*break*/, 3];
             case 2:
-                err_3 = _b.sent();
+                err_2 = _b.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+animeListRouter.get('/checklist/:id', checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, result, err_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                user = req.user;
+                return [4 /*yield*/, req.db.query("SELECT COUNT(*)\n            FROM users.user_anime_list\n            WHERE user_id = $1\n            AND anime_id = $2", [user._id, req.params.id])];
+            case 1:
+                result = _a.sent();
+                handle_1.Console.log(result);
+                res.json({ success: parseInt(result.rows[0].count) !== 0 });
+                return [3 /*break*/, 3];
+            case 2:
+                err_3 = _a.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_3);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+animeListRouter.post('/insert/:id', checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var user, ani, err_4;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                user = req.user;
+                return [4 /*yield*/, req.db.query("SELECT * FROM anime.anime WHERE id = $1", [req.params.id])];
+            case 1:
+                ani = (_a.sent()).rows[0];
+                return [4 /*yield*/, Postgre_1.pgClient.query("\n            INSERT INTO users.user_anime_list(\n                user_id, anime_id, status, name, start_date, priority)\n                VALUES ($1, $2, $3, $4, $5, $6);\n        ", [user._id, req.params.id, 'watching', ani.name, new Date(), "LOW"])];
+            case 2:
+                _a.sent();
+                res.json({ success: true, message: "Anime adicionado a lista ".concat(user._id) });
+                return [3 /*break*/, 4];
+            case 3:
+                err_4 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_4);
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
+animeListRouter.get("/:id", checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, _a, _b, err_5;
+    var _c;
+    return __generator(this, function (_d) {
+        switch (_d.label) {
+            case 0:
+                _d.trys.push([0, 2, , 3]);
+                id = req.params.id;
+                _b = (_a = res).json;
+                _c = { success: true };
+                return [4 /*yield*/, req.db.query("SELECT * FROM users.user_anime_list WHERE user_id = $1 AND anime_id = $2", [req.user._id, id])];
+            case 1:
+                _b.apply(_a, [(_c.response = (_d.sent()).rows[0], _c)]);
+                return [3 /*break*/, 3];
+            case 2:
+                err_5 = _d.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_5);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+animeListRouter.get('/', checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var response, err_6;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id, watched_episodes\n            FROM users.user_anime_list WHERE user_id = $1;\n            ", [req.user._id])];
+            case 1:
+                response = _a.sent();
+                res.send(response.rows);
+                return [3 /*break*/, 3];
+            case 2:
+                err_6 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_6);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }

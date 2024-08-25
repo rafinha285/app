@@ -25,6 +25,7 @@
     width:var(--user-width);
     height:var(--user-height);
     border-radius:45em;
+    margin:0 auto;
 }
 .left .user{
     margin:0 auto
@@ -86,16 +87,16 @@
 }
 .anime-content{
     width:33%;
-    padding:10px;
+    justify-content: space-around;
     display:flex;
     align-items: center;
 }
 .anime-content img{
-    aspect-ratio:9/16;
+    /* aspect-ratio:9/16; */
     border:1px solid white;
     height:7em;
     border-radius:8px;
-    margin-right:10px
+    /* margin-right:10px */
 }
 /* anime props */
 .props{

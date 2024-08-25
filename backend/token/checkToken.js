@@ -36,41 +36,55 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var e = require("express");
+exports.checkToken = void 0;
+var jwt = require("jsonwebtoken");
+var config_1 = require("../secret/config");
 var handle_1 = require("../assets/handle");
 var Postgre_1 = require("../database/Postgre");
-var checkToken_1 = require("../token/checkToken");
-var userGetRouter = e.Router();
-userGetRouter.get("/verify", checkToken_1.checkToken, function (req, res) {
-    res.json({ success: true });
-});
-userGetRouter.get("/", checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, err_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Postgre_1.pgClient.query("\n        SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked,totalanimeonhold,totalmangaonhold\n        FROM users.users\n        WHERE _id = $1;\n    ", [req.user._id])];
-            case 1:
-                result = _a.sent();
-                if (result.rows.length < 1) {
-                    throw handle_1.ErrorType.invalidPassOrEmail;
-                }
-                res.send(result.rows[0]);
-                return [3 /*break*/, 3];
-            case 2:
-                err_1 = _a.sent();
-                switch (err_1) {
-                    case handle_1.ErrorType.noToken:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
-                        break;
-                    default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_1);
-                        break;
-                }
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
+function checkToken(req, res, next) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function () {
+        var tokenHeader, tokencookie, token, jwtResult, user, result, err_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 2, , 3]);
+                    tokenHeader = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
+                    tokencookie = req.cookies.token;
+                    token = tokenHeader || tokencookie;
+                    if (!token) {
+                        return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.noToken)];
+                    }
+                    jwtResult = void 0;
+                    try {
+                        jwtResult = jwt.verify(token, config_1.secretKey);
+                    }
+                    catch (err) {
+                        // Captura erros do JWT, como tokens inválidos ou expirados
+                        return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.invalidToken)];
+                    }
+                    user = jwtResult;
+                    return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT COUNT(*)\n                FROM users.users_sessions\n                WHERE user_id = $1\n                AND user_agent = $2 \n                AND time_zone = $3 \n                AND web_gl_vendor = $4 \n                AND web_gl_renderer = $5 \n                AND now() <= expires_at;\n        ", [user._id, user.user_agent, user.time_zone, user.web_gl_vendor, user.web_gl_renderer])
+                        // Console.log(result.rows)
+                        // Console.log(parseInt(result.rows[0].count) === 0)
+                    ];
+                case 1:
+                    result = _b.sent();
+                    // Console.log(result.rows)
+                    // Console.log(parseInt(result.rows[0].count) === 0)
+                    if (parseInt(result.rows[0].count) === 0) {
+                        return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.unauthorized)];
+                    }
+                    req.user = user;
+                    next();
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_1 = _b.sent();
+                    next(err_1);
+                    throw err_1;
+                case 3: return [2 /*return*/];
+            }
+        });
     });
-}); });
-exports.default = userGetRouter;
+}
+exports.checkToken = checkToken;

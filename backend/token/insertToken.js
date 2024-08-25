@@ -36,41 +36,34 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var e = require("express");
-var handle_1 = require("../assets/handle");
-var Postgre_1 = require("../database/Postgre");
-var checkToken_1 = require("../token/checkToken");
-var userGetRouter = e.Router();
-userGetRouter.get("/verify", checkToken_1.checkToken, function (req, res) {
-    res.json({ success: true });
-});
-userGetRouter.get("/", checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var result, err_1;
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Postgre_1.pgClient.query("\n        SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked,totalanimeonhold,totalmangaonhold\n        FROM users.users\n        WHERE _id = $1;\n    ", [req.user._id])];
-            case 1:
-                result = _a.sent();
-                if (result.rows.length < 1) {
-                    throw handle_1.ErrorType.invalidPassOrEmail;
-                }
-                res.send(result.rows[0]);
-                return [3 /*break*/, 3];
-            case 2:
-                err_1 = _a.sent();
-                switch (err_1) {
-                    case handle_1.ErrorType.noToken:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.noToken);
-                        break;
-                    default:
-                        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_1);
-                        break;
-                }
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
-        }
+var jwt = require("jsonwebtoken");
+var config_1 = require("../secret/config");
+function insertToken(req, user) {
+    return __awaiter(this, void 0, void 0, function () {
+        var expires_at, result, jwtToken, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 2, , 3]);
+                    expires_at = new Date();
+                    expires_at.setDate(expires_at.getDate() + 7);
+                    return [4 /*yield*/, req.db.query("INSERT INTO users.users_sessions (\n                user_id, expires_at, user_agent, time_zone, web_gl_vendor, web_gl_renderer\n            ) VALUES ($1, $2, $3, $4, $5, $6) \n            RETURNING *", [user._id, expires_at, user.user_agent, user.time_zone, user.web_gl_vendor, user.web_gl_renderer])];
+                case 1:
+                    result = _a.sent();
+                    if (result.rows.length !== 0) {
+                        jwtToken = jwt.sign(user, config_1.secretKey, { 'expiresIn': "7 days" });
+                        return [2 /*return*/, jwtToken];
+                    }
+                    else {
+                        throw new Error("Erro ao iniciar sessão");
+                    }
+                    return [3 /*break*/, 3];
+                case 2:
+                    err_1 = _a.sent();
+                    throw err_1;
+                case 3: return [2 /*return*/];
+            }
+        });
     });
-}); });
-exports.default = userGetRouter;
+}
+exports.default = insertToken;

@@ -4,7 +4,6 @@ import {Anime} from "../types/animeModel"
 import "../css/index.css"
 import "../css/base.css"
 import { Link } from "react-router-dom";
-import * as nano from "nano"
 
 
 interface AnimeLanProps{

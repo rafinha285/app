@@ -18,7 +18,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     const [ratingValue,setRatingValue] = useState<number>(ani.rate)
     const [startDate,setStartDate] = useState<Date|undefined>(ani.start_date)
     const [endDate,setEndDate] = useState<Date|undefined>(ani.finish_date)
-    const [state,setState] = useState<userAnimeState>(ani.state)
+    const [state,setState] = useState<userAnimeState>(ani.status)
     // const [timesWatched,setTimesWatched] = useState<number|undefined>(ani.times_watched)
     const [season,setSeason] = useState<Season[]>()
     const [seasonsList,setSeeasonsList] = useState<SeasonList[]>()

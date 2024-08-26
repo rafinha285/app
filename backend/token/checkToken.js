@@ -41,6 +41,7 @@ var jwt = require("jsonwebtoken");
 var config_1 = require("../secret/config");
 var handle_1 = require("../assets/handle");
 var Postgre_1 = require("../database/Postgre");
+var deleteToken_1 = require("./deleteToken");
 function checkToken(req, res, next) {
     var _a;
     return __awaiter(this, void 0, void 0, function () {
@@ -48,7 +49,7 @@ function checkToken(req, res, next) {
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
-                    _b.trys.push([0, 2, , 3]);
+                    _b.trys.push([0, 4, , 5]);
                     tokenHeader = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
                     tokencookie = req.cookies.token;
                     token = tokenHeader || tokencookie;
@@ -64,25 +65,29 @@ function checkToken(req, res, next) {
                         return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.invalidToken)];
                     }
                     user = jwtResult;
-                    return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT COUNT(*)\n                FROM users.users_sessions\n                WHERE user_id = $1\n                AND user_agent = $2 \n                AND time_zone = $3 \n                AND web_gl_vendor = $4 \n                AND web_gl_renderer = $5 \n                AND now() <= expires_at;\n        ", [user._id, user.user_agent, user.time_zone, user.web_gl_vendor, user.web_gl_renderer])
-                        // Console.log(result.rows)
+                    return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT expires_at\n                FROM users.users_sessions\n                WHERE user_id = $1\n                AND user_agent = $2 \n                AND time_zone = $3 \n                AND web_gl_vendor = $4 \n                AND web_gl_renderer = $5 \n        ", [user._id, user.user_agent, user.time_zone, user.web_gl_vendor, user.web_gl_renderer])
                         // Console.log(parseInt(result.rows[0].count) === 0)
                     ];
                 case 1:
                     result = _b.sent();
-                    // Console.log(result.rows)
                     // Console.log(parseInt(result.rows[0].count) === 0)
-                    if (parseInt(result.rows[0].count) === 0) {
+                    if (result.rows.length === 0) {
                         return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.unauthorized)];
                     }
+                    if (!(new Date(result.rows[0].expires_at).getTime() < new Date().getTime())) return [3 /*break*/, 3];
+                    return [4 /*yield*/, (0, deleteToken_1.default)(req)];
+                case 2:
+                    _b.sent();
+                    return [2 /*return*/, (0, handle_1.sendError)(res, handle_1.ErrorType.unauthorized)];
+                case 3:
                     req.user = user;
                     next();
-                    return [3 /*break*/, 3];
-                case 2:
+                    return [3 /*break*/, 5];
+                case 4:
                     err_1 = _b.sent();
                     next(err_1);
                     throw err_1;
-                case 3: return [2 /*return*/];
+                case 5: return [2 /*return*/];
             }
         });
     });

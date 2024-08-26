@@ -5,6 +5,22 @@ import { checkToken } from "../token/checkToken";
 import { JwtUser } from "../types";
 const animeListRouter = express.Router();
 
+
+animeListRouter.post("/rating/:id",checkToken,async(req,res)=>{
+    try{
+        const {id} = req.params;
+        const {rating} = req.body;
+        // console.log(req.body,[parseInt(rating),(req.user as JwtUser)._id,id])
+        await req.db.query(`UPDATE users.user_anime_list
+            SET rate = $1
+            WHERE user_id = $2 AND anime_id = $3
+        `,[parseInt(rating),(req.user as JwtUser)._id,id])
+        // console.log(result)
+        res.json({success:true,message:rating})
+    }catch(err){
+        sendError(res,ErrorType.default,500,err)
+    }
+})
 animeListRouter.get('/season/eps/:aniId/:seaId',checkToken,async(req:express.Request,res:express.Response)=>{
     try{
         const {aniid,seaId} = req.params;
@@ -26,22 +42,22 @@ animeListRouter.patch("/update",checkToken,async(req,res)=>{
                 watched_episodes =$1
                 start_date = $2,
                 finish_date = $3,
-                rate = $4,
-                state = $5,
-                priority = $6,
-                times_watched = $7,
-                rewatched_episodes = $8
-            WHERE id = $9
+                state = $4,
+                priority = $5,
+                times_watched = $6,
+                rewatched_episodes = $7,
+                rate = $9
+            WHERE id = $8
         `,[
             watched_episodes,
             start_date,
             finish_date,
-            rate,
             state,
             priority,
             times_watched,
             rewatched_episodes,
-            id
+            id,
+            rate
         ])
         res.json({success:true,message:"Atualizado com sucesso"})
     }catch(err){
@@ -56,7 +72,7 @@ animeListRouter.get('/checklist/:id',checkToken,async(req,res)=>{
             WHERE user_id = $1
             AND anime_id = $2`,
         [user._id,req.params.id]);
-        Console.log(result)
+        // Console.log(result)
         res.json({success:parseInt(result.rows[0].count) !== 0})
     }catch(err){
         sendError(res,ErrorType.default,500,err)

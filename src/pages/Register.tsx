@@ -7,13 +7,14 @@ import "../css/login.css"
 // import {pbkdf2, pbkdf2Sync} from "@react-native-module/pbkdf2"
 import ReCAPTCHA from "react-google-recaptcha";
 import { v4 as uuid } from "uuid";
+import { fetchPost } from "../features/main";
 const salt = bcrypt.genSaltSync(10)
 const Register:React.FC = ()=>{
     const [email,setEmail] = useState<string>("")
     const [name,setName] = useState<string>("")
     const [surname,setSurname] = useState<string>("")
     const [username,setUsername] = useState<string>("")
-    const [birthDate,setBirthDate] = useState<Date>()
+    const [birthDate,setBirthDate] = useState<Date>(new Date())
     const [s,setS] = useState<string>("")
     const [cs,setCs] = useState<string>("")
     const [recaptchaValue,setRecaptchaValue] = useState<string|null>(null)
@@ -71,21 +72,18 @@ const Register:React.FC = ()=>{
                 console.log(name,surname,s===cs)
                 const emailRegex = /\S+@\S+\.\S+/;
                 if(emailRegex.test(email)&&s == cs){
-                    let response = $.ajax("/user/p/new/user",{
-                        method:"POST",
-                        data:{
+                    let response = await fetchPost("/user/p/new/user","POST",{
                             // _id,
-                            name:name,
-                            surname:surname,
-                            email:email,
-                            username:username,
-                            birthDate:birthDate?.toISOString(),
-                            password:hashedPassword,
-                            recaptchaToken:recaptchaValue,
-                            salt
-                        }
+                        name:name,
+                        surname:surname,
+                        email:email,
+                        username:username,
+                        birthDate:birthDate?.toISOString(),
+                        password:hashedPassword,
+                        recaptchaToken:recaptchaValue,
+                        salt
                     })
-                    if(response.status === 200){
+                    if(response.ok){
                         window.location.href = '/login'
                     }
                 }

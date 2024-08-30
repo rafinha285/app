@@ -5,20 +5,23 @@ import { Box, Rating } from "@mui/material"
 import { getLabelText, tupleToSeason } from "../functions/animeFunctions"
 import AnimeStar from "./AnimeStart"
 import GlobalContext from "../GlobalContext"
-import { DateToStringInput, DateToStringLocal } from "../features/main"
+import { DateToStringInput, DateToStringLocal, fetchPost, fetchUser } from "../features/main"
 import axios from "axios"
 import AnimeListSeason from "../assets/AnimeList/AnimeSeason"
+import { Episode } from "../types/episodeModel"
 
 interface props{
     onClose:()=>void
-    ani:AnimeUser
+    ani:AnimeUser,
+    // seasons:Season[],
+    // episodes:Episode[]
 }
 const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     const [ratingHover,setRatingHover] = useState(-1)
     const [ratingValue,setRatingValue] = useState<number>(ani.rate)
     const [startDate,setStartDate] = useState<Date|undefined>(ani.start_date)
     const [endDate,setEndDate] = useState<Date|undefined>(ani.finish_date)
-    const [state,setState] = useState<userAnimeState>(ani.status)
+    const [status,setStatus] = useState<userAnimeState>(ani.status)
     // const [timesWatched,setTimesWatched] = useState<number|undefined>(ani.times_watched)
     const [season,setSeason] = useState<Season[]>()
     const [seasonsList,setSeeasonsList] = useState<SeasonList[]>()
@@ -30,7 +33,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     enum changeEnum{
         startDate,
         endDate,
-        state,
+        status,
         timesWatched,
         priority,
         watchedEpisodes,
@@ -44,8 +47,8 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
             case changeEnum.endDate:
                 setEndDate(new Date(e.target.value))
                 break
-            case changeEnum.state:
-                setState(e.target.value as userAnimeState)
+            case changeEnum.status:
+                setStatus(e.target.value as userAnimeState)
                 break
             case changeEnum.priority:
                 setPriority(e.target.value as priorityValue)
@@ -54,18 +57,18 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     }
     useEffect(()=>{
         const handleGetSeasons = async()=>{
-            await fetch(`/api/g/seasons/${ani.anime_id}`)
+            await fetch(`/ani/g/seasons/${ani.anime_id}`)
                 .then((response)=>response.json())
                 .then((data:any)=>{
-                    console.log(tupleToSeason(data))
-                    setSeason(tupleToSeason(data))
-                })
-            await fetch(`/api/user/animelist/season/${ani.anime_id}`)
-                .then((response)=>response.json())
-                .then((data)=> {
                     console.log(data)
-                    setSeeasonsList(data)
+                    setSeason(data)
                 })
+            // await fetch(`/api/user/animelist/season/${ani.anime_id}`)
+            //     .then((response)=>response.json())
+            //     .then((data)=> {
+            //         console.log(data)
+            //         setSeeasonsList(data)
+            //     })
         }
         handleGetSeasons()
         // var arr:SeasonList[] = []
@@ -81,20 +84,16 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     },[])
     const handleUpdateList = async() =>{
         let body = {
-            id:ani.id,
-            // watched_episodes:watchedEpisodes,
+            anime_id:ani.anime_id,
             start_date:startDate,
             finish_date:endDate,
             rate:ratingValue,
-            state,
+            status,
             priority,
-            seasons:seasonsList!
-            // times_watched:timesWatched,
-            // rewatched_episodes:rewatchedEpisodes
         }
-        await axios.patch('/api/user/animelist/update',body)
-        .then((res)=>{
-            alert(res.data.message)
+        await fetchUser('/user/p/update',"POST",body)
+        .then(async (res)=>{
+            alert((await res.json()).message)
             onClose()
         })
     }
@@ -103,7 +102,10 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
         currentSeason.total_episodes = parseInt(e.target.value)
     }
     const handleDeleteList = async()=>{
-
+        let res = await fetchUser(`/user/animelist/delete/${ani.anime_id}`,'DELETE').then(r=>r.json())
+        alert(res.message);
+        onClose()
+        window.location.reload()
     }
     return(
         <div className="edit-list-content">
@@ -116,7 +118,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                 <p>Editar Anime: {ani.name}</p>
                 <div className="status">
                     <p>Status: </p>
-                    <select value={state} onChange={(e)=>{handleChange(e,changeEnum.state)}}>{Object.values(userAnimeState).map((v,i)=>(
+                    <select value={status} onChange={(e)=>{handleChange(e,changeEnum.status)}}>{Object.values(userAnimeState).map((v,i)=>(
                         <option value={v} key={i}>{v}</option>
                     ))}</select>
                 </div>

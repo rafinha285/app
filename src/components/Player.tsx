@@ -80,8 +80,9 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         }
     }
     const getResolutions = (epReso:string[]):PlyrSource=>{
-        const resolutions = ['1080p', '720p', '480p'];
-        const baseUrl = `${cdnUrl}/ep/${ani.id}/${seasonId}/${ep.id}`
+        // const resolutions = ['1080p', '720p', '480p'];
+        // const baseUrl = `${cdnUrl}/ep/${ani.id}/${seasonId}/${ep.id}`
+        let resolutions:quality[] = epReso.map(v=>`${v.split("x")[1]}p`) as quality[]
         const baseVideoUrl = `${cdnUrl}/stream/${ani.id}/${seasonId}/${ep.id}`
         console.log(ep.subtitlestracks)
         const captionPlyrTracks = createCaptionsTracks(ep.subtitlestracks!)
@@ -94,8 +95,8 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         }
         console.log(d)
 
-        var epResoo = `${epReso[0].split("x")[1]}p`
-        switch(epResoo){
+        // var epResoo = `${epReso[0].split("x")[1]}p`
+        switch(resolutions[0]){
             case quality.FULLHD:
                 console.log("FULLHD")
                 d.sources = resolutions.map((reso,index)=>({
@@ -111,7 +112,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                     src: `${baseVideoUrl}/${reso.replace("p","")}`,
                     type: 'video/mp4',
                     label: reso,
-                    size: index === 0 ? 1080 : 720,
+                    size: index === 0 ? 720 : 480,
                   }))
                 break
             case quality.SD:
@@ -190,17 +191,8 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         intr.after(skEButton);
 
         console.log(seasonEp,ep.epindex,ep.epindex !=  Math.min(...seasonEp.map((v)=>v.epindex)))
-        // postLog(ani,true,ep.id,plyr.currentTime)
         function handleTimeUpdate() {
             const sec = plyr.currentTime;
-            // console.log(`sec >= opIni && sec <= opFim:${sec >= opIni && sec <= opFim},\n
-            //     sec: ${sec},\n
-            //     opIni: ${opIni},\n
-            //     sec >= opIni: ${sec >= opIni},\n
-            //     opFim: ${opFim},\n 
-            //     sec <= opFim: ${sec <= opFim}
-            // `)
-            // console.log(ep.epindex != Math.min(...seasonEp.map((v)=>v.index)),Math.min(...seasonEp.map((v)=>v.index)),ep.epindex)
             if (sec >= opIni && sec <= opFim && ep.epindex != Math.min(...seasonEp.map((v)=>v.epindex))) {
                 // console.log("skip-active ep")
                 skIButton.addClass("skip-active");
@@ -252,7 +244,22 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         //         }
         //     }
         // }
+        const handlePostSec = async()=>{
+            if(context.isLogged){
+
+            }else{
+                // indexedDB.open
+            }
+        }
+        const handleGetSec =async()=>{
+            if(context.isLogged){
+
+            }else{
+                
+            }
+        }
         // plyr.on()
+        plyr.elements.container?.addEventListener('pause',handlePostSec)
         plyr.elements.container?.addEventListener("timeupdate",handleTimeUpdate)
         plyr.elements.container?.addEventListener("seeking",handleTimeUpdate)
         // plyr.elements.container?.addEventListener('progress',handleLoadedSeconds)

@@ -11,6 +11,7 @@ import {
 // import { CookieSetOption } from "react-cookie";
 // import { useCookies } from "react-cookie";
 import axios from 'axios';
+import { fetchPost } from "../features/main";
 // import { genSalt, hashSync } from "bcryptjs";
 
 const cookiess = new Cookies();
@@ -33,7 +34,7 @@ const Login:React.FC = ()=>{
                 // const publicKey = await fetchPublicKey();  
                 const userIndentifier = getDeviceIndentifier()
                 // const encryptedData = encryptDataWithPublicKey(body)
-                const response = await axios.post("/user/p/login",{
+                const response = await fetchPost(`/user/p/login`,"POST",{
                     email,
                     password,
                     recaptchaToken:recaptchaValue,
@@ -43,8 +44,8 @@ const Login:React.FC = ()=>{
                     WebGLRenderer:userIndentifier.WegGl?.renderer
                 })
 
-                if(response.status === 200){
-                    const token = response.data.token
+                if(response.ok){
+                    const token = (await response.json()).token
                     // console.log(token,response,response.headers["set-cookie"])
                     cookiess.set("token",token,{path:"/",maxAge:86400, secure: true})
                     // setCookie('token',token,{path:"/",maxAge:84600})

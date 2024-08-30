@@ -5,7 +5,7 @@ import "../css/base.css"
 import "../css/anime.css"
 import "../css/anime_.css"
 import "../css/loading.css"
-import { checkIsLogged, getEpTime, getMonthName} from "../features/main";
+import { checkIsLogged, fetchUser, getEpTime, getMonthName} from "../features/main";
 import LikeButton from "../assets/LikeButton"
 import AniGeneros from "../assets/Animegenre";
 import { Link, useParams } from "react-router-dom";
@@ -55,11 +55,11 @@ const AnimePage:React.FC = ()=>{
     const [studios,setStudios] = useState<Producer[]>([])
 
     let checkList=async()=>{
-        await fetch(`/user/animelist/checklist/${ani?.id}`)
+        await fetchUser(`/user/animelist/checklist/${ani?.id}`,"GET")
             .then(response=>response.json())
             .then(async data=>{
                 setIsInList(data.success)
-                await fetch(`/user/animelist/${ani?.id}`)
+                await fetchUser(`/user/animelist/${ani?.id}`,"GET")
                     .then(response => response.json())
                     .then((data:{success:boolean,response:AnimeUser})=>{
                         setUserAni(data.response)
@@ -144,7 +144,7 @@ const AnimePage:React.FC = ()=>{
         checkIsLogged(context.isLogged)
         const token = sessionStorage.getItem("token")
         console.log(token)
-        await fetch(`/user/animelist/insert/${ani?.id!}`,{method:"POST","headers":{'Authorization':`Bearer ${token}`}})
+        await fetchUser(`/user/animelist/insert/${ani?.id!}`,'POST')
             .then(res=>res.json())
             .then((data)=>{
                 console.log(data)

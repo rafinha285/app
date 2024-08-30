@@ -1,5 +1,6 @@
 import React from "react";
 import { Anime } from "../../types/animeModel";
+import { fetchUser } from "../../features/main";
 interface props{
     setRatingValue:React.Dispatch<React.SetStateAction<string|undefined>>,
     ratingValue:string|undefined,
@@ -12,16 +13,9 @@ const Rating:React.FC<props> = ({setRatingValue,ratingValue,ani})=>{
         }
     }
     const handleRatingSubmit = async()=>{
-        let isInAnimeList = await fetch(`/user/animelist/checklist/${ani.id}`).then(r=>r.json()).then((r:{success:boolean})=>r.success)
+        let isInAnimeList = await fetchUser(`/user/animelist/checklist/${ani.id}`,'GET').then(r=>r.json()).then((r:{success:boolean})=>r.success)
         if(isInAnimeList){
-            //TODO fazer uma função para pegar ja com o fetch com os headers certos
-            await fetch(`/user/animelist/rating/${ani.id}`,{
-                method:"POST",
-                headers: {'Content-Type': 'application/json'},
-                body:JSON.stringify({
-                    rating:parseInt(ratingValue!)
-                })
-            })
+            fetchUser(`/user/animelist/rating/${ani.id}`,"POST",{rating:parseInt(ratingValue!)})
         }
     }
     return(

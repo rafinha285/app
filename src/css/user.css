@@ -61,11 +61,12 @@
 }
 /* anime list */
 .anime-list{
-    display:flex;
-    justify-content:center;
+    /* display:flex;
+    justify-content:center; */
+    padding: var(--user-padding);
 }
 .anime-list .content{
-    width:var(--anime-width);
+    /* width:var(--anime-width); */
     background-color:rgb(103 0 145);
     padding:5em;
     border-radius:10px;
@@ -127,5 +128,5 @@
     --user-width:15em;
     --anime-width:80%;
     --user-height:15em;
-    --user-padding:10em;
+    --user-padding:5em;
 }

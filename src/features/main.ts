@@ -2,6 +2,7 @@ import { useContext } from "react"
 import { Anime } from "../types/animeModel"
 import { Episode, languages } from "../types/episodeModel"
 import GlobalContext, { GlobalContextType } from "../GlobalContext"
+import { getDeviceIndentifier } from "../functions/userFunctions"
 
 export function getEpTime(ee:number):string{
     var e = Math.round(ee)
@@ -129,7 +130,26 @@ export function checkIsLogged(isLogged:boolean){
         window.location.href = '/login/'
     }
 }
-
+export async function fetchPost(path:string,method:"POST"|"DELETE"|"PATCH" = "POST",body?:any){
+    return await fetch(path,{
+        method:method,
+        headers: {'Content-Type': 'application/json'},
+        body:JSON.stringify(body)
+    })
+}
+export async function fetchUser(path:string,method:"POST"|"DELETE"|"PATCH"|"GET",body?:any){
+    let indentifier = getDeviceIndentifier()
+    return await fetch(path,{
+        method,
+        headers:{
+            'Content-Type':"application/json",
+            'timeZone':indentifier.timeZone,
+            'webGlRenderer':indentifier.WegGl?.renderer,
+            'webGlVendor':indentifier.WegGl?.vendor,
+        },
+        body:JSON.stringify(body)
+    })
+}
 Date.prototype.getDayOfWeekName = function(){
     // const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
     let daysOfWeek = Date.prototype.daysOfWeek()

@@ -28,8 +28,8 @@ const Watch:React.FC = () =>{
     const [ani,setAni]= useState<Anime>()
     // const [epIndex,setEpIndex] = useState<number>(1)
     const [eps,setEps] = useState<Episode[]>()
-    const [nextUrl,setNextUrl] = useState<string>()
-    const [prevUrl,setPrevUrl] = useState<string>()
+    // const [nextUrl,setNextUrl] = useState<string>()
+    // const [prevUrl,setPrevUrl] = useState<string>()
     const [epsMap,setEpsMap] = useState<Map<number, Episode>>(new Map())
     const fetchEps = useCallback(async(ani:Anime,ep:Episode) =>{
         var res = await fetch(`/ep/g/season/${ani?.id}/${ep?.season_id}`)
@@ -89,8 +89,8 @@ const Watch:React.FC = () =>{
                         // $("#after").attr("href",`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[ep?.index!+1]._id!}`)
                         // if()
 
-                        setNextUrl(nextEpUrl(eps,ani.id,ep))
-                        setPrevUrl(prevEpUrl(eps,ani.id,ep))
+                        // setNextUrl(nextEpUrl(eps,ani.id,ep))
+                        // setPrevUrl(prevEpUrl(eps,ani.id,ep))
                         console.log(`/Anime/${ani.id}/watch/${ep?.season_id}/${eps.find(v=>v.epindex === (ep.epindex+1))!.id}`)
                     }
                 })

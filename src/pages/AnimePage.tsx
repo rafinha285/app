@@ -24,10 +24,11 @@ import { useCookies } from "react-cookie";
 import { Episode } from "../types/episodeModel";
 import GlobalContext from "../GlobalContext";
 import Popup from "reactjs-popup"
-import AnimeEditList from "../components/AnimeEditList";
+import AnimeEditList from "../components/User/AnimeEditList";
 import { ratingLabel } from "../types/types";
 import {cdnUrl} from "../const";
 import Rating from "../components/Anime/Rating";
+import Comements from "../components/Comments";
 
 
 interface seasonDate{
@@ -233,7 +234,7 @@ const AnimePage:React.FC = ()=>{
                         </div>
                         {
                             isInList?(
-                                <Rating setRatingValue={setRatingValue} ratingValue={ratingValue} ani={ani}/>
+                                <Rating setRatingValue={setRatingValue} ratingValue={ratingValue} aniId={ani.id}/>
                             ):(<></>)
                         }
                             {/* <Rating
@@ -296,6 +297,7 @@ const AnimePage:React.FC = ()=>{
                             <PersoCompo perso={v} aniId={ani.id} key={i}></PersoCompo>
                         ))}</div>
                     </div>
+                    <Comements indentifier={ani.id} type={'Anime'} name={ani.name} />
                 </div>
                 ):err?(
                     <div className="main-loading">

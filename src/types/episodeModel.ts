@@ -1,4 +1,3 @@
-import nano from "nano";
 import { quality } from "./types";
 export enum languages{
     Japanese = 'ja',
@@ -56,7 +55,6 @@ export interface EpisodeUser{
     duration:number;
     ep_index:number;
     name:string;
-    season_name:string;
 }
 export interface EpisodeSim{
     id:string

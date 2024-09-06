@@ -5,7 +5,7 @@ import { tupleToProducer } from "../../functions/animeFunctions";
 import Popup from "reactjs-popup";
 import { cdnUrl } from "../../const";
 import { Link } from "react-router-dom";
-import AnimeEditList from "../AnimeEditList";
+import AnimeEditList from "./AnimeEditList";
 
 
 interface props{
@@ -25,13 +25,13 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
     }
     useEffect(()=>{
         const handleGetProps = async()=>{
-            const token = sessionStorage.getItem("token")
-            const headers:HeadersInit = {
-                "Authorization":`Bearer ${token}`
-            }
+            // const token = sessionStorage.getItem("token")
+            // const headers:HeadersInit = {
+            //     "Authorization":`Bearer ${token}`
+            // }
             const getAnime:Anime = await fetch(`/ani/g/${ani.anime_id}`).then(res=>res.json())
             const getAnimeProps = await fetch(`/ani/g/prods/${ani.anime_id}`).then(async(response)=>await response.json())
-            setAnime(getAnime)    
+            setAnime(getAnime)
             setAniProp(getAnimeProps)
 
         }

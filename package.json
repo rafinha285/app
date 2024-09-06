@@ -21,6 +21,7 @@
     "constants-browserify": "^1.0.0",
     "crypto": "^1.0.1",
     "crypto-browserify": "^3.12.0",
+    "disqus-react": "^1.1.5",
     "jquery": "^3.7.1",
     "jsencrypt": "^3.3.2",
     "mongoose": "^7.5.3",
@@ -48,7 +49,9 @@
     "typescript": "^4.9.5",
     "universal-cookie": "^7.1.4",
     "uuid": "^9.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "@react-buddy/ide-toolbox": "^2.4.0",
+    "@react-buddy/palette-mui": "^5.0.1"
   },
   "scripts": {
     "start": "react-app-rewired start",

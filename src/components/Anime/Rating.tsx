@@ -4,18 +4,18 @@ import { fetchUser } from "../../features/main";
 interface props{
     setRatingValue:React.Dispatch<React.SetStateAction<string|undefined>>,
     ratingValue:string|undefined,
-    ani:Anime
+    aniId:string
 }
-const Rating:React.FC<props> = ({setRatingValue,ratingValue,ani})=>{
+const Rating:React.FC<props> = ({setRatingValue,ratingValue,aniId})=>{
     const handleRatingChange = (e:React.ChangeEvent<HTMLSelectElement>)=>{
         if(e.target.value !== 'none'){
             setRatingValue(e.target.value)
         }
     }
     const handleRatingSubmit = async()=>{
-        let isInAnimeList = await fetchUser(`/user/animelist/checklist/${ani.id}`,'GET').then(r=>r.json()).then((r:{success:boolean})=>r.success)
+        let isInAnimeList = await fetchUser(`/user/animelist/checklist/${aniId}`,'GET').then(r=>r.json()).then((r:{success:boolean})=>r.success)
         if(isInAnimeList){
-            fetchUser(`/user/animelist/rating/${ani.id}`,"POST",{rating:parseInt(ratingValue!)})
+            fetchUser(`/user/animelist/rating/${aniId}`,"POST",{rating:parseInt(ratingValue!)})
         }
     }
     return(

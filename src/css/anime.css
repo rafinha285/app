@@ -256,3 +256,6 @@ h1, h2{
 .update-button:hover{
     background: var(--dark_purple);
 }
+.comments{
+    margin: 0 5em;
+}

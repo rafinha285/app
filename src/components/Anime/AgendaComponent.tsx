@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { AnimeAgenda } from "../types/animeModel";
-import { trim } from "../features/main";
-import {cdnUrl} from "../const";
+import { AnimeAgenda } from "../../types/animeModel";
+import { trim } from "../../features/main";
+import {cdnUrl} from "../../const";
 
 interface props{
     ani:AnimeAgenda

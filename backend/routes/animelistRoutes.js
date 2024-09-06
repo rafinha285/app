@@ -1,4 +1,19 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -36,10 +51,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AnimelistEmitter = void 0;
 var express = require("express");
 var Postgre_1 = require("../database/Postgre");
 var handle_1 = require("../assets/handle");
 var checkToken_1 = require("../token/checkToken");
+var events_1 = require("events");
 var animeListRouter = express.Router();
 animeListRouter.post("/rating/:id", checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var id, rating, err_1;
@@ -67,32 +84,73 @@ animeListRouter.post("/rating/:id", checkToken_1.checkToken, function (req, res)
         }
     });
 }); });
-animeListRouter.get('/season/eps/:aniId/:seaId', checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, aniid, seaId, err_2;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
+// animeListRouter.get('/season/eps/:aniId/:seaId',checkToken,async(req:express.Request,res:express.Response)=>{
+//     try{
+//         const {aniid,seaId} = req.params;
+//         await pgClient.query(`
+//             SELECT * FROM users.user_episode_list
+//             WHERE user_id =
+//             `)
+//         }catch(err){
+//         }
+//     })
+var AnimelistEmitterClass = /** @class */ (function (_super) {
+    __extends(AnimelistEmitterClass, _super);
+    function AnimelistEmitterClass() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    AnimelistEmitterClass.prototype.on = function (event, listener) {
+        // Chamando o método 'on' da classe EventEmitter
+        _super.prototype.on.call(this, event, listener);
+        return this;
+    };
+    // Emitindo o evento 'updateNumbers' com argumento
+    AnimelistEmitterClass.prototype.emitUpdateNumbers = function (userId, err) {
+        this.emit('updateNumbers', err);
+    };
+    return AnimelistEmitterClass;
+}(events_1.EventEmitter));
+//!Rota para deletar anime da lista
+//não era pra ta aq ma n tenho outro lugar pra bota
+exports.AnimelistEmitter = new AnimelistEmitterClass();
+animeListRouter.delete("/delete/:id", checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
-                _a = req.params, aniid = _a.aniid, seaId = _a.seaId;
-                return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT * FROM users.user_episode_list\n            WHERE user_id = \n            ")];
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, req.db.query("\n            DELETE FROM users.user_anime_list WHERE user_id = $1 AND anime_id = $2;\n        ", [req.user._id, req.params.id])];
             case 1:
-                _b.sent();
+                _a.sent();
+                exports.AnimelistEmitter.emitUpdateNumbers(req.user._id, null);
+                res.json({ success: true, message: "Anime deletado da lista do ".concat(req.user.username) });
                 return [3 /*break*/, 3];
             case 2:
-                err_2 = _b.sent();
+                err_2 = _a.sent();
+                (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_2);
                 return [3 /*break*/, 3];
             case 3: return [2 /*return*/];
         }
     });
 }); });
 animeListRouter.patch("/update", checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, id, watched_episodes, start_date, finish_date, rate, state, priority, times_watched, rewatched_episodes, err_3;
+    var _a, id, watched_episodes, start_date, finish_date, state, priority, times_watched, rewatched_episodes, err_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
-                _a = req.body, id = _a.id, watched_episodes = _a.watched_episodes, start_date = _a.start_date, finish_date = _a.finish_date, rate = _a.rate, state = _a.state, priority = _a.priority, times_watched = _a.times_watched, rewatched_episodes = _a.rewatched_episodes;
-                return [4 /*yield*/, Postgre_1.pgClient.query("\n            UPDATE users.user_anime_list\n                SET \n                watched_episodes =$1\n                start_date = $2,\n                finish_date = $3,\n                state = $4,\n                priority = $5,\n                times_watched = $6,\n                rewatched_episodes = $7,\n                rate = $9\n            WHERE id = $8\n        ", [
+                _a = req.body, id = _a.id, watched_episodes = _a.watched_episodes, start_date = _a.start_date, finish_date = _a.finish_date, state = _a.state, priority = _a.priority, times_watched = _a.times_watched, rewatched_episodes = _a.rewatched_episodes;
+                handle_1.Console.log([
+                    watched_episodes,
+                    start_date,
+                    finish_date,
+                    state,
+                    priority,
+                    times_watched,
+                    rewatched_episodes,
+                    id,
+                ]);
+                return [4 /*yield*/, Postgre_1.pgClient.query("\n            UPDATE users.user_anime_list\n                SET \n                watched_episodes = $1,\n                start_date = $2,\n                finish_date = $3,\n                status = $4,\n                priority = $5,\n                times_watched = $6,\n                rewatched_episodes = $7\n            WHERE id = $8\n        ", [
                         watched_episodes,
                         start_date,
                         finish_date,
@@ -101,10 +159,12 @@ animeListRouter.patch("/update", checkToken_1.checkToken, function (req, res) { 
                         times_watched,
                         rewatched_episodes,
                         id,
-                        rate
-                    ])];
+                    ]).then(function (r) { return handle_1.Console.log(r); })
+                    // AnimelistEmitter.emitUpdateNumbers((req.user as JwtUser)._id,null)
+                ];
             case 1:
                 _b.sent();
+                // AnimelistEmitter.emitUpdateNumbers((req.user as JwtUser)._id,null)
                 res.json({ success: true, message: "Atualizado com sucesso" });
                 return [3 /*break*/, 3];
             case 2:
@@ -149,6 +209,8 @@ animeListRouter.post('/insert/:id', checkToken_1.checkToken, function (req, res)
                 return [4 /*yield*/, Postgre_1.pgClient.query("\n            INSERT INTO users.user_anime_list(\n                user_id, anime_id, status, name, start_date, priority)\n                VALUES ($1, $2, $3, $4, $5, $6);\n        ", [user._id, req.params.id, 'watching', ani.name, new Date(), "LOW"])];
             case 2:
                 _a.sent();
+                // console.log('updateNumbers',user)
+                exports.AnimelistEmitter.emitUpdateNumbers(req.user._id, null);
                 res.json({ success: true, message: "Anime adicionado a lista ".concat(user._id) });
                 return [3 /*break*/, 4];
             case 3:

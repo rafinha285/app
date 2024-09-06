@@ -1,8 +1,8 @@
 import React, { useEffect, useState} from "react";
-import AnimePoster from "../assets/AnimePosters"
-import {Anime} from "../types/animeModel"
-import "../css/index.css"
-import "../css/base.css"
+import AnimePoster from "../../assets/AnimePosters.tsx"
+import {Anime} from "../../types/animeModel.ts"
+import "../../css/index.css"
+import "../../css/base.css"
 import { Link } from "react-router-dom";
 
 

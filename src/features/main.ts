@@ -137,7 +137,7 @@ export async function fetchPost(path:string,method:"POST"|"DELETE"|"PATCH" = "PO
         body:JSON.stringify(body)
     })
 }
-export async function fetchUser(path:string,method:"POST"|"DELETE"|"PATCH"|"GET",body?:any){
+export async function fetchUser(path:string,method:"POST"|"DELETE"|"PATCH"|"GET" = "POST",body?:any){
     let indentifier = getDeviceIndentifier()
     return await fetch(path,{
         method,
@@ -149,6 +149,13 @@ export async function fetchUser(path:string,method:"POST"|"DELETE"|"PATCH"|"GET"
         },
         body:JSON.stringify(body)
     })
+}
+export function isToday(date:Date) {
+    const today = new Date();
+
+    return date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear();
 }
 Date.prototype.getDayOfWeekName = function(){
     // const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];

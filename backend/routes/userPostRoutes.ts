@@ -8,7 +8,6 @@ import {v4 as uuidv4} from "uuid"
 import * as fs from 'fs'
 import * as path from 'path'
 // import * as crypto from 'crypto'
-import * as NodeRSA from 'node-rsa'
 import insertToken from "../token/insertToken";
 import deleteToken from "../token/deleteToken";
 
@@ -19,9 +18,9 @@ userPostRouter.post("/login",async(req:e.Request,res:e.Response)=>{
         console.log(typeof ErrorType)
         // console.log(decryptData(req.body.encryptedData))
         const {email,password,recaptchaToken,userAgent,timeZone,WebGLVendor,WebGLRenderer} = req.body;
-        if(!recaptchaToken){
-            throw ErrorType.invalidReCaptcha
-        }
+        // if(!recaptchaToken){
+        //     throw ErrorType.invalidReCaptcha
+        // }
         const response = await fetch('https://www.google.com/recaptcha/api/siteverify',{
             method:"POST",
             headers:{
@@ -30,16 +29,16 @@ userPostRouter.post("/login",async(req:e.Request,res:e.Response)=>{
             body: `secret=${reCaptchaSecretKey}&response=${recaptchaToken}`
         })
         const data = await response.json()
-        if(data.success){
+        // if(data.success){
             let result = await pgClient.query(`
-        WITH hashed_password AS (
-            SELECT users.crypt($1, salt) AS hash
-            FROM users.users
-            WHERE email = $2
-        )
-        SELECT * FROM users.users
-        WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
-        `,[password,email])
+                WITH hashed_password AS (
+                    SELECT users.crypt($1, salt) AS hash
+                    FROM users.users
+                    WHERE email = $2
+                )
+                SELECT * FROM users.users
+                WHERE email = $2 AND password = (SELECT hash FROM hashed_password)
+                `,[password,email])
             // Console.log(result.rows)
             if(result.rows.length < 1){
                 throw ErrorType.invalidPassOrEmail
@@ -56,9 +55,9 @@ userPostRouter.post("/login",async(req:e.Request,res:e.Response)=>{
             // const token = jwt.sign(tokenInfo,await importPrivateKey(),{expiresIn:"1d"})
             res.cookie('token',token,{httpOnly:true,secure:true})
             res.send({success:true,message:"Login Successful",token})
-        }else{
-            throw ErrorType.invalidReCaptcha
-        }
+        // }else{
+        //     throw ErrorType.invalidReCaptcha
+        // }
     }catch(err){
         switch(err){
             case ErrorType.invalidReCaptcha:
@@ -97,14 +96,6 @@ userPostRouter.post('/app/login',async(req:e.Request,res:e.Response)=>{
         // Console.log(result.rows)
         if(result.rows.length < 1){
             throw ErrorType.invalidPassOrEmail
-        }
-        let tokenInfo ={
-            _id:result.rows[0]._id,
-            username:result.rows[0].username,
-            user_agent:userAgent,
-            time_zone:timeZone,
-            web_gl_vendor:WebGLVendor,
-            web_gl_renderer:WebGLRenderer,
         }
         // const token = jwt.sign(tokenInfo,secretKey,{expiresIn:"1d"})
         // res.cookie('token',token,{httpOnly:true,secure:true})
@@ -176,6 +167,16 @@ userPostRouter.post('/new/user',async(req,res)=>{
             const totalMangaPlanToRead:number = 0;
             const totalMangaOnHold = 0
             const totalMangaLiked:number = 0
+            Console.log([
+                _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
+                totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
+                totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,
+                totalAnimeLiked || [],  // Se totalAnimeLiked for nulo, usa um array vazio
+                totalMangaLiked || [],   // Se totalMangaLiked for nulo, usa um array vazio,
+                salt,
+                totalAnimeOnHold,
+                totalMangaOnHold
+            ])
             const result = await pgClient.query(
                 `INSERT INTO users.users 
                 (

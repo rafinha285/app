@@ -36,36 +36,128 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addAnimeToAnimeList = void 0;
-var Postgre_1 = require("../database/Postgre");
-function addAnimeToAnimeList(_a) {
-    var user_id = _a.user_id, anime_id = _a.anime_id, status = _a.status, start_date = _a.start_date, finish_date = _a.finish_date, rate = _a.rate, priority = _a.priority;
+exports.updateAnimelistNumbers = void 0;
+var Postgre_1 = require("../../backend/database/Postgre");
+var animelistRoutes_1 = require("../routes/animelistRoutes");
+// export class UserAnimeList implements AnimeUser{
+//     user_id: string;
+//     id: number;
+//     anime_id: string;
+//     name: string;
+//     start_date?: Date;
+//     finish_date?: Date;
+//     rate: number;
+//     status: userAnimeState;
+//     priority: priorityValue;
+//     last_ep: EpisodeUser[];
+//     constructor(
+//         user_id:string,
+//         id: number,
+//         anime_id: string,
+//         name: string,
+//         rate: number,
+//         status: userAnimeState,
+//         priority: priorityValue,
+//         last_ep: EpisodeUser[],
+//         start_date?: Date,
+//         finish_date?: Date
+//     ) {
+//         this.user_id = user_id;
+//         this.id = id;
+//         this.anime_id = anime_id;
+//         this.name = name;
+//         this.rate = rate;
+//         this.status = status;
+//         this.priority = priority;
+//         this.last_ep = last_ep;
+//         this.start_date = start_date;
+//         this.finish_date = finish_date;
+//     }
+//     async save():Promise<void> {
+//         let con = await pgClient.connect()
+//         try{
+//             await con.query(`INSERT INTO users.user_anime_list
+//                 (
+//                     user_id,
+//                     anime_id,
+//                     status,
+//                     name,
+//                     start_date,
+//                     finish_date,
+//                     rate,
+//                     priority,
+//                 ) VALUES (
+//                     $1
+//                     $2
+//                     $3
+//                     $4
+//                     $5
+//                     $6
+//                     $7
+//                     $8
+//                 )
+//             `,[
+//                 this.user_id,
+//                 this.anime_id,
+//                 this.status,
+//                 this.start_date,
+//                 this.finish_date,
+//                 this.rate,
+//                 this.priority,
+//             ])
+//         }catch(err){
+//             con.query("ROLLBACK")
+//             throw err
+//         }finally{
+//             con.release()
+//         }
+//     }
+// }
+animelistRoutes_1.AnimelistEmitter.on('updateNumbers', function (e) { return __awaiter(void 0, void 0, void 0, function () { return __generator(this, function (_a) {
+    switch (_a.label) {
+        case 0: return [4 /*yield*/, updateAnimelistNumbers(e)];
+        case 1: return [2 /*return*/, _a.sent()];
+    }
+}); }); });
+// AnimelistEmitter.on('insert',async(e)=>await updateAnimelistNumbers(e))
+function updateAnimelistNumbers(userId) {
     return __awaiter(this, void 0, void 0, function () {
-        var con, err_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4 /*yield*/, Postgre_1.animeClient.connect()];
+        var totalAnimeResult, watchingResult, completedResult, droppedResult, planToWatchResult, totalAnime, watching, completed, dropped, planToWatch, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 7, , 8]);
+                    return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT COUNT(*) as total \n            FROM users.user_anime_list \n            WHERE user_id = $1\n        ", [userId])];
                 case 1:
-                    con = _b.sent();
-                    _b.label = 2;
+                    totalAnimeResult = _a.sent();
+                    return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT COUNT(*) as watching \n            FROM users.user_anime_list \n            WHERE status = 'watching' AND user_id = $1\n        ", [userId])];
                 case 2:
-                    _b.trys.push([2, 4, 5, 6]);
-                    // animeClient
-                    return [4 /*yield*/, con.query("INSERT INTO users.user_anime_list\n            (\n                user_id,\n                anime_id,\n                status,\n                name,\n                start_date,\n                finish_date,\n                rate,\n                priority,\n            ) VALUES (\n                $1\n                $2\n                $3\n                $4\n                $5\n                $6\n                $7\n                $8\n            )\n        ", [user_id, anime_id, status, start_date, finish_date, rate, priority])];
+                    watchingResult = _a.sent();
+                    return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT COUNT(*) as completed \n            FROM users.user_anime_list \n            WHERE status = 'completed' AND user_id = $1\n        ", [userId])];
                 case 3:
-                    // animeClient
-                    _b.sent();
-                    return [3 /*break*/, 6];
+                    completedResult = _a.sent();
+                    return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT COUNT(*) as dropped \n            FROM users.user_anime_list \n            WHERE status = 'dropped' AND user_id = $1\n        ", [userId])];
                 case 4:
-                    err_1 = _b.sent();
-                    con.query("ROLLBACK");
-                    throw err_1;
+                    droppedResult = _a.sent();
+                    return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT COUNT(*) as plantowatch \n            FROM users.user_anime_list \n            WHERE status = 'plan_to_watch' AND user_id = $1\n        ", [userId])];
                 case 5:
-                    con.release();
-                    return [7 /*endfinally*/];
-                case 6: return [2 /*return*/];
+                    planToWatchResult = _a.sent();
+                    totalAnime = totalAnimeResult.rows[0].total;
+                    watching = watchingResult.rows[0].watching;
+                    completed = completedResult.rows[0].completed;
+                    dropped = droppedResult.rows[0].dropped;
+                    planToWatch = planToWatchResult.rows[0].plantowatch;
+                    console.log([totalAnime, watching, completed, dropped, planToWatch, userId]);
+                    return [4 /*yield*/, Postgre_1.pgClient.query("\n            UPDATE users.users\n            SET totalanime = $1, totalanimewatching = $2, totalanimecompleted = $3, totalanimedropped = $4, totalanimeplantowatch = $5\n            WHERE id = $6\n        ", [totalAnime, watching, completed, dropped, planToWatch, userId])];
+                case 6:
+                    _a.sent();
+                    return [3 /*break*/, 8];
+                case 7:
+                    err_1 = _a.sent();
+                    throw err_1;
+                case 8: return [2 /*return*/];
             }
         });
     });
 }
-exports.addAnimeToAnimeList = addAnimeToAnimeList;
+exports.updateAnimelistNumbers = updateAnimelistNumbers;

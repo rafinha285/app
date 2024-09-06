@@ -1,14 +1,8 @@
-import React, { useContext, useEffect, useState } from "react"
-import { Anime, AnimeUser, Season, SeasonList } from "../types/animeModel"
-import { priorityValue, userAnimeState } from "../types/types"
-import { Box, Rating } from "@mui/material"
-import { getLabelText, tupleToSeason } from "../functions/animeFunctions"
-import AnimeStar from "./AnimeStart"
-import GlobalContext from "../GlobalContext"
-import { DateToStringInput, DateToStringLocal, fetchPost, fetchUser } from "../features/main"
-import axios from "axios"
-import AnimeListSeason from "../assets/AnimeList/AnimeSeason"
-import { Episode } from "../types/episodeModel"
+import React, {useContext, useEffect, useState} from "react"
+import {AnimeUser} from "../../types/animeModel"
+import {priorityValue, userAnimeState} from "../../types/types"
+import GlobalContext from "../../GlobalContext"
+import {DateToStringInput, fetchUser, isToday} from "../../features/main"
 
 interface props{
     onClose:()=>void
@@ -17,17 +11,11 @@ interface props{
     // episodes:Episode[]
 }
 const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
-    const [ratingHover,setRatingHover] = useState(-1)
-    const [ratingValue,setRatingValue] = useState<number>(ani.rate)
+    const [ratingValue,setRatingValue] = useState<string>(ani?.rate.toString())
     const [startDate,setStartDate] = useState<Date|undefined>(ani.start_date)
     const [endDate,setEndDate] = useState<Date|undefined>(ani.finish_date)
     const [status,setStatus] = useState<userAnimeState>(ani.status)
-    // const [timesWatched,setTimesWatched] = useState<number|undefined>(ani.times_watched)
-    const [season,setSeason] = useState<Season[]>()
-    const [seasonsList,setSeeasonsList] = useState<SeasonList[]>()
     const [priority,setPriority] = useState<priorityValue>(ani.priority)
-    // const [watchedEpisodes,setWatchedEpisodes] = useState<number>(ani.watched_episodes)
-    // const [rewatchedEpisodes,setRewatchedEpisodes] = useState<number|undefined>(ani.watched_episodes)
     const context = useContext(GlobalContext)!
     console.log(ani)
     enum changeEnum{
@@ -48,6 +36,9 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                 setEndDate(new Date(e.target.value))
                 break
             case changeEnum.status:
+                if((e.target.value as userAnimeState) === userAnimeState.completed && endDate === undefined){
+                    setEndDate(new Date())
+                }
                 setStatus(e.target.value as userAnimeState)
                 break
             case changeEnum.priority:
@@ -57,12 +48,12 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     }
     useEffect(()=>{
         const handleGetSeasons = async()=>{
-            await fetch(`/ani/g/seasons/${ani.anime_id}`)
-                .then((response)=>response.json())
-                .then((data:any)=>{
-                    console.log(data)
-                    setSeason(data)
-                })
+            // await fetch(`/ani/g/seasons/${ani.anime_id}`)
+            //     .then((response)=>response.json())
+            //     .then((data:any)=>{
+            //         console.log(data)
+            //         // setSeason(data)
+            //     })
             // await fetch(`/api/user/animelist/season/${ani.anime_id}`)
             //     .then((response)=>response.json())
             //     .then((data)=> {
@@ -85,66 +76,78 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     const handleUpdateList = async() =>{
         let body = {
             anime_id:ani.anime_id,
-            start_date:startDate,
-            finish_date:endDate,
-            rate:ratingValue,
+            start_date:startDate?isToday(new Date(startDate))?new Date():startDate:null,
+            finish_date:endDate?isToday(new Date(endDate))?new Date():endDate:null,
+            // rate:ratingValue,
             status,
             priority,
         }
-        await fetchUser('/user/p/update',"POST",body)
+        if(!(ratingValue === undefined)){
+            await fetchUser(`/user/animelist/rating/${ani.anime_id}`,'POST',{rating:ratingValue})
+        }
+        await fetchUser('/user/animelist/update/','PATCH',body)
         .then(async (res)=>{
             alert((await res.json()).message)
             onClose()
         })
     }
-    const handleSeasonChange = (e:React.ChangeEvent<HTMLInputElement>,season:string) =>{
-        var currentSeason = seasonsList?.find(v=>v.season_id===season)!;
-        currentSeason.total_episodes = parseInt(e.target.value)
-    }
+    // const handleSeasonChange = (e:React.ChangeEvent<HTMLInputElement>,season:string) =>{
+    //     var currentSeason = seasonsList?.find(v=>v.season_id===season)!;
+    //     currentSeason.total_episodes = parseInt(e.target.value)
+    // }
     const handleDeleteList = async()=>{
         let res = await fetchUser(`/user/animelist/delete/${ani.anime_id}`,'DELETE').then(r=>r.json())
         alert(res.message);
         onClose()
         window.location.reload()
     }
+    const handleRatingChange = (e:React.ChangeEvent<HTMLSelectElement>)=>{
+        if(e.target.value !== 'none'){
+            setRatingValue(e.target.value)
+        }
+    }
     return(
         <div className="edit-list-content">
             <button onClick={onClose} className="close-popup"><i className="fa-solid fa-x"></i></button>
             <div className="edit-list">
-                <div style={{display:"flex"}}>
+                <div style={{display: "flex"}}>
                     <button className="update-button" onClick={handleUpdateList}>Update Anime</button>
                     <button className="update-button" onClick={handleDeleteList}>Delete Anime</button>
                 </div>
                 <p>Editar Anime: {ani.name}</p>
                 <div className="status">
                     <p>Status: </p>
-                    <select value={status} onChange={(e)=>{handleChange(e,changeEnum.status)}}>{Object.values(userAnimeState).map((v,i)=>(
+                    <select value={status} onChange={(e) => {
+                        handleChange(e, changeEnum.status)
+                    }}>{Object.values(userAnimeState).map((v, i) => (
                         <option value={v} key={i}>{v}</option>
                     ))}</select>
                 </div>
-                {/*<div>*/}
-                {/*    {season?.sort((a,b)=>a.index - b.index).map((v)=>{*/}
-                {/*        let currentSea = seasonsList?.find(vS=>vS.season_id===v.id)!*/}
-                {/*        console.log(seasonsList)*/}
-                {/*        return <AnimeListSeason season={v} onChange={handleSeasonChange} seasonList={currentSea}/>*/}
-                {/*    })}*/}
-                {/*    /!* <p>Episódios Assistidos: </p>*/}
-                {/*    <input type="number" value={watchedEpisodes} onChange={(e)=>handleChange(e,changeEnum.watchedEpisodes)}></input> *!/*/}
-                {/*</div>*/}
-                <div>
-                    <div>
-                        <p>Rating: </p>
-                        <AnimeStar ratingHover={ratingHover} setRatingHover={setRatingHover} setRatingValue={setRatingValue} context={context} aniId={ani.anime_id} ratingValue={ratingValue}/>
-                    </div>
-                </div>
+                <p>Rating</p>
+                <select className="selectN" onChange={handleRatingChange} value={ratingValue}>
+                    <option value="none">Selecione sua nota</option>
+                    <option value="10">(10) Obra-prima</option>
+                    <option value="9">(9) Incrivel</option>
+                    <option value="8">(8) Muito Bom</option>
+                    <option value="7">(7) Bom</option>
+                    <option value="6">(6) Ok</option>
+                    <option value="5">(5) Na Média</option>
+                    <option value="4">(4) Ruim</option>
+                    <option value="3">(3) Muito Ruim</option>
+                    <option value="2">(2) Horrivel</option>
+                    <option value="1">(1) Inassistível</option>
+                </select>
+                {/*<Rating setRatingValue={setRatingValue} ratingValue={ratingValue} aniId={ani.anime_id}/>*/}
                 <div>
                     <div>
                         <p>Data de começo: </p>
                         {/* startDate?DateToStringLocal(startDate):"" */}
-                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.startDate)} value={startDate?DateToStringInput(startDate):""}/>
+                        <input type="date" onChange={(e) => handleChange(e, changeEnum.startDate)}
+                               value={startDate ? DateToStringInput(startDate) : ""}/>
                         <p>Data de fim: </p>
                         {/* endDate?DateToStringLocal(endDate):"" */}
-                        <input type="date" onChange={(e)=>handleChange(e,changeEnum.endDate)} value={endDate?DateToStringInput(endDate):""}></input>
+                        <input type="date" onChange={(e) => handleChange(e, changeEnum.endDate)}
+                               value={endDate ? DateToStringInput(endDate) : ""}></input>
                     </div>
                 </div>
                 {/* <p>Vezes asistido</p> */}
@@ -154,8 +157,8 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                 }
                 <div className="status">
                     <p>Prioridade: </p>
-                    <select value={priority} onChange={(e)=>handleChange(e,changeEnum.priority)}>
-                        {Object.keys(priorityValue).map((v,i)=>(
+                    <select value={priority} onChange={(e) => handleChange(e, changeEnum.priority)}>
+                        {Object.keys(priorityValue).map((v, i) => (
                             <option value={v}>{priorityValue[v as keyof typeof priorityValue]}</option>
                         ))}
                     </select>

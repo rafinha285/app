@@ -13,9 +13,17 @@ export async function checkToken(req:e.Request,res:e.Response,next:e.NextFunctio
         // AND web_gl_vendor = $4 
         // AND web_gl_renderer = $5 
         // para ver se é o usuario de mesmo token
+        const { timezone, webglrenderer, webglvendor } = req.headers;
+        const userAgent = req.headers['user-agent']
         const tokenHeader = req.headers.authorization?.split(" ")[1];
         const tokencookie = req.cookies.token
         const token = tokenHeader || tokencookie;
+        // console.log(req.headers)
+        // console.log(userAgent)
+        // console.log(timezone, webglrenderer, webglvendor)
+        if(!(timezone||webglrenderer||webglvendor||userAgent)){
+            return sendError(res,ErrorType.noToken)
+        }
         if(!token){
             return sendError(res,ErrorType.noToken)
         }
@@ -35,7 +43,8 @@ export async function checkToken(req:e.Request,res:e.Response,next:e.NextFunctio
                 AND time_zone = $3 
                 AND web_gl_vendor = $4 
                 AND web_gl_renderer = $5 
-        `,[user._id,user.user_agent,user.time_zone,user.web_gl_vendor,user.web_gl_renderer])
+        `,[user._id,userAgent,timezone,webglvendor,webglrenderer])
+        // console.log(result)
         // Console.log(parseInt(result.rows[0].count) === 0)
         if(result.rows.length === 0){
             return sendError(res,ErrorType.unauthorized);

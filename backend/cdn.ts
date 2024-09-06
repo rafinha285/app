@@ -23,7 +23,7 @@ app.get('/ani/img',async(req:e.Request,res:e.Response)=>{
         const typesImg = ["jpe","jpg","jpeg","png"]
         let im = typesImg.length
         for(let i = 0;i<im;i++){
-            Console.log(path.join(ANIME_PATH,(req.query.Id as string),"img",`${req.query.Id}.${typesImg[i]}`))
+            // Console.log(path.join(ANIME_PATH,(req.query.Id as string),"img",`${req.query.Id}.${typesImg[i]}`))
             let pathImg = path.join(ANIME_PATH,(req.query.Id as string),"img",`${req.query.Id}.${typesImg[i]}`)
             if(fs.existsSync(pathImg)){
                 return res.sendFile(pathImg)
@@ -84,6 +84,7 @@ app.get("/stream/:aniId/:season/:epId/:reso",async(req:e.Request,res:e.Response)
         //     console.error(err);
         //     res.status(500).end();
         // });
+        res.setHeader('Cache-Control', 'public, max-age=7200');
         res.sendFile(filePath)
         // res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
     }catch(err){
@@ -91,7 +92,7 @@ app.get("/stream/:aniId/:season/:epId/:reso",async(req:e.Request,res:e.Response)
     }
 })
 //rota pro download do ep
-app.get('/download/:aniid/:seasonid/:epid/:reso',async(req,res)=>{
+app.get('/download/:aniid/:seasonid/:epid/:reso',async(req:e.Request,res:e.Response)=>{
     try{
         let {aniid,seasonid,epid,reso} = req.params;
         let filePath = path.join(ANIME_PATH,aniid,'seasons',seasonid,epid,`${epid}-${reso}.mp4`)

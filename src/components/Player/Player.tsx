@@ -1,29 +1,33 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import { Episode } from "../types/episodeModel";
-import { quality } from "../types/types";
+import {Episode, EpisodeUser} from "../../types/episodeModel";
+import { quality } from "../../types/types";
 import Plyr,{APITypes,PlyrOptions,PlyrSource} from "plyr-react";
 import ReactDOMServer from 'react-dom/server';
 import 'plyr/dist/plyr.css'
-import "../css/watch.css"
-import { Anime } from "../types/animeModel";
-import {handleEpWatching, handleNextEp} from "../features/main";
-import { getEpsFromSeason } from "../functions/animeFunctions";
-import {cdnUrl} from "../const";
-import globalContext from "../GlobalContext";
+import "../../css/watch.css"
+import { Anime } from "../../types/animeModel";
+import {fetchUser, handleEpWatching, handleNextEp} from "../../features/main";
+import { getEpsFromSeason } from "../../functions/animeFunctions";
+import {cdnUrl} from "../../const";
+import globalContext from "../../GlobalContext";
+import PlayerPopup from "./PlayerPopup";
+import {PopupActions} from "reactjs-popup/dist/types";
 interface prop{
     ani:Anime;
     seasonId:string;
     ep:Episode;
     eps:Episode[]
+    ref: React.RefObject<APITypes>
 }
 
-const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
+const Player:React.FC<prop> = ({ani,seasonId,ep,eps,ref}) =>{
     // const ref = useRef<Plyr>(null)
     const res = ['1920x1080','1280x720', '854x480']
     console.log(ani,ep,eps)
 
     const context = useContext(globalContext)!;
-    const [logSent,setLogSent]=useState(false);
+
+    // const [logSent,setLogSent]=useState(false);
     // $.ajax({
     //     url:`/api/g/s/eps/${ani.id}/${seasonId}`
     // }).done((res:Episode[])=>{
@@ -64,7 +68,7 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
     //     return [];
     // }
 
-    const ref = useRef<APITypes>(null);
+
     const createCaptionsTracks = (subtitles:string[]|null):Plyr.Track[] =>{
         console.log(subtitles)
         if(!subtitles){
@@ -131,7 +135,29 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         console.log(inEnd)
         ref.current!.plyr.currentTime = inEnd
     }
+    const handlePostSec = async(sec:number)=>{
+        if(context.isLogged){
+            // let getEp:{success:boolean,message?:any} = await fetchUser(`/ep/user/g/${ani.id}/${ep.id}`,'GET').then(res=>res.json())
+            // if(!getEp.message){
+                let body = {
+                    episode_id:ep.id,
+                    anime_id:ep.anime_id,
+                    dropped_on:sec,
+                    season_id:ep.season_id,
+                }
+                await fetchUser('/ep/user/p/','POST',body)
+            // }
+        }
+    }
+
+    const handlePause = async(plyr:Plyr)=>{
+        await handlePostSec(plyr.currentTime)
+        // if((plyr.currentTime / ep.duration!) > .05){
+        // }
+    }
+
     const optionsPlyr:PlyrOptions = {
+        autoplay:true,
         settings:['captions', 'quality', 'speed', 'loop'],
         controls:['play-large', // The large play button in the center
             // 'restart', // Restart playback
@@ -154,7 +180,6 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         tooltips:{controls:true,seek:true}
     }
     const initPlyr = async()=>{
-        let lastEpWatchCallTime = 0;
         while (!ref.current || !ref.current.plyr || !ref.current.plyr.elements) {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
@@ -162,6 +187,8 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         plyr.source = getResolutions(ep.resolution)
         console.log(ep.resolution)
         console.log(plyr.source)
+
+        // await handleGetSec()
 
         var seasonEp = await getEpsFromSeason(ep.anime_id,ep.season_id)
 
@@ -194,18 +221,9 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         function handleTimeUpdate() {
             const sec = plyr.currentTime;
             if (sec >= opIni && sec <= opFim && ep.epindex != Math.min(...seasonEp.map((v)=>v.epindex))) {
-                // console.log("skip-active ep")
                 skIButton.addClass("skip-active");
             } else {
-                // console.log("not skip-active op")
                 skIButton.removeClass("skip-active");
-            }
-            if (plyr.duration && sec / plyr.duration >= 0.05 && context.isLogged) {
-                // Verifique se passaram 10 segundos desde a última chamada de handleEpWatching
-                if (sec >= lastEpWatchCallTime + 10) {
-                    handleEpWatching(ani.id, seasonId, ep, sec, false);
-                    lastEpWatchCallTime = sec;
-                }
             }
             if (sec >= ed) {
                 if(context.isLogged){
@@ -214,21 +232,16 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
                     handleEpWatching(ani.id,seasonId,ep,plyr.currentTime,true)
                 }
                 if (Math.max(...seasonEp.map((ep) => ep.epindex)) === ep.epindex) {
-                    // console.log("not skip-active ed")
                     skEButton.removeClass("skip-active");
                 } else {
-                    // console.log("skip-active ed")
                     skEButton.addClass("skip-active");
                 }
             } else {
-                // console.log("not skip-active ed")
                 skEButton.removeClass("skip-active");
             }
-            // const currentTimeInSeconds = Math.floor(sec)
-            // if(currentTimeInSeconds%60===0&&!lastLoggedTime.includes(currentTimeInSeconds)){
-            //     postLog(ani,true,ep.id,sec)
-            //     lastLoggedTime.push(currentTimeInSeconds);
-            // }
+            if(sec / ep.duration! > .05){
+
+            }
         }
         // const handleLoadedSeconds = ()=>{
         //     const buffered = plyr.buffered;
@@ -244,22 +257,8 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         //         }
         //     }
         // }
-        const handlePostSec = async()=>{
-            if(context.isLogged){
-
-            }else{
-                // indexedDB.open
-            }
-        }
-        const handleGetSec =async()=>{
-            if(context.isLogged){
-
-            }else{
-                
-            }
-        }
         // plyr.on()
-        plyr.elements.container?.addEventListener('pause',handlePostSec)
+        plyr.elements.container?.addEventListener('pause',()=>handlePause(plyr))
         plyr.elements.container?.addEventListener("timeupdate",handleTimeUpdate)
         plyr.elements.container?.addEventListener("seeking",handleTimeUpdate)
         // plyr.elements.container?.addEventListener('progress',handleLoadedSeconds)
@@ -273,10 +272,13 @@ const Player:React.FC<prop> = ({ani,seasonId,ep,eps}) =>{
         }
     },[])
     window.addEventListener("beforeunload",function(e){
-        handleEpWatching(ani.id, seasonId, ep, ref.current?.plyr?.currentTime!, ref.current?.plyr.currentTime!>= ep.ending);
+        handlePostSec(ref.current!.plyr!.currentTime)
+        // handleEpWatching(ani.id, seasonId, ep, ref.current?.plyr?.currentTime!, ref.current?.plyr.currentTime!>= ep.ending);
     })
     return(
-        <Plyr source={{type:"video",sources:[]}} ref={ref}  options={optionsPlyr}></Plyr>
+        <div>
+            <Plyr source={{type:"video",sources:[]}} ref={ref}  options={optionsPlyr}></Plyr>
+        </div>
     )
 }
 export default Player

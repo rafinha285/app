@@ -227,3 +227,30 @@
     --heightM:10vmin;
     --plyr-color-main: var(--orange);
 }
+.episode-popup{
+    width: calc(100% - 15em);
+    aspect-ratio: 16 / 9;
+    position: absolute;
+    background-color: rgb(0 0 0 / 36%);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.episode-popup__container{
+    background-color: var(--gray-dark);
+    border-radius: 15px;
+    padding: 1em;
+    border: 2px #c9c9c9 solid;
+    outline: 2px white solid;
+    display: flex;
+}
+.episode-popup__container .close{
+    float: right;
+    background: none;
+}
+.episode-popup__container .button{
+    background: none;
+    border: 2px solid white;
+    border-radius: 5px;
+}

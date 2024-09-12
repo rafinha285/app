@@ -8,6 +8,8 @@ import "../css/login.css"
 import ReCAPTCHA from "react-google-recaptcha";
 import { v4 as uuid } from "uuid";
 import { fetchPost } from "../features/main";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 const salt = bcrypt.genSaltSync(10)
 const Register:React.FC = ()=>{
     const [email,setEmail] = useState<string>("")
@@ -67,7 +69,7 @@ const Register:React.FC = ()=>{
                 var interations = 1000
                 //var hashedPassword = pbkdf2Sync(s,_id,interations,32,"sha256").toString("hex")
                 var hashedPassword = bcrypt.hashSync(s,salt)
-                
+
                 // var hashedPasswordConfirm = pbkdf2Sync(cs,_id,interations,32,"sha256").toString("hex")
                 console.log(name,surname,s===cs)
                 const emailRegex = /\S+@\S+\.\S+/;
@@ -89,7 +91,7 @@ const Register:React.FC = ()=>{
                 }
             }
         }
-        
+
     }
     return(
         <html lang="pt-BR">
@@ -109,7 +111,7 @@ const Register:React.FC = ()=>{
                     </div>
                     <ReCAPTCHA sitekey="6LcHpccpAAAAAILEI6AF1tPIzD7z69E0Ia0RO42t" onChange={handleRecaptchaChange}></ReCAPTCHA>
                     <div className="div-flex">
-                        <button type="submit" onClick={handleSendAccount} disabled={send} className="logBut">Registrar-se <i className="fa-solid fa-plus"></i></button>
+                        <button type="submit" onClick={handleSendAccount} disabled={send} className="logBut">Registrar-se <FontAwesomeIcon icon={faPlus}/></button>
                     </div>
                 </div>
             </form>

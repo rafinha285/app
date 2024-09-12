@@ -29,6 +29,9 @@ import { ratingLabel } from "../types/types";
 import {cdnUrl} from "../const";
 import Rating from "../components/Anime/Rating";
 import Comements from "../components/Comments";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faClock} from "@fortawesome/free-regular-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
 
 interface seasonDate{
@@ -175,7 +178,7 @@ const AnimePage:React.FC = ()=>{
             <Header />
             {ani?(
                 <div className="cont container" style={{padding:"100px"}}>
-                    <p style={{fontSize:".7rem !important"}}>Anime - Duração: <span style={{fontSize:".7rem !important"}} id="aniLen">{getEpTime(ani.averageeptime!)}</span><i className="fa-regular fa-clock"></i></p>
+                    <p style={{fontSize:".7rem !important"}}>Anime - Duração: <span style={{fontSize:".7rem !important"}} id="aniLen">{getEpTime(ani.averageeptime!)}</span><FontAwesomeIcon icon={faClock}/></p>
                     <div className="contentL">
                         <h2>{ani.name}</h2>
                         <div className="dura">
@@ -262,7 +265,7 @@ const AnimePage:React.FC = ()=>{
                         {isInList?(
                             <button className="addAnimeList" onClick={()=>setIsPopupOpen(true)}>Editar Lista</button>
                         ):(
-                            <button className="addAnimeList" onClick={handleAddAnimeToList}>Adicionar a lista de anime<i className="fa-solid fa-plus"></i></button>
+                            <button className="addAnimeList" onClick={handleAddAnimeToList}>Adicionar a lista de anime <FontAwesomeIcon icon={faPlus}/></button>
                         )}
                     </div>
                     <div className="seasons">

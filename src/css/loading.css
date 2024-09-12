@@ -13,7 +13,7 @@
     align-items: center;
     flex-direction: column;
 }
-.main-loading div i{
+.main-loading div svg{
     color: white;
     margin:auto;
     font-size: 1.5em;

@@ -3,8 +3,8 @@ import * as path from 'path'
 import * as fs from 'fs'
 // import * as cors from 'cors';
 // @ts-ignore
-import { ErrorType, sendError, sendFile, setHeader , Console} from './assets/handle'
-import { ANIME_PATH } from './consts'
+import {Console, ErrorType, sendError, sendFile, setHeader} from './assets/handle'
+import {ANIME_PATH} from './consts'
 // import { Console } from 'console'
 
 // @ts-ignore
@@ -12,7 +12,15 @@ const app = e()
 
 // app.use(cors({credentials:true}));
 
-
+app.get('/i/',(req: e.Request, res: e.Response) => {
+    try {
+        //colocar uma imagem teste aq depois
+        //pra testa a velocidade da internet
+        res.sendFile(path.join(__dirname, `./public/index.html`))
+    }catch(err){
+        sendError(res,ErrorType.default,500,err)
+    }
+})
 app.get('/ani/img',async(req:e.Request,res:e.Response)=>{
     setHeader(res)
     try{
@@ -46,6 +54,12 @@ app.get("/ep/:aniId/:season/:epId/:file",async(req:e.Request,res:e.Response)=>{
     }
     res.set('Cache-Control', 'public, max-age=7200')
     res.sendFile(path.join(ANIME_PATH,aniId,"seasons",season,epId,file))
+})
+app.get('/ep/:aniId/:seasonId/:epId/:lang',async(req:e.Request,res:e.Response)=>{
+    setHeader(res)
+    var {aniId,seasonId,epId,lang} = req.params
+    res.set('Cache-Control', 'public, max-age=7200')
+    res.sendFile(path.join(ANIME_PATH,aniId,'seasons',seasonId,epId,`${epId}-${lang}.vtt`))
 })
 app.get("/epPoster/:aniId/:season/:epId",async(req:e.Request,res:e.Response)=>{
     var {aniId,season,epId} = req.params

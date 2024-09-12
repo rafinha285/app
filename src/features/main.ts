@@ -74,14 +74,14 @@ export async function handleEpWatching(ani:string, seasonId:string, ep:Episode,d
         }
     });
 }
-export const handleNextEp = (ani:string,seasonId:string,eps:Episode[],index:number,isLogged:boolean,time:number,interval:NodeJS.Timeout)=>{
-    if(isLogged){
-        handleEpWatching(ani,seasonId,eps.sort((a,b)=>a.epindex-b.epindex)[index],time,true)
-    }
+export const handleNextEp = (ani:string,seasonId:string,eps:Map<number,Episode>,index:number)=>{
+    // if(isLogged){
+    //     handleEpWatching(ani,seasonId,eps.sort((a,b)=>a.epindex-b.epindex)[index],time,true)
+    // }
     console.log(eps)
-    var p = eps.find((v)=>v.epindex === (index+1))
+    var p = eps.get(index+1)
     console.log(p)
-    console.log(ani,seasonId,eps,index)
+    // console.log(ani,seasonId,eps,index)
     if(p){
         window.location.href = `/Anime/${ani}/watch/${seasonId}/${p.id}`
     }

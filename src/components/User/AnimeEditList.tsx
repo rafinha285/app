@@ -3,6 +3,8 @@ import {AnimeUser} from "../../types/animeModel"
 import {priorityValue, userAnimeState} from "../../types/types"
 import GlobalContext from "../../GlobalContext"
 import {DateToStringInput, fetchUser, isToday} from "../../features/main"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faX} from "@fortawesome/free-solid-svg-icons";
 
 interface props{
     onClose:()=>void
@@ -108,7 +110,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     }
     return(
         <div className="edit-list-content">
-            <button onClick={onClose} className="close-popup"><i className="fa-solid fa-x"></i></button>
+            <button onClick={onClose} className="close-popup"><FontAwesomeIcon icon={faX}/></button>
             <div className="edit-list">
                 <div style={{display: "flex"}}>
                     <button className="update-button" onClick={handleUpdateList}>Update Anime</button>

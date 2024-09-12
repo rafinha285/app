@@ -1,7 +1,6 @@
 import { Audio, quality, userAnimeState, priorityValue } from "./types";
 import { character } from "./characterModel";
 import { EpisodeUser } from "./episodeModel";
-import { types } from "cassandra-driver";
 export interface Producer {
     id: string;
     name: string;
@@ -32,7 +31,7 @@ export interface Anime {
     producers: Producer[];
     creators: Producer[];
     genre: string[];
-    seasons?: Season[] | types.Tuple[];
+    seasons?: Season[];
     rating?: number;
     characters?: character[];
     averageeptime?: number;

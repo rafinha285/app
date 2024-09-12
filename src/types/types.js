@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ratingLabel = exports.priorityValue = exports.roles = exports.userMangaState = exports.userAnimeState = exports.state = exports.quality = exports.languages = exports.Audio = void 0;
+exports.ratingLabel = exports.priorityValue = exports.roles = exports.userMangaState = exports.userAnimeState = exports.state = exports.qualityEnum = exports.languages = exports.Audio = void 0;
 var Audio;
 (function (Audio) {
     Audio["DUB"] = "Dublado";
@@ -14,12 +14,12 @@ var languages;
     languages["English"] = "en";
     languages["Spanish"] = "es";
 })(languages || (exports.languages = languages = {}));
-var quality;
-(function (quality) {
-    quality["FULLHD"] = "1080p";
-    quality["HD"] = "720p";
-    quality["SD"] = "480p";
-})(quality || (exports.quality = quality = {}));
+var qualityEnum;
+(function (qualityEnum) {
+    qualityEnum["FULLHD"] = "1080p";
+    qualityEnum["HD"] = "720p";
+    qualityEnum["SD"] = "480p";
+})(qualityEnum || (exports.qualityEnum = qualityEnum = {}));
 var state;
 (function (state) {
     state["ONGOING"] = "Lan\u00E7ando";

@@ -1,33 +1,31 @@
 import React from "react";
-import Popup from "reactjs-popup";
-import {PopupActions} from "reactjs-popup/dist/types";
 import {APITypes} from "plyr-react";
 import {EpisodeUser} from "../../types/episodeModel";
 import {getEpTime} from "../../features/main";
+import ReactDOM from "react-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faX} from "@fortawesome/free-solid-svg-icons";
 
 interface props{
-    plyrRef: React.RefObject<APITypes>;
-    epUser:EpisodeUser|null;
+    epUser?:EpisodeUser;
     open:boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    handleSkip:(skip:number)=>void;
 }
-const PlayerPopup:React.FC<props> = ({plyrRef,epUser,open,setOpen}) =>{
+const PlayerPopup:React.FC<props> = ({epUser,open,setOpen,handleSkip}) =>{
     const handleClick = (e:React.MouseEvent) =>{
         e.stopPropagation();
-        if (plyrRef.current && plyrRef.current.plyr && epUser?.dropped_on !== undefined) {
-            plyrRef.current.plyr.currentTime = epUser.dropped_on;
-            setOpen(false);
-        }
+        handleSkip(epUser?.dropped_on!)
     }
     const handleClose = (e: React.MouseEvent) => {
-        e.preventDefault();
+        e.stopPropagation();
         setOpen(false);
     };
     return (
         <div
             className="episode-popup"
             onClick={(e) => {
-                e.preventDefault();
+                e.stopPropagation();
                 handleClose(e);
             }}
             style={{ display: open ? 'flex' : 'none' }}
@@ -43,7 +41,7 @@ const PlayerPopup:React.FC<props> = ({plyrRef,epUser,open,setOpen}) =>{
                         handleClose(e);
                     }}
                 >
-                    <i className="fa-solid fa-X" />
+                    <FontAwesomeIcon icon={faX}/>
                 </button>
                 <div>
                     <p>Você parou em {getEpTime(epUser?.dropped_on!)}</p>

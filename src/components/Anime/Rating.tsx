@@ -1,6 +1,8 @@
 import React from "react";
 import { Anime } from "../../types/animeModel";
 import { fetchUser } from "../../features/main";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faStar} from "@fortawesome/free-solid-svg-icons";
 interface props{
     setRatingValue:React.Dispatch<React.SetStateAction<string|undefined>>,
     ratingValue:string|undefined,
@@ -33,7 +35,7 @@ const Rating:React.FC<props> = ({setRatingValue,ratingValue,aniId})=>{
                 <option value="2">(2) Horrivel</option>
                 <option value="1">(1) Inassistível</option>
             </select>
-            <button onClick={()=>handleRatingSubmit()} className="aniSNota"><i className="fa-solid fa-star" style={{float:"none"}}></i> Submit</button>
+            <button onClick={()=>handleRatingSubmit()} className="aniSNota"><FontAwesomeIcon icon={faStar} style={{float:"none"}}></FontAwesomeIcon> Submit</button>
         </div>
     )
 }

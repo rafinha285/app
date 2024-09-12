@@ -14,7 +14,7 @@ export interface Episode {
     anime_id: string;
     releasedate: Date;
     views?: number;
-    duration?: number;
+    duration: number;
     openingstart: number;
     openingend: number;
     ending: number;

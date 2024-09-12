@@ -1,0 +1,334 @@
+.player{
+    width:calc(100% - 15em);
+    margin:auto;
+    position: relative;
+    box-sizing: border-box;
+}
+.skip-intro{
+    padding: 0!important;
+    transition: all 1s var(--transCub) !important;
+    width: 0!important;
+    overflow: hidden !important;
+    height: 0;
+    margin-left: 0 !important;
+}
+.skip-active{
+    margin-left: calc(10px/4)  !important;
+    width: 20vmin!important;
+    line-height:1.7;
+    height:auto !important;
+}
+.player button{
+    width:auto
+}
+.player .play-button{
+    background:var(--orange);
+    border:none;
+    border-radius:100%;
+    left: 50%;
+    opacity: .9;
+    padding: 15px;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: .3s;
+    z-index: 2;
+    justify-content: center;
+    width: 48px;
+}
+.video-wrapper{
+    width: 100%;
+    height: 100%;
+    position: relative;
+    box-sizing: border-box;
+}
+.video-wrapper video{
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+.controls{
+    width: 100%;
+    position: absolute;
+    bottom: 0; /* Posiciona os controles na parte inferior */
+    left: 0;
+    background: linear-gradient(#0000, #000000bf); /* Fundo semi-transparente para os controles */
+    padding: 10px;
+    z-index: 3; /* Certifica-se de que os controles estejam por cima do vídeo */
+    display: flex;
+    justify-content: space-evenly; /* Distribui os controles ao longo da largura */
+    opacity: 0; /* Os controles começam invisíveis */
+    transition: opacity 0.3s; /* Transição suave para aparecer/desaparecer */
+    box-sizing: border-box;
+    align-items: center;
+}
+.controls button:first-child > .tooltip{
+    left: 0;
+    transform: translate(0) scale(1);
+}
+.controls >.content:first-child {
+    margin-left: 0;
+}
+.controls > .content{
+    margin-left: 5px;
+}
+.controls button:first-child > .tooltip:before {
+    /*left: 0*/
+}
+.controls button{
+    background: transparent;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+    overflow: visible;
+    padding: calc(10px *.7);
+    position: relative;
+    transition: all .3s ease;
+}
+.controls button:hover{
+    background: var(--orange);
+}
+.controls button:hover .tooltip{
+    opacity: 1;
+}
+.tooltip:before{
+    border-left: 4px solid #0000;
+    border-right: 4px solid #0000;
+    border-top: 4px solid white;
+    bottom:calc(4px*-1);
+    content:'';
+    height: 0;
+    /*left: 0;*/
+    position: absolute;
+    transform: translateX(-50%);
+    width: 0;
+    z-index: 2;
+}
+.tooltip{
+    background: white;
+    border-radius: 5px;
+    bottom:100%;
+    box-shadow: 0 1px 2px #00000026;
+    color:#4a5464;
+    font-size: 13px;
+    font-weight: 400;
+    left: 20%;
+    line-height: 1.3;
+    margin-bottom: calc(10px/2*2);
+    opacity: 0;
+    padding:calc(10px / 2) calc(10px / 2* 1.5);
+    pointer-events: none;
+    position: absolute;
+    transform-origin: 50% 100%;
+    transition: transform .2s ease .1s, opacity .2s ease .1s;
+    white-space: nowrap;
+    z-index: 2;
+}
+.config-open .controls{
+    opacity: 1 !important;
+}
+.player:hover .controls{
+    opacity: 1;
+}
+.progress{
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    height: 5px;
+}
+.buffered-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.3); /* Cor semi-transparente para o buffer */
+    z-index: 1;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.buffered-bar div{
+    height: 100%;
+    background: rgb(255 255 255 / 41%);
+    border-radius: 10px;
+}
+
+.watched-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 2;
+    width: 100%;
+    background: #343a4066;;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.watched-bar div{
+    background-color: var(--orange);
+    height: 100%;
+    /*border-radius: 10px;*/
+}
+
+.progress-input {
+    appearance: none;
+    width: 100%;
+    height: 100%;
+    background: none;
+    z-index: 3; /* Colocar o input acima das barras */
+    position: relative;
+    cursor: pointer;
+    margin:0;
+}
+
+.progress-input::-webkit-slider-thumb {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background-color: var(--white);
+    border-radius: 50%;
+}
+
+.progress-input::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background-color: var(--white);
+    border-radius: 50%;
+}
+.volume{
+    display: flex;
+}
+.time{
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    width: 10%;
+    font-size: 15px;
+    justify-content: center;
+}
+.config{
+    position: relative;
+    display:inline-flex;
+}
+.config-popup{
+    animation: config-keyframes .2s ease;
+    position: absolute;
+    bottom: 100%; /* Posiciona o popup logo abaixo do ícone */
+    right: 30%; /* Ajuste conforme a necessidade para a posição horizontal */
+    background-color: white;
+    padding: 5px 18px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 100; /* Para garantir que o popup fique por cima de outros elementos */
+    min-width: 150px; /* Ajuste conforme necessário */
+}
+/*.config-popup:before{*/
+/*    content: '';*/
+/*    position: absolute;*/
+/*    top: 100%;*/
+/*    left: 10px; !* Posiciona a seta no topo do popup *!*/
+/*    border-width: 8px;*/
+/*    border-style: solid;*/
+/*    border-color: white transparent transparent;*/
+/*}*/
+.config-popup-inner{
+    border:0;
+    margin-top:0;
+    display: flex;
+    padding:10px !important;
+    width: 100% !important;
+    justify-content: space-between;
+    align-items: center;
+    /*display: flex;*/
+}
+.config-popup-inner > div{
+    display: flex;
+}
+.option-checked{
+    background-color: var(--orange) !important;
+}
+.option-checked *{
+    color: white !important;
+}
+.config-popup-inner *{
+    color:var(--orange)
+}
+.config-popup-inner:hover *{
+    color:white
+}
+.back-button{
+    width: 100% !important;
+    border:0;
+    border-bottom: 4px solid var(--gray);
+    margin-top:0;
+    display: flex;
+    padding:10px;
+    color:var(--orange);
+    justify-content: space-between;
+}
+.back-button:hover{
+    color:white;
+    background: var(--orange);
+}
+@keyframes config-keyframes{
+    0%{
+        opacity: .5;
+        transform: translateY(10px);
+    }
+
+    to{
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.badge{
+    background: var(--gray);
+    font-size: 9px;
+    padding: 3px 4px;
+    color:white;
+    border-radius: 2px;
+}
+.config-menu{
+    overflow: auto;
+    max-height: 10em;
+}
+
+
+/*captions*/
+.captions{
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 15px;
+    transition: .2s;
+}
+.player:hover .captions{
+    transform: translateY(-40px);
+}
+.config-open .captions{
+    transform: translateY(-40px);
+}
+.caption{
+    background: var(--purple);
+    padding: 5px;
+    border-radius: 5px;
+    margin-top:10px;
+    display: flex;
+}
+.caption *{
+    font-size: var(--caption-size);
+}
+:root{
+    --caption-size: 20px;
+}
+
+
+.player *{
+    box-sizing: border-box;
+}

@@ -6,6 +6,8 @@ import Cookies from "universal-cookie"
 import "../css/index.css"
 import "../css/base.css"
 import GlobalContext from "../GlobalContext";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faMagnifyingGlass, faRightFromBracket, faUser} from "@fortawesome/free-solid-svg-icons";
 // import $ from 'jquery'
 
 const cookies = new Cookies();
@@ -32,7 +34,7 @@ const Header = ()=>{
         fetch('/user/p/logout/',{method:"POST"})
         .then(response=>response.json())
         .then(data=>console.log(data))
-        
+
         sessionStorage.removeItem("token")
         removeCookie('token')
         window.location.href='/'
@@ -67,27 +69,27 @@ const Header = ()=>{
                     </div>
                     <li><a href="">Mangá</a></li>
                     <li>
-                        <i className="fa-solid fa-magnifying-glass searc" onClick={toggleSearch}></i>
-                        <input type="text" 
-                        id="search" 
-                        className={`search ${searchVisible?"show":""}`} 
-                        onChange={handleInputChange} 
+                        <FontAwesomeIcon icon={faMagnifyingGlass} color={'white'} cursor={'pointer'} onClick={toggleSearch}></FontAwesomeIcon>
+                        <input type="text"
+                        id="search"
+                        className={`search ${searchVisible?"show":""}`}
+                        onChange={handleInputChange}
                         onKeyDown={handleKeyPress}
                         placeholder="Buscar..."
                         ></input>
                     </li>
                     {/* <li>{isLogged?(
-                        
+
                         <Link to={'/user'}><i className="fa-solid fa-user"></i></Link>
                     ):(<Link to={"/login"}><i className="fa-solid fa-user"></i></Link>)}</li> */}
                     <li>{isLogged?(
                         window.location.pathname === "/user"?(
-                            <button onClick={handleLogout}><i className="fa-solid fa-right-from-bracket"></i></button>
+                            <button onClick={handleLogout}><FontAwesomeIcon icon={faRightFromBracket} /></button>
                         ):(
-                            <Link to={'/user'}><i className="fa-solid fa-user"></i></Link>
+                            <Link to={'/user'}><FontAwesomeIcon icon={faUser}/></Link>
                         )
                     ):(
-                        <Link to={"/login"}><i className="fa-solid fa-user"></i></Link>
+                        <Link to={"/login"}><FontAwesomeIcon icon={faUser}/></Link>
                     )}</li>
                 </ul>
             </nav>

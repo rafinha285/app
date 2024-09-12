@@ -1,7 +1,6 @@
 import * as e from "express";
 import { Console, ErrorType, sendError, setHeader } from "../assets/handle";
 import { pgClient } from "../database/Postgre";
-import sleep from "sleep-promise";
 import * as path from "path";
 import { ANIME_PATH } from "../consts";
 
@@ -26,7 +25,7 @@ episodesGetRouter.get("/season/:animeid/:seasonid",async(req,res)=>{
             default:
                 sendError(res,ErrorType.default,500,err)
         }
-        
+
     }
 })
 
@@ -35,7 +34,7 @@ episodesGetRouter.get('/lan',async(req,res)=>{
     try{
         var {count} = req.query
         if(count !== null){
-            console
+            // console
             res.send((await req.db.query(`
                 SELECT 
                     a.name AS animename,

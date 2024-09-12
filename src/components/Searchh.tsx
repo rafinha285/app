@@ -1,14 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
-// import {} from "../types/AnimeType";
 import LikeButton from "../assets/LikeButton";
 import { trim } from "../features/main";
 import "../css/index.css"
 import "../css/base.css"
 import "../css/search.css"
 import { AnimeSearch } from "../types/animeModel";
-import {cdnUrl} from "../const.ts";
+import {cdnUrl} from "../const";
 
 interface searchProp{
     ser:AnimeSearch

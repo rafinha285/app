@@ -7,6 +7,8 @@ import "../css/index.css"
 import '../css/base.css'
 import {genToArray} from "../functions/animeFunctions"
 import {cdnUrl} from "../const";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faClock} from "@fortawesome/free-regular-svg-icons";
 
 
 
@@ -38,7 +40,7 @@ const AnimePoster:React.FC<AnimePosterProps> = ({aniId,doc})=>{
                 <div className="highlight-body">
                     <div className="highlight-time">
                         <span>{getEpTime(doc.averageeptime!)}</span>
-                        <i className="far fa-clock"></i>
+                        <FontAwesomeIcon icon={faClock}/>
                     </div>
                     <div className="highlight-genres">{gen(doc.genre)}</div>
                     <div className="highlight-title">{doc.name}</div>

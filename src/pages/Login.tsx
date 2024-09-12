@@ -12,6 +12,8 @@ import {
 // import { useCookies } from "react-cookie";
 import axios from 'axios';
 import { fetchPost } from "../features/main";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faRightToBracket} from "@fortawesome/free-solid-svg-icons";
 // import { genSalt, hashSync } from "bcryptjs";
 
 const cookiess = new Cookies();
@@ -31,7 +33,7 @@ const Login:React.FC = ()=>{
             try{
                 // const salt = await genSalt(10)
                 // const hashedPassword = hashSync(password,salt)
-                // const publicKey = await fetchPublicKey();  
+                // const publicKey = await fetchPublicKey();
                 const userIndentifier = getDeviceIndentifier()
                 // const encryptedData = encryptDataWithPublicKey(body)
                 const response = await fetchPost(`/user/p/login`,"POST",{
@@ -93,7 +95,7 @@ const Login:React.FC = ()=>{
                 </div>
                 <ReCAPTCHA sitekey="6LcHpccpAAAAAILEI6AF1tPIzD7z69E0Ia0RO42t" onChange={handleRecaptchaChange}></ReCAPTCHA>
                 <div style={{display:"flex",justifyContent:"center",alignItems:"center",flexDirection:"column",margin:"0 auto"}}>
-                    <button onClick={handleLogin} className="logBut">Entrar <i className="fa-solid fa-right-to-bracket"></i></button><br/>
+                    <button onClick={handleLogin} className="logBut">Entrar <FontAwesomeIcon icon={faRightToBracket}/></button><br/>
                     <span>Criar conta:<Link to={"/register"}>Registrar-se</Link></span>
                 </div>
 

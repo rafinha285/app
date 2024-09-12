@@ -78,9 +78,6 @@ nav{
     left: 0;
     transition: width 0.5s;
 }
-.searc{
-    cursor: pointer;
-}
 .nav_link .dropdown li a:hover::after{
     width: 100%;
 }
@@ -101,14 +98,14 @@ nav{
     background: #21024d;
     background: linear-gradient(180deg,rgba(19,0,41,1) 0%, rgb(28 17 86) 5%, rgba(29,0,41,1) 100%);
     margin: 40px auto;
-    
+
 }
 .newanime .newanimein{
     display: block;
     /* background-color: var(--dark_purple3); */
     width: 100%;
     height: 400px;
-    padding: 20px;   
+    padding: 20px;
     overflow-x: auto;
     overflow-y: hidden;
     display: flex;

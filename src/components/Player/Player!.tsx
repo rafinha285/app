@@ -1,30 +1,32 @@
-import React, {useContext, useEffect, useRef} from "react";
+import React, {useContext, useEffect, useRef, useState} from "react";
 import {Episode, EpisodeUser} from "../../types/episodeModel";
-import {Anime} from "../../types/animeModel";
-import Plyr, {APITypes, PlyrOptions, PlyrSource} from "plyr-react";
-import {quality} from "../../types/types";
-import {cdnUrl} from "../../const";
-import ReactDOMServer from "react-dom/server";
-import {fetchUser, handleEpWatching, handleNextEp} from "../../features/main";
-import {isFirstEp, isLastEp} from "../../functions/animeFunctions";
-import globalContext from "../../GlobalContext";
+import { quality } from "../../types/types";
+import Plyr,{APITypes,PlyrOptions,PlyrSource} from "plyr-react";
+import ReactDOMServer from 'react-dom/server';
 import 'plyr/dist/plyr.css'
 import "../../css/watch.css"
+import { Anime } from "../../types/animeModel";
+import {fetchUser, handleEpWatching, handleNextEp} from "../../features/main";
+import { getEpsFromSeason } from "../../functions/animeFunctions";
+import {cdnUrl} from "../../const";
+import globalContext from "../../GlobalContext";
 import PlayerPopup from "./PlayerPopup";
-
-interface props{
-    ani:Anime
-    ep:Episode,
-    eps:Map<number,Episode>;
-    seasonId:string,
-    epUser?:EpisodeUser
+import {PopupActions} from "reactjs-popup/dist/types";
+interface prop{
+    ani:Anime;
+    seasonId:string;
+    ep:Episode;
+    eps:Episode[]
+    ref: React.RefObject<APITypes>
 }
-const Player:React.FC<props> = ({ani,ep,eps,seasonId,epUser}) =>{
+
+const Player:React.FC<prop> = ({ani,seasonId,ep,eps,ref}) =>{
+    // const ref = useRef<Plyr>(null)
+    const res = ['1920x1080','1280x720', '854x480']
+    console.log(ani,ep,eps)
 
     const context = useContext(globalContext)!;
-    const [open, setOpen] = React.useState<boolean>(true);
 
-    const ref = useRef<APITypes>(null)
     // const [logSent,setLogSent]=useState(false);
     // $.ajax({
     //     url:`/api/g/s/eps/${ani.id}/${seasonId}`
@@ -34,13 +36,13 @@ const Player:React.FC<props> = ({ani,ep,eps,seasonId,epUser}) =>{
     // })
     async function setPrevPosEp(){
         setTimeout(()=>{},5000)
-        var prevEp = eps.get(ep.epindex-1)
+        var prevEp = eps.find(v=>v.epindex === (ep.epindex-1))
         // console.log(prevEp,res,ep.epindex)
         if(prevEp){
             console.log(`/Anime/${ani.id}/watch/${seasonId}/${prevEp.id}`)
             $("#before").attr("href",`/Anime/${ani.id}/watch/${seasonId}/${prevEp.id}`)
         }
-        var posEp = eps.get(ep.epindex+1)
+        var posEp = eps.find(v=>v.epindex === (ep.epindex+1))
         if(posEp){
             console.log(`/Anime/${ani.id}/watch/${seasonId}/${posEp.id}`)
             // var after:HTMLElement = document.getElementById("after")!
@@ -81,7 +83,6 @@ const Player:React.FC<props> = ({ani,ep,eps,seasonId,epUser}) =>{
             }));
         }
     }
-
     const getResolutions = (epReso:string[]):PlyrSource=>{
         // const resolutions = ['1080p', '720p', '480p'];
         // const baseUrl = `${cdnUrl}/ep/${ani.id}/${seasonId}/${ep.id}`
@@ -93,15 +94,40 @@ const Player:React.FC<props> = ({ani,ep,eps,seasonId,epUser}) =>{
         const d:PlyrSource = {
             type:"video",
             poster:`${cdnUrl}/epPoster/${ani.id}/${seasonId}/${ep.id}`,
-            sources:resolutions.map((reso) => ({
-                src: `${baseVideoUrl}/${reso.replace("p", "")}`,
-                type: "video/mp4",
-                label: reso,
-                size: parseInt(reso.replace("p", ""), 10),
-            })),
+            sources:[],
             tracks:captionPlyrTracks
         }
         console.log(d)
+
+        // var epResoo = `${epReso[0].split("x")[1]}p`
+        switch(resolutions[0]){
+            case quality.FULLHD:
+                console.log("FULLHD")
+                d.sources = resolutions.map((reso,index)=>({
+                    src: `${baseVideoUrl}/${reso.replace("p","")}`,
+                    type: "video/mp4",
+                    label: reso,
+                    size: index === 0 ? 1080 : index === 1 ? 720 : 480
+                }))
+                break
+            case quality.HD:
+                console.log("HD")
+                d.sources = resolutions.slice(0, 2).map((reso, index) => ({
+                    src: `${baseVideoUrl}/${reso.replace("p","")}`,
+                    type: 'video/mp4',
+                    label: reso,
+                    size: index === 0 ? 720 : 480,
+                  }))
+                break
+            case quality.SD:
+                d.sources = [resolutions[2]].map((reso,index)=>({
+                    src: `${baseVideoUrl}/${reso.replace("p","")}`,
+                    type: "video/mp4",
+                    label: reso,
+                    size: 480
+                }))
+                break
+        }
         return d
     }
     let intervalwatching:any = null;
@@ -157,49 +183,41 @@ const Player:React.FC<props> = ({ani,ep,eps,seasonId,epUser}) =>{
         while (!ref.current || !ref.current.plyr || !ref.current.plyr.elements) {
             await new Promise(resolve => setTimeout(resolve, 100));
         }
-        var plyr = ref.current.plyr!
+        var plyr = ref.current.plyr
         plyr.source = getResolutions(ep.resolution)
-        plyr.on("pause", () => handlePause(plyr));
         console.log(ep.resolution)
         console.log(plyr.source)
 
         // await handleGetSec()
 
-        var seasonEp = eps
+        var seasonEp = await getEpsFromSeason(ep.anime_id,ep.season_id)
 
         const opIni = ep.openingstart
         const opFim = ep.openingend
         const ed = ep.ending
-        // $("#intro").on("click",()=>handleSkipIntro(opFim))
 
         const skIn = $(plyr.elements.controls!)
         var buOp = (<div className="skip-intro plyr__controls__item plyr__control" onClick={()=>handleSkipIntro(opFim)}>
             <span>Pular intro</span>
             <i className="fa-solid fa-chevron-right"></i>
         </div>)
+        console.log(buOp)
         const skIButton = $(ReactDOMServer.renderToStaticMarkup(buOp)).prop("id", "intro").on("click",()=>handleSkipIntro(opFim));
+        console.log(skIn.children(".plyr__volume"),skIButton)
         skIn.children(".plyr__volume").after(skIButton);
 
         const intr = $(plyr.elements.controls!).find("#intro");
-        // @ts-ignore
         let buEd = (<div className="skip-intro plyr__controls__item plyr__control" onClick={()=>handleNextEp(ani.id,seasonId,seasonEp,ep.epindex,context.isLogged)}>
             <span>Proximo episodio</span>
             <i className="fa-solid fa-chevron-right"></i>
         </div>)
-        // @ts-ignore
         const skEButton = $(ReactDOMServer.renderToStaticMarkup(buEd)).prop("id", "outro").on("click",()=>handleNextEp(ani.id,seasonId,seasonEp,ep.epindex,context.isLogged));
         intr.after(skEButton);
-        // if(epUser){
-        //     setOpen(true)
-        //     renderPlayerPopup(plyr.elements.container!,ref,open,setOpen,epUser)
-        // }
 
-
-        console.log(seasonEp,ep.epindex, !isFirstEp(eps,ep))
+        console.log(seasonEp,ep.epindex,ep.epindex !=  Math.min(...seasonEp.map((v)=>v.epindex)))
         function handleTimeUpdate() {
-            if (open) return;
             const sec = plyr.currentTime;
-            if (sec >= opIni && sec <= opFim && !isFirstEp(eps,ep)) {
+            if (sec >= opIni && sec <= opFim && ep.epindex != Math.min(...seasonEp.map((v)=>v.epindex))) {
                 skIButton.addClass("skip-active");
             } else {
                 skIButton.removeClass("skip-active");
@@ -210,7 +228,7 @@ const Player:React.FC<props> = ({ani,ep,eps,seasonId,epUser}) =>{
                     intervalwatching = null
                     handleEpWatching(ani.id,seasonId,ep,plyr.currentTime,true)
                 }
-                if (isLastEp(eps,ep)) {
+                if (Math.max(...seasonEp.map((ep) => ep.epindex)) === ep.epindex) {
                     skEButton.removeClass("skip-active");
                 } else {
                     skEButton.addClass("skip-active");
@@ -218,7 +236,8 @@ const Player:React.FC<props> = ({ani,ep,eps,seasonId,epUser}) =>{
             } else {
                 skEButton.removeClass("skip-active");
             }
-            if(sec / ep.duration! > .05) {
+            if(sec / ep.duration! > .05){
+
             }
         }
         // const handleLoadedSeconds = ()=>{
@@ -242,25 +261,21 @@ const Player:React.FC<props> = ({ani,ep,eps,seasonId,epUser}) =>{
         // plyr.elements.container?.addEventListener('progress',handleLoadedSeconds)
         // const lastLoggedTime:number[] = [];
     }
-    const handleEpUserSkip = (skip:number)=>{
-        ref.current!.plyr.currentTime = skip;
-        setOpen(false)
-    }
-    useEffect(() => {
+
+    useEffect(()=>{
         initPlyr()
         return()=>{
-            // ref.current!.plyr.destroy()
+            ref.current!.plyr.destroy()
         }
     },[])
     window.addEventListener("beforeunload",function(e){
-        // handlePostSec(ref.current!.plyr!.currentTime)
+        handlePostSec(ref.current!.plyr!.currentTime)
         // handleEpWatching(ani.id, seasonId, ep, ref.current?.plyr?.currentTime!, ref.current?.plyr.currentTime!>= ep.ending);
     })
     return(
-        <div className='player-wrapper'>
-            <PlayerPopup open={open} setOpen={setOpen} epUser={epUser} handleSkip={handleEpUserSkip}/>
+        <div>
             <Plyr source={{type:"video",sources:[]}} ref={ref}  options={optionsPlyr}></Plyr>
         </div>
     )
 }
-export default Player;
+export default Player

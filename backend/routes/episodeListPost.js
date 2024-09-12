@@ -45,8 +45,14 @@ episodeListPostRouter.post('/', checkToken_1.checkToken, function (req, res) { r
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                _b.trys.push([0, 2, , 3]);
+                _b.trys.push([0, 3, , 4]);
                 _a = req.body, anime_id = _a.anime_id, dropped_on = _a.dropped_on, episode_id = _a.episode_id, season_id = _a.season_id;
+                return [4 /*yield*/, req.db.query("\n            SELECT check_and_insert_user_anime_list($1, $2);\n        ", [
+                        req.user._id,
+                        anime_id // anime_id
+                    ])];
+            case 1:
+                _b.sent();
                 return [4 /*yield*/, req.db.query("\n            INSERT INTO users.user_episode_list\n            (\n                episode_id,\n                dropped_on,\n                season_id,\n                anime_id,\n                user_id,\n                watched\n            )\n            VALUES\n                (\n                    $1,\n                    $2,\n                    $3,\n                    $4,\n                    $5,\n                    ($2 >= (SELECT ending::double precision FROM anime.episodes WHERE id = $1))\n                )\n            ON CONFLICT (user_id, episode_id)\n                DO UPDATE\n                SET dropped_on = $2,\n                    date = now(),\n                    watched = ($2 >= (SELECT ending::double precision FROM anime.episodes WHERE id = $1));\n        ", [
                         episode_id,
                         dropped_on,
@@ -54,15 +60,15 @@ episodeListPostRouter.post('/', checkToken_1.checkToken, function (req, res) { r
                         anime_id,
                         req.user._id,
                     ])];
-            case 1:
+            case 2:
                 _b.sent();
                 res.json({ success: true });
-                return [3 /*break*/, 3];
-            case 2:
+                return [3 /*break*/, 4];
+            case 3:
                 err_1 = _b.sent();
                 (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err_1);
-                return [3 /*break*/, 3];
-            case 3: return [2 /*return*/];
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
         }
     });
 }); });

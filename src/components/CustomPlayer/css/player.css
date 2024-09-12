@@ -19,7 +19,8 @@
     height:auto !important;
 }
 .player button{
-    width:auto
+    width:auto;
+    cursor: pointer;
 }
 .player .play-button{
     background:var(--orange);

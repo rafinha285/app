@@ -36,12 +36,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// @ts-ignore
+var config_1 = require("../secret/config");
 var e = require("express");
 var handle_1 = require("../assets/handle");
-var config_1 = require("../secret/config");
 var Postgre_1 = require("../database/Postgre");
 var uuid_1 = require("uuid");
-// import * as crypto from 'crypto'
 var insertToken_1 = require("../token/insertToken");
 var deleteToken_1 = require("../token/deleteToken");
 var userPostRouter = e.Router();

@@ -134,15 +134,17 @@ animeListRouter.delete("/delete/:id", checkToken_1.checkToken, function (req, re
     });
 }); });
 animeListRouter.patch("/update", checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, anime_id, finish_date, priority, start_date, status_1, err_3;
+    var _a, anime_id, finish_date, priority, start_date, status_1, result, err_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
-                _a = req.params, anime_id = _a.anime_id, finish_date = _a.finish_date, priority = _a.priority, start_date = _a.start_date, status_1 = _a.status;
-                return [4 /*yield*/, req.db.query("\n            UPDATE users.user_anime_list\n            SET\n                status=$3,\n                start_date=$4,\n                finish_date=$5,\n                priority=$6\n            WHERE anime_id = $1 AND user_id = $2;\n        ", [anime_id, req.user._id, finish_date, priority, start_date, status_1])];
+                _a = req.body, anime_id = _a.anime_id, finish_date = _a.finish_date, priority = _a.priority, start_date = _a.start_date, status_1 = _a.status;
+                handle_1.Console.log(anime_id, finish_date, priority, start_date, status_1);
+                return [4 /*yield*/, req.db.query("\n            UPDATE users.user_anime_list\n            SET\n                status=$3,\n                start_date=$4,\n                finish_date=$5,\n                priority=$6\n            WHERE anime_id = $1 AND user_id = $2;\n        ", [anime_id, req.user._id, status_1, start_date, finish_date === null && status_1 === 'completed' ? new Date() : finish_date, priority])];
             case 1:
-                _b.sent();
+                result = _b.sent();
+                handle_1.Console.log(result);
                 res.json({ success: true, message: "Atualizado com sucesso" });
                 return [3 /*break*/, 3];
             case 2:

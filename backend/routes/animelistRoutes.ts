@@ -64,8 +64,9 @@ animeListRouter.delete("/delete/:id",checkToken,async(req,res)=>{
 })
 animeListRouter.patch("/update",checkToken,async(req,res)=>{
     try{
-        const {anime_id,finish_date,priority,start_date,status} = req.params;
-        await req.db.query(`
+        const {anime_id,finish_date,priority,start_date,status} = req.body;
+        Console.log(anime_id,finish_date,priority,start_date,status)
+        let result = await req.db.query(`
             UPDATE users.user_anime_list
             SET
                 status=$3,
@@ -73,7 +74,8 @@ animeListRouter.patch("/update",checkToken,async(req,res)=>{
                 finish_date=$5,
                 priority=$6
             WHERE anime_id = $1 AND user_id = $2;
-        `,[anime_id,(req.user as JwtUser)._id,finish_date,priority,start_date,status])
+        `,[anime_id,(req.user as JwtUser)._id,status,start_date,finish_date === null && status === 'completed'?new Date():finish_date,priority])
+        Console.log(result)
         res.json({success:true,message:"Atualizado com sucesso"})
     }catch(err){
         sendError(res,ErrorType.default,500,err)

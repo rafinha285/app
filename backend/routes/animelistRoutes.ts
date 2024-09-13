@@ -1,6 +1,6 @@
 import * as express from "express";
 import { pgClient } from "../database/Postgre";
-import { Console, ErrorType, sendError } from "../assets/handle";
+import {Console, ErrorType, sendError, userAnimeState} from "../assets/handle";
 import { checkToken } from "../token/checkToken";
 import { JwtUser } from "../types";
 import { EventEmitter } from 'events';
@@ -64,40 +64,16 @@ animeListRouter.delete("/delete/:id",checkToken,async(req,res)=>{
 })
 animeListRouter.patch("/update",checkToken,async(req,res)=>{
     try{
-        const {id,watched_episodes,start_date,finish_date,state,priority,times_watched,rewatched_episodes} = req.body
-
-        Console.log([
-            watched_episodes,
-            start_date,
-            finish_date,
-            state,
-            priority,
-            times_watched,
-            rewatched_episodes,
-            id,
-        ])
-        await pgClient.query(`
+        const {anime_id,finish_date,priority,start_date,status} = req.params;
+        await req.db.query(`
             UPDATE users.user_anime_list
-                SET 
-                watched_episodes = $1,
-                start_date = $2,
-                finish_date = $3,
-                status = $4,
-                priority = $5,
-                times_watched = $6,
-                rewatched_episodes = $7
-            WHERE id = $8
-        `,[
-            watched_episodes,
-            start_date,
-            finish_date,
-            state,
-            priority,
-            times_watched,
-            rewatched_episodes,
-            id,
-        ]).then(r=>Console.log(r))
-        // AnimelistEmitter.emitUpdateNumbers((req.user as JwtUser)._id,null)
+            SET
+                status=$3,
+                start_date=$4,
+                finish_date=$5,
+                priority=$6
+            WHERE anime_id = $1 AND user_id = $2;
+        `,[anime_id,(req.user as JwtUser)._id,finish_date,priority,start_date,status])
         res.json({success:true,message:"Atualizado com sucesso"})
     }catch(err){
         sendError(res,ErrorType.default,500,err)

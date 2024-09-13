@@ -1,13 +1,9 @@
+// @ts-ignore
+import { reCaptchaSecretKey } from "../secret/config";
 import * as e from "express";
 import { addUser, Console, ErrorType, sendError } from "../assets/handle";
-import { reCaptchaSecretKey } from "../secret/config";
 import { pgClient } from "../database/Postgre";
-import { JwtUser } from "../types";
-import * as jwt from "jsonwebtoken"
 import {v4 as uuidv4} from "uuid"
-import * as fs from 'fs'
-import * as path from 'path'
-// import * as crypto from 'crypto'
 import insertToken from "../token/insertToken";
 import deleteToken from "../token/deleteToken";
 

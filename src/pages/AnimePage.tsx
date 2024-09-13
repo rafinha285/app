@@ -8,24 +8,20 @@ import "../css/loading.css"
 import { checkIsLogged, fetchUser, getEpTime, getMonthName} from "../features/main";
 import LikeButton from "../assets/LikeButton"
 import AniGeneros from "../assets/Animegenre";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import $ from 'jquery'
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { Helmet } from "react-helmet";
 import Loading from "../components/Loading";
 import EpisodeLink from "../assets/EpisodeLink";
-import postLog from "../functions/logFunctions"
 import PersoCompo from "../components/Perso";
-import StarIcon from '@mui/icons-material/Star';
-import { genToArray, getLabelText, handleRatingValue, tupleToProducer, tupleToSeason } from "../functions/animeFunctions";
 import AniProducers, { prodType } from "../assets/AnimeProd";
 import { useCookies } from "react-cookie";
 import { Episode } from "../types/episodeModel";
 import GlobalContext from "../GlobalContext";
 import Popup from "reactjs-popup"
 import AnimeEditList from "../components/User/AnimeEditList";
-import { ratingLabel } from "../types/types";
 import {cdnUrl} from "../const";
 import Rating from "../components/Anime/Rating";
 import Comements from "../components/Comments";
@@ -284,22 +280,22 @@ const AnimePage:React.FC = ()=>{
                             </div>
                         ))}
                     </div>
-                    <div className="personagens">
-                        <div style={{display:"flex",justifyContent:"space-between",marginBottom:"1em"}}>
-                            <h1>Personagens: </h1>
-                        </div>
-                        <div style={{
-                            border:"1px white solid",
-                            padding:"1em",
-                            display:"flex",
-                            flexWrap:"nowrap",
-                            justifyContent:"flex-start",
-                            flexDirection:'row',
-                            overflow:"auto"
-                        }}>{ani.characters?.map((v,i)=>(
-                            <PersoCompo perso={v} aniId={ani.id} key={i}></PersoCompo>
-                        ))}</div>
-                    </div>
+                    {/*<div className="personagens">*/}
+                    {/*    <div style={{display:"flex",justifyContent:"space-between",marginBottom:"1em"}}>*/}
+                    {/*        <h1>Personagens: </h1>*/}
+                    {/*    </div>*/}
+                    {/*    <div style={{*/}
+                    {/*        border:"1px white solid",*/}
+                    {/*        padding:"1em",*/}
+                    {/*        display:"flex",*/}
+                    {/*        flexWrap:"nowrap",*/}
+                    {/*        justifyContent:"flex-start",*/}
+                    {/*        flexDirection:'row',*/}
+                    {/*        overflow:"auto"*/}
+                    {/*    }}>{ani.characters?.map((v,i)=>(*/}
+                    {/*        <PersoCompo perso={v} aniId={ani.id} key={i}></PersoCompo>*/}
+                    {/*    ))}</div>*/}
+                    {/*</div>*/}
                     <Comements indentifier={ani.id} type={'Anime'} name={ani.name} />
                 </div>
                 ):err?(

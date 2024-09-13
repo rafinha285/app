@@ -134,37 +134,15 @@ animeListRouter.delete("/delete/:id", checkToken_1.checkToken, function (req, re
     });
 }); });
 animeListRouter.patch("/update", checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, id, watched_episodes, start_date, finish_date, state, priority, times_watched, rewatched_episodes, err_3;
+    var _a, anime_id, finish_date, priority, start_date, status_1, err_3;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _b.trys.push([0, 2, , 3]);
-                _a = req.body, id = _a.id, watched_episodes = _a.watched_episodes, start_date = _a.start_date, finish_date = _a.finish_date, state = _a.state, priority = _a.priority, times_watched = _a.times_watched, rewatched_episodes = _a.rewatched_episodes;
-                handle_1.Console.log([
-                    watched_episodes,
-                    start_date,
-                    finish_date,
-                    state,
-                    priority,
-                    times_watched,
-                    rewatched_episodes,
-                    id,
-                ]);
-                return [4 /*yield*/, Postgre_1.pgClient.query("\n            UPDATE users.user_anime_list\n                SET \n                watched_episodes = $1,\n                start_date = $2,\n                finish_date = $3,\n                status = $4,\n                priority = $5,\n                times_watched = $6,\n                rewatched_episodes = $7\n            WHERE id = $8\n        ", [
-                        watched_episodes,
-                        start_date,
-                        finish_date,
-                        state,
-                        priority,
-                        times_watched,
-                        rewatched_episodes,
-                        id,
-                    ]).then(function (r) { return handle_1.Console.log(r); })
-                    // AnimelistEmitter.emitUpdateNumbers((req.user as JwtUser)._id,null)
-                ];
+                _a = req.params, anime_id = _a.anime_id, finish_date = _a.finish_date, priority = _a.priority, start_date = _a.start_date, status_1 = _a.status;
+                return [4 /*yield*/, req.db.query("\n            UPDATE users.user_anime_list\n            SET\n                status=$3,\n                start_date=$4,\n                finish_date=$5,\n                priority=$6\n            WHERE anime_id = $1 AND user_id = $2;\n        ", [anime_id, req.user._id, finish_date, priority, start_date, status_1])];
             case 1:
                 _b.sent();
-                // AnimelistEmitter.emitUpdateNumbers((req.user as JwtUser)._id,null)
                 res.json({ success: true, message: "Atualizado com sucesso" });
                 return [3 /*break*/, 3];
             case 2:

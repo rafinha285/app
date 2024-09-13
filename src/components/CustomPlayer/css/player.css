@@ -129,9 +129,6 @@
 .config-open .controls{
     opacity: 1 !important;
 }
-.player:hover .controls{
-    opacity: 1;
-}
 .progress{
     display: flex;
     align-items: center;
@@ -308,9 +305,6 @@
     width: 100%;
     padding: 15px;
     transition: .2s;
-}
-.player:hover .captions{
-    transform: translateY(-40px);
 }
 .config-open .captions{
     transform: translateY(-40px);

@@ -32,6 +32,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const [captionsActive, setCaptionsActive] = useState<boolean>(true);
     const [selectedCaptions,setSelectedCaptions] = useState<string>('por')
     const [isConfigOpen,setIsConfigOpen] = useState<boolean>(false);
+    const [isControlsVisible,setIsControlsVisible] = useState<boolean>(false);
     const {
         isPictureInPictureActive,
         isPictureInPictureAvailable,
@@ -46,9 +47,17 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const [currentCue,setCurrentCue] = React.useState<Cue[]>([]);
     const [cueData,setCueData] = React.useState<VTTData>();
 
-    const handleCheckCaption = (sec:number) =>{
 
-    }
+    const handleMouseMove = () => {
+        setIsControlsVisible(true)
+        // console.log(isControlsVisible);
+        // Remover a classe após 3 segundos se o mouse não se mover mais
+        setTimeout(() => {
+            setIsControlsVisible(false)
+            // console.log(isControlsVisible);
+        }, 3000);
+    };
+
 
     //quality functions
     const qualitySources: { [key in quality]: string } = ep.resolution.reduce((acc, resolution) => {
@@ -59,7 +68,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     }, {} as { [key in quality]: string });
 
     useEffect(() => {
-        if (videoRef.current) {
+        if (videoRef.current && playerContainerRef.current) {
             const videoElement = videoRef.current;
             const q = currentQuality.replace('p','') as quality;
             const newSource = qualitySources[q]; // Definir a fonte de acordo com a qualidade atual
@@ -77,12 +86,15 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                 }
             };
 
+            playerContainerRef.current.addEventListener('mousemove',handleMouseMove);
+
         }
         if(muted){
             setVolume(0);
         }
         window.addEventListener('keydown',handleKeyDown)
         return()=>{
+            playerContainerRef.current?.removeEventListener('mousemove',handleMouseMove);
             window.removeEventListener('keydown',handleKeyDown)
         }
     }, [currentQuality,ep]);
@@ -96,11 +108,17 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
             setCurrentBuffer(bufferedEnd);
         }
         setCurrentTime(video.currentTime);
-        setCurrentCue([])
-        const activeCues = cueData?.cues.filter(
-            cue => cue.startTime <= video.currentTime && cue.endTime >= video.currentTime
-        ) || [];
-        setCurrentCue(activeCues)
+        if(captionsActive){
+            const activeCues = cueData?.cues.filter(
+                cue => cue.startTime <= video.currentTime && cue.endTime >= video.currentTime
+            ) || [];
+            // console.log(activeCues)
+            setCurrentCue(activeCues)
+
+        }else{
+            setCurrentCue([])
+        }
+        // setCurrentCue([])
     };
     const togglePlayPause = (e?: React.MouseEvent<(HTMLDivElement|HTMLButtonElement), MouseEvent>) => {
         e?.stopPropagation()
@@ -308,7 +326,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     }
 
     return (
-        <div className={`player ${isConfigOpen||!isPlaying?'config-open':''}`} ref={playerContainerRef} >
+        <div className={`player ${isConfigOpen||!isPlaying||isControlsVisible?'config-open':''}`} ref={playerContainerRef} >
             <div className='video-wrapper' onClick={handleVideoWrapperClick}>
                 <video
                     src={qualitySources[currentQuality]}
@@ -360,6 +378,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                 currentCue={currentCue}
                 cueData={cueData}
                 setCueData={setCueData}
+                captionsActive={captionsActive}
             />
             <button className='play-button' style={{display: !isPlaying ? 'flex' : 'none'}}
                     onClick={togglePlayPause}>

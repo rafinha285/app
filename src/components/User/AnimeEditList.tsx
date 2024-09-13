@@ -81,7 +81,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
             start_date:startDate?isToday(new Date(startDate))?new Date():startDate:null,
             finish_date:endDate?isToday(new Date(endDate))?new Date():endDate:null,
             // rate:ratingValue,
-            status,
+            status:status,
             priority,
         }
         if(!(ratingValue === undefined)){
@@ -122,7 +122,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                     <select value={status} onChange={(e) => {
                         handleChange(e, changeEnum.status)
                     }}>{Object.values(userAnimeState).map((v, i) => (
-                        <option value={v} key={i}>{v}</option>
+                        <option value={Object.keys(userAnimeState)[i]} key={i}>{v}</option>
                     ))}</select>
                 </div>
                 <p>Rating</p>

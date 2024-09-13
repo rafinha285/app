@@ -104,7 +104,7 @@ const Controls:React.FC<props> = (
             <button className='content' onClick={handleForward}>
                 <FontAwesomeIcon icon={faForward}/>
                 <span className='tooltip'>
-                        Retroceder 10s
+                        Pular 10s
                     </span>
             </button>
 
@@ -141,7 +141,7 @@ const Controls:React.FC<props> = (
             </div>
 
 
-            <span className='content time'>{getEpTime(currentTime)} / {getEpTime(ep.duration)}</span>
+            <span className='content time'>{`${getEpTime(currentTime)} / ${getEpTime(ep.duration)}`}</span>
 
 
             <div className='volume content'>

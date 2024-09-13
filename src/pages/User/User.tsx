@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {User} from "../../types/userType"
 import "../../css/user.css"
-import { DateToStringLocal } from "../../features/main";
+import { DateToStringLocal, fetchUser } from "../../features/main";
 import RoleDiv from "../../components/User/RoleDiv";
 import { userAnimeState, userMangaState } from "../../types/types";
 import AnimeListDiv from "../../components/User/AnimeListDiv";
@@ -15,21 +15,23 @@ const UserPage:React.FC = () =>{
     let [animelist,setAnimelist] = useState<AnimeUser[]>([])
     const handleGetUser =async()=>{
         const token = sessionStorage.getItem('token');
+
         // let user:User
         const headers: HeadersInit ={
             'Authorization':`Bearer ${token}`
         }
-        const check:{success:boolean} = await fetch("/g/checktoken",{headers})
+        //,{headers}
+        const check:{success:boolean} = await fetchUser("/user/g/verify","GET")
             .then(response=>response.json())
         if(check.success){
-            await fetch("/g/user",{headers})
+            await fetchUser("/user/g/","GET")
             .then(response => response.json())
             .then((data:User)=>{
                 // animelist = data.animelist.map(parseAnime)
                 setUser(data)
             })
             .catch((error:any)=>console.error('Error fetching user data:', error))
-            await fetch("/api/user/animelist")
+            await fetchUser("/user/animelist/",'GET')
                 .then(response=>response.json())
                 .then((data:AnimeUser[])=>{
                     setAnimelist(data)
@@ -39,14 +41,14 @@ const UserPage:React.FC = () =>{
             sessionStorage.removeItem("token")
             window.location.href = '/login'
         }
-        
+
     }
     var [user,setUser] = useState<User>()
     useEffect(()=>{
         handleGetUser()
         console.log(user)
     },[!user])
-    
+
     return(
         <html>
             <Helmet>
@@ -55,7 +57,7 @@ const UserPage:React.FC = () =>{
             <Header/>
             <div className="info">
                 <div className="left">
-                    <img className="user-img"></img>
+                    {/*<img className="user-img"></img>*/}
                     <p className="user">Username: {user?.username}</p>
                     {/* DateToStringLocal(user?.birthDate!) */}
                     <p className='birth-date'>Data de Nascimento: {user?.birthDate?.toLocaleString("pt-br")}</p>

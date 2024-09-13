@@ -5,29 +5,29 @@ import "../css/base.css"
 import "../css/anime.css"
 import "../css/anime_.css"
 import "../css/loading.css"
-import { checkIsLogged, getEpTime, getMonthName} from "../features/main";
+import { checkIsLogged, fetchUser, getEpTime, getMonthName} from "../features/main";
 import LikeButton from "../assets/LikeButton"
 import AniGeneros from "../assets/Animegenre";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import $ from 'jquery'
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { Helmet } from "react-helmet";
 import Loading from "../components/Loading";
 import EpisodeLink from "../assets/EpisodeLink";
-import postLog from "../functions/logFunctions"
 import PersoCompo from "../components/Perso";
-import {Box, Rating} from "@mui/material"
-import StarIcon from '@mui/icons-material/Star';
-import { genToArray, getLabelText, handleRatingValue, tupleToProducer, tupleToSeason } from "../functions/animeFunctions";
 import AniProducers, { prodType } from "../assets/AnimeProd";
-import { types } from "cassandra-driver";
+import { useCookies } from "react-cookie";
 import { Episode } from "../types/episodeModel";
 import GlobalContext from "../GlobalContext";
 import Popup from "reactjs-popup"
-import AnimeEditList from "../components/AnimeEditList";
-import { ratingLabel } from "../types/types";
+import AnimeEditList from "../components/User/AnimeEditList";
 import {cdnUrl} from "../const";
+import Rating from "../components/Anime/Rating";
+import Comements from "../components/Comments";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faClock} from "@fortawesome/free-regular-svg-icons";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
 
 interface seasonDate{
@@ -42,6 +42,7 @@ const AnimePage:React.FC = ()=>{
     const [userAni,setUserAni] = useState<AnimeUser>()
     const [err,setErr] = useState<boolean>(false)
     const [seasonD,setSeasonD] = useState<seasonDate>()
+    const [cookies,setCookie] = useCookies(['token'])
     interface EpisodeState{
         [seasonId:string]: Episode[]
     }
@@ -54,13 +55,16 @@ const AnimePage:React.FC = ()=>{
     const [studios,setStudios] = useState<Producer[]>([])
 
     let checkList=async()=>{
-        await fetch(`/api/user/list/checkanime/${ani?.id}`)
+        await fetchUser(`/user/animelist/checklist/${ani?.id}`,"GET")
             .then(response=>response.json())
             .then(async data=>{
-                setIsInList(data.message)
-                await fetch(`/api/user/animelist/${ani?.id}`)
+                setIsInList(data.success)
+                await fetchUser(`/user/animelist/${ani?.id}`,"GET")
                     .then(response => response.json())
-                    .then(data=>setUserAni(data))
+                    .then((data:{success:boolean,response:AnimeUser})=>{
+                        setUserAni(data.response)
+                        setRatingValue(data.response.rate !== null?data.response.rate.toString():'none')
+                    })
             })
     }
 
@@ -98,6 +102,9 @@ const AnimePage:React.FC = ()=>{
                     })
             }
             fetchPS()
+            if(sessionStorage.getItem("token")){
+                setCookie('token', sessionStorage.getItem("token"), { path: '/' });
+            }
             // ani.seasons = tupleToSeason(ani.seasons as types.Tuple[])
             // console.log(ani.seasons)
             // ani.seasons?.forEach((season)=>{
@@ -135,7 +142,9 @@ const AnimePage:React.FC = ()=>{
 
     const handleAddAnimeToList = async()=>{
         checkIsLogged(context.isLogged)
-        await fetch(`/api/user/anime/add/${ani?.id!}`,{method:"POST"})
+        const token = sessionStorage.getItem("token")
+        console.log(token)
+        await fetchUser(`/user/animelist/insert/${ani?.id!}`,'POST')
             .then(res=>res.json())
             .then((data)=>{
                 console.log(data)
@@ -154,7 +163,7 @@ const AnimePage:React.FC = ()=>{
     const handleLike = ()=>{
 
     }
-    const [ratingValue,setRatingValue] = useState<number|null>()
+    const [ratingValue,setRatingValue] = useState<string>()
     const [ratingHover,setRatingHover] = useState(-1)
     console.log(ani)
     return(
@@ -165,7 +174,7 @@ const AnimePage:React.FC = ()=>{
             <Header />
             {ani?(
                 <div className="cont container" style={{padding:"100px"}}>
-                    <p style={{fontSize:".7rem !important"}}>Anime - Duração: <span style={{fontSize:".7rem !important"}} id="aniLen">{getEpTime(ani.averageeptime!)}</span><i className="fa-regular fa-clock"></i></p>
+                    <p style={{fontSize:".7rem !important"}}>Anime - Duração: <span style={{fontSize:".7rem !important"}} id="aniLen">{getEpTime(ani.averageeptime!)}</span><FontAwesomeIcon icon={faClock}/></p>
                     <div className="contentL">
                         <h2>{ani.name}</h2>
                         <div className="dura">
@@ -222,21 +231,11 @@ const AnimePage:React.FC = ()=>{
                         <div className="im">
                             <img src={`${cdnUrl}/ani/img?Id=${ani.id}`} alt={ani.name} />
                         </div>
-                        {/* <Box sx={{p:"auto",border:"1px white solid",borderRadius:'5px'}} className="not"> */}
-                            {/* <select className="selectN">
-                                <option value="none">Selecione sua nota</option>
-                                <option value="10">(10) Obra-prima</option>
-                                <option value="9">(9) Incrivel</option>
-                                <option value="8">(8) Muito Bom</option>
-                                <option value="7">(7) Bom</option>
-                                <option value="6">(6) Ok</option>
-                                <option value="5">(5) Na Média</option>
-                                <option value="4">(4) Ruim</option>
-                                <option value="3">(3) Muito Ruim</option>
-                                <option value="2">(2) Horrivel</option>
-                                <option value="1">(1) PUTA QUE PARIU</option>
-                            </select>
-                            <button className="aniSNota"><i className="fa-solid fa-star" style={{float:"none"}}></i> Submit</button> */}
+                        {
+                            isInList?(
+                                <Rating setRatingValue={setRatingValue} ratingValue={ratingValue} aniId={ani.id}/>
+                            ):(<></>)
+                        }
                             {/* <Rating
                                 className="rating"
                                 name="rating"
@@ -255,15 +254,14 @@ const AnimePage:React.FC = ()=>{
                             />
                             {ratingValue!== null&&(
                                 <Box sx={{ml:2,color:"white"}}>{ratingLabel[ratingHover! !== -1?ratingHover!:ratingValue!]}</Box>
-                            )}
-                        </Box> */}
+                            )}*/}
                         <Popup open={isPopupOpen} onClose={()=>setIsPopupOpen(false)}>
                             <AnimeEditList onClose={()=>setIsPopupOpen(false)} ani={userAni!}/>
                         </Popup>
                         {isInList?(
                             <button className="addAnimeList" onClick={()=>setIsPopupOpen(true)}>Editar Lista</button>
                         ):(
-                            <button className="addAnimeList" onClick={handleAddAnimeToList}>Adicionar a lista de anime<i className="fa-solid fa-plus"></i></button>
+                            <button className="addAnimeList" onClick={handleAddAnimeToList}>Adicionar a lista de anime <FontAwesomeIcon icon={faPlus}/></button>
                         )}
                     </div>
                     <div className="seasons">
@@ -276,37 +274,29 @@ const AnimePage:React.FC = ()=>{
                     <div className="eps">
                         {seasons.map((season,i,arr)=>(
                             <div style={{display:season.index === Math.min(...arr.map(v=>v.index))?"block":"none"}} id={season.id} key={season.index}>
-                                {/* //TODO Fazer o display de episodios de acordo com a temporada
-                                    tem q fazer o backend pegar o nome do ep e o index dele de acordo com o id da season, faça com loop
-                                    vou fazer no EpisodeLink, e passar somente o id
-                                */}
-                                {/* {episodes.filter((episodes)=>episodes.season_id == season.id)?.sort((a,b)=>a.epindex - b.epindex).map((ep)=>{
-                                    // console.log(episodes.filter((episodes)=>episodes.seasonid == season.id))
-                                    console.log(ep.name,ep.epindex)
-                                    return <EpisodeLink ani={ani} s={season} ep={ep} key={ep.epindex}/>
-                                })} */}
                                 {episodes[season.id]?.sort((a,b)=>a.epindex-b.epindex).map(v=>(
                                     <EpisodeLink ani={ani} s={season} ep={v}/>
                                 ))}
                             </div>
                         ))}
                     </div>
-                    <div className="personagens">
-                        <div style={{display:"flex",justifyContent:"space-between",marginBottom:"1em"}}>
-                            <h1>Personagens: </h1>
-                        </div>
-                        <div style={{
-                            border:"1px white solid",
-                            padding:"1em",
-                            display:"flex",
-                            flexWrap:"nowrap",
-                            justifyContent:"flex-start",
-                            flexDirection:'row',
-                            overflow:"auto"
-                        }}>{ani.characters?.map((v,i)=>(
-                            <PersoCompo perso={v} aniId={ani.id} key={i}></PersoCompo>
-                        ))}</div>
-                    </div>
+                    {/*<div className="personagens">*/}
+                    {/*    <div style={{display:"flex",justifyContent:"space-between",marginBottom:"1em"}}>*/}
+                    {/*        <h1>Personagens: </h1>*/}
+                    {/*    </div>*/}
+                    {/*    <div style={{*/}
+                    {/*        border:"1px white solid",*/}
+                    {/*        padding:"1em",*/}
+                    {/*        display:"flex",*/}
+                    {/*        flexWrap:"nowrap",*/}
+                    {/*        justifyContent:"flex-start",*/}
+                    {/*        flexDirection:'row',*/}
+                    {/*        overflow:"auto"*/}
+                    {/*    }}>{ani.characters?.map((v,i)=>(*/}
+                    {/*        <PersoCompo perso={v} aniId={ani.id} key={i}></PersoCompo>*/}
+                    {/*    ))}</div>*/}
+                    {/*</div>*/}
+                    <Comements indentifier={ani.id} type={'Anime'} name={ani.name} />
                 </div>
                 ):err?(
                     <div className="main-loading">

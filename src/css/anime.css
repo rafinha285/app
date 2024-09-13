@@ -13,13 +13,13 @@ h1, h2{
     display: inline-block;
 }
 .contentR{
-    width: 45%;
+    /* width: 45%; */
     float: right;
     display: flex;
     padding: 10px;
-    height: calc(min-content + 10px);
+    /* height: calc(min-content + 10px); */
     flex-direction: column;
-    align-items: flex-end;
+    align-items: center;
 }
 .contentR * {
     float: right;
@@ -41,17 +41,17 @@ h1, h2{
     color: black !important;
 }
 .im{
-    height: 361px;
+    height: 25em;
     width: fit-content;
     display: inline;
     float: right;
 }
 .not{
-    margin: 2em auto;
+    margin: 2em;
     max-width: 9.5em;
     display: flex;
     flex-direction: column;
-    height: 4em;
+    /* height: 4em; */
 }
 /* .not select{
     margin: 10px;
@@ -199,7 +199,7 @@ h1, h2{
     background: var(--light_blue2);
 }
 .addAnimeList{
-    margin: 3.5em;
+    margin: 2em;
     background: none;
     border: 1px white solid;
     border-radius: 5px;
@@ -255,4 +255,7 @@ h1, h2{
 }
 .update-button:hover{
     background: var(--dark_purple);
+}
+.comments{
+    margin: 0 5em;
 }

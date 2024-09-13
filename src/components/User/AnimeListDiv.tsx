@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { AnimeUser, Producer } from "../../types/animeModel";
+import { Anime, AnimeUser, Producer } from "../../types/animeModel";
 import { DateToStringLocal } from "../../features/main";
 import { tupleToProducer } from "../../functions/animeFunctions";
 import Popup from "reactjs-popup";
+import { cdnUrl } from "../../const";
+import { Link } from "react-router-dom";
+import AnimeEditList from "./AnimeEditList";
 
 
 interface props{
@@ -13,44 +16,37 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
         producers:Producer[],
         creators:Producer[],
         studios:Producer[],
-        genre:string[]
     }
     const [aniProp,setAniProp] = useState<aniProps>()
+    const [anime,setAnime] = useState<Anime>()
     const [isOpen,setIsOpen] = useState<boolean>()
     const handleEditAnime =()=>{
 
     }
     useEffect(()=>{
         const handleGetProps = async()=>{
-            const token = sessionStorage.getItem("token")
-            const headers:HeadersInit = {
-                "Authorization":`Bearer ${token}`
-            }
-            const getAnimeProps = await fetch(`/api/ani/${ani.anime_id}/props`,headers)
-                .then(async(response)=>await response.json())
-            var props:aniProps = {
-                producers:tupleToProducer(getAnimeProps.producers),
-                creators:tupleToProducer(getAnimeProps.creators),
-                studios:tupleToProducer(getAnimeProps.studios),
-                genre:getAnimeProps.genre
-            }
-            setAniProp(props)
+            // const token = sessionStorage.getItem("token")
+            // const headers:HeadersInit = {
+            //     "Authorization":`Bearer ${token}`
+            // }
+            const getAnime:Anime = await fetch(`/ani/g/${ani.anime_id}`).then(res=>res.json())
+            const getAnimeProps = await fetch(`/ani/g/prods/${ani.anime_id}`).then(async(response)=>await response.json())
+            setAnime(getAnime)
+            setAniProp(getAnimeProps)
 
         }
         handleGetProps()
     },[])
     return(
         <>
-            <Popup open={isOpen}>
-                <div className="">
-
-                </div>
+            <Popup open={isOpen} onClose={()=>setIsOpen(false)}>
+                <AnimeEditList onClose={()=>setIsOpen(false)} ani={ani}/>
             </Popup>
             <div className="anime">
                 <div className="anime-content">
-                    <img src={`/api/ani/img?Id=${ani.anime_id}`}></img>
-                    <p>{ani.name}</p>
-                    <button onClick={()=>setIsOpen(true)}></button>
+                    <img src={`${cdnUrl}/ani/img?Id=${ani.anime_id}`}></img>
+                    <Link to={`/Anime/${ani.anime_id}`}><p>{ani.name}</p></Link>
+                    <button style={{margin:0}} className="addAnimeList" onClick={()=>setIsOpen(true)}>Editar anime</button>
                 </div>
                 <div className="anime-content">
                     <div className="anime-date">
@@ -63,8 +59,10 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
                         <div className='genres prop'>
                             <p>Generos: </p>
                             <div className='prop-list'>
-                                {aniProp?.genre.map((v,i)=>(
-                                    <div className="prop-item" key={i}>{v}</div>
+                                {anime?.genre.map((v,i)=>(
+                                    <Link to={`/gen/${v}`}>
+                                        <div className="prop-item" key={i}>{v}</div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
@@ -72,7 +70,9 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
                             <p>Estudios: </p>
                             <div className="prop-list">
                                 {aniProp?.studios.map((v,i)=>(
-                                    <div className="prop-item" key={i}>{v.name}</div>
+                                    <Link to={`/stud/${v.id}`}>
+                                        <div className="prop-item" key={i}>{v.name}</div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
@@ -80,10 +80,20 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
                             <p>Criadores: </p>
                             <div className="prop-list">
                                 {aniProp?.creators.map((v,i)=>(
-                                    <div className="prop-item" key={i}>{v.name}</div>
+                                    <Link to={`/crea/${v.id}`}>
+                                        <div className="prop-item" key={i}>{v.name}</div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
+                        {/* <div className="producers prop">
+                            <p>Produtores: </p>
+                            <div className="prop-list">
+                                {aniProp?.producers.map((v,i)=>(
+                                    <div className="prop-item" key={i}>{v.name}</div>
+                                ))}
+                            </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

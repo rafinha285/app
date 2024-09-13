@@ -3,8 +3,6 @@ import { character } from "./characterModel"
 // import {Season} from "./seasonModel"
 import { Episode } from "./episodeModel";
 import { EpisodeUser } from "./episodeModel";
-import {types} from "cassandra-driver"
-import nano from "nano";
 // export interface Anime{
 //     _id:string;
 // 	name:string;
@@ -91,7 +89,7 @@ export interface Anime{
 	producers:Producer[];
 	creators:Producer[];
 	genre:string[];
-	seasons?:Season[]|types.Tuple[];
+	seasons?:Season[];
 	rating?:number;
 	characters?:character[];
 	// path?:string;

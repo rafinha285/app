@@ -77,3 +77,12 @@ export const handleRatingValue = async(value:number,context:GlobalContextType,an
             }
         })
 }
+
+export function isFirstEp (eps: Map<number, Episode>,ep:Episode): boolean {
+    const epIndexes = Array.from(eps.values()).map(v => v.epindex);
+    return Math.min(...epIndexes) === ep?.epindex;
+}
+export function isLastEp (eps: Map<number, Episode>,ep:Episode): boolean {
+    const epIndexes = Array.from(eps.values()).map(v => v.epindex);
+    return Math.max(...epIndexes) === ep?.epindex;
+}

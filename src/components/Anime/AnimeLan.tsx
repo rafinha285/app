@@ -1,10 +1,11 @@
 import React, { useEffect, useState} from "react";
-import AnimePoster from "../assets/AnimePosters"
-import {Anime} from "../types/animeModel"
-import "../css/index.css"
-import "../css/base.css"
+import AnimePoster from "../../assets/AnimePosters"
+import {Anime} from "../../types/animeModel"
+import "../../css/index.css"
+import "../../css/base.css"
 import { Link } from "react-router-dom";
-import * as nano from "nano"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
 
 interface AnimeLanProps{
@@ -39,7 +40,7 @@ const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
                     <h2>Novos mangás adicionados</h2>
                     <Link to="/Manga/lancamentos" className="newMoreBut">
                         <span className="ui-icon-plusthic"></span>
-                        <i className="fa-solid fa-plus"></i>
+                        <FontAwesomeIcon icon={faPlus}/>
                         Ver mais
                     </Link>
                 </div>
@@ -53,7 +54,7 @@ const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
                     <h2>Novos animes adicionados</h2>
                     <Link to="/Anime/lancamentos" className="newMoreBut">
                         <span className="ui-icon-plusthic"></span>
-                        <i className="fa-solid fa-plus"></i>
+                        <FontAwesomeIcon icon={faPlus}/>
                         Ver mais
                     </Link>
                 </div>

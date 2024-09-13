@@ -2,6 +2,7 @@ import { useContext } from "react"
 import { Anime } from "../types/animeModel"
 import { Episode, languages } from "../types/episodeModel"
 import GlobalContext, { GlobalContextType } from "../GlobalContext"
+import { getDeviceIndentifier } from "../functions/userFunctions"
 
 export function getEpTime(ee:number):string{
     var e = Math.round(ee)
@@ -73,14 +74,14 @@ export async function handleEpWatching(ani:string, seasonId:string, ep:Episode,d
         }
     });
 }
-export const handleNextEp = (ani:string,seasonId:string,eps:Episode[],index:number,isLogged:boolean,time:number,interval:NodeJS.Timeout)=>{
-    if(isLogged){
-        handleEpWatching(ani,seasonId,eps.sort((a,b)=>a.epindex-b.epindex)[index],time,true)
-    }
+export const handleNextEp = (ani:string,seasonId:string,eps:Map<number,Episode>,index:number)=>{
+    // if(isLogged){
+    //     handleEpWatching(ani,seasonId,eps.sort((a,b)=>a.epindex-b.epindex)[index],time,true)
+    // }
     console.log(eps)
-    var p = eps.find((v)=>v.epindex === (index+1))
+    var p = eps.get(index+1)
     console.log(p)
-    console.log(ani,seasonId,eps,index)
+    // console.log(ani,seasonId,eps,index)
     if(p){
         window.location.href = `/Anime/${ani}/watch/${seasonId}/${p.id}`
     }
@@ -88,8 +89,8 @@ export const handleNextEp = (ani:string,seasonId:string,eps:Episode[],index:numb
 export function nextEpUrl(eps:Episode[],ani:string,ep:Episode,):string|undefined{
     var posEp = eps.find(v=>v.epindex === (ep.epindex+1))
     if(posEp){
-        console.log(ani,ep.seasonid,posEp,posEp.id,`/Anime/${ani}/watch/${ep.seasonid}/${posEp.id}`)
-        return `/Anime/${ani}/watch/${ep.seasonid}/${posEp.id}`
+        console.log(ani,ep.season_id,posEp,posEp.id,`/Anime/${ani}/watch/${ep.season_id}/${posEp.id}`)
+        return `/Anime/${ani}/watch/${ep.season_id}/${posEp.id}`
     }else{
         return undefined
     }
@@ -97,8 +98,8 @@ export function nextEpUrl(eps:Episode[],ani:string,ep:Episode,):string|undefined
 export function prevEpUrl(eps:Episode[],ani:string,ep:Episode,):string|undefined{
     var prevEp = eps.find(v=>v.epindex === (ep.epindex-1))
     if(prevEp){
-        console.log(ani,ep.seasonid,prevEp,prevEp.id,`/Anime/${ani}/watch/${ep.seasonid}/${prevEp.id}`)
-        return `/Anime/${ani}/watch/${ep.seasonid}/${prevEp.id}`
+        console.log(ani,ep.season_id,prevEp,prevEp.id,`/Anime/${ani}/watch/${ep.season_id}/${prevEp.id}`)
+        return `/Anime/${ani}/watch/${ep.season_id}/${prevEp.id}`
     }else{
         return undefined
     }
@@ -129,7 +130,33 @@ export function checkIsLogged(isLogged:boolean){
         window.location.href = '/login/'
     }
 }
+export async function fetchPost(path:string,method:"POST"|"DELETE"|"PATCH" = "POST",body?:any){
+    return await fetch(path,{
+        method:method,
+        headers: {'Content-Type': 'application/json'},
+        body:JSON.stringify(body)
+    })
+}
+export async function fetchUser(path:string,method:"POST"|"DELETE"|"PATCH"|"GET" = "POST",body?:any){
+    let indentifier = getDeviceIndentifier()
+    return await fetch(path,{
+        method,
+        headers:{
+            'Content-Type':"application/json",
+            'timeZone':indentifier.timeZone,
+            'webGlRenderer':indentifier.WegGl?.renderer,
+            'webGlVendor':indentifier.WegGl?.vendor,
+        },
+        body:JSON.stringify(body)
+    })
+}
+export function isToday(date:Date) {
+    const today = new Date();
 
+    return date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear();
+}
 Date.prototype.getDayOfWeekName = function(){
     // const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
     let daysOfWeek = Date.prototype.daysOfWeek()

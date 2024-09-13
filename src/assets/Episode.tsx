@@ -1,10 +1,11 @@
 import React from "react";
 import "../css/episodes.css"
-// import { epLog } from "../types/logType";
 import { getEpTime } from "../features/main";
 import { Link } from "react-router-dom";
 import { EpisodeSim } from "../types/episodeModel";
 import {cdnUrl} from "../const";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faClock} from "@fortawesome/free-regular-svg-icons";
 
 interface props{
     ep:EpisodeSim
@@ -26,7 +27,7 @@ const Episode:React.FC<props> = ({ep}) =>{
                     </div>
                     <div className="ep-time">
                         <span datatype={ep.id}>{getEpTime(ep.duration)}</span>
-                        <i datatype={ep.id} className="far fa-clock"></i>
+                        <FontAwesomeIcon icon={faClock}/>
                     </div>
                     <div className="ep-animetitle">
                     {ep.animename}

@@ -5,9 +5,15 @@ import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import "../css/login.css"
 import Cookies from "universal-cookie"
+import {
+    getDeviceIndentifier
+} from '../functions/userFunctions'
 // import { CookieSetOption } from "react-cookie";
 // import { useCookies } from "react-cookie";
 import axios from 'axios';
+import { fetchPost } from "../features/main";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faRightToBracket} from "@fortawesome/free-solid-svg-icons";
 // import { genSalt, hashSync } from "bcryptjs";
 
 const cookiess = new Cookies();
@@ -23,31 +29,40 @@ const Login:React.FC = ()=>{
         console.log(value)
     };
     const handleLogin = async()=>{
-        if(recaptchaValue&&password&&email){
+        // if(recaptchaValue&&password&&email){
             try{
                 // const salt = await genSalt(10)
                 // const hashedPassword = hashSync(password,salt)
-                const response = await axios.post("/user/p/login",{
+                // const publicKey = await fetchPublicKey();
+                const userIndentifier = getDeviceIndentifier()
+                // const encryptedData = encryptDataWithPublicKey(body)
+                const response = await fetchPost(`/user/p/login`,"POST",{
                     email,
                     password,
-                    // hashedPassword,
-                    // salt,
-                    recaptchaToken:recaptchaValue
+                    recaptchaToken:recaptchaValue,
+                    userAgent:userIndentifier.userAgent,
+                    timeZone:userIndentifier.timeZone,
+                    WebGLVendor:userIndentifier.WegGl?.vendor,
+                    WebGLRenderer:userIndentifier.WegGl?.renderer
                 })
 
-                const token = response.data.token
-                // console.log(token,response,response.headers["set-cookie"])
-                cookiess.set("token",token,{path:"/",maxAge:86400, secure: true})
-                // setCookie('token',token,{path:"/",maxAge:84600})
-                sessionStorage.setItem("token",token)
-                console.log(token)
-                window.location.href = "/"
+                if(response.ok){
+                    const token = (await response.json()).token
+                    // console.log(token,response,response.headers["set-cookie"])
+                    cookiess.set("token",token,{path:"/",maxAge:86400, secure: true})
+                    // setCookie('token',token,{path:"/",maxAge:84600})
+                    sessionStorage.setItem("token",token)
+                    console.log(token)
+                    window.location.href = "/"
+                }else{
+                    alert('cu')
+                }
             }catch(err){
                 console.log(err)
                 setError(true)
             }
 
-        }
+        // }
     }
     enum enu{
         password,
@@ -80,7 +95,7 @@ const Login:React.FC = ()=>{
                 </div>
                 <ReCAPTCHA sitekey="6LcHpccpAAAAAILEI6AF1tPIzD7z69E0Ia0RO42t" onChange={handleRecaptchaChange}></ReCAPTCHA>
                 <div style={{display:"flex",justifyContent:"center",alignItems:"center",flexDirection:"column",margin:"0 auto"}}>
-                    <button onClick={handleLogin} className="logBut">Entrar <i className="fa-solid fa-right-to-bracket"></i></button><br/>
+                    <button onClick={handleLogin} className="logBut">Entrar <FontAwesomeIcon icon={faRightToBracket}/></button><br/>
                     <span>Criar conta:<Link to={"/register"}>Registrar-se</Link></span>
                 </div>
 

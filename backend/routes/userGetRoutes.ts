@@ -1,14 +1,15 @@
 import * as e from "express";
-import { checkToken, ErrorType, sendError } from "../assets/handle";
+import { ErrorType, sendError } from "../assets/handle";
 import { pgClient } from "../database/Postgre";
 import { JwtUser } from "../types";
+import { checkToken } from "../token/checkToken";
 
 const userGetRouter = e.Router()
 
 userGetRouter.get("/verify",checkToken,(req,res)=>{
     res.json({success:true})
 })
-userGetRouter.get("/user",checkToken,async(req,res)=>{
+userGetRouter.get("/",checkToken,async(req,res)=>{
     try{
         let result = await pgClient.query(`
         SELECT _id, name, surname, username, birthdate, email, totalanime, totalanimewatching, totalanimecompleted, totalanimedropped, totalanimeplantowatch, role, totalmanga, totalmangareading, totalmangacompleted, totalmangadropped, totalmangaplantoread, totalanimeliked, totalmangaliked,totalanimeonhold,totalmangaonhold

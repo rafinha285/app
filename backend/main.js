@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
+var path = require("path");
 var handle_1 = require("./assets/handle");
 var body_parser_1 = require("body-parser");
 var cookieParser = require("cookie-parser");
@@ -47,7 +48,9 @@ var Postgre_1 = require("./database/Postgre");
 var pg = require("pg");
 var animeGetRoutes_1 = require("./routes/animeGetRoutes");
 var animelistRoutes_1 = require("./routes/animelistRoutes");
-var episodesgetRoutes_1 = require("./routes/episodesgetRoutes");
+var episodeGetRoutes_1 = require("./routes/episodeGetRoutes");
+var episodeListPost_1 = require("./routes/episodeListPost");
+var episodeListGet_1 = require("./routes/episodeListGet");
 var app = e();
 app.use((0, body_parser_1.json)());
 app.use((0, body_parser_1.urlencoded)({ extended: true }));
@@ -83,9 +86,12 @@ app.use('/user/g/', userGetRoutes_1.default);
 app.use('/user/animelist', animelistRoutes_1.default);
 //rotas para anime
 app.use('/ani/g/', animeGetRoutes_1.default);
-//rotas para episodios
-app.use('/ep/g/', episodesgetRoutes_1.default);
 //rotas para o log de eps assistidos
+app.use('/ep/user/p/', episodeListPost_1.default);
+//rota para pegar os eps do usuario
+app.use('/ep/user/g/', episodeListGet_1.default);
+//rotas para episodios
+app.use('/ep/g/', episodeGetRoutes_1.default);
 app.use(e.static(consts_1.BUILD_PATH, { maxAge: '1d' }));
 //kkkkkk risos risos risonho
 app.get('/easteregg', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -94,6 +100,9 @@ app.get('/easteregg', function (req, res) { return __awaiter(void 0, void 0, voi
         return [2 /*return*/];
     });
 }); });
+app.get("/public-key", function (req, res) {
+    res.sendFile(path.join('E:\\main\\app\\backend\\secret\\public_key.pem'));
+});
 //para q todos os requests
 app.get('*', function (req, res) {
     (0, handle_1.sendFile)().cssJs(res);

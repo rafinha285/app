@@ -9,7 +9,8 @@ export declare enum languages {
     English = "en",
     Spanish = "es"
 }
-export declare enum quality {
+export type quality = '1080p' | '720p' | '480p';
+export declare enum qualityEnum {
     FULLHD = "1080p",
     HD = "720p",
     SD = "480p"

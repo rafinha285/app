@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addUser = exports.checkToken = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.witchStorageAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = exports.userAnimeState = exports.priorityValue = void 0;
+exports.addUser = exports.addLog = exports.endConnectionAnime = exports.rollbackAnime = exports.openConnectionAnime = exports.id = exports.mkDir = exports.sendFile = exports.sendError = exports.ErrorType = exports.getTime = exports.cut = exports.setHeader = exports.Console = exports.userAnimeState = exports.priorityValue = void 0;
 var Console_1 = require("./Console");
 var path = require("path");
 var Postgre_1 = require("../database/Postgre");
@@ -45,9 +45,7 @@ var ffmpeg = require('fluent-ffmpeg');
 ffmpeg.setFfmpegPath("D:/Site_anime/ffmpeg/bin/ffmpeg.exe");
 ffmpeg.setFfprobePath("D:/Site_anime/ffmpeg/bin/ffprobe.exe");
 var uuid_1 = require("uuid");
-var jwt = require("jsonwebtoken");
-var config_1 = require("../secret/config");
-var consts_1 = require("../consts");
+// import { HDD_ANIME_PATH, SSD_ANIME_PATH } from '../consts';
 // import { randomInt } from "crypto";
 var priorityValue;
 (function (priorityValue) {
@@ -151,6 +149,7 @@ function sendError(res, errorType, status, menssage) {
         res.status(409).json({ success: false, message: "Usuário já está logado em outro lugar." });
     }
     function unauthorized(res) {
+        res.clearCookie("token");
         res.status(401).json({ success: false, message: "Essa operação não é autorizada" });
     }
     switch (errorType) {
@@ -274,20 +273,18 @@ exports.id = id;
 //         }
 //     }
 // }
-function witchStorageAnime(p) {
-    if (fs.existsSync(path.join(consts_1.SSD_ANIME_PATH, p))) {
-        return path.join(consts_1.SSD_ANIME_PATH, p);
-    }
-    else {
-        return path.join(consts_1.HDD_ANIME_PATH, p);
-    }
-}
-exports.witchStorageAnime = witchStorageAnime;
+// export function witchStorageAnime(p:string):string{
+//     if(fs.existsSync(path.join(SSD_ANIME_PATH,p))){
+//         return path.join(SSD_ANIME_PATH,p)
+//     }else{
+//         return path.join(HDD_ANIME_PATH,p)
+//     }
+// }
 function openConnectionAnime() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, Postgre_1.animeClient.connect()
+                case 0: return [4 /*yield*/, Postgre_1.pgClient.connect()
                     // await animeClient.query("BEGIN")
                 ];
                 case 1: return [2 /*return*/, _a.sent()
@@ -302,7 +299,7 @@ function commitAnime() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, Postgre_1.animeClient.query("COMMIT")];
+                case 0: return [4 /*yield*/, Postgre_1.pgClient.query("COMMIT")];
                 case 1:
                     _a.sent();
                     return [2 /*return*/];
@@ -314,7 +311,7 @@ function rollbackAnime() {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, Postgre_1.animeClient.query("ROLLBACK")];
+                case 0: return [4 /*yield*/, Postgre_1.pgClient.query("ROLLBACK")];
                 case 1:
                     _a.sent();
                     return [2 /*return*/];
@@ -352,60 +349,54 @@ function addLog(log) {
     });
 }
 exports.addLog = addLog;
-function checkToken(req, res, next) {
-    var _a;
-    var tokenHeader = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
-    var tokencookie = req.cookies.token;
-    // console.log(tokencookie)
-    var token = tokenHeader || tokencookie;
-    var segredo = config_1.secretKey;
-    if (!token) {
-        sendError(res, ErrorType.noToken);
-        return;
-    }
-    jwt.verify(token, segredo, function (err, usuario) {
-        if (err) {
-            sendError(res, ErrorType.invalidToken);
-            return;
-        }
-        if (typeof usuario === 'string') {
-            try {
-                // Decodifica o token JWT para obter as informações do usuário
-                var decodedToken = jwt.verify(usuario, segredo);
-                if (decodedToken) {
-                    // console.log(decodedToken.UserAgent,decodedToken.ip)
-                    // console.log(req.get("User-Agent")!,req.socket.remoteAddress)
-                    if (!(decodedToken.UserAgent === req.get("User-Agent") &&
-                        decodedToken.ip === req.socket.remoteAddress)) {
-                        throw ErrorType.isLoggedElsewhere;
-                    }
-                    else {
-                        req.user = decodedToken;
-                    }
-                }
-                else {
-                    req.user = usuario;
-                }
-            }
-            catch (error) {
-                switch (error) {
-                    case ErrorType.isLoggedElsewhere:
-                        console.log("aaaa erro logged elsewhere");
-                        return sendError(res, ErrorType.isLoggedElsewhere);
-                    default:
-                        return sendError(res, ErrorType.default, 500, error);
-                }
-                // return
-                // req.user = usuario;
-            }
-        }
-        else {
-            req.user = usuario;
-        }
-        next();
-    });
-}
-exports.checkToken = checkToken;
+// export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) {
+//     const tokenHeader = req.headers.authorization?.split(" ")[1];
+//     const tokencookie = req.cookies.token
+//     // console.log(tokencookie)
+//     const token = tokenHeader || tokencookie;
+//     const segredo = secretKey
+//     if(!token){
+//         sendError(res,ErrorType.noToken)
+//         return
+//     }
+//     jwt.verify(token,segredo,(err:unknown,usuario:any)=>{
+//         if (err) {
+//             sendError(res, ErrorType.invalidToken);
+//             return;
+//         }
+//         if (typeof usuario === 'string') {
+//             try {
+//                 // Decodifica o token JWT para obter as informações do usuário
+//                 const decodedToken = jwt.verify(usuario, segredo) as JwtUser | null;
+//                 if (decodedToken) {
+//                     // console.log(decodedToken.UserAgent,decodedToken.ip)
+//                     // console.log(req.get("User-Agent")!,req.socket.remoteAddress)
+//                     if(!(decodedToken.user_agent === req.get("User-Agent")!&&
+//                     decodedToken.ip === req.socket.remoteAddress)){
+//                         throw ErrorType.isLoggedElsewhere
+//                     }else{
+//                         req.user = decodedToken;
+//                     }
+//                 } else {
+//                     req.user = usuario;
+//                 }
+//             } catch (error) {
+//                 switch(error){
+//                     case ErrorType.isLoggedElsewhere:
+//                         console.log("aaaa erro logged elsewhere")
+//                         return sendError(res,ErrorType.isLoggedElsewhere)
+//                     default:
+//                         return sendError(res,ErrorType.default,500,error)
+//                 }
+//                 // return
+//                 // req.user = usuario;
+//             }
+//         } else {
+//             req.user = usuario;
+//         }
+//         next()
+//     })
+// }
 function addUser(user) {
     return __awaiter(this, void 0, void 0, function () {
         var name, surname, username, birthDate, email, password, salt, _id, totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch, totalAnimeOnHold, totalAnimeLiked, totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead, totalMangaOnHold, totalMangaLiked, result;
@@ -429,7 +420,7 @@ function addUser(user) {
                     totalMangaPlanToRead = 0;
                     totalMangaOnHold = 0;
                     totalMangaLiked = 0;
-                    return [4 /*yield*/, Postgre_1.animeClient.query("INSERT INTO users.users \n        (\n            _id, \n            username, \n            email, \n            password, \n            name, \n            surname, \n            birthdate, \n            totalanime, \n            totalanimewatching, \n            totalanimecompleted, \n            totalanimedropped, \n            totalanimeplantowatch, \n            totalmanga, \n            totalmangareading,\n            totalmangacompleted, \n            totalmangadropped, \n            totalmangaplantoread, \n            totalAnimeLiked, \n            totalMangaLiked,\n            salt,\n            totalanimeonhold,\n            totalmangaonhold\n        ) \n        VALUES \n        (\n            $1, \n            $2, \n            $3, \n            $4, \n            $5, \n            $6, \n            $7, \n            $8, \n            $9, \n            $10, \n            $11, \n            $12, \n            $13, \n            $14, \n            $15, \n            $16, \n            $17, \n            $18, \n            $19, \n            $20, \n            $21,\n            $22\n        ) RETURNING *", [
+                    return [4 /*yield*/, Postgre_1.pgClient.query("INSERT INTO users.users \n        (\n            _id, \n            username, \n            email, \n            password, \n            name, \n            surname, \n            birthdate, \n            totalanime, \n            totalanimewatching, \n            totalanimecompleted, \n            totalanimedropped, \n            totalanimeplantowatch, \n            totalmanga, \n            totalmangareading,\n            totalmangacompleted, \n            totalmangadropped, \n            totalmangaplantoread, \n            totalAnimeLiked, \n            totalMangaLiked,\n            salt,\n            totalanimeonhold,\n            totalmangaonhold\n        ) \n        VALUES \n        (\n            $1, \n            $2, \n            $3, \n            $4, \n            $5, \n            $6, \n            $7, \n            $8, \n            $9, \n            $10, \n            $11, \n            $12, \n            $13, \n            $14, \n            $15, \n            $16, \n            $17, \n            $18, \n            $19, \n            $20, \n            $21,\n            $22\n        ) RETURNING *", [
                             _id, username, email, password, name, surname, new Date(birthDate).toISOString(),
                             totalAnime, totalAnimeWatching, totalAnimeCompleted, totalAnimeDropped, totalAnimePlanToWatch,
                             totalManga, totalMangaReading, totalMangaCompleted, totalMangaDropped, totalMangaPlanToRead,

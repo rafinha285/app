@@ -3,7 +3,9 @@ import "../css/episodes.css"
 import { epLog } from "../types/logType";
 import Episode from "../assets/Episode";
 import { Link } from "react-router-dom";
-import {EpisodeSim} from "../types/episodeModel.ts";
+import {EpisodeSim} from "../types/episodeModel";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 
 interface prop{
     count:number|undefined
@@ -34,7 +36,7 @@ const Episodes:React.FC<prop> = ({count}) =>{
                 <h2>Episódios recem-adicionados</h2>
                 <Link className="newMoreBut" to={`/Anime/lancamentos`}>
                     <span className="ui-icon-plusthic"></span>
-                    <i className="fa-solid fa-plus"></i>
+                    <FontAwesomeIcon icon={faPlus}/>
                     Ver mais
                 </Link>
             </div>

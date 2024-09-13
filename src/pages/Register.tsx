@@ -7,13 +7,16 @@ import "../css/login.css"
 // import {pbkdf2, pbkdf2Sync} from "@react-native-module/pbkdf2"
 import ReCAPTCHA from "react-google-recaptcha";
 import { v4 as uuid } from "uuid";
+import { fetchPost } from "../features/main";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faPlus} from "@fortawesome/free-solid-svg-icons";
 const salt = bcrypt.genSaltSync(10)
 const Register:React.FC = ()=>{
     const [email,setEmail] = useState<string>("")
     const [name,setName] = useState<string>("")
     const [surname,setSurname] = useState<string>("")
     const [username,setUsername] = useState<string>("")
-    const [birthDate,setBirthDate] = useState<Date>()
+    const [birthDate,setBirthDate] = useState<Date>(new Date())
     const [s,setS] = useState<string>("")
     const [cs,setCs] = useState<string>("")
     const [recaptchaValue,setRecaptchaValue] = useState<string|null>(null)
@@ -66,34 +69,29 @@ const Register:React.FC = ()=>{
                 var interations = 1000
                 //var hashedPassword = pbkdf2Sync(s,_id,interations,32,"sha256").toString("hex")
                 var hashedPassword = bcrypt.hashSync(s,salt)
-                
+
                 // var hashedPasswordConfirm = pbkdf2Sync(cs,_id,interations,32,"sha256").toString("hex")
                 console.log(name,surname,s===cs)
                 const emailRegex = /\S+@\S+\.\S+/;
                 if(emailRegex.test(email)&&s == cs){
-                    $.ajax("/user/p/new/user",{
-                        method:"POST",
-                        data:{
-                            _id:_id,
-                            name:name,
-                            surname:surname,
-                            email:email,
-                            username:username,
-                            birthDate:birthDate?.toISOString(),
-                            password:hashedPassword,
-                            recaptchaToken:recaptchaValue,
-                            salt
-                        }
+                    let response = await fetchPost("/user/p/new/user","POST",{
+                            // _id,
+                        name:name,
+                        surname:surname,
+                        email:email,
+                        username:username,
+                        birthDate:birthDate?.toISOString(),
+                        password:hashedPassword,
+                        recaptchaToken:recaptchaValue,
+                        salt
                     })
-                    .done((res)=>{
-                        console.log(res)
+                    if(response.ok){
                         window.location.href = '/login'
-                    })
-                    $(document).ajaxSend(()=>{send=true})
+                    }
                 }
             }
         }
-        
+
     }
     return(
         <html lang="pt-BR">
@@ -113,7 +111,7 @@ const Register:React.FC = ()=>{
                     </div>
                     <ReCAPTCHA sitekey="6LcHpccpAAAAAILEI6AF1tPIzD7z69E0Ia0RO42t" onChange={handleRecaptchaChange}></ReCAPTCHA>
                     <div className="div-flex">
-                        <button type="submit" onClick={handleSendAccount} disabled={send} className="logBut">Registrar-se <i className="fa-solid fa-plus"></i></button>
+                        <button type="submit" onClick={handleSendAccount} disabled={send} className="logBut">Registrar-se <FontAwesomeIcon icon={faPlus}/></button>
                     </div>
                 </div>
             </form>

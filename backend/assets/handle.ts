@@ -2,7 +2,7 @@ import e, * as express from 'express';
 import Cconsole from "./Console";
 import * as path from "path";
 import { User } from "../../src/types/userType";
-import {animeClient, logPool} from "../database/Postgre";
+import {pgClient, logPool} from "../database/Postgre";
 import { Log, page } from "../../src/types/logType";
 import * as fs from 'fs'
 const ffmpeg = require('fluent-ffmpeg')
@@ -13,7 +13,7 @@ import * as jwt from "jsonwebtoken"
 import { PoolClient } from 'pg';
 import { secretKey } from '../secret/config';
 import { JwtUser, TokenRequest } from '../types';
-import { HDD_ANIME_PATH, SSD_ANIME_PATH } from '../consts';
+// import { HDD_ANIME_PATH, SSD_ANIME_PATH } from '../consts';
 // import { randomInt } from "crypto";
 
 
@@ -106,6 +106,7 @@ export function sendError(res:express.Response,errorType:ErrorType = ErrorType.d
         res.status(409).json({success:false,message:"Usuário já está logado em outro lugar."})
     }
     function unauthorized(res:e.Response){
+        res.clearCookie("token")
         res.status(401).json({success:false,message:"Essa operação não é autorizada"})
     }
     switch(errorType){
@@ -207,22 +208,22 @@ export function id(num:number = 8){
 //         }
 //     }
 // }
-export function witchStorageAnime(p:string):string{
-    if(fs.existsSync(path.join(SSD_ANIME_PATH,p))){
-        return path.join(SSD_ANIME_PATH,p)
-    }else{
-        return path.join(HDD_ANIME_PATH,p)
-    }
-}
+// export function witchStorageAnime(p:string):string{
+//     if(fs.existsSync(path.join(SSD_ANIME_PATH,p))){
+//         return path.join(SSD_ANIME_PATH,p)
+//     }else{
+//         return path.join(HDD_ANIME_PATH,p)
+//     }
+// }
 export async function openConnectionAnime(){
-    return await animeClient.connect()
+    return await pgClient.connect()
     // await animeClient.query("BEGIN")
 }
 async function commitAnime():Promise<void> {
-    await animeClient.query("COMMIT")
+    await pgClient.query("COMMIT")
 }
 export async function rollbackAnime():Promise<void>{
-    await animeClient.query("ROLLBACK")
+    await pgClient.query("ROLLBACK")
 }
 export async function endConnectionAnime(client:PoolClient) {
     client.release()
@@ -242,54 +243,54 @@ export async function addLog(log:Log){
 }
 
 
-export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) {
-    const tokenHeader = req.headers.authorization?.split(" ")[1];
-    const tokencookie = req.cookies.token
-    // console.log(tokencookie)
-    const token = tokenHeader || tokencookie;
-    const segredo = secretKey
-    if(!token){
-        sendError(res,ErrorType.noToken)
-        return
-    }
-    jwt.verify(token,segredo,(err:unknown,usuario:any)=>{
-        if (err) {
-            sendError(res, ErrorType.invalidToken);
-            return;
-        }
-        if (typeof usuario === 'string') {
-            try {
-                // Decodifica o token JWT para obter as informações do usuário
-                const decodedToken = jwt.verify(usuario, segredo) as JwtUser | null;
-                if (decodedToken) {
-                    // console.log(decodedToken.UserAgent,decodedToken.ip)
-                    // console.log(req.get("User-Agent")!,req.socket.remoteAddress)
-                    if(!(decodedToken.UserAgent === req.get("User-Agent")!&&
-                    decodedToken.ip === req.socket.remoteAddress)){
-                        throw ErrorType.isLoggedElsewhere
-                    }else{
-                        req.user = decodedToken;
-                    }
-                } else {
-                    req.user = usuario;
-                }
-            } catch (error) {
-                switch(error){
-                    case ErrorType.isLoggedElsewhere:
-                        console.log("aaaa erro logged elsewhere")
-                        return sendError(res,ErrorType.isLoggedElsewhere)
-                    default:
-                        return sendError(res,ErrorType.default,500,error)
-                }
-                // return
-                // req.user = usuario;
-            }
-        } else {
-            req.user = usuario;
-        }
-        next()
-    })
-}
+// export function checkToken(req:TokenRequest,res:e.Response,next:e.NextFunction) {
+//     const tokenHeader = req.headers.authorization?.split(" ")[1];
+//     const tokencookie = req.cookies.token
+//     // console.log(tokencookie)
+//     const token = tokenHeader || tokencookie;
+//     const segredo = secretKey
+//     if(!token){
+//         sendError(res,ErrorType.noToken)
+//         return
+//     }
+//     jwt.verify(token,segredo,(err:unknown,usuario:any)=>{
+//         if (err) {
+//             sendError(res, ErrorType.invalidToken);
+//             return;
+//         }
+//         if (typeof usuario === 'string') {
+//             try {
+//                 // Decodifica o token JWT para obter as informações do usuário
+//                 const decodedToken = jwt.verify(usuario, segredo) as JwtUser | null;
+//                 if (decodedToken) {
+//                     // console.log(decodedToken.UserAgent,decodedToken.ip)
+//                     // console.log(req.get("User-Agent")!,req.socket.remoteAddress)
+//                     if(!(decodedToken.user_agent === req.get("User-Agent")!&&
+//                     decodedToken.ip === req.socket.remoteAddress)){
+//                         throw ErrorType.isLoggedElsewhere
+//                     }else{
+//                         req.user = decodedToken;
+//                     }
+//                 } else {
+//                     req.user = usuario;
+//                 }
+//             } catch (error) {
+//                 switch(error){
+//                     case ErrorType.isLoggedElsewhere:
+//                         console.log("aaaa erro logged elsewhere")
+//                         return sendError(res,ErrorType.isLoggedElsewhere)
+//                     default:
+//                         return sendError(res,ErrorType.default,500,error)
+//                 }
+//                 // return
+//                 // req.user = usuario;
+//             }
+//         } else {
+//             req.user = usuario;
+//         }
+//         next()
+//     })
+// }
 export async function addUser(user:{
     name:string,
     surname:string,
@@ -316,7 +317,7 @@ export async function addUser(user:{
     const totalMangaPlanToRead:number = 0;
     const totalMangaOnHold = 0
     const totalMangaLiked:number = 0
-    const result = await animeClient.query(
+    const result = await pgClient.query(
         `INSERT INTO users.users 
         (
             _id, 

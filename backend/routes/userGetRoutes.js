@@ -39,11 +39,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
 var handle_1 = require("../assets/handle");
 var Postgre_1 = require("../database/Postgre");
+var checkToken_1 = require("../token/checkToken");
 var userGetRouter = e.Router();
-userGetRouter.get("/verify", handle_1.checkToken, function (req, res) {
+userGetRouter.get("/verify", checkToken_1.checkToken, function (req, res) {
     res.json({ success: true });
 });
-userGetRouter.get("/user", handle_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+userGetRouter.get("/", checkToken_1.checkToken, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var result, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {

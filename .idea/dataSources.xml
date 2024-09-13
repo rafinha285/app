@@ -8,12 +8,5 @@
       <jdbc-url>jdbc:postgresql://192.168.18.20:5433/</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="data@192.168.18.20" uuid="3f768db3-7cbc-4713-9a52-1942232508cd">
-      <driver-ref>cassandra</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.dbschema.CassandraJdbcDriver</jdbc-driver>
-      <jdbc-url>jdbc:cassandra://192.168.18.20:9042/data</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
   </component>
 </project>

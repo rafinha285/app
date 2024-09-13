@@ -202,20 +202,6 @@
 .plyr__caption i{
     font-size: 1.1em ;
 }
-.skip-intro{
-    padding: 0!important;
-    transition: all 1s var(--transCub);
-    width: 0vmin;
-    overflow: hidden !important;
-    height: 0;
-    margin-left: 0 !important;
-}
-.skip-active{
-    margin-left: calc(var(--plyr-control-spacing,10px)/4)  !important;
-    width: 16vmin;
-    line-height:var(--plyr-line-height,1.7);
-    height:auto !important;
-}
 :root{
     --top:-650px;
     --topM:-200px;
@@ -226,4 +212,49 @@
     --height:20vmin;
     --heightM:10vmin;
     --plyr-color-main: var(--orange);
+}
+.popup-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+.episode-popup{
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    position: absolute;
+    background-color: rgb(0 0 0 / 36%);
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.episode-popup__container{
+    background-color: var(--gray-dark);
+    border-radius: 15px;
+    padding: 1em;
+    border: 2px #c9c9c9 solid;
+    outline: 2px white solid;
+    display: flex;
+    flex-direction: row-reverse;
+}
+.episode-popup__container .close{
+    width: 30px;
+    height: 30px;
+    float: right;
+    background: none;
+    border: none;
+}
+.episode-popup__container .button{
+    background: none;
+    border: 2px solid white;
+    border-radius: 5px;
+}
+.episode-popup__container .button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }

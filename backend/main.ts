@@ -1,20 +1,18 @@
 import * as e from 'express'
 import * as path from 'path'
-import * as fs from 'fs'
-import * as http from 'http'
-import {types} from 'cassandra-driver'
 import { Console, ErrorType, sendError, sendFile } from "./assets/handle"
 import {json, urlencoded} from "body-parser"
 import * as cookieParser from "cookie-parser"
 import userPostRouter from './routes/userPostRoutes'
-import { client } from './database/pool'
 import userGetRouter from './routes/userGetRoutes'
 import { BUILD_HTML, BUILD_PATH } from './consts'
 import { pgClient } from './database/Postgre'
 import * as pg from "pg"
 import animeGetRouter from './routes/animeGetRoutes'
 import animeListRouter from './routes/animelistRoutes'
-import episodesGetRouter from './routes/episodesgetRoutes'
+import episodesGetRouter from './routes/episodeGetRoutes'
+import episodeListPostRouter from "./routes/episodeListPost";
+import episodeListGetRouter from "./routes/episodeListGet";
 
 const app = e()
 
@@ -24,7 +22,7 @@ app.use(cookieParser())
 
 pg.defaults.poolSize = 5
 
-app.use(async (req,res,next)=>{
+app.use(async (req:e.Request,res:e.Response,next:e.NextFunction)=>{
     // client.connect()
     //     .then(()=>{
     //         req.db = client;
@@ -53,15 +51,21 @@ app.use('/user/g/',userGetRouter)
 app.use('/user/animelist',animeListRouter)
 //rotas para anime
 app.use('/ani/g/',animeGetRouter)
+//rotas para o log de eps assistidos
+app.use('/ep/user/p/',episodeListPostRouter)
+//rota para pegar os eps do usuario
+app.use('/ep/user/g/',episodeListGetRouter)
 //rotas para episodios
 app.use('/ep/g/',episodesGetRouter)
-//rotas para o log de eps assistidos
 
 
 app.use(e.static(BUILD_PATH,{ maxAge: '1d' }))
 //kkkkkk risos risos risonho
-app.get('/easteregg',async(req,res)=>{
+app.get('/easteregg',async(req:e.Request,res:e.Response)=>{
     res.redirect('https://youtu.be/xvFZjo5PgG0?si=UNy9hc1yJFPGlSz-')
+})
+app.get("/public-key",(req:e.Request,res:e.Response)=>{
+    res.sendFile(path.join('E:\\main\\app\\backend\\secret\\public_key.pem'))
 })
 //para q todos os requests
 app.get('*',(req:e.Request,res:e.Response)=>{

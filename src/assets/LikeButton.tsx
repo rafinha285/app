@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 import React, {useState} from "react"
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faHeart} from "@fortawesome/free-solid-svg-icons";
 
 // interface LikeProp{
 //     aniId:mongoose.Types.ObjectId;
@@ -13,11 +15,11 @@ const LikeButton = () =>{
         if(isLiked){
             // $.ajax("/api/like/",{
             //     headers:{
-                    
+
             //     }
             // })
         }else{
-            
+
         }
         e.preventDefault()
     }
@@ -27,7 +29,7 @@ const LikeButton = () =>{
             className={`aniLik ${isLiked?'aniLikSel':''}`}
             onClick={handleLike}
         >
-            <i className="fa-solid fa-heart" style={{fontSize:"1.2em"}}></i>
+            <FontAwesomeIcon icon={faHeart} style={{fontSize:"1.2em"}}></FontAwesomeIcon>
         </button>
     )
 }

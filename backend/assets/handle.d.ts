@@ -1,8 +1,7 @@
-import e, * as express from 'express';
+import * as express from 'express';
 import { User } from "../../src/types/userType";
 import { Log } from "../../src/types/logType";
 import { PoolClient } from 'pg';
-import { TokenRequest } from '../types';
 export declare enum priorityValue {
     LOW = "Baixa",
     MEDIUM = "Media",
@@ -44,12 +43,10 @@ export declare function sendFile(): {
 };
 export declare function mkDir(no: String, svData: string): Promise<void>;
 export declare function id(num?: number): string | false;
-export declare function witchStorageAnime(p: string): string;
-export declare function openConnectionAnime(): Promise<any>;
+export declare function openConnectionAnime(): Promise<PoolClient>;
 export declare function rollbackAnime(): Promise<void>;
 export declare function endConnectionAnime(client: PoolClient): Promise<void>;
 export declare function addLog(log: Log): Promise<any>;
-export declare function checkToken(req: TokenRequest, res: e.Response, next: e.NextFunction): void;
 export declare function addUser(user: {
     name: string;
     surname: string;

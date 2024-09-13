@@ -9,10 +9,11 @@ export enum languages{
     English = 'en',
     Spanish = 'es',
 }
-export enum quality{
-    FULLHD = "1080p",
-    HD = "720p",
-    SD = "480p"
+export type quality = '1080p' | '720p' | '480p';
+export enum qualityEnum {
+    FULLHD = '1080p',
+    HD = '720p',
+    SD = '480p',
 }
 export enum state{
 	ONGOING="Lançando",

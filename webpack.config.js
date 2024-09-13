@@ -1,9 +1,9 @@
 const path = require('path');
 
 module.exports = {
-  resolve:{
-    fallback:{
-    "crypto":false
+  resolve: {
+    fallback: {
+      "constants": require.resolve("constants-browserify")
     }
-  }
+  },
 };

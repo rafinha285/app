@@ -19,6 +19,7 @@ interface props{
     epUser?:EpisodeUser;
     eps:Map<number, Episode>;
 }
+let count = 0;
 const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const videoRef = React.useRef<HTMLVideoElement>(null);
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -50,13 +51,12 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
 
     const handleMouseMove = () => {
         setIsControlsVisible(true)
-        // console.log(isControlsVisible);
-        // Remover a classe após 3 segundos se o mouse não se mover mais
-        setTimeout(() => {
-            setIsControlsVisible(false)
-            // console.log(isControlsVisible);
-        }, 3000);
+        count = 0;
     };
+    const handleMouseLeave = () => {
+        setIsControlsVisible(false);
+        count = 0;
+    }
 
 
     //quality functions
@@ -68,7 +68,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     }, {} as { [key in quality]: string });
 
     useEffect(() => {
-        if (videoRef.current && playerContainerRef.current) {
+        if (videoRef.current) {
             const videoElement = videoRef.current;
             const q = currentQuality.replace('p','') as quality;
             const newSource = qualitySources[q]; // Definir a fonte de acordo com a qualidade atual
@@ -85,16 +85,12 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                     videoElement.play(); // Se estava tocando, continuar
                 }
             };
-
-            playerContainerRef.current.addEventListener('mousemove',handleMouseMove);
-
         }
         if(muted){
             setVolume(0);
         }
         window.addEventListener('keydown',handleKeyDown)
         return()=>{
-            playerContainerRef.current?.removeEventListener('mousemove',handleMouseMove);
             window.removeEventListener('keydown',handleKeyDown)
         }
     }, [currentQuality,ep]);
@@ -117,6 +113,13 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
 
         }else{
             setCurrentCue([])
+        }
+        if (count > 3) {
+            setIsControlsVisible(false);
+            count = 0;
+        }
+        if (isControlsVisible) {
+            count += 1;
         }
         // setCurrentCue([])
     };
@@ -326,7 +329,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     }
 
     return (
-        <div className={`player ${isConfigOpen||!isPlaying||isControlsVisible?'config-open':''}`} ref={playerContainerRef} >
+        <div className={`player ${isConfigOpen||!isPlaying||isControlsVisible?'config-open':''}`} ref={playerContainerRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
             <div className='video-wrapper' onClick={handleVideoWrapperClick}>
                 <video
                     src={qualitySources[currentQuality]}

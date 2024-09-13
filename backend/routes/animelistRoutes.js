@@ -229,7 +229,7 @@ animeListRouter.get('/', checkToken_1.checkToken, function (req, res) { return _
         switch (_a.label) {
             case 0:
                 _a.trys.push([0, 2, , 3]);
-                return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id, watched_episodes\n            FROM users.user_anime_list WHERE user_id = $1;\n            ", [req.user._id])];
+                return [4 /*yield*/, Postgre_1.pgClient.query("\n            SELECT user_id, anime_id, status, name, start_date, finish_date, rate, priority, id\n            FROM users.user_anime_list WHERE user_id = $1;\n            ", [req.user._id])];
             case 1:
                 response = _a.sent();
                 res.send(response.rows);

@@ -122,7 +122,7 @@ animeListRouter.get("/:id",checkToken,async(req,res)=>{
 animeListRouter.get('/',checkToken, async (req:express.Request, res:express.Response) => {
     try{
         var response = await pgClient.query(`
-            SELECT user_id, anime_id, status, name, start_date, finish_date, rate, times_watched, priority, rewatched_episodes, last_ep, id, watched_episodes
+            SELECT user_id, anime_id, status, name, start_date, finish_date, rate, priority, id
             FROM users.user_anime_list WHERE user_id = $1;
             `,[(req.user as JwtUser)._id])
 

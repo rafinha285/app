@@ -98,7 +98,7 @@ const UserPage:React.FC = () =>{
                 <div className="content">
                     <h1>Lista de anime</h1>
                     <div className="list">
-                        {animelist?.map((v,i)=>(
+                        {(animelist||[])?.map((v,i)=>(
                             <AnimeListDiv ani={v} key={i}></AnimeListDiv>
                         ))}
                     </div>

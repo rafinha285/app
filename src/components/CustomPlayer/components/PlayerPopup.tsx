@@ -7,7 +7,7 @@ import {faX} from "@fortawesome/free-solid-svg-icons";
 interface props{
     epUser?:EpisodeUser;
     open:boolean;
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+    setOpen:()=> void;
     handleSkip:(skip:number)=>void;
 }
 const PlayerPopup:React.FC<props> = ({epUser,open,setOpen,handleSkip}) =>{
@@ -17,7 +17,7 @@ const PlayerPopup:React.FC<props> = ({epUser,open,setOpen,handleSkip}) =>{
     }
     const handleClose = (e: React.MouseEvent) => {
         e.stopPropagation();
-        setOpen(false);
+        setOpen();
     };
     console.log(epUser)
     return (

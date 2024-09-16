@@ -42,7 +42,10 @@ episodeListPostRouter.post('/',checkToken,async (req,res)=>{
                 DO UPDATE
                 SET dropped_on = $2,
                     date = now(),
-                    watched = ($2 >= (SELECT ending::double precision FROM anime.episodes WHERE id = $1));
+                    watched = CASE
+                            WHEN users.user_episode_list.watched = true THEN users.user_episode_list.watched
+                            ELSE ($2 >= (SELECT ending::double precision FROM anime.episodes WHERE id = $1))
+                        END;
         `,[
             episode_id,
             dropped_on,

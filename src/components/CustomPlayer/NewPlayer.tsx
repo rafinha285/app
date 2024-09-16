@@ -14,6 +14,7 @@ import {Cue, VTTData} from "webvtt-parser";
 import PlayerPopup from "./components/PlayerPopup";
 import {handlePostSec} from "./functions/userFunctions";
 import globalContext, {GlobalContextType} from "../../GlobalContext";
+import {getPlayerLocalstorage, setPlayerLocalstorage} from "./functions/localstorageFunctions"
 
 interface props{
     aniId:string;
@@ -28,13 +29,13 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const context = useContext<GlobalContextType|undefined>(globalContext)!;
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
-    const [volume, setVolume] = useState<number>(1); // Volume range 0 to 1
+    const [volume, setVolume] = useState<number>(getPlayerLocalstorage('volume') as number||1); // Volume range 0 to 1
     const [currentTime, setCurrentTime] = useState<number>(0);
     const [currentBuffer, setCurrentBuffer] = useState<number>(0);
-    const [currentQuality,setCurrentQuality] = useState<quality>(getQuality());
-    const [currentSpeed,setCurrentSpeed] = useState(1)
-    const [muted,setMuted] = useState<boolean>(false);
-    const [captionsActive, setCaptionsActive] = useState<boolean>(true);
+    const [currentQuality,setCurrentQuality] = useState<quality>((getPlayerLocalstorage('quality')||1080) as quality);
+    const [currentSpeed,setCurrentSpeed] = useState(getPlayerLocalstorage('speed') as number||1)
+    const [muted,setMuted] = useState<boolean>(getPlayerLocalstorage('muted') as boolean);
+    const [captionsActive, setCaptionsActive] = useState<boolean>(getPlayerLocalstorage('captions') as boolean|true);
     const [selectedCaptions,setSelectedCaptions] = useState<string>('por')
     const [isConfigOpen,setIsConfigOpen] = useState<boolean>(false);
     const [isControlsVisible,setIsControlsVisible] = useState<boolean>(false);
@@ -47,6 +48,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     // const [displayPlayButton,setDisplayPlayButton] = useState<boolean>(true);
 
     const [isPopupOpen,setIsPopupOpen] = useState<boolean>(!!epUser);
+    const [isPopupClicked,setIsPopupClicked] = useState<boolean>(false)
 
     const playerContainerRef = React.useRef<HTMLDivElement>(null);
 
@@ -76,8 +78,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     useEffect(() => {
         if (videoRef.current) {
             const videoElement = videoRef.current;
-            const q = currentQuality
-            const newSource = qualitySources[q]; // Definir a fonte de acordo com a qualidade atual
+            const newSource = qualitySources[currentQuality]; // Definir a fonte de acordo com a qualidade atual
             const currentTimee = currentTime; // Armazenar o tempo atual do vídeo
             const isPlaying = !videoElement.paused; // Verifica se o vídeo está tocando
 
@@ -92,13 +93,9 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                 }
             };
         }
-        console.log(epUser)
-        if(epUser){
-            setIsPopupOpen(true)
-        }
-        if(muted){
-            setVolume(0);
-        }
+        // if(muted){
+        //     setVolume(0);
+        // }
         window.addEventListener('keydown',handleKeyDown)
         return()=>{
             window.removeEventListener('keydown',handleKeyDown)
@@ -171,6 +168,8 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         setVolume(newVolume);
         if (videoRef.current) {
             setMuted(newVolume===0)
+            setPlayerLocalstorage('volume', newVolume)
+            setPlayerLocalstorage('muted', newVolume === 0)
             videoRef.current.volume = newVolume;
         }
     }
@@ -182,6 +181,8 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
             }
             if (videoRef.current) {
                 setMuted(newVolume===0)
+                setPlayerLocalstorage('volume', newVolume)
+                setPlayerLocalstorage('muted', newVolume === 0)
                 videoRef.current.volume = newVolume;
             }
             return newVolume
@@ -195,6 +196,8 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
             }
             if (videoRef.current) {
                 setMuted(newVolume===0)
+                setPlayerLocalstorage('volume', newVolume)
+                setPlayerLocalstorage('muted', newVolume === 0)
                 videoRef.current.volume = newVolume;
             }
             return newVolume;
@@ -217,6 +220,8 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                     // Atualiza a qualidade e a fonte do vídeo
                     setCurrentQuality(v);
                     videoRef.current.src = newSource;
+
+                    setPlayerLocalstorage('quality',v);
 
                     // Quando o novo vídeo começar a carregar
                     videoRef.current.onloadedmetadata = () => {
@@ -256,6 +261,8 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                         setCurrentQuality(selectedQuality as quality); // Define a qualidade
                         videoRef.current.src = newSource; // Muda a fonte de vídeo
 
+                        setPlayerLocalstorage('quality',selectedQuality);
+
                         videoRef.current.onloadedmetadata = () => {
                             if (videoRef.current) {
                                 videoRef.current.currentTime = currentTimee; // Restaura o tempo
@@ -272,7 +279,10 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
 
     const handleToggleMuted = (e?:React.MouseEvent<HTMLButtonElement>)=>{
         e?.stopPropagation();
-        setMuted((prev)=>!prev);
+        setMuted((prev)=> {
+            setPlayerLocalstorage('muted',!prev)
+            return !prev
+        });
     }
 
     const handleForward = (e?:React.MouseEvent<HTMLButtonElement>) =>{
@@ -306,7 +316,10 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     }
     const toggleCaptions = (e:React.MouseEvent<HTMLButtonElement>)=>{
         e.stopPropagation();
-        setCaptionsActive(!captionsActive);
+        setCaptionsActive((captions)=>{
+            setPlayerLocalstorage('captions',!captions);
+            return !captions
+        });
     }
     const togglePiP = (e:React.MouseEvent<HTMLButtonElement>) =>{
         e.stopPropagation();
@@ -334,6 +347,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const handleSpeedChange = (v:number)=>{
         setCurrentSpeed(v)
         if(videoRef.current){
+            setPlayerLocalstorage('speed',v)
             videoRef.current.playbackRate = v
         }
     }
@@ -341,6 +355,10 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         if((e.currentTarget.currentTime / ep.duration)>.05){
             handlePostSec(context.isLogged,e.currentTarget.currentTime,ep)
         }
+    }
+    const handleClosePopup = () => {
+        setIsPopupOpen(false)
+        setIsPopupClicked(true)
     }
 
     //keyboard event listeners
@@ -393,10 +411,10 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
 
     return (
         <div className={`player ${isConfigOpen||!isPlaying||isControlsVisible?'config-open':''}`} ref={playerContainerRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
-            {epUser?(
+            {epUser&&isPopupOpen&&!isPopupClicked?(
                 <PlayerPopup
                     open={isPopupOpen}
-                    setOpen={setIsPopupOpen}
+                    setOpen={handleClosePopup}
                     handleSkip={handleSkip}
                     epUser={epUser}
                 />

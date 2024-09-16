@@ -13,7 +13,7 @@ interface props{
     // episodes:Episode[]
 }
 const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
-    const [ratingValue,setRatingValue] = useState<string>(ani?.rate.toString())
+    const [ratingValue,setRatingValue] = useState<string>(ani?.rate?.toString())
     const [startDate,setStartDate] = useState<Date|undefined>(ani.start_date)
     const [endDate,setEndDate] = useState<Date|undefined>(ani.finish_date)
     const [status,setStatus] = useState<userAnimeState>(ani.status)

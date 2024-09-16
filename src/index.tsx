@@ -13,6 +13,7 @@ import Download from './pages/Download';
 import Agenda from './pages/Agenda';
 import GlobalContext, { GlobalProvider } from './GlobalContext';
 import UserPage from './pages/User/User';
+import UserPageConfig from "./pages/User/Userconfig";
 const App:React.FC = ()=> {
 return (
   <Router>
@@ -32,6 +33,7 @@ return (
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/user' element={<UserPage/>}/>
+        <Route path='/user/config' element={<UserPageConfig/>}/>
       </Routes>
     </GlobalProvider>
   </Router>

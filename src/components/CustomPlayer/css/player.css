@@ -136,7 +136,7 @@
     display: flex;
     align-items: center;
     position: relative;
-    width: 100%;
+    width: 70%;
     height: 5px;
 }
 .buffered-bar {

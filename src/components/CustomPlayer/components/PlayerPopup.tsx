@@ -1,8 +1,6 @@
 import React from "react";
-import {APITypes} from "plyr-react";
-import {EpisodeUser} from "../../types/episodeModel";
-import {getEpTime} from "../../features/main";
-import ReactDOM from "react-dom";
+import {EpisodeUser} from "../../../types/episodeModel";
+import {getEpTime} from "../../../features/main";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faX} from "@fortawesome/free-solid-svg-icons";
 
@@ -21,6 +19,7 @@ const PlayerPopup:React.FC<props> = ({epUser,open,setOpen,handleSkip}) =>{
         e.stopPropagation();
         setOpen(false);
     };
+    console.log(epUser)
     return (
         <div
             className="episode-popup"

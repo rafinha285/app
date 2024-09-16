@@ -9,7 +9,6 @@ import { checkIsLogged, fetchUser, getEpTime, getMonthName} from "../features/ma
 import LikeButton from "../assets/LikeButton"
 import AniGeneros from "../assets/Animegenre";
 import { useParams } from "react-router-dom";
-import $ from 'jquery'
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import { Helmet } from "react-helmet";
@@ -70,13 +69,13 @@ const AnimePage:React.FC = ()=>{
 
     useEffect(()=>{
         if(!ani){
-            $.ajax(`/ani/g/${id}`).done((res:Anime)=>{
-                const animeData:Anime = res
-                setAni(animeData)
-            }).fail((e:any)=>{
-                if(e.status === 400){
+            fetch(`/ani/g/${id}`).then(async res=>{
+                if(!res.ok){
                     setErr(true)
+                    return
                 }
+                const animeData:Anime = await res.json()
+                setAni(animeData)
             })
         }
         if(ani){
@@ -128,13 +127,15 @@ const AnimePage:React.FC = ()=>{
     },[ani,id])
     const [gen,setGen] = useState<string[]>([])
 
-    const seasonChangeHandle = (e:React.ChangeEvent) =>{
-        var s = $(e.target).val()
-        $(".eps").children().each(function(i,p){
-            if($(p).attr("id") === s){
-                $(p).css("display","block")
+    const seasonChangeHandle = (e: React.ChangeEvent<HTMLSelectElement>) =>{
+        var s = e.target.value
+        const epsElements = document.querySelectorAll<HTMLElement>(".eps > div");
+        epsElements.forEach(element=>{
+            const id = element.id
+            if(id === s){
+                element.style.display="block"
             }else{
-                $(p).css("display","none")
+                element.style.display="none"
             }
         })
     }

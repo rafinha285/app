@@ -10,7 +10,7 @@ import {isFirstEp, isLastEp} from "../../functions/animeFunctions";
 import globalContext from "../../GlobalContext";
 import 'plyr/dist/plyr.css'
 import "../../css/watch.css"
-import PlayerPopup from "./PlayerPopup";
+import PlayerPopup from "../CustomPlayer/components/PlayerPopup.tsx";
 
 interface props{
     ani:Anime

@@ -1,6 +1,5 @@
 import * as e from "express";
-import { pgClient } from "../database/Postgre";
-import { Console, ErrorType, sendError, setHeader } from "../assets/handle";
+import {Console, ErrorType, sendError, setHeader} from "../assets/handle";
 
 const animeGetRouter = e.Router();
 //TODO fazer a database de animes ser o pgsql
@@ -76,6 +75,14 @@ animeGetRouter.get("/seasons/:id",async(req,res)=>{
         res.send((await req.db.query(`SELECT * FROM anime.seasons WHERE anime_id = $1`,[req.params.id])).rows)
     }catch(err){
         sendError(res,ErrorType.default,500,err)
+    }
+})
+//rota apra pegar uma season de um anime
+animeGetRouter.get('/season/:id/:seasonId',async(req,res)=>{
+    try{
+        res.send((await req.db.query(`SELECT * FROM anime.seasons WHERE anime_id = $1 AND id = $2`,[req.params.id,req.params.seasonId])).rows)
+    }catch(err){
+        sendError(res,ErrorType.default)
     }
 })
 //rota para pegar animes de acordo com o genero

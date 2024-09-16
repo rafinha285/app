@@ -47,11 +47,21 @@ episodeListPostRouter.post('/', checkToken_1.checkToken, function (req, res) { r
             case 0:
                 _b.trys.push([0, 3, , 4]);
                 _a = req.body, anime_id = _a.anime_id, dropped_on = _a.dropped_on, episode_id = _a.episode_id, season_id = _a.season_id;
-                return [4 /*yield*/, req.db.query("\n            SELECT check_and_insert_user_anime_list($1, $2);\n        ", [
+                // Console.log(req.body,req.user as JwtUser);
+                // Console.log([
+                //     (req.user as JwtUser)._id,  // user_id
+                //     anime_id                    // anime_id
+                // ])
+                return [4 /*yield*/, req.db.query("\n            SELECT users.check_and_insert_user_anime_list($1, $2);\n        ", [
                         req.user._id,
                         anime_id // anime_id
                     ])];
             case 1:
+                // Console.log(req.body,req.user as JwtUser);
+                // Console.log([
+                //     (req.user as JwtUser)._id,  // user_id
+                //     anime_id                    // anime_id
+                // ])
                 _b.sent();
                 return [4 /*yield*/, req.db.query("\n            INSERT INTO users.user_episode_list\n            (\n                episode_id,\n                dropped_on,\n                season_id,\n                anime_id,\n                user_id,\n                watched\n            )\n            VALUES\n                (\n                    $1,\n                    $2,\n                    $3,\n                    $4,\n                    $5,\n                    ($2 >= (SELECT ending::double precision FROM anime.episodes WHERE id = $1))\n                )\n            ON CONFLICT (user_id, episode_id)\n                DO UPDATE\n                SET dropped_on = $2,\n                    date = now(),\n                    watched = ($2 >= (SELECT ending::double precision FROM anime.episodes WHERE id = $1));\n        ", [
                         episode_id,

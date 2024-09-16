@@ -86,6 +86,9 @@
     padding: calc(10px *.7);
     position: relative;
     transition: all .3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .controls button:hover{
     background: var(--orange);
@@ -238,7 +241,7 @@
     display: flex;
     padding:10px !important;
     width: 100% !important;
-    justify-content: space-between;
+    justify-content: space-between !important;
     align-items: center;
     /*display: flex;*/
 }

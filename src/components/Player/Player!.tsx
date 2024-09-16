@@ -10,7 +10,7 @@ import {fetchUser, handleEpWatching, handleNextEp} from "../../features/main";
 import { getEpsFromSeason } from "../../functions/animeFunctions";
 import {cdnUrl} from "../../const";
 import globalContext from "../../GlobalContext";
-import PlayerPopup from "./PlayerPopup";
+import PlayerPopup from "../CustomPlayer/components/PlayerPopup.tsx";
 import {PopupActions} from "reactjs-popup/dist/types";
 interface prop{
     ani:Anime;

@@ -29,7 +29,6 @@
     "crypto": "^1.0.1",
     "crypto-browserify": "^3.12.0",
     "disqus-react": "^1.1.5",
-    "jquery": "^3.7.1",
     "jsencrypt": "^3.3.2",
     "mongoose": "^7.5.3",
     "node-rsa": "^1.1.1",

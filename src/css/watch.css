@@ -162,46 +162,6 @@
 .ep-sel-but:hover{
     background: var(--gray-dark);
 }
-
-.plyr__menu__container{
-    max-height: 25em;
-    overflow: auto;
-}
-
-.mainplayer *{
-    color:black !important;
-}
-.plyr{
-    width: calc(100% - 15em);
-    margin: auto;
-}
-.plyr__menu__container .plyr__control>span{
-    color: var(--orange);
-    transition: all .4s;
-}
-.plyr__menu__container .plyr__control:hover>span{
-    color: #fff;
-}
-.plyr__menu__container .plyr__control>span .plyr__menu__value{
-    color: var(--orange);
-    transition: all .6s;
-}
-.plyr__menu__container .plyr__control:hover>span .plyr__menu__value{
-    color: #fff;
-}
-/* .plyr__caption{
-    font-size: 2em;
-} */
-.plyr__caption{
-    font-size: 1em !important;
-    background: var(--plyr-captions-background,#5600ceab) !important;
-}
-.plyr__caption b{
-    font-size: 1.1em !important;
-}
-.plyr__caption i{
-    font-size: 1.1em ;
-}
 :root{
     --top:-650px;
     --topM:-200px;
@@ -257,4 +217,8 @@
 }
 .episode-popup__container .button:hover {
     background-color: rgba(255, 255, 255, 0.1);
+}
+.link-anime{
+    width: fit-content;
+    margin: 2em auto 7em;
 }

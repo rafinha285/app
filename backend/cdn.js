@@ -39,14 +39,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var e = require("express");
 var path = require("path");
 var fs = require("fs");
-// import * as cors from 'cors';
-// @ts-ignore
 var handle_1 = require("./assets/handle");
 var consts_1 = require("./consts");
-// import { Console } from 'console'
 // @ts-ignore
 var app = e();
-// app.use(cors({credentials:true}));
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*'); // Ou o domínio específico
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
+app.get('/i/', function (req, res) {
+    try {
+        //colocar uma imagem teste aq depois
+        //pra testa a velocidade da internet
+        res.sendFile(path.join(__dirname, "./public/index.html"));
+    }
+    catch (err) {
+        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
+    }
+});
 app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var typesImg, im, i, pathImg;
     return __generator(this, function (_a) {
@@ -59,7 +70,6 @@ app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 
             typesImg = ["jpe", "jpg", "jpeg", "png"];
             im = typesImg.length;
             for (i = 0; i < im; i++) {
-                handle_1.Console.log(path.join(consts_1.ANIME_PATH, req.query.Id, "img", "".concat(req.query.Id, ".").concat(typesImg[i])));
                 pathImg = path.join(consts_1.ANIME_PATH, req.query.Id, "img", "".concat(req.query.Id, ".").concat(typesImg[i]));
                 if (fs.existsSync(pathImg)) {
                     return [2 /*return*/, res.sendFile(pathImg)];
@@ -90,6 +100,16 @@ app.get("/ep/:aniId/:season/:epId/:file", function (req, res) { return __awaiter
         return [2 /*return*/];
     });
 }); });
+app.get('/ep/:aniId/:seasonId/:epId/:lang', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, aniId, seasonId, epId, lang;
+    return __generator(this, function (_b) {
+        (0, handle_1.setHeader)(res);
+        _a = req.params, aniId = _a.aniId, seasonId = _a.seasonId, epId = _a.epId, lang = _a.lang;
+        res.set('Cache-Control', 'public, max-age=7200');
+        res.sendFile(path.join(consts_1.ANIME_PATH, aniId, 'seasons', seasonId, epId, "".concat(epId, "-").concat(lang, ".vtt")));
+        return [2 /*return*/];
+    });
+}); });
 app.get("/epPoster/:aniId/:season/:epId", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, aniId, season, epId;
     return __generator(this, function (_b) {
@@ -105,33 +125,7 @@ app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awa
         try {
             _a = req.params, aniId = _a.aniId, season = _a.season, epId = _a.epId, reso = _a.reso;
             filePath = path.join(consts_1.ANIME_PATH, aniId, "seasons", season, epId, "".concat(epId, "-").concat(reso, ".mp4"));
-            // Console.log(filePath)
-            // const stat = fs.statSync(filePath);
-            // const fileSize = stat.size;
-            //
-            // const readStream = fs.createReadStream(filePath);
-            //
-            // res.setHeader('Content-Type', 'video/mp4');
-            // res.setHeader('Content-Length', fileSize);
-            // res.setHeader('Content-Disposition', `attachment; filename=${epId}.mp4`);
-            //
-            // let uploadedBytes = 0;
-            // readStream.on('data', (chunk) => {
-            //     uploadedBytes += chunk.length;
-            //     const progress = (uploadedBytes / fileSize) * 100;
-            //     // Envia o progresso para o cliente
-            //     res.status(206)
-            //     res.write(chunk);
-            // });
-            //
-            // readStream.on('end', () => {
-            //     res.end();
-            // });
-            //
-            // readStream.on('error', (err) => {
-            //     console.error(err);
-            //     res.status(500).end();
-            // });
+            res.setHeader('Cache-Control', 'public, max-age=7200');
             res.sendFile(filePath);
             // res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
         }
@@ -143,31 +137,40 @@ app.get("/stream/:aniId/:season/:epId/:reso", function (req, res) { return __awa
 }); });
 //rota pro download do ep
 app.get('/download/:aniid/:seasonid/:epid/:reso', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, aniid, seasonid, epid, reso, filePath, stat, fileSize_1, readStream, uploadedBytes_1;
+    var _a, aniid, seasonid, epid, reso, filePath, stat, fileSize, readStream_1, uploadedBytes_1;
     return __generator(this, function (_b) {
         try {
             _a = req.params, aniid = _a.aniid, seasonid = _a.seasonid, epid = _a.epid, reso = _a.reso;
             filePath = path.join(consts_1.ANIME_PATH, aniid, 'seasons', seasonid, epid, "".concat(epid, "-").concat(reso, ".mp4"));
+            handle_1.Console.log('File path:', filePath); // Adicione isso para verificar o caminho do arquivo
             stat = fs.statSync(filePath);
-            fileSize_1 = stat.size;
-            readStream = fs.createReadStream(filePath);
+            fileSize = stat.size;
+            readStream_1 = fs.createReadStream(filePath);
             res.setHeader('Content-Type', 'video/mp4');
-            res.setHeader('Content-Length', fileSize_1);
+            res.setHeader('Content-Length', fileSize);
             res.setHeader('Content-Disposition', "attachment; filename=".concat(epid, ".mp4"));
             uploadedBytes_1 = 0;
-            readStream.on('data', function (chunk) {
+            readStream_1.on('data', function (chunk) {
                 uploadedBytes_1 += chunk.length;
-                var progress = (uploadedBytes_1 / fileSize_1) * 100;
-                // Envia o progresso para o cliente
-                res.write(chunk);
+                var canWrite = res.write(chunk);
+                // console.log('Can write:', canWrite); // Adicione isso para verificar o status de escrita
+                if (!canWrite) {
+                    readStream_1.pause();
+                }
             });
-            readStream.on('end', function () {
+            res.on('drain', function () {
+                // console.log('Drain event'); // Adicione isso para verificar quando o buffer está vazio
+                readStream_1.resume();
+            });
+            readStream_1.on('end', function () {
+                handle_1.Console.log('End of stream');
                 res.end();
             });
-            readStream.on('error', function (err) {
-                console.error(err);
+            readStream_1.on('error', function (err) {
+                console.error('Stream error:', err);
                 res.status(500).end();
             });
+            // res.sendFile(filePath)
         }
         catch (err) {
             (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);

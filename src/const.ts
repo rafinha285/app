@@ -1,2 +1,2 @@
-export const cdnUrl = `http://cdn.animefoda.top`;
+export const cdnUrl = `http://localhost:8080`;
 export const proxyUrl = `/proxy`

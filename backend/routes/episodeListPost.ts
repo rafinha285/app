@@ -7,10 +7,14 @@ const episodeListPostRouter = Router();
 
 episodeListPostRouter.post('/',checkToken,async (req,res)=>{
     try{
-        // Console.log(req.body)
         const {anime_id,dropped_on,episode_id,season_id} = req.body;
+        // Console.log(req.body,req.user as JwtUser);
+        // Console.log([
+        //     (req.user as JwtUser)._id,  // user_id
+        //     anime_id                    // anime_id
+        // ])
         await req.db.query(`
-            SELECT check_and_insert_user_anime_list($1, $2);
+            SELECT users.check_and_insert_user_anime_list($1, $2);
         `, [
             (req.user as JwtUser)._id,  // user_id
             anime_id                    // anime_id

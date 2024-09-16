@@ -4,7 +4,6 @@ import Footer from "../../components/Footer";
 import Searchh from "../../components/Searchh";
 import { Anime} from "../../types/animeModel";
 import "../../css/search.css"
-import $ from "jquery"
 import { useParams , Link} from "react-router-dom";
 import { Helmet } from "react-helmet";
 
@@ -14,10 +13,13 @@ const GenSearch:React.FC = ()=>{
     const [gens,setGens] = useState<Anime[]>()
 
     useEffect(()=>{
-        $.ajax(`/ani/g/gen/${gen}`)
-            .done((res:Anime[])=>{
-                setGens(res)
+        const fetchGens = () =>{
+            fetch(`/ani/g/gen/${gen}`).then(async r=>{
+                if(r.ok){
+                    setGens(await r.json())
+                }
             })
+        }
     },[])
     return(
         <html lang="pt-BR">

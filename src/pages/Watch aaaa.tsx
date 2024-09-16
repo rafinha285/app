@@ -7,7 +7,7 @@ import Loading from "../components/Loading";
 import Header from "../components/Header";
 import LikeButton from "../assets/LikeButton";
 import {cdnUrl} from "../const";
-import PlayerPopup from "../components/Player/PlayerPopup";
+import PlayerPopup from "../components/CustomPlayer/components/PlayerPopup.tsx";
 import Player from "../components/Player/Player";
 import {DateToStringLocal, fetchUser, handleNextEp} from "../features/main";
 import EpisodeDropdown from "../assets/EpisodeDropdown";

@@ -14,18 +14,12 @@ const Episodes:React.FC<prop> = ({count}) =>{
     const [eps,setEps] = useState<EpisodeSim[]>()
     useEffect(()=>{
         if(count){
-            $.ajax({
-                method:"GET",
-                url:`/ep/g/lan?count=${count}`
-            }).done((res)=>{
-                setEps(res)
+            fetch(`/ep/g/lan?count=${count}`).then(async(res)=>{
+                setEps(await res.json())
             })
         }else{
-            $.ajax({
-                method:"GET",
-                url:`/ep/g/lan`
-            }).done((res)=>{
-                setEps(res)
+            fetch(`/ep/g/lan`).then(async(res)=>{
+                setEps(await res.json())
             })
         }
 

@@ -8,7 +8,7 @@ import {Helmet} from "react-helmet";
 import Header from "../components/Header";
 import LikeButton from "../assets/LikeButton";
 import {cdnUrl} from "../const";
-import PlayerPopup from "../components/Player/PlayerPopup";
+import PlayerPopup from "../components/CustomPlayer/components/PlayerPopup.tsx";
 import globalContext from "../GlobalContext";
 import {quality} from "../types/types";
 import {DateToStringLocal, fetchUser, handleNextEp} from "../features/main";
@@ -148,17 +148,7 @@ const Watch:React.FC = () => {
         console.log(inEnd)
         plyrRef.current!.plyr.currentTime = inEnd
     }
-    const handlePostSec = async (sec: number) => {
-        if (context.isLogged) {
-            let body = {
-                episode_id: ep?.id,
-                anime_id: ep?.anime_id,
-                dropped_on: sec,
-                season_id: ep?.season_id,
-            }
-            await fetchUser('/ep/user/p/', 'POST', body)
-        }
-    }
+
     const handlePause = async (plyr: Plyr) => {
         await handlePostSec(plyr.currentTime)
         // if((plyr.currentTime / ep.duration!) > .05){

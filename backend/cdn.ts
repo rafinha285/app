@@ -1,16 +1,17 @@
 import * as e from 'express'
 import * as path from 'path'
 import * as fs from 'fs'
-// import * as cors from 'cors';
-// @ts-ignore
 import {Console, ErrorType, sendError, sendFile, setHeader} from './assets/handle'
 import {ANIME_PATH} from './consts'
-// import { Console } from 'console'
 
 // @ts-ignore
 const app = e()
 
-// app.use(cors({credentials:true}));
+app.use((req:e.Request, res:e.Response, next:e.NextFunction) => {
+    res.header('Access-Control-Allow-Origin', '*'); // Ou o domínio específico
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
 
 app.get('/i/',(req: e.Request, res: e.Response) => {
     try {
@@ -71,33 +72,6 @@ app.get("/stream/:aniId/:season/:epId/:reso",async(req:e.Request,res:e.Response)
         var {aniId,season,epId,reso} = req.params
         // Console.log(epId,reso,typeof reso)
         var filePath = path.join(ANIME_PATH,aniId,"seasons",season,epId,`${epId}-${reso}.mp4`)
-        // Console.log(filePath)
-        // const stat = fs.statSync(filePath);
-        // const fileSize = stat.size;
-        //
-        // const readStream = fs.createReadStream(filePath);
-        //
-        // res.setHeader('Content-Type', 'video/mp4');
-        // res.setHeader('Content-Length', fileSize);
-        // res.setHeader('Content-Disposition', `attachment; filename=${epId}.mp4`);
-        //
-        // let uploadedBytes = 0;
-        // readStream.on('data', (chunk) => {
-        //     uploadedBytes += chunk.length;
-        //     const progress = (uploadedBytes / fileSize) * 100;
-        //     // Envia o progresso para o cliente
-        //     res.status(206)
-        //     res.write(chunk);
-        // });
-        //
-        // readStream.on('end', () => {
-        //     res.end();
-        // });
-        //
-        // readStream.on('error', (err) => {
-        //     console.error(err);
-        //     res.status(500).end();
-        // });
         res.setHeader('Cache-Control', 'public, max-age=7200');
         res.sendFile(filePath)
         // res.download(path.join(ANIME_PATH,aniId,"seasons",seasonId,epId,`${epId}-${reso}.mp4`))
@@ -108,8 +82,10 @@ app.get("/stream/:aniId/:season/:epId/:reso",async(req:e.Request,res:e.Response)
 //rota pro download do ep
 app.get('/download/:aniid/:seasonid/:epid/:reso',async(req:e.Request,res:e.Response)=>{
     try{
-        let {aniid,seasonid,epid,reso} = req.params;
-        let filePath = path.join(ANIME_PATH,aniid,'seasons',seasonid,epid,`${epid}-${reso}.mp4`)
+        let { aniid, seasonid, epid, reso } = req.params;
+        let filePath = path.join(ANIME_PATH, aniid, 'seasons', seasonid, epid, `${epid}-${reso}.mp4`);
+
+        Console.log('File path:', filePath); // Adicione isso para verificar o caminho do arquivo
 
         const stat = fs.statSync(filePath);
         const fileSize = stat.size;
@@ -123,19 +99,28 @@ app.get('/download/:aniid/:seasonid/:epid/:reso',async(req:e.Request,res:e.Respo
         let uploadedBytes = 0;
         readStream.on('data', (chunk) => {
             uploadedBytes += chunk.length;
-            const progress = (uploadedBytes / fileSize) * 100;
-            // Envia o progresso para o cliente
-            res.write(chunk);
+            const canWrite = res.write(chunk);
+            // console.log('Can write:', canWrite); // Adicione isso para verificar o status de escrita
+            if (!canWrite) {
+                readStream.pause();
+            }
+        });
+
+        res.on('drain', () => {
+            // console.log('Drain event'); // Adicione isso para verificar quando o buffer está vazio
+            readStream.resume();
         });
 
         readStream.on('end', () => {
+            Console.log('End of stream');
             res.end();
         });
 
         readStream.on('error', (err) => {
-            console.error(err);
+            console.error('Stream error:', err);
             res.status(500).end();
         });
+        // res.sendFile(filePath)
     }catch(err){
         sendError(res,ErrorType.default,500,err)
     }

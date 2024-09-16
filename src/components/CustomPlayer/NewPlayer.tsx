@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Episode, EpisodeUser} from "../../types/episodeModel";
 import {cdnUrl} from "../../const";
 import {quality} from "../../types/types";
@@ -11,6 +11,9 @@ import screenful from "screenfull";
 import usePictureInPicture, {VideoRefType} from 'react-use-pip'
 import {getQuality} from "./functions/configFunctions";
 import {Cue, VTTData} from "webvtt-parser";
+import PlayerPopup from "./components/PlayerPopup";
+import {handlePostSec} from "./functions/userFunctions";
+import globalContext, {GlobalContextType} from "../../GlobalContext";
 
 interface props{
     aniId:string;
@@ -22,6 +25,7 @@ interface props{
 let count = 0;
 const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const videoRef = React.useRef<HTMLVideoElement>(null);
+    const context = useContext<GlobalContextType|undefined>(globalContext)!;
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
     const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
     const [volume, setVolume] = useState<number>(1); // Volume range 0 to 1
@@ -40,7 +44,9 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         togglePictureInPicture,
     } = usePictureInPicture(videoRef as VideoRefType)
 
-    const [displayPlayButton,setDisplayPlayButton] = useState<boolean>(true);
+    // const [displayPlayButton,setDisplayPlayButton] = useState<boolean>(true);
+
+    const [isPopupOpen,setIsPopupOpen] = useState<boolean>(!!epUser);
 
     const playerContainerRef = React.useRef<HTMLDivElement>(null);
 
@@ -60,17 +66,17 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
 
 
     //quality functions
-    const qualitySources: { [key in quality]: string } = ep.resolution.reduce((acc, resolution) => {
+    const qualitySources: { [key:number]: string } = ep.resolution.reduce((acc, resolution) => {
         // Verifica se a resolução é uma das qualidades permitidas
-        acc[resolution.split('x')[1] as quality] = `${cdnUrl}/stream/${aniId}/${seasonId}/${ep.id}/${resolution.split('x')[1]}`;
+        acc[parseInt(resolution.split('x')[1])] = `${cdnUrl}/stream/${aniId}/${seasonId}/${ep.id}/${resolution.split('x')[1]}`;
         // console.log(acc)
         return acc;
-    }, {} as { [key in quality]: string });
+    }, {} as { [key :number]: string });
 
     useEffect(() => {
         if (videoRef.current) {
             const videoElement = videoRef.current;
-            const q = currentQuality.replace('p','') as quality;
+            const q = currentQuality
             const newSource = qualitySources[q]; // Definir a fonte de acordo com a qualidade atual
             const currentTimee = currentTime; // Armazenar o tempo atual do vídeo
             const isPlaying = !videoElement.paused; // Verifica se o vídeo está tocando
@@ -85,6 +91,10 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                     videoElement.play(); // Se estava tocando, continuar
                 }
             };
+        }
+        console.log(epUser)
+        if(epUser){
+            setIsPopupOpen(true)
         }
         if(muted){
             setVolume(0);
@@ -136,9 +146,17 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         }
     };
 
+    const handleSkip = (v:number) =>{
+        if(videoRef.current){
+            videoRef.current.currentTime = v;
+            setCurrentTime(v)
+            setIsPopupOpen(false)
+        }
+    }
+
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.stopPropagation()
-        console.log(e)
+        // console.log(e)
         // e.preventDefault()
         const newTime = parseFloat(e.target.value);
         if (videoRef.current) {
@@ -187,27 +205,67 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         console.log(v)
         console.log(videoRef.current)
         if (videoRef.current) {
-            const newSource = qualitySources[v];
-            console.log(qualitySources);
-            console.log(newSource)
-            if (newSource) {
-                const currentTimee = currentTime; // Armazena o tempo atual
-                const isPlaying = !videoRef.current.paused; // Verifica se o vídeo está tocando
-                console.log(currentTimee)
-                // Atualiza a qualidade e a fonte do vídeo
-                setCurrentQuality(v);
-                videoRef.current.src = newSource;
+            if(v !== -1){
+                const newSource = qualitySources[v];
+                console.log(qualitySources);
+                console.log(newSource)
 
-                // Quando o novo vídeo começar a carregar
-                videoRef.current.onloadedmetadata = () => {
-                    if(videoRef.current){
-                        // console.log()
-                        videoRef.current.currentTime = currentTimee; // Restaura o tempo anterior
-                        if (isPlaying) {
-                            videoRef.current.play(); // Retoma a reprodução se estava tocando
+                if (newSource) {
+                    const currentTimee = currentTime; // Armazena o tempo atual
+                    const isPlaying = !videoRef.current.paused; // Verifica se o vídeo está tocando
+                    console.log(currentTimee)
+                    // Atualiza a qualidade e a fonte do vídeo
+                    setCurrentQuality(v);
+                    videoRef.current.src = newSource;
+
+                    // Quando o novo vídeo começar a carregar
+                    videoRef.current.onloadedmetadata = () => {
+                        if(videoRef.current){
+                            // console.log()
+                            videoRef.current.currentTime = currentTimee; // Restaura o tempo anterior
+                            if (isPlaying) {
+                                videoRef.current.play(); // Retoma a reprodução se estava tocando
+                            }
                         }
+                    };
+                }
+            }else{
+                const threshold480 = 30 / 100;
+                const threshold720 = 10 / 100;
+                const playbackQuality = videoRef.current.getVideoPlaybackQuality();
+                console.log(playbackQuality)
+
+                const availableResolutions = ep.resolution.map(res => parseInt(res.split('x')[1]));
+
+                const droppedFrames = playbackQuality.droppedVideoFrames;
+                const totalFrames = playbackQuality.totalVideoFrames;
+
+                if(totalFrames>0){
+                    const dropRate = droppedFrames / totalFrames;
+                    let selectedQuality = Math.max(...availableResolutions);
+                    if (dropRate > threshold480 && availableResolutions.includes(480)) {
+                        selectedQuality = 480;
+                    } else if (dropRate > threshold720 && availableResolutions.includes(720)) {
+                        selectedQuality = 720;
                     }
-                };
+                    const newSource = qualitySources[selectedQuality as quality];
+                    if (newSource) {
+                        const currentTimee = currentTime;
+                        const isPlaying = !videoRef.current.paused;
+
+                        setCurrentQuality(selectedQuality as quality); // Define a qualidade
+                        videoRef.current.src = newSource; // Muda a fonte de vídeo
+
+                        videoRef.current.onloadedmetadata = () => {
+                            if (videoRef.current) {
+                                videoRef.current.currentTime = currentTimee; // Restaura o tempo
+                                if (isPlaying) {
+                                    videoRef.current.play(); // Retoma a reprodução
+                                }
+                            }
+                        };
+                    }
+                }
             }
         }
     };
@@ -279,6 +337,11 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
             videoRef.current.playbackRate = v
         }
     }
+    const handlePause = (e: React.SyntheticEvent<HTMLVideoElement, Event>) =>{
+        if((e.currentTarget.currentTime / ep.duration)>.05){
+            handlePostSec(context.isLogged,e.currentTarget.currentTime,ep)
+        }
+    }
 
     //keyboard event listeners
     const handleKeyDown = (e:KeyboardEvent) =>{
@@ -330,6 +393,14 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
 
     return (
         <div className={`player ${isConfigOpen||!isPlaying||isControlsVisible?'config-open':''}`} ref={playerContainerRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
+            {epUser?(
+                <PlayerPopup
+                    open={isPopupOpen}
+                    setOpen={setIsPopupOpen}
+                    handleSkip={handleSkip}
+                    epUser={epUser}
+                />
+            ):<></>}
             <div className='video-wrapper' onClick={handleVideoWrapperClick}>
                 <video
                     src={qualitySources[currentQuality]}
@@ -338,6 +409,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                     ref={videoRef}
                     onTimeUpdate={handleTimeUpdate}
                     onProgress={handleTimeUpdate}
+                    onPause={(e)=>handlePause(e)}
                     // width={cu}
                 >
                     {/*{Object.values(qualitySources).map(v=>(*/}

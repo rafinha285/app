@@ -4,13 +4,15 @@ import Footer from "../components/Footer";
 import "../css/download.css"
 import { useParams } from "react-router-dom";
 import EpDownloadButton from "../components/EpDownloadButton";
+import {Anime, Season} from "../types/animeModel";
+import {Episode} from "../types/episodeModel";
+import {cdnUrl} from "../const";
 
 const Download:React.FC = () =>{
     const {id,seasonId,epId} = useParams()
-    const [aniName,setAniName] = useState<string>()
-    const [seasonName,setSeasonName] = useState<string>()
-    const [epName,setEpName] = useState<string>()
-    const [epReso,setEpReso] = useState<string[]>()
+    const [ani,setAni] = useState<Anime>()
+    const [season,setSeason] = useState<Season>()
+    const [ep,setEp] = useState<Episode>()
     interface response{
         aniName:string;
         seasonName:string;
@@ -18,45 +20,46 @@ const Download:React.FC = () =>{
         episodeResolution:string[];
     }
     useEffect(()=>{
-        $.ajax({
-            url:`/api/g/aniD/${id}/${seasonId}/${epId}`
-        }).done((res:response)=>{
-            setAniName(res.aniName)
-            setSeasonName(res.seasonName)
-            setEpName(res.episodeName)
-            setEpReso(res.episodeResolution)
+        fetch(`/ep/g/${id}/${seasonId}/${epId}`).then(async (res)=>{
+            setEp(await res.json())
+            fetch(`/ani/g/${id}`).then(async res=>{
+                setAni(await res.json())
+                fetch(`/ani/g/season/${id}/${seasonId}`).then(async res=>{
+                    setSeason(await res.json())
+                })
+            })
         })
-    },[!aniName,!seasonName,!epName,!epReso])
+    },[])
     const downloadHandle = async(reso:string) =>{
         try{
-            const response = await fetch(`/api/g/ep/download/${id}/${seasonId}/${epId}/${reso.split("x")[1]}`)
+            const response = await fetch(`${cdnUrl}/download/${id}/${seasonId}/${epId}/${reso.split("x")[1]}`)
+            // console.log(response)
             if(!response.ok) throw new Error("Erro ao baixar Episodio");
             const blob = await response.blob()
             const url = window.URL.createObjectURL(blob)
             const link = document.createElement('a')
             link.href = url;
-            link.setAttribute('download', `${epName}.mp4`);
+            link.setAttribute('download', `${ep?.name}.mp4`);
             document.body.appendChild(link)
             link.click()
             document.body.removeChild(link);
         }catch(err){
             console.error(err)
         }
-        
     }
     return(
         <html>
             <Header/>
             <div className="download-main">
                 <div className="main-download-title">
-                    <h1>{aniName}</h1><br/>
-                    <h2>{epName}</h2>
-                    <img className="download-img" alt={epName} src={`/api/ep/${id}/${seasonId}/${epId}/${epId}.jpg`}/>
+                    <h1>{ani?.name}</h1><br/>
+                    <h2>{ep?.name}</h2>
+                    <img className="download-img" alt={ep?.name} src={`${cdnUrl}/epPoster/${id}/${seasonId}/${epId}`}/>
                 </div>
                 <div className="main-download-content">
-                    {epReso?.map((v,i)=>(
-                        <EpDownloadButton reso={v} downloadHandle={(reso)=>downloadHandle(reso)} key={i}></EpDownloadButton>
-                    ))}
+                    {ep?.resolution?.map((v, i)=> {
+                    return (<EpDownloadButton reso={v} downloadHandle={(reso) => downloadHandle(reso)} key={i} />)
+                    })}
                 </div>
             </div>
             <Footer/>

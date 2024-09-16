@@ -1,8 +1,6 @@
-import Plyr from "plyr";
-import React, {useCallback, useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
-import Player from "../components/Player/Player";
 import {Episode, EpisodeUser} from "../types/episodeModel";
 import { Anime } from "../types/animeModel";
 import "../css/watch.css"
@@ -14,9 +12,6 @@ import EpisodeDropdown from "../assets/EpisodeDropdown";
 import {DateToStringLocal, fetchUser} from "../features/main";
 import Loading from "../components/Loading";
 import { cdnUrl } from "../const";
-import PlayerPopup from "../components/Player/PlayerPopup";
-import {PopupActions} from "reactjs-popup/dist/types";
-import {APITypes} from "plyr-react";
 import Comments from "../components/Comments";
 import {isFirstEp, isLastEp} from "../functions/animeFunctions";
 import NewPlayer from "../components/CustomPlayer/NewPlayer";
@@ -33,6 +28,7 @@ const Watch:React.FC = () =>{
     const [epUser,setEpUser] = useState<EpisodeUser>()
     const [ani,setAni]= useState<Anime>()
     const [eps,setEps] = useState<Map<number,Episode>>(new Map())
+    const [isCompleted,setIsCompleted] = useState<boolean>(false)
 
     // const plyrRef = useRef<APITypes>(null);
 
@@ -48,59 +44,42 @@ const Watch:React.FC = () =>{
     },[!eps])
 
     useEffect(()=>{
-        $.ajax({
-            url:`/ep/g/${id}/${seasonId}/${epId}`
-        }).done((res)=>{
-            console.log(res)
-            setEp(res)
-            console.log(ani)
-            // setEpIndex(tupleToSeason(ani!.seasons!).find(e=>e.id == seasonId)?.episodes.findIndex(e=>e===ep?.id)!)
+        const fetchData = async () => {
+            try {
+                const epRes = await fetch(`/ep/g/${id}/${seasonId}/${epId}`);
+                const epData = await epRes.json();
+                setEp(epData);
 
-        })
-        const fetchEpUser = async()=>{
-            let response:{success:boolean,message?:EpisodeUser} = await fetchUser(`/ep/user/g/${ani?.id}/${epId}`,'GET').then(r=>r.json());
-            console.log(response.message)
-            if(response.message){
-                setEpUser(response.message)
-            }
-        }
+                const aniRes = await fetch(`/ani/g/${id}`);
+                const aniData = await aniRes.json();
+                setAni(aniData);
 
-        $.ajax({
-            url:`/ani/g/${id}`
-        }).done((res)=>{
-            setAni(res)
-            if(ani&&ep){
-                // console.log(nextEpUrl(eps!,ani.id,ep))
-                console.log(ani,ani.id)
-                fetchEps(ani,ep)
-                .catch(console.error)
-                .then(()=>{
-                    if(eps&&ep){
-                        fetchEpUser()
-                        // console.log(id,ani?._id,seasonId,epIndex,ani)
-                        // console.log(ep)
-
-                        // console.log(`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[epIndex-1]._id}`)
-                        // if(Math.min())
-                        // $("#before").attr("href",`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[epIndex-1]._id}`)
-                        // $("#after").attr("href",`/Anime/${ani?._id}/watch/${seasonId}/${ani?.seasons?.find(s=>s._id == seasonId)?.episodes[ep?.index!+1]._id!}`)
-                        // if()
-
-                        // setNextUrl(nextEpUrl(eps,ani.id,ep))
-                        // setPrevUrl(prevEpUrl(eps,ani.id,ep))
-                        console.log(`/Anime/${ani.id}/watch/${ep?.season_id}/${eps.get(ep.epindex+1)?.id}`)
+                if (aniData && epData) {
+                    await fetchEps(aniData, epData);
+                    const epUserRes = await fetchUser(`/ep/user/g/${aniData?.id}/${epId}`, 'GET');
+                    const epUserData = await epUserRes.json();
+                    if(epUserRes.ok){
+                        setIsCompleted(true);
+                        console.log(epUserData.message);
+                        if (epUserData.message) {
+                            setEpUser(epUserData.message);
+                        }
                     }
-                })
+                }
+            } catch (error) {
+                console.error(error);
             }
-
-        })
-
-        $("#linkAnime").css("margin","2em auto 7em auto")
+        };
+        fetchData()
         // console.log(`/Anime/${ani!._id}/watch/${seasonId!}/${ani?.seasons?.find(s=>s._id==seasonId)!._id}`)
-    },[!ani,fetch])
+    },[id, seasonId, epId, fetchEps, fetchUser])
     const handleChangeClass = (e:React.MouseEvent) =>{
         e.preventDefault()
-        $("#epSelDrop").toggleClass("ep-sel-show")
+        const element = document.getElementById("epSelDrop");
+
+        if (element) {
+            element.classList.toggle("ep-sel-show");
+        }
     }
 
 
@@ -128,7 +107,7 @@ const Watch:React.FC = () =>{
                     <title>Assistir: {ani.name}, {ep?.name}</title>
                 </Helmet>
                 <Header></Header>
-                <Link style={{width:"fit-content",margin:"3em auto"}} to={`/Anime/${id}`} id="linkAnime">
+                <Link className='link-anime' to={`/Anime/${id}`} id="linkAnime">
                     <div className="card">
                         <div className="card-hover">
                             <div>
@@ -151,7 +130,9 @@ const Watch:React.FC = () =>{
                         </div>
                     </div>
                 </Link>
-                <NewPlayer aniId={ani.id} seasonId={seasonId} ep={ep} epUser={epUser} eps={eps}/>
+                {ani&&ep&&isCompleted?(
+                    <NewPlayer aniId={ani.id} seasonId={seasonId} ep={ep} epUser={epUser} eps={eps}/>
+                ):<></>}
                 {/*<Player ep={ep} ani={ani} seasonId={seasonId} eps={eps} epUser={epUser}/>*/}
                 <div className="ep-sel1">
                     <div>

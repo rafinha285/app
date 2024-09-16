@@ -129,6 +129,7 @@ nav{
     overflow: hidden;
     position: relative;
     transition: all 1s;
+    border-radius: 10px;
 }
 .newanime-t:hover .highlight-hover{
     background-color: rgba(20,0,37,.5);

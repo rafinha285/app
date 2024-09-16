@@ -1,4 +1,3 @@
-import $ from "jquery"
 import {Anime, AnimeUser, Producer,Season} from "../types/animeModel"
 import AnimePoster from "../assets/AnimePosters"
 import { Episode } from "../types/episodeModel";

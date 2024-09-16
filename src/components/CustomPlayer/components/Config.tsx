@@ -8,7 +8,7 @@ type pages = 'main' | 'quality' | 'speed' | 'captions'
 
 interface SettingsOption {
     label: string;
-    value: string|number;
+    value: string|number|quality;
     badge?: string;
 }
 interface SettingsMenuProps{
@@ -34,11 +34,11 @@ const SettingsMenu:React.FC<SettingsMenuProps> = ({type,title,options,currentOpt
                         type="button"
                         role="menuitemradio"
                         className={`config-popup-inner ${
-                            !(type === 'quality')? 
+                            type !== 'quality'? 
                                 currentOption === option.value?
                                     'option-checked':
                                     ''
-                                :(currentOption as string).replace('p','') === option.value?
+                                :currentOption=== parseInt(option.value as string)?
                                     'option-checked':
                                     ''
                         }`}
@@ -84,9 +84,10 @@ const VideoPlayerSettings:React.FC<props> = (
         return {
             label: `${resolution}p`,
             value: resolution,
-            badge: Object.keys(qualityEnum)[Object.values(qualityEnum).indexOf(`${resolution}p` as unknown as qualityEnum)]
+            badge: resolution
         }
     })
+    // qualityOptions.unshift({label:'Automatico',value:-1,badge:"AUTO"})
     const captionsOptions = ep.subtitlestracks!.map(v=>{
        return {
            label: v,

@@ -1,2 +1,2 @@
-export const cdnUrl = `http://localhost:8080`;
+export const cdnUrl = `http://192.168.18.20:8080`;
 export const proxyUrl = `/proxy`

@@ -1,0 +1,22 @@
+.main-config{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--light_blue);
+    padding: 5em;
+}
+.main-config .container{
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 70%;
+}
+.container p{
+    margin: 0;
+}
+.container input{
+    width: fit-content;
+}
+.main-content{
+    height: 100%;
+    width: 100%;
+}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {User} from "../../types/userType"
-import "../../css/user.css"
+import "./css/user.css"
 import { DateToStringLocal, fetchUser } from "../../features/main";
 import RoleDiv from "../../components/User/RoleDiv";
 import { userAnimeState, userMangaState } from "../../types/types";
@@ -10,6 +10,9 @@ import Footer from "../../components/Footer";
 import { Helmet } from "react-helmet";
 import { parseAnime } from "../../functions/animeFunctions";
 import { AnimeUser } from "../../types/animeModel";
+import {Link} from "react-router-dom";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faGear} from "@fortawesome/free-solid-svg-icons";
 
 const UserPage:React.FC = () =>{
     let [animelist,setAnimelist] = useState<AnimeUser[]>([])
@@ -63,35 +66,38 @@ const UserPage:React.FC = () =>{
                     <p className='birth-date'>Data de Nascimento: {user?.birthDate?.toLocaleString("pt-br")}</p>
                 </div>
                 <div className="right">
-                    <p>Nome: {user?.name}</p>
-                    <p>Sobrenome: {user?.surname}</p>
-                    <p>Email: {user?.email}</p>
-                    <div className="role">
-                        <p>Cargos: </p>
-                        <div className="role-list">
-                            {user?.role?.map((v,i)=>(
-                                <RoleDiv role={v} key={i}/>
-                            ))}
+                    <div>
+                        <p>Nome: {user?.name}</p>
+                        <p>Sobrenome: {user?.surname}</p>
+                        <p>Email: {user?.email}</p>
+                        <div className="role">
+                            <p>Cargos: </p>
+                            <div className="role-list">
+                                {user?.role?.map((v,i)=>(
+                                    <RoleDiv role={v} key={i}/>
+                                ))}
+                            </div>
+                        </div>
+                        <p>Anime</p>
+                        <div className="anime-infos">
+                            <p>Animes: {user?.totalanime}</p>
+                            <p>Animes {userAnimeState.watching}: {user?.totalanimewatching}</p>
+                            <p>Animes {userAnimeState.completed}: {user?.totalanimecompleted}</p>
+                            <p>Animes {userAnimeState.on_hold}: {user?.totalanimeonhold}</p>
+                            <p>Animes {userAnimeState.dropped}: {user?.totalanimedropped}</p>
+                            <p>Animes {userAnimeState.plan_to_watch}: {user?.totalanimeplantowatch}</p>
+                        </div>
+                        <p>Manga</p>
+                        <div className="anime-infos">
+                            <p>Mangas: {user?.totalmanga}</p>
+                            <p>Mangas {userMangaState.reading}: {user?.totalmangareading}</p>
+                            <p>Mangas {userMangaState.completed}: {user?.totalmangacompleted}</p>
+                            <p>Mangas {userMangaState.on_hold}: {user?.totalmangaonhold}</p>
+                            <p>Mangas {userMangaState.dropped}: {user?.totalmangadropped}</p>
+                            <p>Mangas {userMangaState.plan_to_read}: {user?.totalmangaplantoread}</p>
                         </div>
                     </div>
-                    <p>Anime</p>
-                    <div className="anime-infos">
-                        <p>Animes: {user?.totalanime}</p>
-                        <p>Animes {userAnimeState.watching}: {user?.totalanimewatching}</p>
-                        <p>Animes {userAnimeState.completed}: {user?.totalanimecompleted}</p>
-                        <p>Animes {userAnimeState.on_hold}: {user?.totalanimeonhold}</p>
-                        <p>Animes {userAnimeState.dropped}: {user?.totalanimedropped}</p>
-                        <p>Animes {userAnimeState.plan_to_watch}: {user?.totalanimeplantowatch}</p>
-                    </div>
-                    <p>Manga</p>
-                    <div className="anime-infos">
-                        <p>Mangas: {user?.totalmanga}</p>
-                        <p>Mangas {userMangaState.reading}: {user?.totalmangareading}</p>
-                        <p>Mangas {userMangaState.completed}: {user?.totalmangacompleted}</p>
-                        <p>Mangas {userMangaState.on_hold}: {user?.totalmangaonhold}</p>
-                        <p>Mangas {userMangaState.dropped}: {user?.totalmangadropped}</p>
-                        <p>Mangas {userMangaState.plan_to_read}: {user?.totalmangaplantoread}</p>
-                    </div>
+                    <Link className='user-config-button' to={'/user/config'}><FontAwesomeIcon icon={faGear}/></Link>
                 </div>
             </div>
             <div className="anime-list">

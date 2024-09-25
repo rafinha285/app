@@ -1,4 +1,4 @@
-/* css for base of the page */
+ /* css for base of the page */
 .info{
     display:flex;
     padding: var(--user-padding);
@@ -12,12 +12,14 @@
     border-radius:10px;
 }
 .right{
-    display: flex;
-    flex-direction: column;
+    /*display: flex;*/
+    /*flex-direction: row;*/
     background:rgb(103 0 145);
     padding:var(--user-padding);
     width:50%;
     border-radius:10px;
+    /*justify-content: space-between;*/
+    position: relative;
 }
 /* left side */
 .user-img{
@@ -122,6 +124,19 @@
     border-radius:5px;
     padding: 3px;
     margin:2px 10px;
+}
+.user-config-button{
+    padding:10px;
+    border-radius:5px;
+    position: absolute;
+    right:var(--user-padding);
+    top:var(--user-padding);
+    display:flex;
+    align-items: center;
+    transition: .2s;
+}
+.user-config-button:hover{
+    background: var(--orange) !important;
 }
 
 :root{

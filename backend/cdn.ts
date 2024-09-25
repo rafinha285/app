@@ -7,21 +7,21 @@ import {ANIME_PATH} from './consts'
 // @ts-ignore
 const app = e()
 
-app.use((req:e.Request, res:e.Response, next:e.NextFunction) => {
-    res.header('Access-Control-Allow-Origin', '*'); // Ou o domínio específico
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
-
-app.get('/i/',(req: e.Request, res: e.Response) => {
-    try {
-        //colocar uma imagem teste aq depois
-        //pra testa a velocidade da internet
-        res.sendFile(path.join(__dirname, `./public/index.html`))
-    }catch(err){
-        sendError(res,ErrorType.default,500,err)
-    }
-})
+// app.use((req:e.Request, res:e.Response, next:e.NextFunction) => {
+//     res.header('Access-Control-Allow-Origin', '*'); // Ou o domínio específico
+//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//     next();
+// });
+//
+// app.get('/i/',(req: e.Request, res: e.Response) => {
+//     try {
+//         //colocar uma imagem teste aq depois
+//         //pra testa a velocidade da internet
+//         res.sendFile(path.join(__dirname, `./public/index.html`))
+//     }catch(err){
+//         sendError(res,ErrorType.default,500,err)
+//     }
+// })
 app.get('/ani/img',async(req:e.Request,res:e.Response)=>{
     setHeader(res)
     try{

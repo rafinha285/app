@@ -43,21 +43,21 @@ var handle_1 = require("./assets/handle");
 var consts_1 = require("./consts");
 // @ts-ignore
 var app = e();
-app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*'); // Ou o domínio específico
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
-app.get('/i/', function (req, res) {
-    try {
-        //colocar uma imagem teste aq depois
-        //pra testa a velocidade da internet
-        res.sendFile(path.join(__dirname, "./public/index.html"));
-    }
-    catch (err) {
-        (0, handle_1.sendError)(res, handle_1.ErrorType.default, 500, err);
-    }
-});
+// app.use((req:e.Request, res:e.Response, next:e.NextFunction) => {
+//     res.header('Access-Control-Allow-Origin', '*'); // Ou o domínio específico
+//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//     next();
+// });
+//
+// app.get('/i/',(req: e.Request, res: e.Response) => {
+//     try {
+//         //colocar uma imagem teste aq depois
+//         //pra testa a velocidade da internet
+//         res.sendFile(path.join(__dirname, `./public/index.html`))
+//     }catch(err){
+//         sendError(res,ErrorType.default,500,err)
+//     }
+// })
 app.get('/ani/img', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var typesImg, im, i, pathImg;
     return __generator(this, function (_a) {

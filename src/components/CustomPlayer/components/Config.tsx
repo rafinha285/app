@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {quality, qualityEnum} from "../../../types/types";
+import {quality} from "../../../types/types";
 import {Episode} from "../../../types/episodeModel";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";

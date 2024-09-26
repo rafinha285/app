@@ -15,6 +15,9 @@ const UserPageConfig:React.FC = () =>{
 
     const [user, setUser] = useState<User>();
     const [email,setEmail] = useState<string>();
+    const [name,setName] = useState<string>();
+    const [surname,setSurname] = useState<string>();
+    const [username,setUsername] = useState<string>();
     useEffect(() => {
 
         const fetchU = async () =>{
@@ -22,6 +25,9 @@ const UserPageConfig:React.FC = () =>{
                 setUser(res)
                 console.log(res)
                 setEmail(res.email)
+                setName(res.name)
+                setSurname(res.surname)
+                setUsername(res.username)
             })
         }
 
@@ -37,8 +43,22 @@ const UserPageConfig:React.FC = () =>{
             <Header/>
             <div className='main-config'>
                 <div className='container'>
-                    <p>Email</p>
-                    <input value={email} onChange={(e) => setEmail(e.target.value)}/>
+                    <div className={'innercontainer'}>
+                        <p>Email</p>
+                        <input value={email} onChange={(e) => setEmail(e.target.value)}/>
+                    </div>
+                    <div className={'innercontainer'}>
+                        <p>Nome: </p>
+                        <input value={name} onChange={(e) => setName(e.target.value)}/>
+                    </div>
+                    <div className={'innercontainer'}>
+                        <p>Nome: </p>
+                        <input value={surname} onChange={(e) => setSurname(e.target.value)}/>
+                    </div>
+                    <div className={'innercontainer'}>
+                        <p>Username: </p>
+                        <input value={username} onChange={(e) => setUsername(e.target.value)}/>
+                    </div>
                 </div>
             </div>
             <Footer/>

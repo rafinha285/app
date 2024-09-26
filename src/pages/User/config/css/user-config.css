@@ -1,20 +1,35 @@
 .main-config{
     display: flex;
-    flex-direction: column;
-    background-color: var(--light_blue);
-    padding: 5em;
+    justify-content: center;
+    align-items: center;
 }
 .main-config .container{
-    display: flex;
     align-items: center;
+    display: flex;
     justify-content: space-around;
     width: 70%;
+    height: 100%;
+    background-color: var(--gray-dark);
+    border-radius: 10px;
+    padding: 5em;
+    flex-direction: column;
 }
 .container p{
     margin: 0;
 }
 .container input{
-    width: fit-content;
+    width: 30%;
+    background: var(--gray);
+    border: none;
+    border-radius: 5px;
+    color: white;
+}
+.container .innercontainer{
+    display: flex;
+    justify-content: space-between;
+    justify-items: start;
+    padding: 1em 2em;
+    width: 100%;
 }
 .main-content{
     height: 100%;

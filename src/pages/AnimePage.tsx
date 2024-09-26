@@ -26,7 +26,7 @@ import Rating from "../components/Anime/Rating";
 import Comements from "../components/Comments";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faStar} from "@fortawesome/free-solid-svg-icons";
 
 
 interface seasonDate{
@@ -226,6 +226,8 @@ const AnimePage:React.FC = ()=>{
                             {/* <p>Season: <span>{seasonD?.season}</span>de <span>{seasonD?.year}</span></p> */}
                             <p>Idioma: <span>{ani.language}</span></p>
                             <p>Data de lançamento: <span><b>{new Date(ani.releasedate).getDate().toString()}</b> de <b>{getMonthName(new Date(ani.releasedate),false)}</b> de <b>{new Date(ani.releasedate).getFullYear().toString()}</b></span></p>
+                            <p>Estado: <span><b>{ani.state}</b></span></p>
+                            <p>Nota: <span><b>{ani.rating}</b></span> <FontAwesomeIcon icon={faStar}/></p>
                         </div>
                     </div>
                     <div className="contentR">

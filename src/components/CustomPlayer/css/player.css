@@ -87,8 +87,13 @@
     position: relative;
     transition: all .3s ease;
     display: flex;
+<<<<<<< Updated upstream
     justify-content: center;
     align-items: center;
+=======
+    align-items: center;
+    justify-content: space-between;
+>>>>>>> Stashed changes
 }
 .controls button:hover{
     background: var(--orange);
@@ -323,7 +328,7 @@
     font-size: var(--caption-size);
 }
 :root{
-    --caption-size: 20px;
+    --caption-size: 25px;
 }
 
 

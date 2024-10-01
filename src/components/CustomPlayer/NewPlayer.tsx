@@ -12,8 +12,13 @@ import usePictureInPicture, {VideoRefType} from 'react-use-pip'
 import {getQuality} from "./functions/configFunctions";
 import {Cue, VTTData} from "webvtt-parser";
 import PlayerPopup from "./components/PlayerPopup";
+<<<<<<< Updated upstream
 import {handlePostSec} from "./functions/userFunctions";
 import globalContext, {GlobalContextType} from "../../GlobalContext";
+=======
+import {handlePostSec} from "../../functions/userFunctions";
+import globalContext from "../../GlobalContext";
+>>>>>>> Stashed changes
 
 interface props{
     aniId:string;
@@ -24,6 +29,7 @@ interface props{
 }
 let count = 0;
 const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
+    const context = useContext(globalContext)!;
     const videoRef = React.useRef<HTMLVideoElement>(null);
     const context = useContext<GlobalContextType|undefined>(globalContext)!;
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -38,6 +44,10 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const [selectedCaptions,setSelectedCaptions] = useState<string>('por')
     const [isConfigOpen,setIsConfigOpen] = useState<boolean>(false);
     const [isControlsVisible,setIsControlsVisible] = useState<boolean>(false);
+    const [isPopupOpen,setIsPopupOpen] = useState<boolean>(false);
+    const [canPlay,setCanPlay] = useState<boolean>(false)
+
+
     const {
         isPictureInPictureActive,
         isPictureInPictureAvailable,
@@ -71,12 +81,21 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         acc[parseInt(resolution.split('x')[1])] = `${cdnUrl}/stream/${aniId}/${seasonId}/${ep.id}/${resolution.split('x')[1]}`;
         // console.log(acc)
         return acc;
+<<<<<<< Updated upstream
     }, {} as { [key :number]: string });
+=======
+    }, {} as { [key:number]: string });
+>>>>>>> Stashed changes
 
     useEffect(() => {
-        if (videoRef.current) {
+        if (videoRef.current && playerContainerRef.current) {
             const videoElement = videoRef.current;
+<<<<<<< Updated upstream
             const q = currentQuality
+=======
+            const q = currentQuality;
+            console.log(qualitySources)
+>>>>>>> Stashed changes
             const newSource = qualitySources[q]; // Definir a fonte de acordo com a qualidade atual
             const currentTimee = currentTime; // Armazenar o tempo atual do vídeo
             const isPlaying = !videoElement.paused; // Verifica se o vídeo está tocando
@@ -91,6 +110,13 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                     videoElement.play(); // Se estava tocando, continuar
                 }
             };
+            console.log(epUser)
+            if(epUser){
+                setIsPopupOpen(true)
+            }
+            playerContainerRef.current.addEventListener('mousemove',handleMouseMove);
+            videoRef.current.addEventListener('canplay',handleCanPlay);
+
         }
         console.log(epUser)
         if(epUser){
@@ -101,9 +127,11 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         }
         window.addEventListener('keydown',handleKeyDown)
         return()=>{
+            playerContainerRef.current?.removeEventListener('mousemove',handleMouseMove);
+            videoRef.current?.removeEventListener('canplay',handleCanPlay);
             window.removeEventListener('keydown',handleKeyDown)
         }
-    }, [currentQuality,ep]);
+    }, [currentQuality,ep,epUser]);
 
     //handles
 
@@ -137,6 +165,9 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         e?.stopPropagation()
         if (videoRef.current) {
             if (videoRef.current.paused) {
+                if(currentTime / ep.duration > .05){
+                    handlePostSec(context,ep,currentTime);
+                }
                 videoRef.current.play();
                 setIsPlaying(true);
             } else {
@@ -207,6 +238,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         if (videoRef.current) {
             if(v !== -1){
                 const newSource = qualitySources[v];
+<<<<<<< Updated upstream
                 console.log(qualitySources);
                 console.log(newSource)
 
@@ -218,6 +250,18 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                     setCurrentQuality(v);
                     videoRef.current.src = newSource;
 
+=======
+                // console.log(qualitySources);
+                // console.log(newSource)
+                if (newSource) {
+                    const currentTimee = currentTime; // Armazena o tempo atual
+                    const isPlaying = !videoRef.current.paused; // Verifica se o vídeo está tocando
+                    // console.log(currentTimee)
+                    // Atualiza a qualidade e a fonte do vídeo
+                    setCurrentQuality(v);
+                    videoRef.current.src = newSource;
+
+>>>>>>> Stashed changes
                     // Quando o novo vídeo começar a carregar
                     videoRef.current.onloadedmetadata = () => {
                         if(videoRef.current){
@@ -230,17 +274,25 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                     };
                 }
             }else{
+<<<<<<< Updated upstream
                 const threshold480 = 30 / 100;
                 const threshold720 = 10 / 100;
                 const playbackQuality = videoRef.current.getVideoPlaybackQuality();
                 console.log(playbackQuality)
 
+=======
+                const threshold480 = 30/100;
+                const threshold720 = 10/100
+                const playbackQuality = videoRef.current.getVideoPlaybackQuality();
+                console.log(playbackQuality);
+>>>>>>> Stashed changes
                 const availableResolutions = ep.resolution.map(res => parseInt(res.split('x')[1]));
 
                 const droppedFrames = playbackQuality.droppedVideoFrames;
                 const totalFrames = playbackQuality.totalVideoFrames;
 
                 if(totalFrames>0){
+<<<<<<< Updated upstream
                     const dropRate = droppedFrames / totalFrames;
                     let selectedQuality = Math.max(...availableResolutions);
                     if (dropRate > threshold480 && availableResolutions.includes(480)) {
@@ -249,11 +301,25 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                         selectedQuality = 720;
                     }
                     const newSource = qualitySources[selectedQuality as quality];
+=======
+                    const dropRate = droppedFrames/totalFrames;
+                    let selectedQuality:quality = Math.max(...availableResolutions) as quality;
+                    if(dropRate > threshold480 && availableResolutions.includes(480)){
+                        selectedQuality = 480
+                    }else if(dropRate > threshold720 && availableResolutions.includes(720)){
+                        selectedQuality = 720
+                    }
+                    const newSource = qualitySources[selectedQuality];
+>>>>>>> Stashed changes
                     if (newSource) {
                         const currentTimee = currentTime;
                         const isPlaying = !videoRef.current.paused;
 
+<<<<<<< Updated upstream
                         setCurrentQuality(selectedQuality as quality); // Define a qualidade
+=======
+                        setCurrentQuality(selectedQuality); // Define a qualidade
+>>>>>>> Stashed changes
                         videoRef.current.src = newSource; // Muda a fonte de vídeo
 
                         videoRef.current.onloadedmetadata = () => {
@@ -266,7 +332,12 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                         };
                     }
                 }
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
             }
+            //fazer aq mudar automaticamente a qualidade conforme a variavel de cima
         }
     };
 
@@ -330,6 +401,13 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
             console.warn("Video element not available");
         }
     }
+    const handleSkip = (v:number) =>{
+        console.log(v)
+        if(videoRef.current){
+            videoRef.current.currentTime = v;
+        }
+        setIsConfigOpen(false)
+    }
 
     const handleSpeedChange = (v:number)=>{
         setCurrentSpeed(v)
@@ -390,8 +468,12 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                 break
         }
     }
+    const handleCanPlay = () => {
+        setCanPlay(true); // O vídeo pode ser reproduzido
+    };
 
     return (
+<<<<<<< Updated upstream
         <div className={`player ${isConfigOpen||!isPlaying||isControlsVisible?'config-open':''}`} ref={playerContainerRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
             {epUser?(
                 <PlayerPopup
@@ -399,6 +481,15 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                     setOpen={setIsPopupOpen}
                     handleSkip={handleSkip}
                     epUser={epUser}
+=======
+        <div className={`player ${isConfigOpen||!isPlaying||isControlsVisible?'config-open':''}`} ref={playerContainerRef} >
+            {epUser&&canPlay?(
+                <PlayerPopup
+                    open={isPopupOpen}
+                    setOpen={setIsPopupOpen}
+                    epUser={epUser}
+                    handleSkip={handleSkip}
+>>>>>>> Stashed changes
                 />
             ):<></>}
             <div className='video-wrapper' onClick={handleVideoWrapperClick}>

@@ -5,18 +5,19 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faX} from "@fortawesome/free-solid-svg-icons";
 
 interface props{
-    epUser?:EpisodeUser;
+    epUser:EpisodeUser;
     open:boolean;
     setOpen: React.Dispatch<React.SetStateAction<boolean>>;
     handleSkip:(skip:number)=>void;
 }
 const PlayerPopup:React.FC<props> = ({epUser,open,setOpen,handleSkip}) =>{
     const handleClick = (e:React.MouseEvent) =>{
-        e.stopPropagation();
-        handleSkip(epUser?.dropped_on!)
+        // e.stopPropagation();
+        handleSkip(epUser.dropped_on)
     }
     const handleClose = (e: React.MouseEvent) => {
-        e.stopPropagation();
+        // e.stopPropagation();
+        console.log(e,setOpen)
         setOpen(false);
     };
     // console.log(epUser)
@@ -24,7 +25,6 @@ const PlayerPopup:React.FC<props> = ({epUser,open,setOpen,handleSkip}) =>{
         <div
             className="episode-popup"
             onClick={(e) => {
-                e.stopPropagation();
                 handleClose(e);
             }}
             style={{ display: open ? 'flex' : 'none' }}
@@ -36,7 +36,6 @@ const PlayerPopup:React.FC<props> = ({epUser,open,setOpen,handleSkip}) =>{
                 <button
                     className="close"
                     onClick={(e) => {
-                        e.preventDefault();
                         handleClose(e);
                     }}
                 >

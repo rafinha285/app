@@ -28,18 +28,25 @@ const SettingsMenu:React.FC<SettingsMenuProps> = ({type,title,options,currentOpt
                 <span>{title}</span>
             </button>
             <div role="menu" className="config-menu">
-                {options.map((option) => (
-                    <button
                         key={option.value}
                         type="button"
                         role="menuitemradio"
                         className={`config-popup-inner ${
+<<<<<<< Updated upstream
                             type !== 'quality'? 
                                 currentOption === option.value?
                                     'option-checked':
                                     ''
                                 :currentOption=== parseInt(option.value as string)?
                                     'option-checked':
+=======
+                            type === 'quality'?
+                                currentOption === parseInt(option.value as string)?
+                                    'option-checked' :
+                                    ''
+                                :currentOption === option.value ?
+                                    'option-checked' :
+>>>>>>> Stashed changes
                                     ''
                         }`}
                         aria-checked={currentOption === option.value}
@@ -52,6 +59,8 @@ const SettingsMenu:React.FC<SettingsMenuProps> = ({type,title,options,currentOpt
                         }
                     </button>
                 ))}
+                    </button>)
+                })}
             </div>
         </div>
     )
@@ -80,14 +89,21 @@ const VideoPlayerSettings:React.FC<props> = (
     const [activeMenu, setActiveMenu] = useState<pages>('main');
     const qualityOptions:SettingsOption[] = ep.resolution.map(v=>{
         const resolution = v.split('x')[1]
-
         return {
             label: `${resolution}p`,
             value: resolution,
             badge: resolution
         }
     })
+<<<<<<< Updated upstream
     // qualityOptions.unshift({label:'Automatico',value:-1,badge:"AUTO"})
+=======
+    qualityOptions.unshift({
+        label:"Automatico",
+        value:-1,
+        badge:'AUTO'
+    })
+>>>>>>> Stashed changes
     const captionsOptions = ep.subtitlestracks!.map(v=>{
        return {
            label: v,

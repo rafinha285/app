@@ -34,12 +34,12 @@ const SettingsMenu:React.FC<SettingsMenuProps> = ({type,title,options,currentOpt
                         type="button"
                         role="menuitemradio"
                         className={`config-popup-inner ${
-                            type !== 'quality'? 
-                                currentOption === option.value?
-                                    'option-checked':
+                            type === 'quality'?
+                                currentOption === parseInt(option.value as string)?
+                                    'option-checked' :
                                     ''
-                                :currentOption=== parseInt(option.value as string)?
-                                    'option-checked':
+                                :currentOption === option.value ?
+                                    'option-checked' :
                                     ''
                         }`}
                         aria-checked={currentOption === option.value}
@@ -80,13 +80,13 @@ const VideoPlayerSettings:React.FC<props> = (
     const [activeMenu, setActiveMenu] = useState<pages>('main');
     const qualityOptions:SettingsOption[] = ep.resolution.map(v=>{
         const resolution = v.split('x')[1]
-
         return {
             label: `${resolution}p`,
             value: resolution,
             badge: resolution
         }
     })
+
     // qualityOptions.unshift({label:'Automatico',value:-1,badge:"AUTO"})
     const captionsOptions = ep.subtitlestracks!.map(v=>{
        return {

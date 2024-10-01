@@ -1,3 +1,4 @@
+/backend
 /backend/node_modules
 /backend/secret
 /backend/database
@@ -14,3 +15,4 @@
 .idea/runConfigurations/TSC_Client.xml
 .idea/dataSources.xml
 .idea/*
+/backend/

@@ -30,11 +30,8 @@
     "crypto-browserify": "^3.12.0",
     "disqus-react": "^1.1.5",
     "jsencrypt": "^3.3.2",
-    "mongoose": "^7.5.3",
     "node-rsa": "^1.1.1",
     "path": "^0.12.7",
-    "plyr": "^3.7.8",
-    "plyr-react": "^5.3.0",
     "react": "^18.2.0",
     "react-cookie": "^7.2.0",
     "react-device-detect": "^2.2.3",
@@ -60,7 +57,7 @@
     "webvtt-parser": "^2.2.0"
   },
   "scripts": {
-    "start": "react-app-rewired start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -93,6 +90,7 @@
     "@types/react-helmet": "^6.1.7",
     "@types/uuid": "^9.0.7",
     "@types/webvtt-parser": "^2.2.0",
+    "react-app-rewired": "^2.2.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^4.15.1"
   },

@@ -19,7 +19,7 @@ const PlayerPopup:React.FC<props> = ({epUser,open,setOpen,handleSkip}) =>{
         e.stopPropagation();
         setOpen(false);
     };
-    console.log(epUser)
+    // console.log(epUser)
     return (
         <div
             className="episode-popup"

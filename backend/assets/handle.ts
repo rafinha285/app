@@ -17,18 +17,18 @@ import { JwtUser, TokenRequest } from '../types';
 // import { randomInt } from "crypto";
 
 
-export enum priorityValue{
-    LOW="Baixa",
-    MEDIUM="Media",
-    HIGH="Alta"
-}
-export enum userAnimeState{
-    watching="Assistindo",
-    completed="Completado",
-    on_hold="Em espera",
-    dropped="Desistido",
-    plan_to_watch="Pretendo assistir"
-}
+// export enum priorityValue{
+//     LOW="Baixa",
+//     MEDIUM="Media",
+//     HIGH="Alta"
+// }
+// export enum userAnimeState{
+//     watching="Assistindo",
+//     completed="Completado",
+//     on_hold="Em espera",
+//     dropped="Desistido",
+//     plan_to_watch="Pretendo assistir"
+// }
 
 
 export const Console = Cconsole

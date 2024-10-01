@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import mongoose,{ObjectId} from "mongoose"
 import {Anime} from "../types/animeModel";
 import {getEpTime, trim} from "../features/main"
 import "../css/index.css"

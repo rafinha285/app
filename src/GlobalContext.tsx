@@ -1,5 +1,4 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
 // import jwt from 'jsonwebtoken';
 
 export interface GlobalContextType {
@@ -12,11 +11,11 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
     // const [cookies] = useCookies();
     // const token = getCookie('token');
     useEffect(() => {
-        
+
         console.log(sessionStorage.getItem("token"))
         setIsLogged(!!(sessionStorage.getItem("token"))); // Verifica se o token existe e define o estado de isLogged
-    }, [!(document.readyState === "complete")]); 
-    
+    }, [!(document.readyState === "complete")]);
+
     return(
         <GlobalContext.Provider value={{isLogged}}>
             {children}

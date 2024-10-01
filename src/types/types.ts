@@ -9,11 +9,7 @@ export enum languages{
     English = 'en',
     Spanish = 'es',
 }
-<<<<<<< Updated upstream
-export type quality = 1080 | 720 | 480| -1;
-=======
 export type quality = 1080 | 720 | 480 | -1;
->>>>>>> Stashed changes
 export enum qualityEnum {
     FULLHD = '1080p',
     HD = '720p',

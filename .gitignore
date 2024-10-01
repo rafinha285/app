@@ -1,3 +1,4 @@
+/backend
 /build
 /node_modules
 .idea/discord.xml
@@ -8,3 +9,4 @@
 .idea/runConfigurations/TSC_Client.xml
 .idea/dataSources.xml
 .idea/*
+/backend/

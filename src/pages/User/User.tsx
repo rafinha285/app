@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import {User} from "../../types/userType"
 import "../../css/user.css"
-import { DateToStringLocal, fetchUser } from "../../features/main";
+import {fetchUser} from "../../features/main";
 import RoleDiv from "../../components/User/RoleDiv";
-import { userAnimeState, userMangaState } from "../../types/types";
+import {roles, userAnimeState, userMangaState} from "../../types/types";
 import AnimeListDiv from "../../components/User/AnimeListDiv";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { Helmet } from "react-helmet";
-import { parseAnime } from "../../functions/animeFunctions";
-import { AnimeUser } from "../../types/animeModel";
+import {Helmet} from "react-helmet";
+import {AnimeUser} from "../../types/animeModel";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faUserTie} from "@fortawesome/free-solid-svg-icons";
 
 const UserPage:React.FC = () =>{
     let [animelist,setAnimelist] = useState<AnimeUser[]>([])
@@ -46,7 +47,7 @@ const UserPage:React.FC = () =>{
     var [user,setUser] = useState<User>()
     useEffect(()=>{
         handleGetUser()
-        console.log(user)
+        console.log(user?.role.includes(roles.adm));
     },[!user])
 
     return(
@@ -63,6 +64,18 @@ const UserPage:React.FC = () =>{
                     <p className='birth-date'>Data de Nascimento: {user?.birthDate?.toLocaleString("pt-br")}</p>
                 </div>
                 <div className="right">
+                    {user?.role?.includes(roles.adm)?(
+                        <button style={{
+                            background:"none",
+                            border:"1px solid white",
+                            borderRadius:"5px",
+                        }}
+                                onClick={(e)=>{
+                                    e.preventDefault()
+                                    window.location.href=`/admin/${user?._id}`
+                                }}
+                        >Pagina administrador <FontAwesomeIcon icon={faUserTie}/></button>
+                    ):<></>}
                     <p>Nome: {user?.name}</p>
                     <p>Sobrenome: {user?.surname}</p>
                     <p>Email: {user?.email}</p>

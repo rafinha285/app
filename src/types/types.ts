@@ -36,9 +36,9 @@ export enum userMangaState{
     plan_to_read="Pretendo ler"
 }
 export enum roles{
-    adm = "Administrador",
-    client = "Cliente",
-    creator = "Criador"
+    adm = "adm",
+    client = "client",
+    creator = "creator"
 }
 export enum priorityValue{
     LOW="Baixa",

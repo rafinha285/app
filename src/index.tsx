@@ -11,6 +11,7 @@ import Register from './pages/Register';
 import ProdSearch from './pages/Search/Prod';
 import Download from './pages/Download';
 import Agenda from './pages/Agenda';
+import IndexAdmin from "./pages/Admin/pages/AdminIndex"
 import GlobalContext, { GlobalProvider } from './GlobalContext';
 import UserPage from './pages/User/User';
 const App:React.FC = ()=> {
@@ -32,6 +33,7 @@ return (
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/user' element={<UserPage/>}/>
+        <Route path='/admin/:id' element={<IndexAdmin/>}/>
       </Routes>
     </GlobalProvider>
   </Router>

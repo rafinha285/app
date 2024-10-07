@@ -28,7 +28,7 @@ const Watch:React.FC = () =>{
     const [epUser,setEpUser] = useState<EpisodeUser>()
     const [ani,setAni]= useState<Anime>()
     const [eps,setEps] = useState<Map<number,Episode>>(new Map())
-    const [isCompleted,setIsCompleted] = useState<boolean>(false)
+    // const [isCompleted,setIsCompleted] = useState<boolean>(false)
 
     // const plyrRef = useRef<APITypes>(null);
 
@@ -59,7 +59,7 @@ const Watch:React.FC = () =>{
                     const epUserRes = await fetchUser(`/ep/user/g/${aniData?.id}/${epId}`, 'GET');
                     const epUserData = await epUserRes.json();
                     if(epUserRes.ok){
-                        setIsCompleted(true);
+                        // setIsCompleted(true);
                         console.log(epUserData.message);
                         if (epUserData.message) {
                             setEpUser(epUserData.message);
@@ -130,7 +130,7 @@ const Watch:React.FC = () =>{
                         </div>
                     </div>
                 </Link>
-                {ani&&ep&&isCompleted?(
+                {ani&&ep?(
                     <NewPlayer aniId={ani.id} seasonId={seasonId} ep={ep} epUser={epUser} eps={eps}/>
                 ):<></>}
                 {/*<Player ep={ep} ani={ani} seasonId={seasonId} eps={eps} epUser={epUser}/>*/}

@@ -15,9 +15,9 @@ const Rating:React.FC<props> = ({setRatingValue,ratingValue,aniId})=>{
         }
     }
     const handleRatingSubmit = async()=>{
-        let isInAnimeList = await fetchUser(`/user/animelist/checklist/${aniId}`,'GET').then(r=>r.json()).then((r:{success:boolean})=>r.success)
+        let isInAnimeList = await fetchUser(`/user/animelist/g/checklist/${aniId}`,'GET').then(r=>r.json()).then((r:{success:boolean})=>r.success)
         if(isInAnimeList){
-            fetchUser(`/user/animelist/rating/${aniId}`,"POST",{rating:parseInt(ratingValue!)})
+            fetchUser(`/user/animelist/p/rating/${aniId}`,"POST",{rating:parseInt(ratingValue!)})
         }
     }
     return(

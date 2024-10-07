@@ -145,7 +145,7 @@ const AnimePage:React.FC = ()=>{
         checkIsLogged(context.isLogged)
         const token = sessionStorage.getItem("token")
         console.log(token)
-        await fetchUser(`/user/animelist/insert/${ani?.id!}`,'POST')
+        await fetchUser(`/user/animelist/p/insert/${ani?.id!}`,'POST')
             .then(res=>res.json())
             .then((data)=>{
                 console.log(data)

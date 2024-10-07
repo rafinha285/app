@@ -85,9 +85,9 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
             priority,
         }
         if(!(ratingValue === undefined)){
-            await fetchUser(`/user/animelist/rating/${ani.anime_id}`,'POST',{rating:ratingValue})
+            await fetchUser(`/user/animelist/p/rating/${ani.anime_id}`,'POST',{rating:ratingValue})
         }
-        await fetchUser('/user/animelist/update/','PATCH',body)
+        await fetchUser('/user/animelist/patch/update/','PATCH',body)
         .then(async (res)=>{
             alert((await res.json()).message)
             onClose()

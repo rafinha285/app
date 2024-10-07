@@ -54,11 +54,11 @@ const AnimePage:React.FC = ()=>{
     const [studios,setStudios] = useState<Producer[]>([])
 
     let checkList=async()=>{
-        await fetchUser(`/user/animelist/checklist/${ani?.id}`,"GET")
+        await fetchUser(`/user/animelist/g/checklist/${ani?.id}`,"GET")
             .then(response=>response.json())
             .then(async data=>{
                 setIsInList(data.success)
-                await fetchUser(`/user/animelist/${ani?.id}`,"GET")
+                await fetchUser(`/user/animelist/g/${ani?.id}`,"GET")
                     .then(response => response.json())
                     .then((data:{success:boolean,response:AnimeUser})=>{
                         setUserAni(data.response)

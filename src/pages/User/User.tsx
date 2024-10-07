@@ -31,7 +31,7 @@ const UserPage:React.FC = () =>{
                 setUser(data)
             })
             .catch((error:any)=>console.error('Error fetching user data:', error))
-            await fetchUser("/user/animelist/g/",'GET')
+            await fetchUser("/user/animelist/",'GET')
                 .then(response=>response.json())
                 .then((data:AnimeUser[])=>{
                     setAnimelist(data)

@@ -1,6 +1,7 @@
 import {fetchUser} from "../features/main";
 import {Episode} from "../types/episodeModel";
 import {GlobalContextType} from "../GlobalContext";
+import {roles} from "../types/types";
 
 export async function fetchPublicKey(){
     return await fetch("/public-key").then(r=>r.text())
@@ -49,4 +50,12 @@ export const handlePostSec = async (context:GlobalContextType,ep:Episode,sec: nu
         await fetchUser('/ep/user/p/', 'POST', body)
     }
 }
-
+interface getPrivilegesInterface{
+    role:roles[],
+    super:boolean
+}
+export async function getPrivileges():Promise<getPrivilegesInterface>{
+    let res= await fetchUser("/user/g/privileges","GET")
+    let response:{success:boolean,role:roles[],super:boolean} = await res.json()
+    return {role:response.role,super:response.super};
+}

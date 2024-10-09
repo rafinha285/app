@@ -16,10 +16,11 @@ export enum qualityEnum {
     SD = '480p',
 }
 export enum state{
-	ONGOING="Lançando",
-	HIATUS="Hiáto",
-	COMPLETED="Completo",
-	CANCELED= "Cancelado"
+    ONGOING="Lançando",
+    HIATUS="Hiáto",
+    COMPLETED="Completo",
+    CANCELED= "Cancelado",
+    NOTARING= "Não Lançado"
 }
 export enum userAnimeState{
     watching="Assistindo",

@@ -83,7 +83,7 @@ export interface Anime{
 	description:string;
 	quality:quality;
 	language:Audio;
-	state:string;
+	state:state;
 	releasedate:Date;
 	studios:Producer[];
 	producers:Producer[];

@@ -81,14 +81,14 @@
     border: 0;
     border-radius: 4px;
     cursor: pointer;
-    flex-shrink: 0;
+    /*flex-shrink: 0;*/
     overflow: visible;
     padding: calc(10px *.7);
     position: relative;
     transition: all .3s ease;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
 }
 .controls button:hover{
     background: var(--orange);

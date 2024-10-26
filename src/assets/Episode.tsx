@@ -19,7 +19,7 @@ const Episode:React.FC<props> = ({ep}) =>{
             <div className="">
                 <div className="ep-hover"/>
                 <div className="ep-img">
-                    <img alt={ep.animename} src={`${cdnUrl}/epPOster/${ep.anime_id}/${ep.season_id}/${ep.id}`}></img>
+                    <img alt={ep.animename} src={`${cdnUrl}/epPoster/${ep.anime_id}/${ep.season_id}/${ep.id}`}></img>
                 </div>
                 <div className="ep-body">
                     <div className="ep-res">

@@ -46,6 +46,7 @@ const AnimePage:React.FC = ()=>{
         [seasonId:string]: Episode[]
     }
     const [episodes,setEpisodes] = useState<EpisodeState>({})
+    const [episodesWatched,setEpisodesWatched] = useState<EpisodeState>({})
     const [isInList,setIsInList] = useState<boolean>(false)
     const [isPopupOpen,setIsPopupOpen] = useState<boolean>()
     const [seasons,setSeasons] = useState<Season[]>([])
@@ -64,6 +65,7 @@ const AnimePage:React.FC = ()=>{
                         setUserAni(data.response)
                         setRatingValue(data.response.rate !== null?data.response.rate.toString():'none')
                     })
+                await fetchUser("")
             })
     }
 

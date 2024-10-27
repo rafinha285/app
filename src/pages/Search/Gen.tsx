@@ -20,6 +20,7 @@ const GenSearch:React.FC = ()=>{
                 }
             })
         }
+        fetchGens()
     },[])
     return(
         <html lang="pt-BR">

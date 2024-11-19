@@ -25,7 +25,7 @@ const Captions:React.FC<props> = ({
     const captionsContainerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         loadVTT(aniId,seasonId,epId,selectedCaptions,setCueData)
-    }, []);
+    }, [selectedCaptions]);
 
     useEffect(() => {
         if (captionsContainerRef.current) {

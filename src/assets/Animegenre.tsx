@@ -8,7 +8,7 @@ interface AniGenProps{
 }
 
 const AniGeneros:React.FC<AniGenProps> = ({genre,index}) =>{
-    console.log(genre);
+    // console.log(genre);
     
     return(
         <>

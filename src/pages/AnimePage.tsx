@@ -17,7 +17,7 @@ import EpisodeLink from "../assets/EpisodeLink";
 import PersoCompo from "../components/Perso";
 import AniProducers, { prodType } from "../assets/AnimeProd";
 import { useCookies } from "react-cookie";
-import { Episode } from "../types/episodeModel";
+import {Episode, EpisodeUser} from "../types/episodeModel";
 import GlobalContext from "../GlobalContext";
 import Popup from "reactjs-popup"
 import AnimeEditList from "../components/User/AnimeEditList";
@@ -46,7 +46,10 @@ const AnimePage:React.FC = ()=>{
         [seasonId:string]: Episode[]
     }
     const [episodes,setEpisodes] = useState<EpisodeState>({})
-    const [episodesWatched,setEpisodesWatched] = useState<EpisodeState>({})
+    interface EpisodeListState{
+        [seasonId:string]: EpisodeUser[]
+    }
+    const [episodesWatched,setEpisodesWatched] = useState<EpisodeListState>({})
     const [isInList,setIsInList] = useState<boolean>(false)
     const [isPopupOpen,setIsPopupOpen] = useState<boolean>()
     const [seasons,setSeasons] = useState<Season[]>([])
@@ -65,7 +68,7 @@ const AnimePage:React.FC = ()=>{
                         setUserAni(data.response)
                         setRatingValue(data.response.rate !== null?data.response.rate.toString():'none')
                     })
-                await fetchUser("")
+                // await fetchUser("")
             })
     }
 
@@ -87,7 +90,7 @@ const AnimePage:React.FC = ()=>{
                 await fetch(`/ani/g/prods/${ani.id}`)
                     .then(response=>response.json())
                     .then(data=>{
-                        console.log(data)
+                        // console.log(data)
                         setCreators(data.creators)
                         setProducers(data.producers)
                         setStudios(data.studios)
@@ -97,7 +100,9 @@ const AnimePage:React.FC = ()=>{
                     .then(data=>{
                         data.forEach(async (element:Season) => {
                             const fetchedEps = await fetchEp(ani,element)
+                            const fetchedEpsList = await fetchEpList(ani,element)
                             setEpisodes(prev=>({...prev,[element.id]:fetchedEps}))
+                            setEpisodesWatched(prev=>({...prev, [element.id]:fetchedEpsList}))
                         });
                         setSeasons(data)
                     })
@@ -142,15 +147,23 @@ const AnimePage:React.FC = ()=>{
         })
     }
 
+    const handleWatched = () =>{
+        if(ani){
+            seasons.forEach(async element=>{
+                const fetchedEpsList = await fetchEpList(ani,element)
+                setEpisodesWatched(prev=>({...prev, [element.id]:fetchedEpsList}))
+            })
+        }
+    }
 
     const handleAddAnimeToList = async()=>{
         checkIsLogged(context.isLogged)
         const token = sessionStorage.getItem("token")
-        console.log(token)
+        // console.log(token)
         await fetchUser(`/user/animelist/p/insert/${ani?.id!}`,'POST')
             .then(res=>res.json())
             .then((data)=>{
-                console.log(data)
+                // console.log(data)
                 checkList()
             })
     }
@@ -159,16 +172,25 @@ const AnimePage:React.FC = ()=>{
         const data: Episode[] = await res.json();
         return data
     }
+    const fetchEpList = async(ani:Anime,s:Season)=>{
+        const res = await fetchUser(`/ep/user/g/season/${ani?.id}/${s.id}`,"GET")
+        let data:EpisodeUser[]
+        if(!res.ok){
+            return []
+        }
+        data = await res.json()
+        console.log(data)
+        return data;
+    }
     const handleEditAnimePopup = async()=>{
         checkIsLogged(context.isLogged)
-
     }
     const handleLike = ()=>{
 
     }
     const [ratingValue,setRatingValue] = useState<string>()
     const [ratingHover,setRatingHover] = useState(-1)
-    console.log(ani)
+    // console.log(ani)
     return(
         <html lang="pt-BR">
             <Helmet>
@@ -280,7 +302,13 @@ const AnimePage:React.FC = ()=>{
                         {seasons.map((season,i,arr)=>(
                             <div style={{display:season.index === Math.min(...arr.map(v=>v.index))?"block":"none"}} id={season.id} key={season.index}>
                                 {episodes[season.id]?.sort((a,b)=>a.epindex-b.epindex).map(v=>(
-                                    <EpisodeLink ani={ani} s={season} ep={v}/>
+                                    <EpisodeLink
+                                        ani={ani}
+                                        s={season}
+                                        ep={v}
+                                        epList={episodesWatched[season.id].find(vEp => vEp.episode_id === v.id)} handleWatched={handleWatched}
+                                        isLogged={context.isLogged}
+                                    />
                                 ))}
                             </div>
                         ))}

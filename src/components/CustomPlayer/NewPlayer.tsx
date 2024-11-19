@@ -35,7 +35,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const [currentSpeed,setCurrentSpeed] = useState(1)
     const [muted,setMuted] = useState<boolean>(false);
     const [captionsActive, setCaptionsActive] = useState<boolean>(true);
-    const [selectedCaptions,setSelectedCaptions] = useState<string>('por')
+    const [selectedCaptions,setSelectedCaptions] = useState<string>(ep?.subtitlestracks?.[0]??'por')
     const [isConfigOpen,setIsConfigOpen] = useState<boolean>(false);
     const [isControlsVisible,setIsControlsVisible] = useState<boolean>(false);
     const {

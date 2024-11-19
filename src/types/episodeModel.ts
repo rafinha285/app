@@ -55,6 +55,7 @@ export interface EpisodeUser{
     duration:number;
     ep_index:number;
     name:string;
+    watched:boolean;
 }
 export interface EpisodeSim{
     id:string

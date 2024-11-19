@@ -145,6 +145,10 @@ h1, h2{
     justify-content: space-between;
     margin: .2em 0;
 }
+.eps div .selected{
+    color: var(--gray);
+    background-color: var(--dark_purple);
+}
 .eps div button{
     background-color: var(--purple);
     border: none;

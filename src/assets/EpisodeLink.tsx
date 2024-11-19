@@ -30,7 +30,7 @@ const EpisodeLink:React.FC<prop> = ({ani,s,ep,epList,handleWatched,isLogged})=>{
                 <div className="ep" key={ep?.epindex}>
                     <span>{ep?.name}</span>
                     <div>
-                        <button className={epList?"selected":""} onClick={!epList?handleWatchedd:()=>{}}><FontAwesomeIcon icon={epList?.watched?faEye:faEyeSlash}/> Visto</button>
+                        <button className={epList?"selected":""} onClick={!epList?handleWatchedd:()=>{}}><FontAwesomeIcon icon={epList?faEye:faEyeSlash}/> Visto</button>
                         <Link to={`/Anime/${ani.id}/watch/${s.id}/${ep.id}`}><button><FontAwesomeIcon icon={faPlay}/> Assistir</button></Link>
                         <Link to={`/Anime/${ani.id}/download/${s.id}/${ep.id}`}><button ><FontAwesomeIcon icon={faDownload}/> Download</button></Link>
                     </div>

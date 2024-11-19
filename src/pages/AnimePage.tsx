@@ -66,7 +66,7 @@ const AnimePage:React.FC = ()=>{
                     .then(response => response.json())
                     .then((data:{success:boolean,response:AnimeUser})=>{
                         setUserAni(data.response)
-                        setRatingValue(data.response.rate !== null?data.response.rate.toString():'none')
+                        setRatingValue(data.response?.rate !== null?data.response?.rate.toString():'none')
                     })
                 // await fetchUser("")
             })

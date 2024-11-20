@@ -3,12 +3,14 @@ import { useCookies } from "react-cookie";
 import {fetchUser} from "./features/main";
 import {roles} from "./types/types";
 import {getPrivileges} from "./functions/userFunctions";
+import {User} from "./types/userType";
 // import jwt from 'jsonwebtoken';
 
 export interface GlobalContextType {
     isLogged: boolean;
     isAdmin: boolean;
     isSuper: boolean;
+    user:User|null
 }
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
@@ -16,6 +18,7 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
     const [isLogged, setIsLogged] = useState<boolean>(false)
     const [isAdmin, setIsAdmin] = useState<boolean>(false)
     const [isSuper, setIsSuper] = useState<boolean>(false)
+    const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState<boolean>(true);
     // const [cookies] = useCookies();
     // const token = getCookie('token');
@@ -27,9 +30,11 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
                 const userData = await userResponse.json();
                 setIsLogged(userData.success);
                 if(userData.success){
+                    let getUser:User= await (await fetchUser("/user/g/","GET")).json();
                     let privilegesData = await getPrivileges()
                     setIsAdmin(privilegesData.role.includes(roles.adm));
                     setIsSuper(privilegesData.super);
+                    setUser(getUser);
                 }
 
             } catch (error) {
@@ -47,7 +52,7 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
     }
 
     return(
-        <GlobalContext.Provider value={{isLogged,isAdmin,isSuper}}>
+        <GlobalContext.Provider value={{isLogged,isAdmin,isSuper,user}}>
             {children}
         </GlobalContext.Provider>
     )

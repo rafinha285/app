@@ -23,10 +23,11 @@ import Popup from "reactjs-popup"
 import AnimeEditList from "../components/User/AnimeEditList";
 import {cdnUrl} from "../const";
 import Rating from "../components/Anime/Rating";
-import Comements from "../components/Comments";
+import ComementsDisqus from "../components/CommentsDisqus";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 import {faPlus, faStar} from "@fortawesome/free-solid-svg-icons";
+import Comments from "../components/comments/Comments";
 
 
 interface seasonDate{
@@ -329,7 +330,8 @@ const AnimePage:React.FC = ()=>{
                     {/*        <PersoCompo perso={v} aniId={ani.id} key={i}></PersoCompo>*/}
                     {/*    ))}</div>*/}
                     {/*</div>*/}
-                    <Comements indentifier={ani.id} type={'Anime'} name={ani.name} />
+                    {/*<ComementsDisqus indentifier={ani.id} type={'Anime'} name={ani.name} />*/}
+                    <Comments/>
                 </div>
                 ):err?(
                     <div className="main-loading">

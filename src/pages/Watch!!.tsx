@@ -18,7 +18,7 @@ import EpisodeDropdown from "../assets/EpisodeDropdown";
 import Footer from "../components/Footer";
 import "../css/watch.css"
 import 'plyr/dist/plyr.css'
-import Comements from "../components/Comments";
+import ComementsDisqus from "../components/CommentsDisqus.tsx";
 
 
 const Watch:React.FC = () => {
@@ -390,7 +390,7 @@ const Watch:React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <Comements indentifier={ep?.id!} type={'Episódio'} name={ep?.name!} />
+                    <ComementsDisqus indentifier={ep?.id!} type={'Episódio'} name={ep?.name!} />
                     <Footer/>
                 </html>
             ) : (

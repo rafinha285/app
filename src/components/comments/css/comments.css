@@ -1,0 +1,36 @@
+.comments{
+    width: 100%;
+    padding: 20px;
+}
+.comments-input{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+}
+.comments-input textarea{
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    color: white;
+    width: 100%;
+}
+.comments-avatar{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid white;
+}
+
+.comments-textarea-wrapper{
+    margin-left: 10px;
+    flex: 1 0 0%;
+}
+.comments-main{
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+}

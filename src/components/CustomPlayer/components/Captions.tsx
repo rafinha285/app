@@ -8,7 +8,6 @@ interface props{
     aniId:string,
     selectedCaptions: string;
     currentCue: Cue[];
-    cueData:VTTData|undefined;
     setCueData: React.Dispatch<React.SetStateAction<VTTData | undefined>>;
     captionsActive: boolean;
 }
@@ -18,13 +17,15 @@ const Captions:React.FC<props> = ({
     aniId,
     selectedCaptions,
     currentCue,
-    cueData,
     setCueData,
     captionsActive,
     }) =>{
     const captionsContainerRef = useRef<HTMLDivElement>(null);
     useEffect(() => {
         loadVTT(aniId,seasonId,epId,selectedCaptions,setCueData)
+        if (captionsContainerRef.current) {
+            captionsContainerRef.current.innerHTML = '';
+        }
     }, [selectedCaptions]);
 
     useEffect(() => {

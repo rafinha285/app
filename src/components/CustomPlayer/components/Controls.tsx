@@ -11,6 +11,8 @@ import {
     faVolumeLow,
     faVolumeOff, faVolumeXmark
 } from "@fortawesome/free-solid-svg-icons";
+import {faImage as faImageSolid} from "@fortawesome/free-solid-svg-icons";
+import {faImage as faImageRegular} from "@fortawesome/free-regular-svg-icons"
 import {Episode} from "../../../types/episodeModel";
 import {getEpTime} from "../../../features/main";
 import {faClosedCaptioning} from "@fortawesome/free-regular-svg-icons";
@@ -20,6 +22,7 @@ import {quality} from "../../../types/types";
 
 interface props{
     isPlaying: boolean;
+    isLoading: boolean;
     togglePlayPause: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement, MouseEvent>)=> void;
     ep:Episode;
     eps:Map<number,Episode>;
@@ -38,6 +41,9 @@ interface props{
     captionsActive:boolean;
     isConfigOpen:boolean;
     toggleConfig:(e:React.MouseEvent<HTMLButtonElement>)=>void;
+    togglePip:(e:React.MouseEvent<HTMLButtonElement>)=>void;
+    isPictureInPictureAvailable:boolean;
+    isPictureInPictureActive:boolean;
     selectedCaptions:string,
     setSelectedCaptions:React.Dispatch<React.SetStateAction<string>>;
     currentQuality: quality;
@@ -49,6 +55,7 @@ interface props{
 const Controls:React.FC<props> = (
     {
         isPlaying,
+        isLoading,
         togglePlayPause,
         ep,
         eps,
@@ -67,6 +74,9 @@ const Controls:React.FC<props> = (
         captionsActive,
         isConfigOpen,
         toggleConfig,
+        togglePip,
+        isPictureInPictureAvailable,
+        isPictureInPictureActive,
         selectedCaptions,
         setSelectedCaptions,
         currentQuality,
@@ -217,7 +227,12 @@ const Controls:React.FC<props> = (
                     // </div>
                 )}
             </div>
-
+            {isPictureInPictureAvailable&&(
+                <button className='content' onClick={togglePip}>
+                    <FontAwesomeIcon icon={isPictureInPictureActive ? faImageSolid : faImageRegular}/>
+                    <span className='tooltip'>Picture in Picture</span>
+                </button>
+            )}
 
             <button className='content' onClick={toggleFullscreen}>
                 <FontAwesomeIcon icon={!isFullscreen? faUpRightAndDownLeftFromCenter:faDownLeftAndUpRightToCenter} />

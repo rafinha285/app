@@ -3,7 +3,7 @@ import {Episode, EpisodeUser} from "../../types/episodeModel";
 import {cdnUrl} from "../../const";
 import {quality} from "../../types/types";
 import './css/player.css'
-import {faPause, faPlay, faRepeat} from "@fortawesome/free-solid-svg-icons";
+import {faPause, faPlay, faRepeat, faSpinner} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import Controls from "./components/Controls";
 import Captions from "./components/Captions";
@@ -27,6 +27,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const videoRef = React.useRef<HTMLVideoElement>(null);
     const context = useContext<GlobalContextType|undefined>(globalContext)!;
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
     const [volume, setVolume] = useState<number>(1); // Volume range 0 to 1
     const [currentTime, setCurrentTime] = useState<number>(0);
@@ -100,13 +101,15 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
             setVolume(0);
         }
         window.addEventListener('keydown',handleKeyDown)
+        videoRef.current?.addEventListener('waiting',()=>handleWating(true));
+        videoRef.current?.addEventListener('canplay',()=>handleWating(false));
         return()=>{
             window.removeEventListener('keydown',handleKeyDown)
         }
     }, [currentQuality,ep]);
 
     //handles
-
+    let currentPostTime = 0;
     const handleTimeUpdate = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
         const video = e.currentTarget;
         if (video.buffered.length) {
@@ -120,7 +123,6 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
             ) || [];
             // console.log(activeCues)
             setCurrentCue(activeCues)
-
         }else{
             setCurrentCue([])
         }
@@ -133,9 +135,14 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         }
         // setCurrentCue([])
     };
+
+    const handleWating = (bool:boolean) =>{
+        setIsLoading(bool);
+    }
+
     const togglePlayPause = (e?: React.MouseEvent<(HTMLDivElement|HTMLButtonElement), MouseEvent>) => {
         e?.stopPropagation()
-        if (videoRef.current) {
+        if (videoRef.current&&!isLoading) {
             if (videoRef.current.paused) {
                 videoRef.current.play();
                 setIsPlaying(true);
@@ -419,6 +426,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
             </div>
             <Controls
                 isPlaying={isPlaying}
+                isLoading={isLoading}
                 togglePlayPause={togglePlayPause}
                 ep={ep}
                 eps={eps}
@@ -437,6 +445,9 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                 captionsActive={captionsActive}
                 isConfigOpen={isConfigOpen}
                 toggleConfig={toggleConfig}
+                togglePip={togglePiP}
+                isPictureInPictureActive={isPictureInPictureActive}
+                isPictureInPictureAvailable={isPictureInPictureAvailable}
                 selectedCaptions={selectedCaptions}
                 setSelectedCaptions={setSelectedCaptions}
                 currentSpeed={currentSpeed}
@@ -451,13 +462,17 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                 seasonId={ep.season_id}
                 selectedCaptions={selectedCaptions}
                 currentCue={currentCue}
-                cueData={cueData}
                 setCueData={setCueData}
                 captionsActive={captionsActive}
             />
-            <button className='play-button' style={{display: !isPlaying ? 'flex' : 'none'}}
+            <button className='play-button' style={{display: !isPlaying||isLoading ? 'flex' : 'none'}}
                     onClick={togglePlayPause}>
-                <FontAwesomeIcon icon={currentTime === ep.duration?faRepeat:!isPlaying?faPlay:faPause} />
+                {isLoading?(
+                        <FontAwesomeIcon icon={faSpinner} spinPulse size={'lg'}/>
+                    ):(
+                        <FontAwesomeIcon icon={currentTime === ep.duration?faRepeat:!isPlaying?faPlay:faPause} />
+                    )
+                }
             </button>
         </div>
     )

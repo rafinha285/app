@@ -1,7 +1,11 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import "./css/comments.css"
+import Comment from "./components/Comment";
+import globalContext, {GlobalContextType} from "../../GlobalContext";
 
 const Comments:React.FC = () => {
+    const {isLogged,user} = useContext<GlobalContextType|undefined>(globalContext)!
+
     return (
         <div className="comments">
             <div className='comments-input'>
@@ -13,7 +17,7 @@ const Comments:React.FC = () => {
                 </div>
             </div>
             <div className="comments-main">
-
+                <Comment></Comment>
             </div>
         </div>
     )

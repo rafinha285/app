@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {EpisodeUser} from "../../../types/episodeModel";
 import {getEpTime} from "../../../features/main";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -20,7 +20,12 @@ const PlayerPopup:React.FC<props> = ({epUser,open,setOpen,handleSkip}) =>{
         console.log(e,setOpen)
         setOpen(false);
     };
-    console.log(epUser)
+    useEffect(() => {
+        if(epUser!==undefined){
+            setOpen(true);
+        }
+    }, [epUser]);
+    // console.log(epUser)
     return (
         <div
             className="episode-popup"

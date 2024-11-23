@@ -10,13 +10,10 @@ import { EpisodeSim } from "../types/episodeModel";
 const LancamentosPage:React.FC = () =>{
     const [eps,setEps] = useState<EpisodeSim[]>()
     useEffect(()=>{
-        $.ajax({
-            method:"GET",
-            url:`/ep/g/lan?count=20`
-        }).done((res)=>{
-            setEps(res)
-        })    
-        console.log(isMobile)
+        fetch(`/ep/g/lan?count=20`).then(res=>res.json())
+            .then(res=>{
+                setEps(res)
+            })
     },[!eps])
     
     return(

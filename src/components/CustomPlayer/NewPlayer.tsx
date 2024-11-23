@@ -93,7 +93,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                 }
             };
         }
-        console.log(epUser)
+        // console.log(epUser)
         if(epUser){
             setIsPopupOpen(true)
         }

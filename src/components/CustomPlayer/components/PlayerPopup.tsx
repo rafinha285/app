@@ -21,7 +21,7 @@ const PlayerPopup:React.FC<props> = ({epUser,open,setOpen,handleSkip}) =>{
         setOpen(false);
     };
     useEffect(() => {
-        setOpen(!!epUser);
+        setOpen(!!epUser && !epUser.finished);
     }, [epUser]);
     // console.log(epUser)
     return (

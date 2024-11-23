@@ -137,7 +137,8 @@ const Watch:React.FC = () =>{
                 <div className="ep-sel1">
                     <div>
                         <p>Nome Episódio: <span>{ep?.name}</span></p>
-                        <p>Data de Lançamento <span>{DateToStringLocal(new Date(ep?.releasedate!))}</span></p>
+                        <p>Data de Lançamento: <span>{DateToStringLocal(new Date(ep?.releasedate!))}</span></p>
+                        <p>Vizualizações: <span>{ep.views??0}</span></p>
                     </div>
                     <div className="ep-select">
                         <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>

@@ -5,6 +5,7 @@ import { Season } from "../types/animeModel";
 import { Episode } from "../types/episodeModel";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faPlay} from "@fortawesome/free-solid-svg-icons";
+import {fetchUser} from "../features/main.ts";
 interface prop{
     ani:Anime,
     s:Season,
@@ -12,10 +13,9 @@ interface prop{
     // downloadHandle:()=>void
 }
 const EpisodeLink:React.FC<prop> = ({ani,s,ep})=>{
-    // const [episode,setEpisode] = useState<Episode>()
-    // useEffect(()=>{
-
-    // },[!episode])
+    const handleWatched =  async() =>{
+        await fetchUser()
+    }
     return(
         <>
             {ep?(

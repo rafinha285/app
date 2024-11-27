@@ -10,6 +10,7 @@ import { v4 as uuid } from "uuid";
 import { fetchPost } from "../features/main";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {CredentialResponse, GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
 const salt = bcrypt.genSaltSync(10)
 const Register:React.FC = ()=>{
     const [email,setEmail] = useState<string>("")
@@ -60,13 +61,10 @@ const Register:React.FC = ()=>{
         setRecaptchaValue(value);
         console.log(value)
     };
-    const handleSendAccount = async(e:React.MouseEvent)=>{
-        e.preventDefault()
+    const handleSendAccount = async(e?:React.MouseEvent)=>{
+        e?.preventDefault()
         if(recaptchaValue){
             if(email&&name&&surname&&username&&birthDate&&s&&cs&&!send){
-                var _id = uuid()
-                // var salt = uuid()
-                var interations = 1000
                 //var hashedPassword = pbkdf2Sync(s,_id,interations,32,"sha256").toString("hex")
                 var hashedPassword = bcrypt.hashSync(s,salt)
 
@@ -91,7 +89,13 @@ const Register:React.FC = ()=>{
                 }
             }
         }
-
+    }
+    const handleSendGoogleAccount = async(credentialResponse:CredentialResponse)=>{
+        try{
+            credentialResponse.credential
+        }catch(err){
+            console.error(err)
+        }
     }
     return(
         <html lang="pt-BR">
@@ -113,6 +117,7 @@ const Register:React.FC = ()=>{
                     <div className="div-flex">
                         <button type="submit" onClick={handleSendAccount} disabled={send} className="logBut">Registrar-se <FontAwesomeIcon icon={faPlus}/></button>
                     </div>
+                    <GoogleLogin onSuccess={handleSendGoogleAccount}/>
                 </div>
             </form>
             <Footer></Footer>

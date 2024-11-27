@@ -13,27 +13,31 @@ import Download from './pages/Download';
 import Agenda from './pages/Agenda';
 import GlobalContext, { GlobalProvider } from './GlobalContext';
 import UserPage from './pages/User/User';
+import {GoogleOAuthProvider} from "@react-oauth/google";
+import {googleClientId} from "./const";
 const App:React.FC = ()=> {
 return (
   <Router>
-    <GlobalProvider>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path='/Anime/lancamentos' element={<LancamentosPage />} />
-        <Route path='/Anime/:id' element={<Anime />}/>
-        <Route path='/Anime/:id/watch/:seasonId/:epId' element={<Watch />} />
-        <Route path='/Anime/:id/download/:seasonId/:epId' element={<Download/>}/>
-        <Route path='/Anime/agenda' element={<Agenda/>}/>
-        <Route path='/gen/:gen' element={<GenSearch />} />
-        <Route path='/prod/:prod' element={<ProdSearch type='Produtor'/>}/>
-        <Route path='/crea/:prod' element={<ProdSearch type='Criador'/>}/>
-        <Route path='/stud/:prod' element={<ProdSearch type='Estudio'/>}/>
-        <Route path='/search' element={<MainSearch />} />
-        <Route path='/login' element={<Login/>}/>
-        <Route path='/register' element={<Register/>}/>
-        <Route path='/user' element={<UserPage/>}/>
-      </Routes>
-    </GlobalProvider>
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <GlobalProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path='/Anime/lancamentos' element={<LancamentosPage />} />
+          <Route path='/Anime/:id' element={<Anime />}/>
+          <Route path='/Anime/:id/watch/:seasonId/:epId' element={<Watch />} />
+          <Route path='/Anime/:id/download/:seasonId/:epId' element={<Download/>}/>
+          <Route path='/Anime/agenda' element={<Agenda/>}/>
+          <Route path='/gen/:gen' element={<GenSearch />} />
+          <Route path='/prod/:prod' element={<ProdSearch type='Produtor'/>}/>
+          <Route path='/crea/:prod' element={<ProdSearch type='Criador'/>}/>
+          <Route path='/stud/:prod' element={<ProdSearch type='Estudio'/>}/>
+          <Route path='/search' element={<MainSearch />} />
+          <Route path='/login' element={<Login/>}/>
+          <Route path='/register' element={<Register/>}/>
+          <Route path='/user' element={<UserPage/>}/>
+        </Routes>
+      </GlobalProvider>
+    </GoogleOAuthProvider>
   </Router>
 );
 }

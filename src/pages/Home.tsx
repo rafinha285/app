@@ -6,7 +6,11 @@ import { Helmet} from "react-helmet"
 import "../css/index.css"
 import "../css/base.css"
 import Episodes from "../components/Episodes";
+import {firebaseApp} from "../functions/firebase/firebaseApp";
+import { getAnalytics } from "firebase/analytics";
+
 const Home = () =>{
+    const analytics = getAnalytics(firebaseApp);
     return(
         <html lang="pt-BR">
             <Helmet>

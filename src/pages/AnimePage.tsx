@@ -17,7 +17,7 @@ import EpisodeLink from "../assets/EpisodeLink";
 import PersoCompo from "../components/Perso";
 import AniProducers, { prodType } from "../assets/AnimeProd";
 import { useCookies } from "react-cookie";
-import { Episode } from "../types/episodeModel";
+import {Episode, EpisodeUser} from "../types/episodeModel";
 import GlobalContext from "../GlobalContext";
 import Popup from "reactjs-popup"
 import AnimeEditList from "../components/User/AnimeEditList";
@@ -27,6 +27,7 @@ import Comements from "../components/Comments";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 import {faPlus, faStar} from "@fortawesome/free-solid-svg-icons";
+import {logPage} from "../functions/firebase/analytics/sendLogAnalytics";
 
 
 interface seasonDate{
@@ -46,7 +47,10 @@ const AnimePage:React.FC = ()=>{
         [seasonId:string]: Episode[]
     }
     const [episodes,setEpisodes] = useState<EpisodeState>({})
-    const [episodesWatched,setEpisodesWatched] = useState<EpisodeState>({})
+    interface EpisodeListState{
+        [seasonId:string]: EpisodeUser[]
+    }
+    const [episodesWatched,setEpisodesWatched] = useState<EpisodeListState>({})
     const [isInList,setIsInList] = useState<boolean>(false)
     const [isPopupOpen,setIsPopupOpen] = useState<boolean>()
     const [seasons,setSeasons] = useState<Season[]>([])
@@ -70,6 +74,7 @@ const AnimePage:React.FC = ()=>{
     }
 
     useEffect(()=>{
+        logPage("anime-page")
         if(!ani){
             fetch(`/ani/g/${id}`).then(async res=>{
                 if(!res.ok){

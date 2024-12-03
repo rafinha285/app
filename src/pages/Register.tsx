@@ -10,7 +10,6 @@ import { v4 as uuid } from "uuid";
 import { fetchPost } from "../features/main";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {CredentialResponse, GoogleLogin, GoogleOAuthProvider} from "@react-oauth/google";
 const salt = bcrypt.genSaltSync(10)
 const Register:React.FC = ()=>{
     const [email,setEmail] = useState<string>("")
@@ -90,13 +89,6 @@ const Register:React.FC = ()=>{
             }
         }
     }
-    const handleSendGoogleAccount = async(credentialResponse:CredentialResponse)=>{
-        try{
-            credentialResponse.credential
-        }catch(err){
-            console.error(err)
-        }
-    }
     return(
         <html lang="pt-BR">
             <Header></Header>
@@ -117,7 +109,7 @@ const Register:React.FC = ()=>{
                     <div className="div-flex">
                         <button type="submit" onClick={handleSendAccount} disabled={send} className="logBut">Registrar-se <FontAwesomeIcon icon={faPlus}/></button>
                     </div>
-                    <GoogleLogin onSuccess={handleSendGoogleAccount}/>
+                    
                 </div>
             </form>
             <Footer></Footer>

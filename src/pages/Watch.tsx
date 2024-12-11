@@ -12,7 +12,7 @@ import EpisodeDropdown from "../assets/EpisodeDropdown";
 import {DateToStringLocal, fetchUser} from "../features/main";
 import Loading from "../components/Loading";
 import { cdnUrl } from "../const";
-import Comments from "../components/CommentsDisqus.tsx";
+import Comments from "../components/CommentsDisqus";
 import {isFirstEp, isLastEp} from "../functions/animeFunctions";
 import NewPlayer from "../components/CustomPlayer/NewPlayer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

@@ -330,8 +330,8 @@ const AnimePage:React.FC = ()=>{
                     {/*        <PersoCompo perso={v} aniId={ani.id} key={i}></PersoCompo>*/}
                     {/*    ))}</div>*/}
                     {/*</div>*/}
-                    {/*<ComementsDisqus indentifier={ani.id} type={'Anime'} name={ani.name} />*/}
-                    <Comments/>
+                    <ComementsDisqus indentifier={ani.id} type={'Anime'} name={ani.name} />
+                    {/*<Comments/>*/}
                 </div>
                 ):err?(
                     <div className="main-loading">

@@ -11,7 +11,7 @@ import PlayerPopup from "../components/CustomPlayer/components/PlayerPopup.tsx";
 import Player from "../components/Player/Player";
 import {DateToStringLocal, fetchUser, handleNextEp} from "../features/main";
 import EpisodeDropdown from "../assets/EpisodeDropdown";
-import Comements from "../components/Comments";
+import ComementsDisqus from "../components/CommentsDisqus.tsx";
 import Footer from "../components/Footer";
 import Plyr, {APITypes, PlyrOptions, PlyrSource, usePlyr} from "plyr-react";
 import {isFirstEp, isLastEp} from "../functions/animeFunctions";

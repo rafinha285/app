@@ -17,11 +17,16 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
     const [isAdmin, setIsAdmin] = useState<boolean>(false)
     const [isSuper, setIsSuper] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(true);
-    // const [cookies] = useCookies();
+    const [cookies,setCookies] = useCookies(['token']);
     // const token = getCookie('token');
     useEffect(() => {
         const fetchTest = async() =>{
             try {
+                if(!localStorage.getItem('token')){
+                    setIsLogged(false);
+                    return;
+                }
+                setCookies('token',localStorage.getItem('token')!)
                 const userResponse = await fetchUser(`/user/g/verify`, "GET");
                 // console.log(userResponse)
                 const userData = await userResponse.json();

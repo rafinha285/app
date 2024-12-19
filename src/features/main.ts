@@ -146,7 +146,7 @@ export async function fetchUser(path:string,method:"POST"|"DELETE"|"PATCH"|"GET"
             'timeZone':indentifier.timeZone,
             'webGlRenderer':indentifier.WegGl?.renderer,
             'webGlVendor':indentifier.WegGl?.vendor,
-            'authorization':`Bearer ${localStorage.getItem('token')}`
+            // 'authorization':`Bearer ${localStorage.getItem('token')}`
         },
         body:JSON.stringify(body)
     })

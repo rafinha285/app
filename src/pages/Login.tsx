@@ -51,7 +51,7 @@ const Login:React.FC = ()=>{
                     // console.log(token,response,response.headers["set-cookie"])
                     cookiess.set("token",token,{path:"/",maxAge:86400, secure: true})
                     // setCookie('token',token,{path:"/",maxAge:84600})
-                    sessionStorage.setItem("token",token)
+                    localStorage.setItem("token",token)
                     console.log(token)
                     window.location.href = "/"
                 }else{

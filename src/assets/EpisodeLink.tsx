@@ -23,7 +23,6 @@ const EpisodeLink:React.FC<prop> = ({ani,s,ep,epList,handleWatched,isLogged})=>{
             handleWatched()
         }
     }
-    console.log(epList)
     return(
         <>
             {ep?(

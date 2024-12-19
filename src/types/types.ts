@@ -39,7 +39,8 @@ export enum userMangaState{
 export enum roles{
     adm = "Administrador",
     client = "Cliente",
-    creator = "Criador"
+    creator = "Criador",
+    developer = "Desenvolvedor",
 }
 export enum priorityValue{
     LOW="Baixa",

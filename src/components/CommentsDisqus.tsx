@@ -7,7 +7,7 @@ interface props{
     type:"Episódio"|'Anime',
     name:string
 }
-const Comements:React.FC<props> = ({indentifier,type,name})=>{
+const ComementsDisqus:React.FC<props> = ({indentifier,type,name})=>{
     return (
         <div className="comments">
             <DiscussionEmbed
@@ -24,4 +24,4 @@ const Comements:React.FC<props> = ({indentifier,type,name})=>{
         </div>
     )
 }
-export default Comements;
+export default ComementsDisqus;

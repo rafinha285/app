@@ -14,12 +14,12 @@ export function getEpTime(ee:number):string{
     if (h === "0") {
         s = s.length === 1 ? (s = `0${s}`) : s;
         m = Math.floor((e % 3600) / 60).toString();
-        m = m.length === 1 ? `0${m}` : m; // Correção aqui
+        m = m.length === 1 ? `0${m}` : m;
         ar.push(m, s);
     } else {
         s= s.length === 1 ? (s = `0${s}`) : s;
         m = Math.floor((e % 3600) / 60).toString();
-        m = m.length === 1 ? `0${m}` : m; // Correção aqui
+        m = m.length === 1 ? `0${m}` : m;
         h= h.length === 1 ? (h = `0${h}`) : h;
         ar.push(h, m, s);
     }
@@ -146,6 +146,7 @@ export async function fetchUser(path:string,method:"POST"|"DELETE"|"PATCH"|"GET"
             'timeZone':indentifier.timeZone,
             'webGlRenderer':indentifier.WegGl?.renderer,
             'webGlVendor':indentifier.WegGl?.vendor,
+            // 'authorization':`Bearer ${localStorage.getItem('token')}`
         },
         body:JSON.stringify(body)
     })

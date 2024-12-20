@@ -35,7 +35,7 @@ const AnimePoster:React.FC<AnimePosterProps> = ({aniId,doc})=>{
             <article className="newanime-t">
                 <div className="highlight-hover" />
                 <div className="highlight-img">
-                    <img src={`${cdnUrl}/ani/img?Id=${aniId}`} alt={doc!.name}></img>
+                    <img src={`/cdn-cgi/image/quality=75/${cdnUrl}/ani/img?Id=${aniId}`} alt={doc!.name}></img>
                 </div>
                 <div className="highlight-body">
                     <div className="highlight-time">

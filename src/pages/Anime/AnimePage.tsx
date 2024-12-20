@@ -1,33 +1,33 @@
 import React, { useContext, useEffect, useState} from "react";
-import {Anime, AnimeUser, Producer, Season} from "../types/animeModel";
-import "../css/index.css"
-import "../css/base.css"
-import "../css/anime.css"
-import "../css/anime_.css"
-import "../css/loading.css"
-import { checkIsLogged, fetchUser, getEpTime, getMonthName} from "../features/main";
-import LikeButton from "../assets/LikeButton"
-import AniGeneros from "../assets/Animegenre";
+import {Anime, AnimeUser, Producer, Season} from "../../types/animeModel";
+import "../../css/index.css"
+import "../../css/base.css"
+import "../../css/anime.css"
+import "../../css/anime_.css"
+import "../../css/loading.css"
+import { checkIsLogged, fetchUser, getEpTime, getMonthName} from "../../features/main";
+import LikeButton from "../../assets/LikeButton"
+import AniGeneros from "../../assets/Animegenre";
 import { useParams } from "react-router-dom";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
+import Footer from "../../components/Footer";
+import Header from "../../components/Header";
 import { Helmet } from "react-helmet";
-import Loading from "../components/Loading";
-import EpisodeLink from "../assets/EpisodeLink";
-import PersoCompo from "../components/Perso";
-import AniProducers, { prodType } from "../assets/AnimeProd";
+import Loading from "../../components/Loading";
+import EpisodeLink from "../../assets/EpisodeLink";
+import PersoCompo from "../../components/Perso";
+import AniProducers, { prodType } from "../../assets/AnimeProd";
 import { useCookies } from "react-cookie";
-import {Episode, EpisodeUser} from "../types/episodeModel";
-import GlobalContext from "../GlobalContext";
+import {Episode, EpisodeUser} from "../../types/episodeModel";
+import GlobalContext from "../../GlobalContext";
 import Popup from "reactjs-popup"
-import AnimeEditList from "../components/User/AnimeEditList";
-import {cdnUrl} from "../const";
-import Rating from "../components/Anime/Rating";
-import ComementsDisqus from "../components/CommentsDisqus";
+import AnimeEditList from "../../components/User/AnimeEditList";
+import {cdnUrl} from "../../const";
+import Rating from "../../components/Anime/Rating";
+import ComementsDisqus from "../../components/CommentsDisqus";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 import {faPlus, faStar} from "@fortawesome/free-solid-svg-icons";
-import Comments from "../components/comments/Comments";
+import Comments from "../../components/comments/Comments";
 
 
 interface seasonDate{

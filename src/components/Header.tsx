@@ -7,7 +7,7 @@ import "../css/index.css"
 import "../css/base.css"
 import GlobalContext from "../GlobalContext";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faMagnifyingGlass, faRightFromBracket, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faMagnifyingGlass, faRightFromBracket, faRightToBracket, faUser} from "@fortawesome/free-solid-svg-icons";
 // import $ from 'jquery'
 
 const cookies = new Cookies();
@@ -45,7 +45,7 @@ const Header = ()=>{
         return <div>O contexto global não está definido</div>;
     }
     const {isLogged} = context
-    console.log(isLogged)
+    // console.log(isLogged)
     return(
         <header className="header">
             <nav>
@@ -57,8 +57,14 @@ const Header = ()=>{
                     }}>Anime foda</h1>
                 </a>
                 <ul className="nav_link">
+                    <div className='dropdown'>
+                        <li><p>Users</p></li>
+                        <div className='dropdown-content'>
+                            <a href='/user/search/'>Pesquisar Usuário</a>
+                        </div>
+                    </div>
                     <div className="dropdown">
-                        <li><a href="">Animes</a></li>
+                        <li><p>Animes</p></li>
                         <div className="dropdown-content">
                             <a href="/Anime/lancamentos">Lançamentos</a>
                             {/* <a href="/Anime/seasons">Seasons</a>
@@ -67,7 +73,7 @@ const Header = ()=>{
                             <a href="/Anime/agenda">Agenda Lançamentos</a>
                         </div>
                     </div>
-                    <li><a href="">Mangá</a></li>
+                    <li><p>Mangá</p></li>
                     <li>
                         <FontAwesomeIcon icon={faMagnifyingGlass} color={'white'} cursor={'pointer'} onClick={toggleSearch}></FontAwesomeIcon>
                         <input type="text"
@@ -89,7 +95,7 @@ const Header = ()=>{
                             <Link to={'/user'}><FontAwesomeIcon icon={faUser}/></Link>
                         )
                     ):(
-                        <Link to={"/login"}><FontAwesomeIcon icon={faUser}/></Link>
+                        <Link to={"/login"}><FontAwesomeIcon icon={faRightToBracket}/></Link>
                     )}</li>
                 </ul>
             </nav>

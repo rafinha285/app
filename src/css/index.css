@@ -24,13 +24,19 @@ nav{
     display: inline-block;
     margin: 0 15px;
 }
-.nav_link li a{
+.nav_link li p{
+    cursor: pointer;
+}
+
+.nav_link li a,
+.nav_link li p {
     text-decoration: none;
     color:#fff;
     padding: 5px 0;
     position: relative;
 }
-.nav_link li a::after{
+.nav_link li a::after,
+.nav_link li p::after {
     content: '';
     background-color: var(--orange);
     width: 0;
@@ -40,7 +46,8 @@ nav{
     left: 0;
     transition: width 0.5s;
 }
-.nav_link li a:hover::after{
+.nav_link li a:hover::after,
+.nav_link li p:hover::after {
     width: 100%;
 }
 .nav_link li button{
@@ -255,6 +262,7 @@ nav{
 }
 .dropdown{
     display: inline-block;
+    /*position: relative;*/
 }
 .dropdown-content{
     display: block;

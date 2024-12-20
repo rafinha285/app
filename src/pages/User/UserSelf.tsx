@@ -11,7 +11,7 @@ import { Helmet } from "react-helmet";
 import { parseAnime } from "../../functions/animeFunctions";
 import { AnimeUser } from "../../types/animeModel";
 
-const UserPage:React.FC = () =>{
+const UserPageSelf:React.FC = () =>{
     let [animelist,setAnimelist] = useState<AnimeUser[]>([])
     const handleGetUser =async()=>{
         const token = sessionStorage.getItem('token');
@@ -108,4 +108,4 @@ const UserPage:React.FC = () =>{
         </html>
     )
 }
-export default UserPage
+export default UserPageSelf

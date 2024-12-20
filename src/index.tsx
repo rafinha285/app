@@ -1,18 +1,20 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import Anime from './pages/AnimePage';
+import Anime from './pages/Anime/AnimePage';
 import Watch from './pages/Watch';
 import GenSearch from './pages/Search/Gen';
 import MainSearch from './pages/Search/Search';
-import LancamentosPage from './pages/Lan';
+import LancamentosPage from './pages/Anime/Lan';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ProdSearch from './pages/Search/Prod';
-import Download from './pages/Download';
-import Agenda from './pages/Agenda';
+import Download from './pages/Anime/Download';
+import Agenda from './pages/Anime/Agenda';
 import GlobalContext, { GlobalProvider } from './GlobalContext';
-import UserPage from './pages/User/User';
+import UserPageSelf from './pages/User/UserSelf';
+import UserPage from "./pages/User/UserPage";
+import UserSearch from "./pages/Search/UserSearch";
 const App:React.FC = ()=> {
 return (
   <Router>
@@ -31,7 +33,9 @@ return (
         <Route path='/search' element={<MainSearch />} />
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
-        <Route path='/user' element={<UserPage/>}/>
+        <Route path='/user' element={<UserPageSelf/>}/>
+        <Route path='/user/:id' element={<UserPage/>}/>
+        <Route path='/user/search' element={<UserSearch/>}/>
       </Routes>
     </GlobalProvider>
   </Router>

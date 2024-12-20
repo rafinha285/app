@@ -9,3 +9,4 @@
 .idea/runConfigurations/TSC_Client.xml
 .idea/*
 /backend/
+./package-lock.json

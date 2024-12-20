@@ -1,11 +1,11 @@
 import React ,{useEffect,useState}from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 import { Helmet } from "react-helmet";
-import { epLog } from "../types/logType";
-import Episode from "../assets/Episode";
+import { epLog } from "../../types/logType";
+import Episode from "../../assets/Episode";
 import {isMobile} from "react-device-detect"
-import { EpisodeSim } from "../types/episodeModel";
+import { EpisodeSim } from "../../types/episodeModel";
 
 const LancamentosPage:React.FC = () =>{
     const [eps,setEps] = useState<EpisodeSim[]>()
@@ -15,7 +15,7 @@ const LancamentosPage:React.FC = () =>{
                 setEps(res)
             })
     },[!eps])
-    
+
     return(
         <html>
             <Helmet>

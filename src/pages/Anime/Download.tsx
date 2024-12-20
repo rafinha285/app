@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import "../css/download.css"
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
+import "../../css/download.css"
 import { useParams } from "react-router-dom";
-import EpDownloadButton from "../components/EpDownloadButton";
-import {Anime, Season} from "../types/animeModel";
-import {Episode} from "../types/episodeModel";
-import {cdnUrl} from "../const";
+import EpDownloadButton from "../../components/EpDownloadButton";
+import {Anime, Season} from "../../types/animeModel";
+import {Episode} from "../../types/episodeModel";
+import {cdnUrl} from "../../const";
 
 const Download:React.FC = () =>{
     const {id,seasonId,epId} = useParams()

@@ -40,6 +40,9 @@ const ProdSearch:React.FC<{type:'Produtor'|'Criador'|'Estudio'}> = ({type}) => {
                 <title>Procurar {type}</title>
             </Helmet>
             <Header/>
+            {/*<div>*/}
+            {/*    <p>Produtor: {prod}</p>*/}
+            {/*</div>*/}
             <div>
                 {anis.map((sea,index)=>(
                     <Searchh ser={sea} key={index}/>

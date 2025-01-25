@@ -16,7 +16,7 @@ const PersoCompo:React.FC<props> = ({perso,aniId}) =>{
                 <p>{perso.name}</p>
                 <p>Papel: {perso.role}</p>
             </div>
-            <img src={`${cdnUrl}/char/${aniId}/${perso.id}/img`} className="perso-div-img"></img>
+            <img src={`${cdnUrl}/character/img/${aniId}/${perso.id}`} className="perso-div-img"></img>
 
         </div>
     )

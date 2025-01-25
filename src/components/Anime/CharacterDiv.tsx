@@ -21,7 +21,7 @@ const CharacterDiv:React.FC<Props> = ({characters,aniId}) =>{
                 justifyContent: "flex-start",
                 flexDirection: 'row',
                 overflow: "auto"
-            }}>{(characters??[]).map((v, i) => (
+            }}>{characters.map((v, i) => (
                 <PersoCompo perso={v} aniId={aniId} key={i}></PersoCompo>
             ))}</div>
         </div>

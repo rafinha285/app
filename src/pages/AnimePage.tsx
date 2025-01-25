@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState} from "react";
-import {Anime, AnimeUser, Producer, Season} from "../types/Anime.ts";
+import {Anime, AnimeUser} from "../types/Anime";
 import "../css/index.css"
 import "../css/base.css"
 import "../css/anime.css"
@@ -17,7 +17,7 @@ import EpisodeLink from "../assets/EpisodeLink";
 import PersoCompo from "../components/Perso";
 import AniProducers, { prodType } from "../assets/AnimeProd";
 import { useCookies } from "react-cookie";
-import {Episode, EpisodeUser} from "../types/Episode.ts";
+import {Episode, EpisodeUser} from "../types/Episode";
 import GlobalContext from "../GlobalContext";
 import Popup from "reactjs-popup"
 import AnimeEditList from "../components/User/AnimeEditList";
@@ -28,6 +28,11 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 import {faPlus, faStar} from "@fortawesome/free-solid-svg-icons";
 import Comments from "../components/comments/Comments";
+import CharacterDiv from "../components/Anime/CharacterDiv";
+import {Character} from "../types/Character";
+import {data} from "jquery";
+import {Producer} from "../types/types";
+import {Season} from "../types/Season";
 
 
 interface seasonDate{
@@ -57,7 +62,7 @@ const AnimePage:React.FC = ()=>{
     const [producers,setProducers] = useState<Producer[]>([])
     const [creators,setCreators] = useState<Producer[]>([])
     const [studios,setStudios] = useState<Producer[]>([])
-    const [characters,setCharacters] = useState<Cha>([])
+    const [characters,setCharacters] = useState<Character[]>([])
 
     let checkList=async()=>{
         await fetchUser(`/user/animelist/g/checklist/${ani?.id}`,"GET")
@@ -70,7 +75,6 @@ const AnimePage:React.FC = ()=>{
                         setUserAni(data.response)
                         setRatingValue(data.response?.rate !== null?data.response?.rate.toString():'none')
                     })
-                // await fetchUser("")
             })
     }
 
@@ -108,27 +112,16 @@ const AnimePage:React.FC = ()=>{
                         });
                         setSeasons(data)
                     })
+                await fetch(`/ani/g/characters/${ani.id}`)
+                .then(response=>response.json())
+                    .then((data:{success:boolean,data:Character[]})=>{
+                        setCharacters(data.data)
+                    })
             }
             fetchPS()
             if(sessionStorage.getItem("token")){
                 setCookie('token', sessionStorage.getItem("token"), { path: '/' });
             }
-            // ani.seasons = tupleToSeason(ani.seasons as types.Tuple[])
-            // console.log(ani.seasons)
-            // ani.seasons?.forEach((season)=>{
-            //     season.episodes?.forEach(async ep=>{
-            //         const response = await fetch(`/api/g/eps/${ani!.id}/${season.id}/${ep}`)
-            //         if (response.ok) {
-            //             const data = await response.json();
-            //             // Aqui você pode fazer algo com os episódios, como atualizar o estado ou armazená-los de alguma forma
-            //             console.log(`Episódios da temporada ${season.id}:`, data);
-            //             setEpisodes((prevEpisodes) => [...prevEpisodes, data]);
-            //         } else {
-            //             throw new Error(`Erro ao buscar episódios da temporada ${season.id}`);
-            //         }
-            //     })
-
-            // })
             if(context.isLogged){
                 checkList()
             }
@@ -315,6 +308,7 @@ const AnimePage:React.FC = ()=>{
                             </div>
                         ))}
                     </div>
+                    <CharacterDiv characters={characters} aniId={ani.id}/>
                     <ComementsDisqus indentifier={ani.id} type={'Anime'} name={ani.name} />
                     {/*<Comments/>*/}
                 </div>

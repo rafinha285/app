@@ -1,10 +1,23 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import "./css/comments.css"
-import Comment from "./components/Comment";
+import CommentComponent from "./components/CommentComponent";
 import globalContext, {GlobalContextType} from "../../GlobalContext";
 
-const Comments:React.FC = () => {
+interface CommentProps {
+    page_id:string;
+}
+
+const Comments:React.FC<CommentProps> = ({page_id}) => {
     const {isLogged,user} = useContext<GlobalContextType|undefined>(globalContext)!
+
+    const [comments,setComments] = useState<Comment[]>([])
+
+    async function fetchComments(){
+        const res = await fetch("/comments/g/")
+    }
+    useEffect(()=>{
+        console.log("a")
+    },[])
 
     return (
         <div className="comments">
@@ -17,7 +30,10 @@ const Comments:React.FC = () => {
                 </div>
             </div>
             <div className="comments-main">
-                <Comment></Comment>
+                {comments.map((comment:Comment) => (
+                    <CommentComponent></CommentComponent>
+                ))}
+                {/*<CommentComponent></CommentComponent>*/}
             </div>
         </div>
     )

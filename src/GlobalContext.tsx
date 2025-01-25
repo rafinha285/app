@@ -3,7 +3,7 @@ import { useCookies } from "react-cookie";
 import {fetchUser} from "./features/main";
 import {roles} from "./types/types";
 import {getPrivileges} from "./functions/userFunctions";
-import {User} from "./types/userType";
+import {User} from "./types/User.ts";
 // import jwt from 'jsonwebtoken';
 
 export interface GlobalContextType {

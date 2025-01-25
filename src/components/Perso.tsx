@@ -1,10 +1,11 @@
 import React from "react";
-import { character } from "../types/characterModel";
 import "../css/perso.css"
+import {cdnUrl} from "../const";
+import {Character} from "../types/Character";
 
 
 interface props{
-    perso:character
+    perso:Character
     aniId:string
 }
 const PersoCompo:React.FC<props> = ({perso,aniId}) =>{
@@ -15,8 +16,8 @@ const PersoCompo:React.FC<props> = ({perso,aniId}) =>{
                 <p>{perso.name}</p>
                 <p>Papel: {perso.role}</p>
             </div>
-            <img src={`/api/ani/char/${aniId}/${perso._id}/img`} className="perso-div-img"></img>
-            
+            <img src={`${cdnUrl}/character/img/${aniId}/${perso.id}`} className="perso-div-img"></img>
+
         </div>
     )
 }

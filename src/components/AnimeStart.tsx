@@ -2,7 +2,7 @@ import { Box, Rating } from "@mui/material";
 import React from "react";
 import { ratingLabel } from "../types/types";
 import { GlobalContextType } from "../GlobalContext";
-import { Anime, AnimeUser } from "../types/animeModel";
+import { Anime, AnimeUser } from "../types/Anime.ts";
 import { getLabelText, handleRatingValue } from "../functions/animeFunctions";
 import StarIcon from '@mui/icons-material/Star';
 

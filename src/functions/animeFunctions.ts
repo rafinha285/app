@@ -1,6 +1,6 @@
-import {Anime, AnimeUser, Producer,Season} from "../types/animeModel"
+import {Anime, AnimeUser, Producer,Season} from "../types/Anime.ts"
 import AnimePoster from "../assets/AnimePosters"
-import { Episode } from "../types/episodeModel";
+import { Episode } from "../types/Episode.ts";
 import { checkIsLogged } from "../features/main";
 import { GlobalContextType } from "../GlobalContext";
 // import { languages } from "../types/episodeModel";

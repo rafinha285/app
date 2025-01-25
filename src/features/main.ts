@@ -1,6 +1,6 @@
 import { useContext } from "react"
-import { Anime } from "../types/animeModel"
-import { Episode, languages } from "../types/episodeModel"
+import { Anime } from "../types/Anime.ts"
+import { Episode, languages } from "../types/Episode.ts"
 import GlobalContext, { GlobalContextType } from "../GlobalContext"
 import { getDeviceIndentifier } from "../functions/userFunctions"
 

@@ -3,7 +3,7 @@ import { useLocation} from "react-router-dom";
 import Searchh from "../../components/Searchh";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import { Anime } from "../../types/animeModel";
+import { Anime } from "../../types/Anime.ts";
 import {Helmet} from "react-helmet";
 
 const MainSearch:React.FC =()=>{

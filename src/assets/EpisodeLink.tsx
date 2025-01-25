@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Anime } from "../types/animeModel";
-import { Season } from "../types/animeModel";
-import {Episode, EpisodeUser} from "../types/episodeModel";
+import { Anime } from "../types/Anime.ts";
+import { Season } from "../types/Anime.ts";
+import {Episode, EpisodeUser} from "../types/Episode.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faEye, faEyeSlash, faPlay} from "@fortawesome/free-solid-svg-icons";
 import {fetchUser} from "../features/main";

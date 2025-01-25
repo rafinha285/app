@@ -1,8 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
-import {Episode, EpisodeUser} from "../types/episodeModel";
-import { Anime } from "../types/animeModel";
+import {Episode, EpisodeUser} from "../types/Episode.ts";
+import { Anime } from "../types/Anime.ts";
 import "../css/watch.css"
 import { Link } from "react-router-dom";
 import LikeButton from "../assets/LikeButton";

@@ -1,7 +1,7 @@
 import {Link, useParams} from "react-router-dom";
 import React, {useCallback, useEffect, useRef, useState} from "react";
-import {Episode, EpisodeUser} from "../types/episodeModel";
-import {Anime} from "../types/animeModel";
+import {Episode, EpisodeUser} from "../types/Episode.ts";
+import {Anime} from "../types/Anime.ts";
 import {Helmet} from "react-helmet";
 import Loading from "../components/Loading";
 import Header from "../components/Header";

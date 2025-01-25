@@ -1,5 +1,3 @@
-import {ObjectId} from "mongoose"
-
 enum MaStatus{
     PlanToRead = "Plan to Read",
     Reading = "Reading",
@@ -7,13 +5,13 @@ enum MaStatus{
     Completed = "Completed"
 }
 interface chapter{
-    _id:ObjectId;
+    _id:string;
     name:string;
     releaseDate:Date;
     index:number;
 }
 export interface Manga{
-    _id:ObjectId;
+    _id:string;
     name:string;
     releaseDate:Date;
     generos:[string];
@@ -21,11 +19,11 @@ export interface Manga{
     chapters:chapter[]
 }
 interface chapUser{
-    chapId:ObjectId;
+    chapId:string;
     name:string;
 }
 export interface MangaUser{
-    mangaId:ObjectId;
+    mangaId:string;
     name:string;
     readChapters:number;
     lastChapter:chapUser;

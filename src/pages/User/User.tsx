@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {User} from "../../types/userType"
+import {User} from "../../types/User.ts"
 import "../../css/user.css"
 import { DateToStringLocal, fetchUser } from "../../features/main";
 import RoleDiv from "../../components/User/RoleDiv";
@@ -9,7 +9,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { Helmet } from "react-helmet";
 import { parseAnime } from "../../functions/animeFunctions";
-import { AnimeUser } from "../../types/animeModel";
+import { AnimeUser } from "../../types/Anime.ts";
 
 const UserPage:React.FC = () =>{
     let [animelist,setAnimelist] = useState<AnimeUser[]>([])

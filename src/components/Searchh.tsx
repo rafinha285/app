@@ -6,7 +6,7 @@ import { trim } from "../features/main";
 import "../css/index.css"
 import "../css/base.css"
 import "../css/search.css"
-import { AnimeSearch } from "../types/animeModel";
+import { AnimeSearch } from "../types/Anime.ts";
 import {cdnUrl} from "../const";
 
 interface searchProp{

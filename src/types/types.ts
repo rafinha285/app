@@ -47,6 +47,12 @@ export enum priorityValue{
     MEDIUM="Media",
     HIGH="Alta"
 }
+
+export interface Producer{
+    id:string;
+    name:string;
+}
+
 export type StateType = "ONGOING" | "HIATUS" | "COMPLETED" | "CANCELED";
 export const ratingLabel:{[index:string]:string} ={
     0.5:"PUTA QUE PARIU",

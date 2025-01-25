@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react"
-import {AnimeUser} from "../../types/animeModel"
+import {AnimeUser} from "../../types/Anime.ts"
 import {priorityValue, userAnimeState} from "../../types/types"
 import GlobalContext from "../../GlobalContext"
 import {DateToStringInput, fetchUser, isToday} from "../../features/main"

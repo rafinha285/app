@@ -3,7 +3,7 @@ import { useCookies } from "react-cookie";
 import {fetchUser} from "./features/main";
 import {roles} from "./types/types";
 import {getPrivileges} from "./functions/userFunctions";
-import {User} from "./types/userType";
+import {User} from "./types/User.ts";
 // import jwt from 'jsonwebtoken';
 
 export interface GlobalContextType {
@@ -20,11 +20,16 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
     const [isSuper, setIsSuper] = useState<boolean>(false)
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState<boolean>(true);
-    // const [cookies] = useCookies();
+    const [cookies,setCookies] = useCookies(['token']);
     // const token = getCookie('token');
     useEffect(() => {
         const fetchTest = async() =>{
             try {
+                if(!localStorage.getItem('token')){
+                    setIsLogged(false);
+                    return;
+                }
+                setCookies('token',localStorage.getItem('token')!)
                 const userResponse = await fetchUser(`/user/g/verify`, "GET");
                 // console.log(userResponse)
                 const userData = await userResponse.json();

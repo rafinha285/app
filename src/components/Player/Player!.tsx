@@ -1,11 +1,11 @@
 import React, {useContext, useEffect, useRef, useState} from "react";
-import {Episode, EpisodeUser} from "../../types/episodeModel";
+import {Episode, EpisodeUser} from "../../types/Episode.ts";
 import { quality } from "../../types/types";
 import Plyr,{APITypes,PlyrOptions,PlyrSource} from "plyr-react";
 import ReactDOMServer from 'react-dom/server';
 import 'plyr/dist/plyr.css'
 import "../../css/watch.css"
-import { Anime } from "../../types/animeModel";
+import { Anime } from "../../types/Anime.ts";
 import {fetchUser, handleEpWatching, handleNextEp} from "../../features/main";
 import { getEpsFromSeason } from "../../functions/animeFunctions";
 import {cdnUrl} from "../../const";

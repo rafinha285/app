@@ -1,8 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
-import {Episode, EpisodeUser} from "../types/episodeModel";
-import { Anime } from "../types/animeModel";
+import {Episode, EpisodeUser} from "../types/Episode.ts";
+import { Anime } from "../types/Anime.ts";
 import "../css/watch.css"
 import { Link } from "react-router-dom";
 import LikeButton from "../assets/LikeButton";
@@ -12,7 +12,7 @@ import EpisodeDropdown from "../assets/EpisodeDropdown";
 import {DateToStringLocal, fetchUser} from "../features/main";
 import Loading from "../components/Loading";
 import { cdnUrl } from "../const";
-import Comments from "../components/CommentsDisqus.tsx";
+import Comments from "../components/CommentsDisqus";
 import {isFirstEp, isLastEp} from "../functions/animeFunctions";
 import NewPlayer from "../components/CustomPlayer/NewPlayer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -137,7 +137,8 @@ const Watch:React.FC = () =>{
                 <div className="ep-sel1">
                     <div>
                         <p>Nome Episódio: <span>{ep?.name}</span></p>
-                        <p>Data de Lançamento <span>{DateToStringLocal(new Date(ep?.releasedate!))}</span></p>
+                        <p>Vizualizações: <span>{ep.views??0}</span></p>
+                        <p>Data de Lançamento: <span>{DateToStringLocal(new Date(ep?.releasedate!))}</span></p>
                     </div>
                     <div className="ep-select">
                         <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>

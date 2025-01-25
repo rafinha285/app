@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {quality, qualityEnum} from "../../../types/types";
-import {Episode} from "../../../types/episodeModel";
+import {Episode} from "../../../types/Episode.ts";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";
 

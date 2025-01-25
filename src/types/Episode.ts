@@ -56,6 +56,7 @@ export interface EpisodeUser{
     ep_index:number;
     name:string;
     watched:boolean;
+    finished:boolean;
 }
 export interface EpisodeSim{
     id:string

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Anime, AnimeUser, Producer } from "../../types/animeModel";
+import { Anime, AnimeUser, Producer } from "../../types/Anime.ts";
 import { DateToStringLocal } from "../../features/main";
 import { tupleToProducer } from "../../functions/animeFunctions";
 import Popup from "reactjs-popup";

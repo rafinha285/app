@@ -46,14 +46,14 @@ const Login:React.FC = ()=>{
                     WebGLRenderer:userIndentifier.WegGl?.renderer
                 })
 
-                if(response.ok){
+                if(response.ok&&(await response.json()).token){
                     const token = (await response.json()).token
                     // console.log(token,response,response.headers["set-cookie"])
                     cookiess.set("token",token,{path:"/",maxAge:86400, secure: true})
                     // setCookie('token',token,{path:"/",maxAge:84600})
                     localStorage.setItem("token",token)
                     console.log(token)
-                    window.location.href = "/"
+                    // window.location.href = "/"
                 }else{
                     alert('cu')
                 }

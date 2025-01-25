@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useRef} from "react";
-import {Episode, EpisodeUser} from "../../types/episodeModel";
-import {Anime} from "../../types/animeModel";
+import {Episode, EpisodeUser} from "../../types/Episode.ts";
+import {Anime} from "../../types/Anime.ts";
 import Plyr, {APITypes, PlyrOptions, PlyrSource} from "plyr-react";
 import {quality} from "../../types/types";
 import {cdnUrl} from "../../const";

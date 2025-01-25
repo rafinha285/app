@@ -1,6 +1,6 @@
 import React, { useEffect, useState} from "react";
 import AnimePoster from "../../assets/AnimePosters"
-import {Anime} from "../../types/animeModel"
+import {Anime} from "../../types/Anime.ts"
 import "../../css/index.css"
 import "../../css/base.css"
 import { Link } from "react-router-dom";

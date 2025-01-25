@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {Episode, EpisodeUser} from "../../types/episodeModel";
+import {Episode, EpisodeUser} from "../../types/Episode.ts";
 import {cdnUrl} from "../../const";
 import {quality} from "../../types/types";
 import './css/player.css'

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { AnimeAgenda } from "../../types/animeModel";
+import { AnimeAgenda } from "../../types/Anime.ts";
 import { trim } from "../../features/main";
 import {cdnUrl} from "../../const";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";

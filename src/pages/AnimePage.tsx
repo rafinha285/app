@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState} from "react";
-import {Anime, AnimeUser, Producer, Season} from "../types/animeModel";
+import {Anime, AnimeUser, Producer, Season} from "../types/Anime.ts";
 import "../css/index.css"
 import "../css/base.css"
 import "../css/anime.css"
@@ -17,7 +17,7 @@ import EpisodeLink from "../assets/EpisodeLink";
 import PersoCompo from "../components/Perso";
 import AniProducers, { prodType } from "../assets/AnimeProd";
 import { useCookies } from "react-cookie";
-import {Episode, EpisodeUser} from "../types/episodeModel";
+import {Episode, EpisodeUser} from "../types/Episode.ts";
 import GlobalContext from "../GlobalContext";
 import Popup from "reactjs-popup"
 import AnimeEditList from "../components/User/AnimeEditList";
@@ -57,6 +57,7 @@ const AnimePage:React.FC = ()=>{
     const [producers,setProducers] = useState<Producer[]>([])
     const [creators,setCreators] = useState<Producer[]>([])
     const [studios,setStudios] = useState<Producer[]>([])
+    const [characters,setCharacters] = useState<Cha>([])
 
     let checkList=async()=>{
         await fetchUser(`/user/animelist/g/checklist/${ani?.id}`,"GET")
@@ -314,22 +315,6 @@ const AnimePage:React.FC = ()=>{
                             </div>
                         ))}
                     </div>
-                    {/*<div className="personagens">*/}
-                    {/*    <div style={{display:"flex",justifyContent:"space-between",marginBottom:"1em"}}>*/}
-                    {/*        <h1>Personagens: </h1>*/}
-                    {/*    </div>*/}
-                    {/*    <div style={{*/}
-                    {/*        border:"1px white solid",*/}
-                    {/*        padding:"1em",*/}
-                    {/*        display:"flex",*/}
-                    {/*        flexWrap:"nowrap",*/}
-                    {/*        justifyContent:"flex-start",*/}
-                    {/*        flexDirection:'row',*/}
-                    {/*        overflow:"auto"*/}
-                    {/*    }}>{ani.characters?.map((v,i)=>(*/}
-                    {/*        <PersoCompo perso={v} aniId={ani.id} key={i}></PersoCompo>*/}
-                    {/*    ))}</div>*/}
-                    {/*</div>*/}
                     <ComementsDisqus indentifier={ani.id} type={'Anime'} name={ani.name} />
                     {/*<Comments/>*/}
                 </div>

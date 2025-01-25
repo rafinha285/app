@@ -1,5 +1,5 @@
 import React from "react";
-import { Producer } from "../types/animeModel";
+import { Producer } from "../types/Anime.ts";
 import { Link } from "react-router-dom";
 
 export enum prodType{

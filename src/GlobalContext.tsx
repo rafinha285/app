@@ -3,8 +3,7 @@ import { useCookies } from "react-cookie";
 import {fetchUser} from "./features/main";
 import {roles} from "./types/types";
 import {getPrivileges} from "./functions/userFunctions";
-import {User} from "./types/User.ts";
-// import jwt from 'jsonwebtoken';
+import {User} from "./types/User";
 
 export interface GlobalContextType {
     isLogged: boolean;
@@ -31,7 +30,7 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
                 }
                 setCookies('token',localStorage.getItem('token')!)
                 const userResponse = await fetchUser(`/user/g/verify`, "GET");
-                // console.log(userResponse)
+                console.log(userResponse)
                 const userData = await userResponse.json();
                 setIsLogged(userData.success);
                 if(userData.success){

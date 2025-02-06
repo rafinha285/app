@@ -3,6 +3,7 @@ export interface Comment {
     parent_id:number;
     anime_id:string;
     user_id:string;
+    user_name:string;
     content:string;
     created_at:Date;
     edited_at:Date;

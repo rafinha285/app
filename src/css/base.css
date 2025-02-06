@@ -37,21 +37,38 @@ h1, h2, h3, h4, h5, h6{
     font-weight: 500;
     line-height: 1.2;
 }
+.button{
+    background: none;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+    transition: .3s;
+}
+.del:hover{
+    background: red;
+}
+.button:hover{
+    background: var(--dark);
+}
+.del{
+    background: var(--danger)
+}
 button:focus{
     outline: 1px dotted;
     outline: 5px auto -webkit-focus-ring-color;
 }
 body::-webkit-scrollbar {
-    width: 10px;               
+    width: 10px;
 }
 body::-webkit-scrollbar-track {
     background: var(--body-purple);
 }
-  
+
 body::-webkit-scrollbar-thumb {
-    background-color: var(--dark_purple);  
-    border-radius: 20px;       
-    border: 1px solid var(--purple); 
+    background-color: var(--dark_purple);
+    border-radius: 20px;
+    border: 1px solid var(--purple);
 }
 .newanimein::-webkit-scrollbar{
     width: 10px;

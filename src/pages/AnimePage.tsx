@@ -308,7 +308,7 @@ const AnimePage:React.FC = ()=>{
                     </div>
                     <CharacterDiv characters={characters} aniId={ani.id}/>
                     {/*<ComementsDisqus indenx'tifier={ani.id} type={'Anime'} name={ani.name} />*/}
-                    <Comments/>
+                    <Comments page_id={ani?.id}/>
                 </div>
                 ):err?(
                     <div className="main-loading">

@@ -64,9 +64,6 @@ const Register:React.FC = ()=>{
         e.preventDefault()
         if(recaptchaValue){
             if(email&&name&&surname&&username&&birthDate&&s&&cs&&!send){
-                var _id = uuid()
-                // var salt = uuid()
-                var interations = 1000
                 //var hashedPassword = pbkdf2Sync(s,_id,interations,32,"sha256").toString("hex")
                 var hashedPassword = bcrypt.hashSync(s,salt)
 

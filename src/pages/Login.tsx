@@ -53,7 +53,7 @@ const Login:React.FC = ()=>{
                     // setCookie('token',token,{path:"/",maxAge:84600})
                     localStorage.setItem("token",token)
                     console.log(token)
-                    // window.location.href = "/"
+                    window.location.href = "/"
                 }else{
                     alert('cu')
                 }

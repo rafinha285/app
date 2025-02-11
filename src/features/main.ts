@@ -1,7 +1,4 @@
-import { useContext } from "react"
-import { Anime } from "../types/Anime.ts"
-import { Episode, languages } from "../types/Episode.ts"
-import GlobalContext, { GlobalContextType } from "../GlobalContext"
+import { Episode, languages } from "../types/Episode"
 import { getDeviceIndentifier } from "../functions/userFunctions"
 
 export function getEpTime(ee:number):string{

@@ -14,7 +14,6 @@ import Header from "../components/Header";
 import { Helmet } from "react-helmet";
 import Loading from "../components/Loading";
 import EpisodeLink from "../assets/EpisodeLink";
-import PersoCompo from "../components/Perso";
 import AniProducers, { prodType } from "../assets/AnimeProd";
 import { useCookies } from "react-cookie";
 import {Episode, EpisodeUser} from "../types/Episode";
@@ -30,7 +29,6 @@ import {faPlus, faStar} from "@fortawesome/free-solid-svg-icons";
 import Comments from "../components/comments/Comments";
 import CharacterDiv from "../components/Anime/CharacterDiv";
 import {Character} from "../types/Character";
-import {data} from "jquery";
 import {Producer} from "../types/types";
 import {Season} from "../types/Season";
 
@@ -309,8 +307,8 @@ const AnimePage:React.FC = ()=>{
                         ))}
                     </div>
                     <CharacterDiv characters={characters} aniId={ani.id}/>
-                    <ComementsDisqus indentifier={ani.id} type={'Anime'} name={ani.name} />
-                    {/*<Comments/>*/}
+                    {/*<ComementsDisqus indenx'tifier={ani.id} type={'Anime'} name={ani.name} />*/}
+                    <Comments page_id={ani?.id}/>
                 </div>
                 ):err?(
                     <div className="main-loading">

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="anime@192.168.18.20" uuid="b16831a8-176b-489c-bd88-48e67569ce63">
+    <data-source source="LOCAL" name="anime@server" uuid="b16831a8-176b-489c-bd88-48e67569ce63">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>
-      <jdbc-url>jdbc:postgresql://192.168.18.20:5434/anime</jdbc-url>
+      <jdbc-url>jdbc:postgresql://server:5434/anime</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
     <data-source source="LOCAL" name="votacao@192.168.18.20" uuid="0efe95c5-ecb8-4576-8125-68e63cc15725">

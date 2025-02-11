@@ -1,8 +1,8 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
-import {Episode, EpisodeUser} from "../types/Episode.ts";
-import { Anime } from "../types/Anime.ts";
+import {Episode, EpisodeUser} from "../types/Episode";
+import { Anime } from "../types/Anime";
 import "../css/watch.css"
 import { Link } from "react-router-dom";
 import LikeButton from "../assets/LikeButton";
@@ -12,7 +12,7 @@ import EpisodeDropdown from "../assets/EpisodeDropdown";
 import {DateToStringLocal, fetchUser} from "../features/main";
 import Loading from "../components/Loading";
 import { cdnUrl } from "../const";
-import Comments from "../components/CommentsDisqus";
+import Comments from "../components/comments/Comments";
 import {isFirstEp, isLastEp} from "../functions/animeFunctions";
 import NewPlayer from "../components/CustomPlayer/NewPlayer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -176,7 +176,7 @@ const Watch:React.FC = () =>{
                         </div>
                     </div>
                 </div>
-                <Comments indentifier={ep.id} type={'Episódio'} name={ep.name}/>
+                <Comments page_id={ep.id}/>
                 <Footer/>
             </html>
             ):(

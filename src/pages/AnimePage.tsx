@@ -22,7 +22,6 @@ import Popup from "reactjs-popup"
 import AnimeEditList from "../components/User/AnimeEditList";
 import {cdnUrl} from "../const";
 import Rating from "../components/Anime/Rating";
-import ComementsDisqus from "../components/CommentsDisqus";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 import {faPlus, faStar} from "@fortawesome/free-solid-svg-icons";

@@ -8,9 +8,10 @@ import {Comment} from "../../types/Comment";
 
 interface CommentProps {
     page_id:string;
+    classes?:string[];
 }
 
-const Comments:React.FC<CommentProps> = ({page_id}) => {
+const Comments:React.FC<CommentProps> = ({page_id,classes}) => {
     const {isLogged,user} = useContext<GlobalContextType|undefined>(globalContext)!
 
     const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -42,7 +43,7 @@ const Comments:React.FC<CommentProps> = ({page_id}) => {
     },[])
 
     return (
-        <div className="comments">
+        <div className={`comments ${classes?.map(v=>`${v} `)}`}>
             <div className='comments-input'>
                 <CommentAvatar isLoggedIn={isLogged} user_id={user?._id!}/>
                 <div className='comments-textarea-wrapper'>

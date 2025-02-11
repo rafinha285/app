@@ -176,7 +176,7 @@ const Watch:React.FC = () =>{
                         </div>
                     </div>
                 </div>
-                <Comments page_id={ep.id}/>
+                <Comments page_id={ep.id} classes={["player"]}/>
                 <Footer/>
             </html>
             ):(

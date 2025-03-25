@@ -5,6 +5,8 @@ import globalContext, {GlobalContextType} from "../../GlobalContext";
 import {postComment} from "./functions/post/postComment";
 import CommentAvatar from "./components/CommentAvatar";
 import {Comment} from "../../types/Comment";
+import {apiUrl} from "../../const";
+import RequestType from "../../types/ResponseType"
 
 interface CommentProps {
     page_id:string;
@@ -33,7 +35,7 @@ const Comments:React.FC<CommentProps> = ({page_id,classes}) => {
     const [comments,setComments] = useState<Comment[]>([])
 
     async function fetchComments(){
-        const res:{success:boolean,data:Comment[]} = await (await fetch(`/comments/g/page/${page_id}`)).json();
+        const res:RequestType<Comment[]> = await (await fetch(`${apiUrl}/g/comments/page/${page_id}`)).json();
         setComments(res.data)
         console.log(res.data)
     }

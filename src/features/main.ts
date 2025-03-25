@@ -1,5 +1,7 @@
 import { Episode, languages } from "../types/Episode"
 import { getDeviceIndentifier } from "../functions/userFunctions"
+import {apiUrl} from "../const";
+import ResponseType from "../types/ResponseType";
 
 export function getEpTime(ee:number):string{
     var e = Math.round(ee)
@@ -134,20 +136,50 @@ export async function fetchPost(path:string,method:"POST"|"DELETE"|"PATCH" = "PO
         body:JSON.stringify(body)
     })
 }
-export async function fetchUser(path:string,method:"POST"|"DELETE"|"PATCH"|"GET" = "POST",body?:any){
+export async function fetchUser(
+        path:string,
+        method:"POST"|"DELETE"|"PATCH"|"GET" = "POST",
+        body?:any,
+        retry:boolean = true
+    ):Promise<Response>{
     let indentifier = getDeviceIndentifier()
-    return await fetch(path,{
+    let response = await fetch(path,{
         method,
         headers:{
             'Content-Type':"application/json",
             'timeZone':indentifier.timeZone,
             'webGlRenderer':indentifier.WegGl?.renderer,
             'webGlVendor':indentifier.WegGl?.vendor,
-            // 'authorization':`Bearer ${localStorage.getItem('token')}`
+            'Authorization':`Bearer ${localStorage.getItem('accessToken')}`
         },
         body:JSON.stringify(body)
     })
+    if(!response.ok && response.status === 401 && retry){
+        await refreshToken()
+        response = await fetchUser(path,method,body,false)
+    }
+    return response
 }
+export async function refreshToken(){
+    let response = await fetch(`${apiUrl}/p/user/refresh`,{
+        method:"POST",
+        headers:{
+            'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({
+            refreshToken:localStorage.getItem("refreshToken")
+        })
+    })
+    console.log(response)
+    if(response.ok){
+        let body:ResponseType<{
+            refreshToken:string,
+            accessToken:string,
+        }> = await response.json()
+        localStorage.setItem("accessToken",body.data.accessToken)
+    }
+}
+
 export function isToday(date:Date) {
     const today = new Date();
 

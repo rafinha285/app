@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {User} from "../../types/User.ts"
+import {User} from "../../types/User"
 import "../../css/user.css"
 import { DateToStringLocal, fetchUser } from "../../features/main";
 import RoleDiv from "../../components/User/RoleDiv";
@@ -9,7 +9,9 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { Helmet } from "react-helmet";
 import { parseAnime } from "../../functions/animeFunctions";
-import { AnimeUser } from "../../types/Anime.ts";
+import { AnimeUser } from "../../types/Anime";
+import {apiUrl} from "../../const";
+import ResponseType from "../../types/ResponseType";
 
 const UserPage:React.FC = () =>{
     let [animelist,setAnimelist] = useState<AnimeUser[]>([])
@@ -21,20 +23,20 @@ const UserPage:React.FC = () =>{
             'Authorization':`Bearer ${token}`
         }
         //,{headers}
-        const check:{success:boolean} = await fetchUser("/user/g/verify","GET")
+        const check:{success:boolean} = await fetchUser(`${apiUrl}/g/user/verify`,"GET")
             .then(response=>response.json())
         if(check.success){
-            await fetchUser("/user/g/","GET")
+            await fetchUser(`${apiUrl}/g/user/`,"GET")
             .then(response => response.json())
-            .then((data:User)=>{
+            .then((data:ResponseType<User>)=>{
                 // animelist = data.animelist.map(parseAnime)
-                setUser(data)
+                setUser(data.data)
             })
             .catch((error:any)=>console.error('Error fetching user data:', error))
-            await fetchUser("/user/animelist/g/",'GET')
+            await fetchUser(`${apiUrl}/g/animelist/`,'GET')
                 .then(response=>response.json())
-                .then((data:AnimeUser[])=>{
-                    setAnimelist(data)
+                .then((data:ResponseType<AnimeUser[]>)=>{
+                    setAnimelist(data.data)
                 })
             // console.log(response)
         }else{

@@ -1,22 +1,27 @@
 import React, { useState } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { Link } from "react-router-dom";
+import {Link, redirect} from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import "../css/login.css"
 import Cookies from "universal-cookie"
 import {
     getDeviceIndentifier
 } from '../functions/userFunctions'
-// import { CookieSetOption } from "react-cookie";
-// import { useCookies } from "react-cookie";
-import axios from 'axios';
 import { fetchPost } from "../features/main";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faRightToBracket} from "@fortawesome/free-solid-svg-icons";
-// import { genSalt, hashSync } from "bcryptjs";
+import { apiUrl } from "../const";
+import ResponseType from "../types/ResponseType";
+import axios, {AxiosResponse} from "axios";
 
-const cookiess = new Cookies();
+interface ResponseTokens{
+    accessToken: string;
+    refreshToken: string;
+    expiresIn: number;
+}
+
+const cookies = new Cookies();
 const Login:React.FC = ()=>{
     const [recaptchaValue,setRecaptchaValue] = useState<string|null>(null)
     const [error,setError] = useState<any|null>(null)
@@ -31,12 +36,9 @@ const Login:React.FC = ()=>{
     const handleLogin = async()=>{
         // if(recaptchaValue&&password&&email){
             try{
-                // const salt = await genSalt(10)
-                // const hashedPassword = hashSync(password,salt)
-                // const publicKey = await fetchPublicKey();
+
                 const userIndentifier = getDeviceIndentifier()
-                // const encryptedData = encryptDataWithPublicKey(body)
-                const response = await fetchPost(`/user/p/login`,"POST",{
+                const response = await fetchPost(`${apiUrl}/p/user/login`,"POST",{
                     email,
                     password,
                     recaptchaToken:recaptchaValue,
@@ -46,17 +48,38 @@ const Login:React.FC = ()=>{
                     WebGLRenderer:userIndentifier.WegGl?.renderer
                 })
 
-                if(response.ok&&(await response.json()).token){
-                    const token = (await response.json()).token
-                    // console.log(token,response,response.headers["set-cookie"])
-                    cookiess.set("token",token,{path:"/",maxAge:86400, secure: true})
-                    // setCookie('token',token,{path:"/",maxAge:84600})
-                    localStorage.setItem("token",token)
-                    console.log(token)
-                    window.location.href = "/"
-                }else{
-                    alert('cu')
-                }
+                axios.post(`${apiUrl}/p/user/login`, {
+                    email,
+                    password,
+                    recaptchaToken:recaptchaValue,
+                    userAgent:userIndentifier.userAgent,
+                    timeZone:userIndentifier.timeZone,
+                    WebGLVendor:userIndentifier.WegGl?.vendor,
+                    WebGLRenderer:userIndentifier.WegGl?.renderer
+                }).then((res:AxiosResponse<ResponseType<ResponseTokens>>)=>{
+                    const accessToken = res.data.data.accessToken;
+                    const refreshToken = res.data.data.refreshToken;
+                    cookies.set("token",accessToken,{path: "/", maxAge:res.data.data.expiresIn,secure:true});
+
+                    localStorage.setItem("accessToken",accessToken);
+                    localStorage.setItem("refreshToken",refreshToken);
+                    console.log(res.data)
+                    redirect("/")
+                }).catch(err=>{
+                    alert(err)
+                })
+
+                // if(response.ok&&(await response.json()).token){
+                //     const res:ResponseType<ResponseTokens> = await response.json()
+                //     const accessToken = res.data.accessToken;
+                //     const refreshToken = res.data.refreshToken;
+                //     cookies.set("token",accessToken,{path:"/",maxAge:86400, secure: true})
+                //     // setCookie('token',token,{path:"/",maxAge:84600})
+                //     localStorage.setItem("accessToken",accessToken)
+                //     localStorage.setItem("refreshToken",refreshToken)
+                // }else{
+                //     alert('cu')
+                // }
             }catch(err){
                 console.log(err)
                 setError(true)

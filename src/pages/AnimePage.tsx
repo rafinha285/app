@@ -20,7 +20,7 @@ import {Episode, EpisodeUser} from "../types/Episode";
 import GlobalContext from "../GlobalContext";
 import Popup from "reactjs-popup"
 import AnimeEditList from "../components/User/AnimeEditList";
-import {cdnUrl} from "../const";
+import {apiUrl, cdnUrl} from "../const";
 import Rating from "../components/Anime/Rating";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
@@ -30,6 +30,7 @@ import CharacterDiv from "../components/Anime/CharacterDiv";
 import {Character} from "../types/Character";
 import {Producer} from "../types/types";
 import {Season} from "../types/Season";
+import ResponseType from "../types/ResponseType";
 
 
 interface seasonDate{
@@ -62,7 +63,7 @@ const AnimePage:React.FC = ()=>{
     const [characters,setCharacters] = useState<Character[]>([])
 
     let checkList=async()=>{
-        await fetchUser(`/user/animelist/g/checklist/${ani?.id}`,"GET")
+        await fetchUser(`${apiUrl}/user/animelist/g/checklist/${ani?.id}`,"GET")
             .then(response=>response.json())
             .then(async data=>{
                 setIsInList(data.success)
@@ -77,26 +78,30 @@ const AnimePage:React.FC = ()=>{
 
     useEffect(()=>{
         if(!ani){
-            fetch(`/ani/g/${id}`).then(async res=>{
+            fetch(`${apiUrl}/g/anime/${id}`).then(async res=>{
                 if(!res.ok){
                     setErr(true)
                     return
                 }
-                const animeData:Anime = await res.json()
-                setAni(animeData)
+                const animeData:ResponseType<Anime> = await res.json()
+                setAni(animeData.data)
             })
         }
         if(ani){
             // postLog(ani,false)
             setGen(ani.genre)
             const fetchPS = async()=>{
-                await fetch(`/ani/g/prods/${ani.id}`)
+                await fetch(`${apiUrl}/g/details/${ani.id}`)
                     .then(response=>response.json())
-                    .then(data=>{
+                    .then((data:ResponseType<{
+                        producers:Producer[],
+                        creators:Producer[],
+                        studios:Producer[]
+                    }>)=>{
                         // console.log(data)
-                        setCreators(data.creators)
-                        setProducers(data.producers)
-                        setStudios(data.studios)
+                        setCreators(data.data.creators)
+                        setProducers(data.data.producers)
+                        setStudios(data.data.studios)
                     })
                 await fetch(`/ani/g/seasons/${ani.id}`)
                     .then(response =>response.json())
@@ -152,9 +157,9 @@ const AnimePage:React.FC = ()=>{
         checkIsLogged(context.isLogged)
         const token = sessionStorage.getItem("token")
         // console.log(token)
-        await fetchUser(`/user/animelist/p/insert/${ani?.id!}`,'POST')
+        await fetchUser(`${apiUrl}/p/user/animelist/new/${ani?.id!}`,'POST')
             .then(res=>res.json())
-            .then((data)=>{
+            .then((data:ResponseType<string>)=>{
                 // console.log(data)
                 checkList()
             })

@@ -4,6 +4,7 @@ import {fetchUser} from "./features/main";
 import {roles} from "./types/types";
 import {getPrivileges} from "./functions/userFunctions";
 import {User} from "./types/User";
+import {apiUrl} from "./const";
 
 export interface GlobalContextType {
     isLogged: boolean;
@@ -28,9 +29,9 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
                     setIsLogged(false);
                     return;
                 }
-                setCookies('token',localStorage.getItem('token')!)
-                const userResponse = await fetchUser(`/user/g/verify`, "GET");
-                console.log(userResponse)
+                setCookies('token',localStorage.getItem('accessToken')!)
+                const userResponse = await fetchUser(`${apiUrl}/g/user/verify`, "GET");
+                console.log(userResponse.json())
                 const userData = await userResponse.json();
                 setIsLogged(userData.success);
                 if(userData.success){
@@ -39,6 +40,8 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
                     setIsAdmin(privilegesData.role.includes(roles.adm));
                     setIsSuper(privilegesData.super);
                     setUser(getUser);
+                }else{
+                    await fetchUser(`${apiUrl}/p/user/refresh`)
                 }
 
             } catch (error) {

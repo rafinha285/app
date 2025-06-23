@@ -1,36 +1,38 @@
 import React, { useContext, useEffect, useState} from "react";
-import {Anime, AnimeUser} from "../types/Anime";
+import {Anime, AnimeUser} from "../../types/Anime";
 import "../css/index.css"
 import "../css/base.css"
 import "../css/anime.css"
 import "../css/anime_.css"
 import "../css/loading.css"
-import { checkIsLogged, fetchUser, getEpTime, getMonthName} from "../features/main";
-import LikeButton from "../assets/LikeButton"
-import AniGeneros from "../assets/Animegenre";
+import {checkIsLogged, fetchUser} from "../../functions/userFunctions"
+import {getMonthName} from "../../functions/dateFunctions"
+import { getEpTime} from "../../functions/stringFunctions";
+import LikeButton from "../../assets/LikeButton"
+import AniGeneros from "../../assets/Animegenre";
 import { useParams } from "react-router-dom";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
+import Footer from "../../components/Footer";
+import Header from "../../components/Header";
 import { Helmet } from "react-helmet";
-import Loading from "../components/Loading";
-import EpisodeLink from "../assets/EpisodeLink";
-import AniProducers, { prodType } from "../assets/AnimeProd";
+import Loading from "../../components/Loading";
+import EpisodeLink from "../../assets/EpisodeLink";
+import AniProducers, { prodType } from "../../assets/AnimeProd";
 import { useCookies } from "react-cookie";
-import {Episode, EpisodeUser} from "../types/Episode";
-import GlobalContext from "../GlobalContext";
+import {Episode, EpisodeUser} from "../../types/Episode";
+import GlobalContext from "../../GlobalContext";
 import Popup from "reactjs-popup"
-import AnimeEditList from "../components/User/AnimeEditList";
-import {apiUrl, cdnUrl} from "../const";
-import Rating from "../components/Anime/Rating";
+import AnimeEditList from "../../components/User/AnimeEditList";
+import {apiUrl, cdnUrl} from "../../const";
+import Rating from "../../components/anime/Rating";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 import {faPlus, faStar} from "@fortawesome/free-solid-svg-icons";
-import Comments from "../components/comments/Comments";
-import CharacterDiv from "../components/Anime/CharacterDiv";
-import {Character} from "../types/Character";
-import {Producer} from "../types/types";
-import {Season} from "../types/Season";
-import ResponseType from "../types/ResponseType";
+import Comments from "../../components/comments/Comments";
+import CharacterDiv from "../../components/anime/CharacterDiv";
+import {Character} from "../../types/Character";
+import {Producer} from "../../types/types";
+import {Season} from "../../types/Season";
+import ResponseType from "../../types/ResponseType";
 
 
 interface seasonDate{
@@ -311,7 +313,7 @@ const AnimePage:React.FC = ()=>{
                         ))}
                     </div>
                     <CharacterDiv characters={characters} aniId={ani.id}/>
-                    {/*<ComementsDisqus indenx'tifier={ani.id} type={'Anime'} name={ani.name} />*/}
+                    {/*<ComementsDisqus indenx'tifier={ani.id} type={'anime'} name={ani.name} />*/}
                     <Comments page_id={ani?.id}/>
                 </div>
                 ):err?(

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 import bcrypt from 'bcryptjs'
 import "../css/login.css"
 // import * as bcrypt from "bcrypt"
 // import {pbkdf2, pbkdf2Sync} from "@react-native-module/pbkdf2"
 import ReCAPTCHA from "react-google-recaptcha";
 import { v4 as uuid } from "uuid";
-import { fetchPost } from "../features/main";
+import { fetchPost } from "../../functions/userFunctions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 const salt = bcrypt.genSaltSync(10)

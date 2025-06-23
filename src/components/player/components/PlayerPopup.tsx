@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
-import {EpisodeUser} from "../../../types/Episode.ts";
-import {getEpTime} from "../../../features/main";
+import {EpisodeUser} from "../../../types/Episode";
+import {getEpTime} from "../../../functions/stringFunctions";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faX} from "@fortawesome/free-solid-svg-icons";
 

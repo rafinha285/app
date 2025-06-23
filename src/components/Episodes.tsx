@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import "../css/episodes.css"
-import { epLog } from "../types/logType";
 import Episode from "../assets/Episode";
 import { Link } from "react-router-dom";
-import {EpisodeSim} from "../types/Episode.ts";
+import {EpisodeSim} from "../types/Episode";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 

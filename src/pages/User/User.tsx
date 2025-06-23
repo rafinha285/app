@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {User} from "../../types/User"
 import "../../css/user.css"
-import { DateToStringLocal, fetchUser } from "../../features/main";
+import { DateToStringLocal } from "../../features/main";
 import RoleDiv from "../../components/User/RoleDiv";
 import { userAnimeState, userMangaState } from "../../types/types";
 import AnimeListDiv from "../../components/User/AnimeListDiv";
@@ -12,6 +12,7 @@ import { parseAnime } from "../../functions/animeFunctions";
 import { AnimeUser } from "../../types/Anime";
 import {apiUrl} from "../../const";
 import ResponseType from "../../types/ResponseType";
+import {fetchUser} from "../../functions/userFunctions";
 
 const UserPage:React.FC = () =>{
     let [animelist,setAnimelist] = useState<AnimeUser[]>([])

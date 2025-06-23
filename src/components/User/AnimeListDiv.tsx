@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Anime, AnimeUser, Producer } from "../../types/Anime.ts";
+import {Producer} from "../../types/types"
+import { Anime, AnimeUser } from "../../types/Anime";
 import { DateToStringLocal } from "../../features/main";
-import { tupleToProducer } from "../../functions/animeFunctions";
 import Popup from "reactjs-popup";
 import { cdnUrl } from "../../const";
 import { Link } from "react-router-dom";

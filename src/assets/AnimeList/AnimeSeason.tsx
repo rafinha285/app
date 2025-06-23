@@ -1,10 +1,10 @@
 import React from "react"
-import { Season, SeasonList } from "../../types/Anime.ts"
+import { Season } from "../../types/Season"
 
 interface props{
     season:Season
     onChange:(e:React.ChangeEvent<HTMLInputElement>,season:string)=>void;
-    seasonList?:SeasonList
+    seasonList?:any
 }
 const AnimeListSeason:React.FC<props> = ({season, onChange,seasonList}) =>{
     console.log(seasonList)

@@ -1,12 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
-import LikeButton from "../assets/LikeButton";
-import { trim } from "../features/main";
+import { trim } from "../functions/stringFunctions";
 import "../css/index.css"
 import "../css/base.css"
 import "../css/search.css"
-import { AnimeSearch } from "../types/Anime.ts";
+import { AnimeSearch } from "../types/Anime";
 import {cdnUrl} from "../const";
 
 interface searchProp{

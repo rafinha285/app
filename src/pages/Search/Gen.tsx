@@ -2,7 +2,7 @@ import React, { useEffect ,useState} from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import Searchh from "../../components/Searchh";
-import { Anime} from "../../types/Anime.ts";
+import { Anime} from "../../types/Anime";
 import "../../css/search.css"
 import { useParams , Link} from "react-router-dom";
 import { Helmet } from "react-helmet";

@@ -1,11 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import mongoose,{ObjectId} from "mongoose"
-import {Anime} from "../types/Anime.ts";
-import {getEpTime, trim} from "../features/main"
+import {Anime} from "../types/Anime";
+import {getEpTime, trim} from "../functions/stringFunctions"
 import "../css/index.css"
 import '../css/base.css'
-import {genToArray} from "../functions/animeFunctions"
 import {cdnUrl} from "../const";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock} from "@fortawesome/free-regular-svg-icons";

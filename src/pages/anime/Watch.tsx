@@ -1,22 +1,23 @@
 import React, {useCallback, useEffect, useRef, useState} from "react";
 import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
-import {Episode, EpisodeUser} from "../types/Episode";
-import { Anime } from "../types/Anime";
+import {Episode, EpisodeUser} from "../../types/Episode";
+import { Anime } from "../../types/Anime";
 import "../css/watch.css"
 import { Link } from "react-router-dom";
-import LikeButton from "../assets/LikeButton";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-import EpisodeDropdown from "../assets/EpisodeDropdown";
-import {DateToStringLocal, fetchUser} from "../features/main";
-import Loading from "../components/Loading";
-import { cdnUrl } from "../const";
-import Comments from "../components/comments/Comments";
-import {isFirstEp, isLastEp} from "../functions/animeFunctions";
-import NewPlayer from "../components/CustomPlayer/NewPlayer";
+import LikeButton from "../../assets/LikeButton";
+import Footer from "../../components/Footer";
+import Header from "../../components/Header";
+import EpisodeDropdown from "../../assets/EpisodeDropdown";
+import {DateToStringLocal} from "../../features/main";
+import Loading from "../../components/Loading";
+import { cdnUrl } from "../../const";
+import Comments from "../../components/comments/Comments";
+import {isFirstEp, isLastEp} from "../../functions/animeFunctions";
+import NewPlayer from "../../components/player/NewPlayer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faArrowRight, faBars} from "@fortawesome/free-solid-svg-icons";
+import {fetchUser} from "../../functions/userFunctions";
 
 
 
@@ -71,7 +72,7 @@ const Watch:React.FC = () =>{
             }
         };
         fetchData()
-        // console.log(`/Anime/${ani!._id}/watch/${seasonId!}/${ani?.seasons?.find(s=>s._id==seasonId)!._id}`)
+        // console.log(`/anime/${ani!._id}/watch/${seasonId!}/${ani?.seasons?.find(s=>s._id==seasonId)!._id}`)
     },[id, seasonId, epId, fetchEps, fetchUser])
     const handleChangeClass = (e:React.MouseEvent) =>{
         e.preventDefault()

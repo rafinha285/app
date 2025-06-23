@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Anime } from "../types/Anime.ts";
-import { Season } from "../types/Anime.ts";
-import {Episode, EpisodeUser} from "../types/Episode.ts";
+import { Anime } from "../types/Anime";
+import { Season } from "../types/Season";
+import {Episode, EpisodeUser} from "../types/Episode";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faEye, faEyeSlash, faPlay} from "@fortawesome/free-solid-svg-icons";
-import {fetchUser} from "../features/main";
+
+import {fetchUser} from "../functions/userFunctions";
 interface prop{
     ani:Anime,
     s:Season,

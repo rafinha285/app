@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import AnimeLan from "../components/Anime/AnimeLan";
+import AnimeLan from "../components/anime/AnimeLan";
 import { Helmet} from "react-helmet"
 import "../css/index.css"
 import "../css/base.css"

@@ -1,8 +1,8 @@
-import {Anime, AnimeUser, Producer,Season} from "../types/Anime.ts"
-import AnimePoster from "../assets/AnimePosters"
-import { Episode } from "../types/Episode.ts";
-import { checkIsLogged } from "../features/main";
+import { Episode } from "../types/Episode";
 import { GlobalContextType } from "../GlobalContext";
+import {Producer} from "../types/types";
+import {Season} from "../types/Season";
+import {checkIsLogged} from "./userFunctions";
 // import { languages } from "../types/episodeModel";
 
 
@@ -16,29 +16,6 @@ export function tupleToProducer(data:any[]):Producer[]{
         id:item[0],
         name:item[1]
     }))
-}
-export function tupleToSeason(data:any[]):Season[]{
-    // console.log(data)
-    if(data == null){
-        return []
-    }else{
-        if(data[0].elements){
-            return data.map(item=>({
-                id:item.elements[0],
-                name:item.elements[1],
-                episodes:item.elements[2],
-                index:item.elements[3]
-            }))
-        }else{
-            return data.map(item=>({
-                id:item[0],
-                name:item[1],
-                episodes:item[2],
-                index:item[3]
-            }))
-        }
-    }
-
 }
 export async function getEpsFromSeason(ani:string,season:string):Promise<Episode[]>{
     return await (await fetch(`/ep/g/season/${ani}/${season}`)).json()

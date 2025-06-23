@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {quality, qualityEnum} from "../../../types/types";
-import {Episode} from "../../../types/Episode.ts";
+import {Episode} from "../../../types/Episode";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCaretLeft, faCaretRight} from "@fortawesome/free-solid-svg-icons";
 
@@ -78,7 +78,7 @@ const VideoPlayerSettings:React.FC<props> = (
     }) =>{
 
     const [activeMenu, setActiveMenu] = useState<pages>('main');
-    const qualityOptions:SettingsOption[] = ep.resolution.map(v=>{
+    const qualityOptions:SettingsOption[] = ep.resolution.map((v:string)=>{
         const resolution = v.split('x')[1]
         return {
             label: `${resolution}p`,
@@ -88,7 +88,7 @@ const VideoPlayerSettings:React.FC<props> = (
     })
 
     // qualityOptions.unshift({label:'Automatico',value:-1,badge:"AUTO"})
-    const captionsOptions = ep.subtitlestracks!.map(v=>{
+    const captionsOptions = ep.subtitlestracks!.map((v:string)=>{
        return {
            label: v,
            value: v,

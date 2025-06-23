@@ -13,8 +13,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {faImage as faImageSolid} from "@fortawesome/free-solid-svg-icons";
 import {faImage as faImageRegular} from "@fortawesome/free-regular-svg-icons"
-import {Episode} from "../../../types/Episode.ts";
-import {getEpTime} from "../../../features/main";
+import {Episode} from "../../../types/Episode";
+import {getEpTime} from "../../../functions/stringFunctions";
 import {faClosedCaptioning} from "@fortawesome/free-regular-svg-icons";
 import VideoPlayerSettings from "./Config";
 import {quality} from "../../../types/types";

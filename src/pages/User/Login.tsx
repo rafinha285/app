@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 import {Link, redirect} from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import "../css/login.css"
 import Cookies from "universal-cookie"
 import {
     getDeviceIndentifier
-} from '../functions/userFunctions'
-import { fetchPost } from "../features/main";
+} from '../../functions/userFunctions'
+import { fetchPost } from "../../functions/userFunctions"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faRightToBracket} from "@fortawesome/free-solid-svg-icons";
-import { apiUrl } from "../const";
-import ResponseType from "../types/ResponseType";
+import { apiUrl } from "../../const";
+import ResponseType from "../../types/ResponseType";
 import axios, {AxiosResponse} from "axios";
 
 interface ResponseTokens{

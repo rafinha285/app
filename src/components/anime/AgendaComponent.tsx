@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { AnimeAgenda } from "../../types/Anime.ts";
-import { trim } from "../../features/main";
+import { AnimeAgenda } from "../../types/Anime";
+import { trim } from "../../functions/stringFunctions";
 import {cdnUrl} from "../../const";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStar} from "@fortawesome/free-solid-svg-icons";

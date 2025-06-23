@@ -1,8 +1,7 @@
 import React from "react";
-import { Anime } from "../../types/Anime.ts";
-import { fetchUser } from "../../features/main";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStar} from "@fortawesome/free-solid-svg-icons";
+import {fetchUser} from "../../functions/userFunctions";
 interface props{
     setRatingValue:React.Dispatch<React.SetStateAction<string|undefined>>,
     ratingValue:string|undefined,

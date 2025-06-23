@@ -1,16 +1,16 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
-import Anime from './pages/AnimePage';
-import Watch from './pages/Watch';
+import Anime from './pages/anime/AnimePage';
+import Watch from './pages/anime/Watch';
 import GenSearch from './pages/Search/Gen';
 import MainSearch from './pages/Search/Search';
-import LancamentosPage from './pages/Lan';
-import Login from './pages/Login';
-import Register from './pages/Register';
+import LancamentosPage from './pages/Search/Lan';
+import Login from './pages/User/Login';
+import Register from './pages/User/Register';
 import ProdSearch from './pages/Search/Prod';
-import Download from './pages/Download';
-import Agenda from './pages/Agenda';
+import Download from './pages/anime/Download';
+import Agenda from './pages/Search/Agenda';
 import GlobalContext, { GlobalProvider } from './GlobalContext';
 import UserPage from './pages/User/User';
 const App:React.FC = ()=> {

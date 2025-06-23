@@ -2,10 +2,10 @@ import React, { FC } from 'react';
 import CommentAvatar from "./CommentAvatar";
 import {Comment} from "../../../types/Comment";
 import "../css/comment.css"
-import {fetchUser, getMonthName} from "../../../features/main";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faHeart as faHeartSolid} from "@fortawesome/free-solid-svg-icons";
 import {faFlag, faHeart as faHeartRegular} from "@fortawesome/free-regular-svg-icons";
+import {fetchUser} from "../../../functions/userFunctions";
 
 interface CommentProps {
     comment: Comment;

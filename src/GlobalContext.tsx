@@ -1,8 +1,7 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
-import {fetchUser} from "./features/main";
 import {roles} from "./types/types";
-import {getPrivileges} from "./functions/userFunctions";
+import {fetchUser, getPrivileges} from "./functions/userFunctions";
 import {User} from "./types/User";
 import {apiUrl} from "./const";
 

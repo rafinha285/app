@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AnimeSearch} from "../../types/Anime.ts";
+import { AnimeSearch} from "../../types/Anime";
 import { useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Header from "../../components/Header";

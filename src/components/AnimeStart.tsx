@@ -2,7 +2,6 @@ import { Box, Rating } from "@mui/material";
 import React from "react";
 import { ratingLabel } from "../types/types";
 import { GlobalContextType } from "../GlobalContext";
-import { Anime, AnimeUser } from "../types/Anime.ts";
 import { getLabelText, handleRatingValue } from "../functions/animeFunctions";
 import StarIcon from '@mui/icons-material/Star';
 
@@ -11,7 +10,7 @@ interface props{
     setRatingHover:React.Dispatch<React.SetStateAction<number>>
     setRatingValue:React.Dispatch<React.SetStateAction<number>>
     context:GlobalContextType
-    // ani:Anime|AnimeUser;
+    // ani:anime|AnimeUser;
     aniId:string
     ratingValue:number|null|undefined
 }

@@ -1,8 +1,9 @@
 import React, {useContext, useEffect, useState} from "react"
-import {AnimeUser} from "../../types/Anime.ts"
+import {AnimeUser} from "../../types/Anime"
 import {priorityValue, userAnimeState} from "../../types/types"
 import GlobalContext from "../../GlobalContext"
-import {DateToStringInput, fetchUser, isToday} from "../../features/main"
+import { fetchUser } from "../../functions/userFunctions"
+import {DateToStringInput, isToday} from "../../functions/dateFunctions"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faX} from "@fortawesome/free-solid-svg-icons";
 

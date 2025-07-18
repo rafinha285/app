@@ -7,12 +7,32 @@ h1, h2{
 .selectN option{
     color: black;
 }
-.contentL{
+.anime-page{
+    padding: 10em;
+}
+.duration_top{
+    font-size: 0.7rem;
+}
+.duration_top * {
+    font-size: 0.7rem;
+}
+.details{
+    display: inline-block;
+    margin-right: 2em;
+}
+.inline-details-div{
+    margin-bottom: 1em;
+}
+.inline-details-div .inline-details{
+    display: inline;
+    margin-right: .5em;
+}
+.content-left{
     width: 55%;
     min-height: 100px;
     display: inline-block;
 }
-.contentR{
+.content-right{
     /* width: 45%; */
     float: right;
     display: flex;
@@ -21,7 +41,7 @@ h1, h2{
     flex-direction: column;
     align-items: center;
 }
-.contentR * {
+.content-right * {
     float: right;
 }
 .aniSNota{
@@ -40,7 +60,7 @@ h1, h2{
     width: 206px;
     color: black !important;
 }
-.im{
+.img{
     height: 25em;
     width: fit-content;
     display: inline;
@@ -56,16 +76,13 @@ h1, h2{
 /* .not select{
     margin: 10px;
 } */
-.im img{
+.img img{
     height: 100%;
     border-radius: 7px;
     box-shadow: 1em 1em 1em rgba(9, 0, 14, 0.781)
 }
 .contentL h2{
     font-size: 2.2rem !important;
-}
-.dura{
-    display: inline;
 }
 .contentL .dura span{
     font-size: 0.7rem !important;
@@ -175,7 +192,7 @@ h1, h2{
     display: flex;
     aspect-ratio: 20/1;
     margin: 1em 0;
-    border-radius: .62;
+    border-radius: 1px;
     width: 100%;
     padding: 1em;
 }

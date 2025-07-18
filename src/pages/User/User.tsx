@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import {User} from "../../types/User"
 import "../../css/user.css"
-import { DateToStringLocal } from "../../features/main";
 import RoleDiv from "../../components/User/RoleDiv";
 import { userAnimeState, userMangaState } from "../../types/types";
 import AnimeListDiv from "../../components/User/AnimeListDiv";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import { Helmet } from "react-helmet";
-import { parseAnime } from "../../functions/animeFunctions";
 import { AnimeUser } from "../../types/Anime";
 import {apiUrl} from "../../const";
 import ResponseType from "../../types/ResponseType";

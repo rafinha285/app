@@ -33,11 +33,11 @@ const AnimePoster:React.FC<AnimePosterProps> = ({aniId,doc})=>{
             <article className="newanime-t">
                 <div className="highlight-hover" />
                 <div className="highlight-img">
-                    <img src={`${cdnUrl}/ani/img?Id=${aniId}`} alt={doc!.name}></img>
+                    <img src={`${cdnUrl}/ani/img/${aniId}/${aniId}.jpg`} alt={doc!.name}></img>
                 </div>
                 <div className="highlight-body">
                     <div className="highlight-time">
-                        <span>{getEpTime(doc.averageeptime!)}</span>
+                        <span>{getEpTime(doc.averageEpTime!)}</span>
                         <FontAwesomeIcon icon={faClock}/>
                     </div>
                     <div className="highlight-genres">{gen(doc.genre)}</div>

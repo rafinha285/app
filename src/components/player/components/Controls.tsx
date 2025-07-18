@@ -88,8 +88,8 @@ const Controls:React.FC<props> = (
 
     const handleNextEp = async(e:React.MouseEvent)=>{
         e.stopPropagation();
-        let newEp = eps.get(ep.epindex+1)
-        window.location.href = `/Anime/${newEp?.anime_id}/watch/${newEp?.season_id}/${newEp?.id}`
+        let newEp = eps.get(ep.epIndex+1)
+        window.location.href = `/Anime/${newEp?.animeId}/watch/${newEp?.seasonId}/${newEp?.id}`
     }
     return (
         <div className='controls' onClick={togglePlayPause}>
@@ -180,12 +180,12 @@ const Controls:React.FC<props> = (
             </div>
 
 
-            <button className={`skip-intro ${currentTime>=ep.openingstart&&currentTime <= ep.openingend ? 'skip-active':''} content`} onClick={handleSkipIntro}>
+            <button className={`skip-intro ${currentTime>=ep.openingStart&&currentTime <= ep.openingEnd ? 'skip-active':''} content`} onClick={handleSkipIntro}>
                 Pular Intro
                 <FontAwesomeIcon icon={faAnglesRight}/>
             </button>
 
-            <button className={`skip-intro ${currentTime >= ep.ending && eps.has(ep.epindex+1)? 'skip-active':''} content`} onClick={handleNextEp}>
+            <button className={`skip-intro ${currentTime >= ep.ending && eps.has(ep.epIndex+1)? 'skip-active':''} content`} onClick={handleNextEp}>
                 Próximo episódio
                 <FontAwesomeIcon icon={faChevronRight}/>
             </button>

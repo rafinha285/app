@@ -2,7 +2,7 @@ import { Episode } from "./Episode";
 export interface Season{
     id:string;
     name: string;
-    episodes: string[];
+    episodes: Episode[];
     index: number;
     anime_id:string;
 }

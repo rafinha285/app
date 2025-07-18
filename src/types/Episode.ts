@@ -13,37 +13,22 @@ export interface SubtitlesTracks{
 }
 export interface Episode{
     id:string
-    epindex:number;
+    epIndex:number;
+    dateAdded:Date;
     name:string;
-    anime_id:string;
-    releasedate:Date;
+    animeId:string;
+    seasonId:string
+    releaseDate:Date;
     views?:number;
     duration:number;
-    openingstart:number;
-    openingend:number;
+    openingStart:number;
+    openingEnd:number;
     ending:number;
     audiotracks:languages[];
-    subtitlestracks?:string[];
-    season_id:string
+    subtitlesTracks?:string[];
     resolution:string[]
-    date_added:Date;
+    visible:Boolean;
 }
-// export interface EpisodeDocument extends nano.DocumentGetResponse{
-//     _id:string
-//     index:number;
-//     name:string;
-//     animeId:string;
-//     releaseDate:Date;
-//     views:number;
-//     rating:number;
-//     duration:number;
-//     openingStart:number;
-//     openinigEnd:number;
-//     ending:number;
-//     audioTracks:AudioTracks[];
-//     subtitlesTracks:SubtitlesTracks[];
-//     resolution:quality;
-// }
 export interface EpisodeUser{
     episode_id:string;
     dropped_on:number;
@@ -58,14 +43,7 @@ export interface EpisodeUser{
     watched:boolean;
     finished:boolean;
 }
-export interface EpisodeSim{
-    id:string
-    anime_id:string;
-    season_id:string;
-    name:string;
-    duration:number;
-    resolution:string[];
-    animename:string;
-    seasonname:string;
-    date_added:Date
+export interface EpisodeDTO extends Episode{
+    animeTitle: string;
+    seasonTitle: string;
 }

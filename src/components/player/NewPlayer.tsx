@@ -36,7 +36,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const [currentSpeed,setCurrentSpeed] = useState(1)
     const [muted,setMuted] = useState<boolean>(false);
     const [captionsActive, setCaptionsActive] = useState<boolean>(true);
-    const [selectedCaptions,setSelectedCaptions] = useState<string>(ep?.subtitlestracks?.[0]??'por')
+    const [selectedCaptions,setSelectedCaptions] = useState<string>(ep?.subtitlesTracks?.[0]??'por')
     const [isConfigOpen,setIsConfigOpen] = useState<boolean>(false);
     const [isControlsVisible,setIsControlsVisible] = useState<boolean>(false);
     const {
@@ -332,7 +332,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const handleSkipIntro = (e:React.MouseEvent<HTMLButtonElement>)=>{
         e.stopPropagation();
         if (videoRef.current) {
-            videoRef.current.currentTime = ep.openingend;
+            videoRef.current.currentTime = ep.openingEnd;
         } else {
             console.warn("Video element not available");
         }
@@ -458,8 +458,8 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
             />
             <Captions
                 epId={ep.id}
-                aniId={ep.anime_id}
-                seasonId={ep.season_id}
+                aniId={ep.animeId}
+                seasonId={ep.seasonId}
                 selectedCaptions={selectedCaptions}
                 currentCue={currentCue}
                 setCueData={setCueData}

@@ -27,7 +27,7 @@ const EpisodeLink:React.FC<prop> = ({ani,s,ep,epList,handleWatched,isLogged})=>{
     return(
         <>
             {ep?(
-                <div className="ep" key={ep?.epindex}>
+                <div className="ep" key={ep?.epIndex}>
                     <span>{ep?.name}</span>
                     <div>
                         <button className={epList?"selected":""} onClick={!epList?handleWatchedd:()=>{}}><FontAwesomeIcon icon={epList?faEye:faEyeSlash}/> Visto</button>

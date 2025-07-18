@@ -13,6 +13,7 @@ import Download from './pages/anime/Download';
 import Agenda from './pages/Search/Agenda';
 import GlobalContext, { GlobalProvider } from './GlobalContext';
 import UserPage from './pages/User/User';
+import AnimePage from "./pages/anime/AnimePage";
 const App:React.FC = ()=> {
 return (
   <Router>
@@ -20,7 +21,8 @@ return (
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path='/Anime/lancamentos' element={<LancamentosPage />} />
-        <Route path='/Anime/:id' element={<Anime />}/>
+        <Route path='/Anime/:id' element={<AnimePage />}/>
+        {/*<Route path='/AnimeOld/:id' element={<AnimePageOld />}/>*/}
         <Route path='/Anime/:id/watch/:seasonId/:epId' element={<Watch />} />
         <Route path='/Anime/:id/download/:seasonId/:epId' element={<Download/>}/>
         <Route path='/Anime/agenda' element={<Agenda/>}/>

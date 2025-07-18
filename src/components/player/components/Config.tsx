@@ -88,7 +88,7 @@ const VideoPlayerSettings:React.FC<props> = (
     })
 
     // qualityOptions.unshift({label:'Automatico',value:-1,badge:"AUTO"})
-    const captionsOptions = ep.subtitlestracks!.map((v:string)=>{
+    const captionsOptions = ep.subtitlesTracks!.map((v:string)=>{
        return {
            label: v,
            value: v,

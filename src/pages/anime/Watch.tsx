@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 import {Episode, EpisodeUser} from "../../types/Episode";
 import { Anime } from "../../types/Anime";
-import "../css/watch.css"
+import "../../css/watch.css"
 import { Link } from "react-router-dom";
 import LikeButton from "../../assets/LikeButton";
 import Footer from "../../components/Footer";
@@ -35,7 +35,7 @@ const Watch:React.FC = () =>{
 
     // const popupRef = useRef<PopupActions>(null);
     const fetchEps = useCallback(async(ani:Anime,ep:Episode) =>{
-        var res = await fetch(`/ep/g/season/${ani?.id}/${ep?.season_id}`)
+        var res = await fetch(`/ep/g/season/${ani?.id}/${ep?.seasonId}`)
         let data = await res.json()
         let epsMapTemp = new Map<number, Episode>();
         for(let i =0 ;i<data.length;i++){
@@ -89,14 +89,14 @@ const Watch:React.FC = () =>{
     const nextEpHandle = (e:React.MouseEvent) =>{
         e.preventDefault();
         console.log("nextEpHandle", eps)
-        if(eps.has(ep?.epindex!+1)){
-            window.location.href = `/Anime/${ani?.id}/watch/${ep?.season_id}/${eps.get(ep?.epindex! + 1)!.id}`
+        if(eps.has(ep?.epIndex!+1)){
+            window.location.href = `/Anime/${ani?.id}/watch/${ep?.seasonId}/${eps.get(ep?.epIndex! + 1)!.id}`
         }
     }
     const prevEpHandle = (e:React.MouseEvent) =>{
         e.preventDefault();
-        if(eps.has(ep?.epindex!-1)){
-            window.location.href = `/Anime/${ani?.id}/watch/${ep?.season_id}/${eps.get(ep?.epindex! - 1)!.id}`
+        if(eps.has(ep?.epIndex!-1)){
+            window.location.href = `/Anime/${ani?.id}/watch/${ep?.seasonId}/${eps.get(ep?.epIndex! - 1)!.id}`
         }
     }
     // $("#after").on("click",()=>handleNextEp(ani?.id!,seasonId,eps!,ep?.epindex!))
@@ -139,7 +139,7 @@ const Watch:React.FC = () =>{
                     <div>
                         <p>Nome Episódio: <span>{ep?.name}</span></p>
                         <p>Vizualizações: <span>{ep.views??0}</span></p>
-                        <p>Data de Lançamento: <span>{DateToStringLocal(new Date(ep?.releasedate!))}</span></p>
+                        <p>Data de Lançamento: <span>{DateToStringLocal(new Date(ep?.releaseDate!))}</span></p>
                     </div>
                     <div className="ep-select">
                         <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
@@ -161,7 +161,7 @@ const Watch:React.FC = () =>{
                             <div id="epSelDrop" className="ep-sel-dropdown">
                                 <div className="inEps">
                                     {Array.from(eps.values())
-                                        .sort((a, b) => a.epindex - b.epindex)
+                                        .sort((a, b) => a.epIndex - b.epIndex)
                                         .map((e) => (
                                             <EpisodeDropdown
                                                 epId={e.id}
@@ -169,7 +169,7 @@ const Watch:React.FC = () =>{
                                                 aniId={ani.id}
                                                 seasonId={seasonId!}
                                                 epNId={ep?.id!}
-                                                key={e.epindex}
+                                                key={e.epIndex}
                                             />
                                         ))}
                                 </div>

@@ -3,7 +3,7 @@ import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import {Link, redirect} from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
-import "../css/login.css"
+import "../../css/login.css"
 import Cookies from "universal-cookie"
 import {
     getDeviceIndentifier

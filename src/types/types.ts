@@ -15,6 +15,10 @@ export enum qualityEnum {
     HD = '720p',
     SD = '480p',
 }
+export interface State{
+    id:number;
+    name:string;
+}
 export enum state{
     ONGOING="Lançando",
     HIATUS="Hiáto",

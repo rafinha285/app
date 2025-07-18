@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from "react";
 import "../css/episodes.css"
-import Episode from "../assets/Episode";
+import EpisodeComponent from "../assets/EpisodeComponent";
 import { Link } from "react-router-dom";
-import {EpisodeSim} from "../types/Episode";
+import {EpisodeDTO} from "../types/Episode";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {apiUrl} from "../const";
+import axios from "axios";
 
 interface prop{
     count:number|undefined
 }
 const Episodes:React.FC<prop> = ({count}) =>{
-    const [eps,setEps] = useState<EpisodeSim[]>()
+    const [eps,setEps] = useState<EpisodeDTO[]>()
     useEffect(()=>{
         if(count){
-            fetch(`/ep/g/lan?count=${count}`).then(async(res)=>{
-                setEps(await res.json())
-            })
+            let request = axios.get(`${apiUrl}/g/episode/all?count=${count}`)
+
         }else{
-            fetch(`/ep/g/lan`).then(async(res)=>{
+            fetch(`${apiUrl}/g/episode/all`).then(async(res)=>{
                 setEps(await res.json())
             })
         }
@@ -35,7 +36,7 @@ const Episodes:React.FC<prop> = ({count}) =>{
             </div>
             <div style={{display:"flex",padding:"1em",flexWrap:"wrap"}}>
                 {eps?.map((v,i)=>(
-                    <Episode ep={v}></Episode>
+                    <EpisodeComponent ep={v}></EpisodeComponent>
                 ))}
             </div>
         </div>

@@ -2,24 +2,24 @@ import React from "react";
 import "../css/episodes.css"
 import { getEpTime } from "../functions/stringFunctions";
 import { Link } from "react-router-dom";
-import { EpisodeSim } from "../types/Episode";
 import {cdnUrl} from "../const";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
+import {EpisodeDTO} from "../types/Episode";
 
 interface props{
-    ep:EpisodeSim
+    ep:EpisodeDTO
 }
-const Episode:React.FC<props> = ({ep}) =>{
+const EpisodeComponent:React.FC<props> = ({ep}) =>{
 
     // console.log(ep,`/api/ep/${ep.anime}/${ep.season}/${ep.ep}/${ep.ep}.jpg`)
     console.log(ep)
     return(
-        <Link className="episodes-link" to={`/Anime/${ep.anime_id}/watch/${ep.season_id}/${ep.id}`}>
+        <Link className="episodes-link" to={`/Anime/${ep.animeId}/watch/${ep.seasonId}/${ep.id}`}>
             <div className="">
                 <div className="ep-hover"/>
                 <div className="ep-img">
-                    <img alt={ep.animename} src={`${cdnUrl}/epPoster/${ep.anime_id}/${ep.season_id}/${ep.id}`}></img>
+                    <img alt={""} src={`${cdnUrl}/epPoster/${ep.animeId}/${ep.seasonId}/${ep.id}`}></img>
                 </div>
                 <div className="ep-body">
                     <div className="ep-res">
@@ -30,10 +30,10 @@ const Episode:React.FC<props> = ({ep}) =>{
                         <FontAwesomeIcon icon={faClock}/>
                     </div>
                     <div className="ep-animetitle">
-                    {ep.animename}
+                    {ep.animeTitle}
                     </div>
                     <div className="ep-animeseason">
-                        {ep.seasonname}
+                        {ep.seasonTitle}
                     </div>
                     <div className="ep-title">
                     {ep.name}
@@ -43,4 +43,4 @@ const Episode:React.FC<props> = ({ep}) =>{
         </Link>
     )
 }
-export default Episode
+export default EpisodeComponent

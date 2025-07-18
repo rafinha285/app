@@ -3,6 +3,7 @@ import {GlobalContextType} from "../GlobalContext";
 import {roles} from "../types/types";
 import {apiUrl} from "../const";
 import ResponseType from "../types/ResponseType";
+import {postToApi} from "./requestFunctions.ts";
 
 export async function fetchPublicKey(){
     return await fetch("/public-key").then(r=>r.text())
@@ -82,32 +83,33 @@ export async function fetchUser(
 }
 
 export async function refreshToken() {
-    let response = await fetch(`${apiUrl}/p/user/refresh`, {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            refreshToken: localStorage.getItem("refreshToken")
-        })
-    })
-    console.log(response)
-    if (response.ok) {
-        let body: ResponseType<{
-            refreshToken: string,
-            accessToken: string,
-        }> = await response.json()
-        localStorage.setItem("accessToken", body.data.accessToken)
-    }
+    postToApi("user/refresh",null)
+    // let response = await fetch(`${apiUrl}/p/user/refresh`, {
+    //     method: "POST",
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //         refreshToken: localStorage.getItem("refreshToken")
+    //     })
+    // })
+    // console.log(response)
+    // if (response.ok) {
+    //     let body: ResponseType<{
+    //         refreshToken: string,
+    //         accessToken: string,
+    //     }> = await response.json()
+    //     localStorage.setItem("accessToken", body.data.accessToken)
+    // }
 }
 
 export const handlePostSec = async (context:GlobalContextType, ep:Episode, sec: number) => {
     if (context.isLogged) {
         let body = {
             episode_id: ep?.id,
-            anime_id: ep?.anime_id,
+            anime_id: ep?.animeId,
             dropped_on: sec,
-            season_id: ep?.season_id,
+            season_id: ep?.seasonId,
         }
         await fetchUser('/ep/user/p/', 'POST', body)
     }

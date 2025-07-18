@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
-import "../css/download.css"
+import "../../css/download.css"
 import { useParams } from "react-router-dom";
 import EpDownloadButton from "../../components/EpDownloadButton";
 import {Anime} from "../../types/Anime";

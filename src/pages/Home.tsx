@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useContext, useEffect} from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import AnimeLan from "../components/anime/AnimeLan";
@@ -6,7 +6,12 @@ import { Helmet} from "react-helmet"
 import "../css/index.css"
 import "../css/base.css"
 import Episodes from "../components/Episodes";
+import globalContext from "../GlobalContext.tsx";
 const Home = () =>{
+    const context = useContext(globalContext)
+    useEffect(()=>{
+        console.log(context);
+    })
     return(
         <html lang="pt-BR">
             <Helmet>

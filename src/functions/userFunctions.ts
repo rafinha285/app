@@ -57,31 +57,6 @@ export async function fetchPost(path: string, method: "POST" | "DELETE" | "PATCH
     })
 }
 
-export async function fetchUser(
-    path: string,
-    method: "POST" | "DELETE" | "PATCH" | "GET" = "POST",
-    body?: any,
-    retry: boolean = true
-): Promise<Response> {
-    let indentifier = getDeviceIndentifier()
-    let response = await fetch(path, {
-        method,
-        headers: {
-            'Content-Type': "application/json",
-            'timeZone': indentifier.timeZone,
-            'webGlRenderer': indentifier.WegGl?.renderer,
-            'webGlVendor': indentifier.WegGl?.vendor,
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        },
-        body: JSON.stringify(body)
-    })
-    if (!response.ok && response.status === 401 && retry) {
-        await refreshToken()
-        response = await fetchUser(path, method, body, false)
-    }
-    return response
-}
-
 export async function refreshToken() {
     postToApi("user/refresh",null)
     // let response = await fetch(`${apiUrl}/p/user/refresh`, {
@@ -103,23 +78,23 @@ export async function refreshToken() {
     // }
 }
 
-export const handlePostSec = async (context:GlobalContextType, ep:Episode, sec: number) => {
-    if (context.isLogged) {
-        let body = {
-            episode_id: ep?.id,
-            anime_id: ep?.animeId,
-            dropped_on: sec,
-            season_id: ep?.seasonId,
-        }
-        await fetchUser('/ep/user/p/', 'POST', body)
-    }
-}
+// export const handlePostSec = async (context:GlobalContextType, ep:Episode, sec: number) => {
+//     if (context.isLogged) {
+//         let body = {
+//             episode_id: ep?.id,
+//             anime_id: ep?.animeId,
+//             dropped_on: sec,
+//             season_id: ep?.seasonId,
+//         }
+//         await fetchUser('/ep/user/p/', 'POST', body)
+//     }
+// }
 interface getPrivilegesInterface{
     role:roles[],
     super:boolean
 }
-export async function getPrivileges():Promise<getPrivilegesInterface>{
-    let res= await fetchUser("/user/g/privileges","GET")
-    let response:{success:boolean,role:roles[],super:boolean} = await res.json()
-    return {role:response.role,super:response.super};
-}
+// export async function getPrivileges():Promise<getPrivilegesInterface>{
+//     let res= await getFromApiWithToken(`${apiUrl}/g/user`)
+//     let response:{success:boolean,role:roles[],super:boolean} = await res.json()
+//     return {role:response.role,super:response.super};
+// }

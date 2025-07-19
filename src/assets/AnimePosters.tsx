@@ -8,10 +8,6 @@ import {cdnUrl} from "../const";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faClock} from "@fortawesome/free-regular-svg-icons";
 
-
-
-
-
 function gen(arr:string[]):JSX.Element[]{
     var elements:JSX.Element[] = []
     for(let i = 0;i<arr.length;i++){
@@ -21,28 +17,27 @@ function gen(arr:string[]):JSX.Element[]{
 }
 
 interface AnimePosterProps {
-    aniId: string;
-    doc: Anime;
+    anime: Anime;
 }
 
-const AnimePoster:React.FC<AnimePosterProps> = ({aniId,doc})=>{
-    console.log(doc.genre)
-    console.log(doc)
+const AnimePoster:React.FC<AnimePosterProps> = ({anime})=>{
+    console.log(anime.genre)
+    console.log(anime)
     return(
-        <Link to={`/Anime/${aniId}`}>
+        <Link to={`/Anime/${anime.id}`}>
             <article className="newanime-t">
                 <div className="highlight-hover" />
                 <div className="highlight-img">
-                    <img src={`${cdnUrl}/ani/img/${aniId}/${aniId}.jpg`} alt={doc!.name}></img>
+                    <img src={`${cdnUrl}/ani/img/${anime.id}/${anime.id}.jpg`} alt={anime!.name}></img>
                 </div>
                 <div className="highlight-body">
                     <div className="highlight-time">
-                        <span>{getEpTime(doc.averageEpTime!)}</span>
+                        <span>{getEpTime(anime.averageEpTime!)}</span>
                         <FontAwesomeIcon icon={faClock}/>
                     </div>
-                    <div className="highlight-genres">{gen(doc.genre)}</div>
-                    <div className="highlight-title">{doc.name}</div>
-                    <div className="highlight-desc">{trim(doc.description)}</div>
+                    <div className="highlight-genres">{gen(anime.genre)}</div>
+                    <div className="highlight-title">{anime.name}</div>
+                    <div className="highlight-desc">{trim(anime.description)}</div>
                 </div>
             </article>
         </Link>

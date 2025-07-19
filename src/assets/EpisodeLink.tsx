@@ -6,7 +6,8 @@ import {Episode, EpisodeUser} from "../types/Episode";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faDownload, faEye, faEyeSlash, faPlay} from "@fortawesome/free-solid-svg-icons";
 
-import {fetchUser} from "../functions/userFunctions";
+
+import {fetchUser} from "../functions/requestFunctions.ts";
 interface prop{
     ani:Anime,
     s:Season,

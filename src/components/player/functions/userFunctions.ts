@@ -1,5 +1,6 @@
 import {Episode} from "../../../types/Episode";
-import {fetchUser} from "../../../functions/userFunctions";
+
+import {fetchUser} from "../../../functions/requestFunctions.ts";
 
 export const handlePostSec = async (isLogged:boolean,sec: number,ep:Episode) => {
     if (isLogged) {

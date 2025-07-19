@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import AnimePoster from "../../assets/AnimePosters"
 import {Anime} from "../../types/Anime"
 import "../../css/index.css"
@@ -8,32 +8,52 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {apiUrl} from "../../const";
 import ResponseType from "../../types/ResponseType";
+import globalContext from "../../GlobalContext.tsx";
+import {getFromApi, getFromApiWithToken} from "../../functions/requestFunctions.ts";
 
 
 interface AnimeLanProps{
     manga:boolean
 }
 const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
+    const context = useContext(globalContext)!!
     const [Aniposters,AnisetPosters] = useState<JSX.Element[]>([])
     const [Manposters,MansetPosters] = useState<JSX.Element[]>([])
     useEffect(()=>{
         console.log("aaa")
-        fetch(`${apiUrl}/g/anime/all`).then((res)=>res.json())
-        .then((data:ResponseType<Anime[]>)=>{
-            console.log(data.data)
-            const posterList = data.data?.map((anime:Anime,index:number)=>(
-                <AnimePoster
-                    key={index}
-                    doc={anime}
-                    aniId={anime.id}
-                />
-            ))
-            AnisetPosters(posterList!)
-            console.log(posterList)
-        })
-        .catch((err:any)=>{
-            console.error(err)
-        })
+        let animes:Anime[]=[];
+        if(context.isLogged){
+            getFromApiWithToken<Anime[]>("/anime/all").then(res=>{
+                animes = res.data.data
+            })
+        }else{
+            getFromApi<Anime[]>("/anime/all").then(res=>{
+                animes = res.data.data
+            })
+        }
+        const posterList = animes.map((v,i)=>(
+            <AnimePoster
+                anime={v}
+                key={i}
+            />
+        ));
+        AnisetPosters(posterList)
+        // fetch(`${apiUrl}/g/anime/all`).then((res)=>res.json())
+        // .then((data:ResponseType<Anime[]>)=>{
+        //     console.log(data.data)
+        //     const posterList = data.data?.map((anime:Anime,index:number)=>(
+        //         <AnimePoster
+        //             key={index}
+        //             doc={anime}
+        //             aniId={anime.id}
+        //         />
+        //     ))
+        //     AnisetPosters(posterList!)
+        //     console.log(posterList)
+        // })
+        // .catch((err:any)=>{
+        //     console.error(err)
+        // })
     },[])
     if(manga){
         return(

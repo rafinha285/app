@@ -10,7 +10,8 @@ import { Helmet } from "react-helmet";
 import { AnimeUser } from "../../types/Anime";
 import {apiUrl} from "../../const";
 import ResponseType from "../../types/ResponseType";
-import {fetchUser} from "../../functions/userFunctions";
+
+import {fetchUser} from "../../functions/requestFunctions.ts";
 
 const UserPage:React.FC = () =>{
     let [animelist,setAnimelist] = useState<AnimeUser[]>([])

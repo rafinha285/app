@@ -1,7 +1,8 @@
 import React from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faStar} from "@fortawesome/free-solid-svg-icons";
-import {fetchUser} from "../../functions/userFunctions";
+
+import {fetchUser} from "../../functions/requestFunctions.ts";
 interface props{
     setRatingValue:React.Dispatch<React.SetStateAction<string|undefined>>,
     ratingValue:string|undefined,

@@ -17,7 +17,8 @@ import {isFirstEp, isLastEp} from "../../functions/animeFunctions";
 import NewPlayer from "../../components/player/NewPlayer";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faArrowLeft, faArrowRight, faBars} from "@fortawesome/free-solid-svg-icons";
-import {fetchUser} from "../../functions/userFunctions";
+
+import {fetchUser} from "../../functions/requestFunctions.ts";
 
 
 

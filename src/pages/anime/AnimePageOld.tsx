@@ -5,7 +5,7 @@ import "../../css/base.css"
 import "../../css/animepage/anime.css"
 import "../../css/animepage/anime_.css"
 import "../../css/loading.css"
-import {checkIsLogged, fetchUser} from "../../functions/userFunctions"
+import {checkIsLogged} from "../../functions/userFunctions"
 import {getMonthName} from "../../functions/dateFunctions"
 import { getEpTime} from "../../functions/stringFunctions";
 import LikeButton from "../../assets/LikeButton"
@@ -65,17 +65,17 @@ const AnimePage:React.FC = ()=>{
     const [characters,setCharacters] = useState<Character[]>([])
 
     let checkList=async()=>{
-        await fetchUser(`${apiUrl}/user/animelist/g/checklist/${ani?.id}`,"GET")
-            .then(response=>response.json())
-            .then(async data=>{
-                setIsInList(data.success)
-                await fetchUser(`/user/animelist/g/${ani?.id}`,"GET")
-                    .then(response => response.json())
-                    .then((data:{success:boolean,response:AnimeUser})=>{
-                        setUserAni(data.response)
-                        setRatingValue(data.response?.rate !== null?data.response?.rate.toString():'none')
-                    })
-            })
+        // await fetchUser(`${apiUrl}/user/animelist/g/checklist/${ani?.id}`,"GET")
+        //     .then(response=>response.json())
+        //     .then(async data=>{
+        //         setIsInList(data.success)
+        //         await fetchUser(`/user/animelist/g/${ani?.id}`,"GET")
+        //             .then(response => response.json())
+        //             .then((data:{success:boolean,response:AnimeUser})=>{
+        //                 setUserAni(data.response)
+        //                 setRatingValue(data.response?.rate !== null?data.response?.rate.toString():'none')
+        //             })
+        //     })
     }
 
     useEffect(()=>{
@@ -161,12 +161,12 @@ const AnimePage:React.FC = ()=>{
         checkIsLogged(context.isLogged)
         const token = sessionStorage.getItem("token")
         // console.log(token)
-        await fetchUser(`${apiUrl}/p/user/animelist/new/${ani?.id!}`,'POST')
-            .then(res=>res.json())
-            .then((data:ResponseType<string>)=>{
-                // console.log(data)
-                checkList()
-            })
+        // await fetchUser(`${apiUrl}/p/user/animelist/new/${ani?.id!}`,'POST')
+        //     .then(res=>res.json())
+        //     .then((data:ResponseType<string>)=>{
+        //         // console.log(data)
+        //         checkList()
+        //     })
     }
     const fetchEp =async(ani:Anime,s:Season)=>{
         const res = await fetch(`/ep/g/season/${ani.id}/${s.id}`)
@@ -174,7 +174,7 @@ const AnimePage:React.FC = ()=>{
         return data
     }
     const fetchEpList = async(ani:Anime,s:Season)=>{
-        const res = await fetchUser(`/ep/user/g/season/${ani?.id}/${s.id}`,"GET")
+        const res = await fetch(`/ep/user/g/season/${ani?.id}/${s.id}`)
         let data:EpisodeUser[]
         if(!res.ok){
             return []

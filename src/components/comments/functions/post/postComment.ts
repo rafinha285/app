@@ -1,5 +1,6 @@
 import React from "react";
-import {fetchUser} from "../../../../functions/userFunctions";
+
+import {fetchUser} from "../../../../functions/requestFunctions.ts";
 
 export async function postComment(page_id:string,ref:React.RefObject<HTMLTextAreaElement>,parent_id?:string): Promise<void> {
     await fetchUser(`/comments/p/new/${page_id}`,"POST",{

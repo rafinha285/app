@@ -40,11 +40,10 @@ export enum userMangaState{
     dropped="Desistido",
     plan_to_read="Pretendo ler"
 }
-export enum roles{
-    adm = "Administrador",
-    client = "Cliente",
-    creator = "Criador",
-    developer = "Desenvolvedor",
+export enum UserRole {
+    DEVELOPER = "ROLE_DEVELOPER",
+    USER = "ROLE_USER",
+    ADMIN = "ROLE_ADMIN",
 }
 export enum priorityValue{
     LOW="Baixa",

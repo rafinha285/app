@@ -16,7 +16,7 @@ interface AnimeLanProps{
     manga:boolean
 }
 const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
-    const context = useContext(globalContext)!!
+    const context = useContext(globalContext)
     const [Aniposters,AnisetPosters] = useState<JSX.Element[]>([])
     const [Manposters,MansetPosters] = useState<JSX.Element[]>([])
 
@@ -31,7 +31,8 @@ const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
     }
 
     useEffect(()=>{
-        console.log("aaa")
+        if(!context) return
+        console.log("aaaa")
         if(context.isLogged){
             getFromApiWithToken<Anime[]>("/anime/all").then(res=>{
                 createAnimePosters(res.data.data);
@@ -57,7 +58,7 @@ const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
         // .catch((err:any)=>{
         //     console.error(err)
         // })
-    },[])
+    },[context])
     if(manga){
         return(
             <div className="newanime">

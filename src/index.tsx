@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Anime from './pages/anime/AnimePage';
-import Watch from './pages/anime/Watch';
+import Watch from './pages/anime/Watch.tsx';
 import GenSearch from './pages/Search/Gen';
 import MainSearch from './pages/Search/Search';
 import LancamentosPage from './pages/Search/Lan';
@@ -23,7 +23,7 @@ return (
         <Route path='/Anime/lancamentos' element={<LancamentosPage />} />
         <Route path='/Anime/:id' element={<AnimePage />}/>
         {/*<Route path='/AnimeOld/:id' element={<AnimePageOld />}/>*/}
-        <Route path='/Anime/:id/watch/:seasonId/:epId' element={<Watch />} />
+        <Route path='/Anime/:animeId/watch/:seasonId/:id' element={<Watch />} />
         <Route path='/Anime/:id/download/:seasonId/:epId' element={<Download/>}/>
         <Route path='/Anime/agenda' element={<Agenda/>}/>
         <Route path='/gen/:gen' element={<GenSearch />} />

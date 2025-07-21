@@ -19,6 +19,7 @@ const Comments:React.FC<CommentProps> = ({page_id,classes}) => {
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
     const sendComment = async()=>{
+        console.log("Sending comment...", inputRef.current?.value);
         if(inputRef.current && inputRef.current.value !== ""){
             await postComment(page_id,inputRef)
             await fetchComments()
@@ -35,7 +36,7 @@ const Comments:React.FC<CommentProps> = ({page_id,classes}) => {
     const [comments,setComments] = useState<Comment[]>([])
 
     async function fetchComments(){
-        const res:RequestType<Comment[]> = await (await fetch(`${apiUrl}/g/comments/page/${page_id}`)).json();
+        const res:RequestType<Comment[]> = await (await fetch(`${apiUrl}/g/comment/page/${page_id}`)).json();
         setComments(res.data)
         console.log(res.data)
     }
@@ -47,7 +48,7 @@ const Comments:React.FC<CommentProps> = ({page_id,classes}) => {
     return (
         <div className={`comments ${classes?.map(v=>`${v} `)}`}>
             <div className='comments-input'>
-                <CommentAvatar isLoggedIn={isLogged} user_id={user?._id!}/>
+                <CommentAvatar isLoggedIn={isLogged} user_id={user?.id!}/>
                 <div className='comments-textarea-wrapper'>
                     <textarea
                         cols={2}
@@ -56,7 +57,7 @@ const Comments:React.FC<CommentProps> = ({page_id,classes}) => {
                         onKeyDown={keyDownEvent}
                     />
                 </div>
-                <button className='button'>
+                <button onClick={sendComment} className='button'>
                     Comentar
                 </button>
             </div>

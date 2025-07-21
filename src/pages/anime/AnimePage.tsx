@@ -1,15 +1,10 @@
-import React, {useState} from "react"
-import {Params} from "react-router-dom";
+import React from "react"
 import "../../css/index.css"
 import "../../css/base.css"
 import "../../css/animepage/anime.css"
 import "../../css/animepage/anime_.css"
 import "../../css/loading.css"
-import globalContext from "../../GlobalContext";
-import {AxiosResponse} from "axios";
-import {getFromApi} from "../../functions/requestFunctions";
 import {Anime} from "../../types/Anime";
-import ResponseType from "../../types/ResponseType";
 import {withParams} from "../../functions/withParams.tsx";
 import {Helmet} from "react-helmet";
 import {getEpTime} from "../../functions/stringFunctions.ts";
@@ -25,31 +20,44 @@ import {state, State as StateType} from "../../types/types.ts";
 import {cdnUrl} from "../../const.ts";
 import EpisodeLink from "../../assets/EpisodeLink.tsx";
 import GlobalContext from "../../GlobalContext";
+import BasePage, {BaseState} from "../BasePage.tsx";
 
+type Params = {
+    id: string
+}
 
 type Props = {
-    params: Params<string>;
+    params: Params;
 };
 
-type State = {
+type State = BaseState & {
     ani: Anime | null;
-    err: boolean;
     selectedSeasonId: string;
 };
 
 
-class AnimePage extends React.Component<Props> {
+class AnimePage extends BasePage<Props, State>{
     static contextType = GlobalContext;
     context!: React.ContextType<typeof GlobalContext>;
     match = this.props;
     state: State = {
         ani: null,
         err: false,
+        errReason: "",
         selectedSeasonId:""
     }
 
     async componentDidMount() {
-        await this.fetchAnime();
+        const {id} = this.match.params;
+        if(!id) this.idNotFound("Anime")
+        const ani = await super.getAnime(this.match.params.id);
+        if (!ani) this.setState({
+            err: true,
+            errReason:"Anime não encontrado"
+        });
+        this.setState({
+            ani: ani ? ani : null
+        })
         if(this.state.ani){
             const {ani} = this.state;
             this.setState({selectedSeasonId:ani.seasons.length > 0? ani.seasons[0].id:""});
@@ -67,22 +75,11 @@ class AnimePage extends React.Component<Props> {
         }
     }
 
-    private fetchAnime = async() => {
-        // console.log(this.match)
-        const {id} = this.match.params;
-        try{
-            const res:AxiosResponse<ResponseType<Anime>> = await getFromApi<Anime>(`/anime/${id}`, null)
-            if(res.status !== 200){
-                this.setState({err: true})
-                return
-            }
-            const data = res.data.data
-            console.log(data)
-            this.setState({ani:data})
-        }catch(e){
-            console.log(e)
-        }
-    }
+    // private fetchAnime = async() => {
+    //     // console.log(this.match)
+    //     const {id} = this.match.params;
+    //
+    // }
 
     private stateTypeToStateEnum(input: StateType): state{
         const key = input.name as keyof typeof state; // ex: "COMPLETED"
@@ -96,7 +93,7 @@ class AnimePage extends React.Component<Props> {
     render() {
         const { ani, err, selectedSeasonId } = this.state;
         const releaseDate = ani && new Date(ani.releaseDate);
-        if (err) return <h1>Anime não encontrado</h1>;
+        if (err) return <h1>Erro ao carregar a pagina: {this.state.errReason}</h1>;
         if (!ani || !releaseDate) return <p>Carregando...</p>;
         return(
             <>
@@ -107,7 +104,7 @@ class AnimePage extends React.Component<Props> {
                 <div className="anime-page">
                     <p className={"duration_top"}>Anime - Duração média: <span>{ani.averageEpTime?getEpTime(ani.averageEpTime):0}</span></p>
                     <div className={"content-left"}>
-                        <h2>{ani.name}</h2>
+                        <h2 className={"anime-title"}>{ani.name}</h2>
                         <div style={{display:"inline"}}>
                             <p className={"duration_top details"}>Ano: {releaseDate.getFullYear()}</p>
                             <p className={"duration_top details"}>Qualidade: {ani.quality}</p>
@@ -183,7 +180,7 @@ class AnimePage extends React.Component<Props> {
                             <div style={{ display: season.id === selectedSeasonId ? "block" : "none" }}
                                  key={season.index}>
                                 {season.episodes.sort((a,b)=>a.epIndex-b.epIndex).map((v,i)=>(
-                                    <EpisodeLink ani={ani} s={season} ep={v} handleWatched={()=>{}} isLogged={!!this.context?.isLogged}/>
+                                    <EpisodeLink key={v.epIndex} ani={ani} s={season} ep={v} handleWatched={()=>{}} isLogged={!!this.context?.isLogged}/>
                                 ))}
                             </div>
                         ))}
@@ -195,4 +192,4 @@ class AnimePage extends React.Component<Props> {
     }
 
 }
-export default withParams(AnimePage);
+export default withParams<Params,{}>(AnimePage);

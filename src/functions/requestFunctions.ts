@@ -21,13 +21,13 @@ export async function getFromApi<T>(url: string, headers: object | null = null):
     }
 }
 
-export async function postToApi<T>(url: string, data: T, headers: object | null = null): Promise<AxiosResponse<ResponseType<T>>> {
+export async function postToApi<T,R>(url: string, data: T, headers: object | null = null): Promise<AxiosResponse<ResponseType<R>>> {
     try{
         const header = {
             "Content-Type": "application/json",
             ...headers
         }
-        const response = await axios.post<ResponseType<T>>(`${apiUrl}/p/${url}`, data,{
+        const response = await axios.post<ResponseType<R>>(`${apiUrl}/p${url}`, data,{
             headers:header
         })
         if(response.status !== 200){
@@ -42,8 +42,7 @@ export async function postToApi<T>(url: string, data: T, headers: object | null 
 export async function getFromApiWithToken<T>(url: string):Promise<AxiosResponse<ResponseType<T>>>{
     try{
         const identifier = getDeviceIndentifier()
-        console.log(`${apiUrl}/g/${url}`)
-        const response = await getFromApi<T>(`${apiUrl}/gy${url}`,{
+        const response = await getFromApi<T>(url,{
             'timeZone': identifier.timeZone,
             'webGlRenderer': identifier.WegGl?.renderer,
             'webGlVendor': identifier.WegGl?.vendor,
@@ -59,10 +58,10 @@ export async function getFromApiWithToken<T>(url: string):Promise<AxiosResponse<
     }
 }
 
-export async function postToApiWithToken<T>(url: string, data: T):Promise<AxiosResponse<ResponseType<T>>>{
+export async function postToApiWithToken<T,R>(url: string, data: T):Promise<AxiosResponse<ResponseType<R>>>{
     try{
         const identifier = getDeviceIndentifier()
-        const response = await postToApi<T>(`${apiUrl}/g/${url}`,data,{
+        const response = await postToApi<T,R>(url,data,{
             'timeZone': identifier.timeZone,
             'webGlRenderer': identifier.WegGl?.renderer,
             'webGlVendor': identifier.WegGl?.vendor,

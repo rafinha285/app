@@ -1,8 +1,9 @@
 import React, {createContext, ReactNode, useEffect, useState} from "react";
 import {useCookies} from "react-cookie";
-import {roles} from "./types/types";
 import {User} from "./types/User";
 import {getFromApiWithToken} from "./functions/requestFunctions";
+import {userHasRole} from "./functions/userFunctions.ts";
+import {UserRole} from "./types/types.ts";
 
 export interface GlobalContextType {
     isLogged: boolean;
@@ -26,12 +27,15 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
             const refreshToken = localStorage.getItem("refreshToken");
             if(accessToken){
                 const userVerify = await getFromApiWithToken<null>("/user/verify");
-                console.log(userVerify)
+                // console.log(userVerify)
                 setIsLogged(userVerify.data.success);
                 if(userVerify.data.success){
                     const user = await getFromApiWithToken<User>("/user/");
+                    // console.log(user);
                     setUser(user.data.data)
-                    setIsAdmin(user.data.data.role.includes(roles.adm))
+                    setIsAdmin(userHasRole(user.data.data,UserRole.ADMIN))
+                    setIsSuper(user.data.data.superuser)
+                    setLoading(false)
                 }
             }else if(refreshToken){
                 const userVerify = await getFromApiWithToken<null>("/user/verify");
@@ -41,6 +45,7 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
                 setLoading(false)
                 console.log("Erro ao carregar usuario")
             }
+            // setLoading(false);
         }
         getUser()
         // const fetchTest = async() =>{

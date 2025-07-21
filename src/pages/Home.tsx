@@ -15,7 +15,7 @@ const Home = () =>{
     return(
         <>
             <Helmet>
-                <title>Anime foda</title>
+                <title>{`Anime foda`}</title>
             </Helmet>
             <body>
                 <Header></Header>

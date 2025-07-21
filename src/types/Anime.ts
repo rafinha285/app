@@ -1,6 +1,6 @@
 import {Audio, state, quality, userAnimeState, priorityValue, Producer, State} from "./types"
 import { EpisodeUser } from "./Episode";
-import {Season} from "./Season";
+import {Season, SeasonDTO} from "./Season";
 
 export interface Anime{
     id:string;
@@ -20,19 +20,16 @@ export interface Anime{
 	date_added?:Date;
 	visible:boolean;
 	weekday:string;
-    seasons: Season[]
+    seasons: SeasonDTO[]
 }
 export interface AnimeUser{
-	user_id:string;
-	id:number
-	anime_id:string
-    name:string;
-	start_date?:Date;
-	finish_date?:Date;
-	rate:number;
+	userId:string;
+	anime:Anime
 	status:userAnimeState;
+	startDate?:Date;
+	finishDate?:Date;
+	rate:number;
 	priority:priorityValue;
-    last_ep:EpisodeUser[]
 }
 export interface AnimeSearch{
 	id:string;

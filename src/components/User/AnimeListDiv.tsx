@@ -17,26 +17,12 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
         creators:Producer[],
         studios:Producer[],
     }
-    const [aniProp,setAniProp] = useState<aniProps>()
-    const [anime,setAnime] = useState<Anime>()
+
+    const anime = ani.anime
     const [isOpen,setIsOpen] = useState<boolean>()
     const handleEditAnime =()=>{
 
     }
-    useEffect(()=>{
-        const handleGetProps = async()=>{
-            // const token = sessionStorage.getItem("token")
-            // const headers:HeadersInit = {
-            //     "Authorization":`Bearer ${token}`
-            // }
-            const getAnime:Anime = await fetch(`/ani/g/${ani.anime_id}`).then(res=>res.json())
-            const getAnimeProps = await fetch(`/ani/g/prods/${ani.anime_id}`).then(async(response)=>await response.json())
-            setAnime(getAnime)
-            setAniProp(getAnimeProps)
-
-        }
-        handleGetProps()
-    },[])
     return(
         <>
             <Popup open={isOpen} onClose={()=>setIsOpen(false)}>
@@ -44,14 +30,14 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
             </Popup>
             <div className="anime">
                 <div className="anime-content">
-                    <img src={`${cdnUrl}/ani/img?Id=${ani.anime_id}`}></img>
-                    <Link to={`/Anime/${ani.anime_id}`}><p>{ani.name}</p></Link>
+                    <img src={`${cdnUrl}/ani/img?Id=${ani.anime.id}`} alt={anime.name}></img>
+                    <Link to={`/Anime/${ani.anime}`}><p>{ani.anime.name}</p></Link>
                     <button style={{margin:0}} className="addAnimeList" onClick={()=>setIsOpen(true)}>Editar anime</button>
                 </div>
                 <div className="anime-content">
                     <div className="anime-date">
-                        <p>Data de começo: {DateToStringLocal(ani.start_date!)}</p>
-                        <p>Data de Fim: {ani.finish_date?DateToStringLocal(ani.finish_date):"Não terminado ainda"}</p>
+                        <p>Data de começo: {DateToStringLocal(ani.startDate!)}</p>
+                        <p>Data de Fim: {ani.finishDate?DateToStringLocal(ani.finishDate):"Não terminado ainda"}</p>
                     </div>
                 </div>
                 <div className="anime-content">
@@ -69,7 +55,7 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
                         <div className="studios prop">
                             <p>Estudios: </p>
                             <div className="prop-list">
-                                {aniProp?.studios.map((v,i)=>(
+                                {anime.studios.map((v,i)=>(
                                     <Link to={`/stud/${v.id}`}>
                                         <div className="prop-item" key={i}>{v.name}</div>
                                     </Link>
@@ -79,8 +65,18 @@ const AnimeListDiv:React.FC<props> =({ani})=>{
                         <div className="creators prop">
                             <p>Criadores: </p>
                             <div className="prop-list">
-                                {aniProp?.creators.map((v,i)=>(
+                                {anime.creators.map((v,i)=>(
                                     <Link to={`/crea/${v.id}`}>
+                                        <div className="prop-item" key={i}>{v.name}</div>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="producers prop">
+                            <p>Produtores: </p>
+                            <div className="prop-list">
+                                {anime.producers.map((v,i)=>(
+                                    <Link to={`/prod/${v.id}`}>
                                         <div className="prop-item" key={i}>{v.name}</div>
                                     </Link>
                                 ))}

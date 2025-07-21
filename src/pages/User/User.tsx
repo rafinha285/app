@@ -54,7 +54,7 @@ const UserPage:React.FC = () =>{
     return(
         <html>
             <Helmet>
-                <title>Usuario: {user?.username}</title>
+                <title>{`Usuario: ${user?.username}`}</title>
             </Helmet>
             <Header/>
             <div className="info">
@@ -71,29 +71,29 @@ const UserPage:React.FC = () =>{
                     <div className="role">
                         <p>Cargos: </p>
                         <div className="role-list">
-                            {user?.role?.map((v,i)=>(
-                                <RoleDiv role={v} key={i}/>
+                            {user?.roles?.map((v,i)=>(
+                                <RoleDiv role={v.name} key={i}/>
                             ))}
                         </div>
                     </div>
-                    <p>Anime</p>
-                    <div className="anime-infos">
-                        <p>Animes: {user?.totalanime}</p>
-                        <p>Animes {userAnimeState.watching}: {user?.totalanimewatching}</p>
-                        <p>Animes {userAnimeState.completed}: {user?.totalanimecompleted}</p>
-                        <p>Animes {userAnimeState.on_hold}: {user?.totalanimeonhold}</p>
-                        <p>Animes {userAnimeState.dropped}: {user?.totalanimedropped}</p>
-                        <p>Animes {userAnimeState.plan_to_watch}: {user?.totalanimeplantowatch}</p>
-                    </div>
-                    <p>Manga</p>
-                    <div className="anime-infos">
-                        <p>Mangas: {user?.totalmanga}</p>
-                        <p>Mangas {userMangaState.reading}: {user?.totalmangareading}</p>
-                        <p>Mangas {userMangaState.completed}: {user?.totalmangacompleted}</p>
-                        <p>Mangas {userMangaState.on_hold}: {user?.totalmangaonhold}</p>
-                        <p>Mangas {userMangaState.dropped}: {user?.totalmangadropped}</p>
-                        <p>Mangas {userMangaState.plan_to_read}: {user?.totalmangaplantoread}</p>
-                    </div>
+                    {/*<p>Anime</p>*/}
+                    {/*<div className="anime-infos">*/}
+                    {/*    <p>Animes: {user?.totalanime}</p>*/}
+                    {/*    <p>Animes {userAnimeState.watching}: {user?.totalanimewatching}</p>*/}
+                    {/*    <p>Animes {userAnimeState.completed}: {user?.totalanimecompleted}</p>*/}
+                    {/*    <p>Animes {userAnimeState.on_hold}: {user?.totalanimeonhold}</p>*/}
+                    {/*    <p>Animes {userAnimeState.dropped}: {user?.totalanimedropped}</p>*/}
+                    {/*    <p>Animes {userAnimeState.plan_to_watch}: {user?.totalanimeplantowatch}</p>*/}
+                    {/*</div>*/}
+                    {/*<p>Manga</p>*/}
+                    {/*<div className="anime-infos">*/}
+                    {/*    <p>Mangas: {user?.totalmanga}</p>*/}
+                    {/*    <p>Mangas {userMangaState.reading}: {user?.totalmangareading}</p>*/}
+                    {/*    <p>Mangas {userMangaState.completed}: {user?.totalmangacompleted}</p>*/}
+                    {/*    <p>Mangas {userMangaState.on_hold}: {user?.totalmangaonhold}</p>*/}
+                    {/*    <p>Mangas {userMangaState.dropped}: {user?.totalmangadropped}</p>*/}
+                    {/*    <p>Mangas {userMangaState.plan_to_read}: {user?.totalmangaplantoread}</p>*/}
+                    {/*</div>*/}
                 </div>
             </div>
             <div className="anime-list">

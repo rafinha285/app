@@ -1,5 +1,5 @@
 .player{
-    width:calc(100% - 15em);
+    width:calc(100% - 15em) !important;
     margin:auto;
     position: relative;
     box-sizing: border-box;

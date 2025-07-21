@@ -1,9 +1,6 @@
-import {Episode} from "../types/Episode";
-import {GlobalContextType} from "../GlobalContext";
-import {roles} from "../types/types";
-import {apiUrl} from "../const";
-import ResponseType from "../types/ResponseType";
-import {postToApi} from "./requestFunctions.ts";
+import {UserRole} from "../types/types";
+import {postToApiWithToken} from "./requestFunctions.ts";
+import {User} from "../types/User.ts";
 
 export async function fetchPublicKey(){
     return await fetch("/public-key").then(r=>r.text())
@@ -56,9 +53,12 @@ export async function fetchPost(path: string, method: "POST" | "DELETE" | "PATCH
         body: JSON.stringify(body)
     })
 }
+export function userHasRole(user: User, role: UserRole): boolean {
+    return user.roles.some(r => r.name === role);
+}
 
 export async function refreshToken() {
-    postToApi("user/refresh",null)
+    postToApiWithToken<null,string>("user/refresh",null)
     // let response = await fetch(`${apiUrl}/p/user/refresh`, {
     //     method: "POST",
     //     headers: {
@@ -89,10 +89,6 @@ export async function refreshToken() {
 //         await fetchUser('/ep/user/p/', 'POST', body)
 //     }
 // }
-interface getPrivilegesInterface{
-    role:roles[],
-    super:boolean
-}
 // export async function getPrivileges():Promise<getPrivilegesInterface>{
 //     let res= await getFromApiWithToken(`${apiUrl}/g/user`)
 //     let response:{success:boolean,role:roles[],super:boolean} = await res.json()

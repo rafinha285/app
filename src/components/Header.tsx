@@ -31,6 +31,7 @@ const Header = ()=>{
     }
     // const [cookies,setCookie,removeCookie] = useCookies(['token'])
     const handleLogout = async()=>{
+        console.log("logout")
         fetch('/user/p/logout/',{method:"POST"})
         .then(response=>response.json())
         .then(data=>console.log(data))
@@ -45,9 +46,9 @@ const Header = ()=>{
         return <div>O contexto global não está definido</div>;
     }
     const {isLogged} = context
-    console.log(isLogged)
+    // console.log(isLogged)
     return(
-        <header className="header">
+        <div className="header">
             <nav>
                 <a href="/" style={{
                     textDecoration: "none"
@@ -93,7 +94,7 @@ const Header = ()=>{
                     )}</li>
                 </ul>
             </nav>
-        </header>
+        </div>
     )
 }
 

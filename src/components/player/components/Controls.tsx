@@ -13,7 +13,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import {faImage as faImageSolid} from "@fortawesome/free-solid-svg-icons";
 import {faImage as faImageRegular} from "@fortawesome/free-regular-svg-icons"
-import {Episode} from "../../../types/Episode";
+import {Episode, EpisodeDTO} from "../../../types/Episode";
 import {getEpTime} from "../../../functions/stringFunctions";
 import {faClosedCaptioning} from "@fortawesome/free-regular-svg-icons";
 import VideoPlayerSettings from "./Config";
@@ -24,8 +24,8 @@ interface props{
     isPlaying: boolean;
     isLoading: boolean;
     togglePlayPause: (e: React.MouseEvent<HTMLDivElement | HTMLButtonElement, MouseEvent>)=> void;
-    ep:Episode;
-    eps:Map<number,Episode>;
+    ep:EpisodeDTO;
+    eps:EpisodeDTO[]
     currentTime:number;
     currentBuffer:number;
     handleSeek:(e: React.ChangeEvent<HTMLInputElement>)=> void;
@@ -88,7 +88,7 @@ const Controls:React.FC<props> = (
 
     const handleNextEp = async(e:React.MouseEvent)=>{
         e.stopPropagation();
-        let newEp = eps.get(ep.epIndex+1)
+        let newEp = eps[ep.epIndex+1]
         window.location.href = `/Anime/${newEp?.animeId}/watch/${newEp?.seasonId}/${newEp?.id}`
     }
     return (
@@ -185,7 +185,7 @@ const Controls:React.FC<props> = (
                 <FontAwesomeIcon icon={faAnglesRight}/>
             </button>
 
-            <button className={`skip-intro ${currentTime >= ep.ending && eps.has(ep.epIndex+1)? 'skip-active':''} content`} onClick={handleNextEp}>
+            <button className={`skip-intro ${currentTime >= ep.ending && !!eps[ep.epIndex+1]? 'skip-active':''} content`} onClick={handleNextEp}>
                 Próximo episódio
                 <FontAwesomeIcon icon={faChevronRight}/>
             </button>

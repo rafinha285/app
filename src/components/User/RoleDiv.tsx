@@ -1,9 +1,9 @@
 import React from "react";
-import { roles } from "../../types/types";
+import {UserRole} from "../../types/types";
 
 
 interface props{
-    role:roles
+    role:UserRole
 }
 const RoleDiv:React.FC<props> = ({role}) =>{
     return(

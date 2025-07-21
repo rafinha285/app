@@ -102,7 +102,7 @@ const Login:React.FC = ()=>{
         }
     }
     return(
-        <html lang="pt-BR">
+        <div>
             <Header></Header>
             <div className="login">
                 <div style={{margin:"2.5em auto"}}>
@@ -124,7 +124,7 @@ const Login:React.FC = ()=>{
 
             </div>
             <Footer></Footer>
-        </html>
+        </div>
     )
 }
 export default Login

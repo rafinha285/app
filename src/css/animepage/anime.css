@@ -1,6 +1,6 @@
-h1, h2{
-    font-size: 18px;
-}
+/*h1, h2{*/
+/*    font-size: 18px;*/
+/*}*/
 .selectN{
     color:black;
 }
@@ -8,7 +8,7 @@ h1, h2{
     color: black;
 }
 .anime-page{
-    padding: 10em;
+    padding: 2em 10em;
 }
 .duration_top{
     font-size: 0.7rem;
@@ -87,34 +87,34 @@ h1, h2{
 .contentL .dura span{
     font-size: 0.7rem !important;
 }
-.aniLik{
-    background-color: var(--gray);
-    border-radius: 50px;
-    padding-top: 3px;
-    padding-left: 6px;
-    width: 35px;
-    height: 35px;
-    margin-left: 10px;
-    border-color: white;
-    border-style: outset;
-    transition: all .2s;
-    outline: none !important;
-}
+/*.aniLik{*/
+/*    background-color: var(--gray);*/
+/*    border-radius: 50px;*/
+/*    padding-top: 3px;*/
+/*    padding-left: 6px;*/
+/*    width: 35px;*/
+/*    height: 35px;*/
+/*    margin-left: 10px;*/
+/*    border-color: white;*/
+/*    border-style: outset;*/
+/*    transition: all .2s;*/
+/*    outline: none !important;*/
+/*}*/
 .aniLik:hover{
     background-color: var(--gray-dark);
 }
-.aniLikSel{
-    background-color: var(--red);
-    border-radius: 50px;
-    padding-top: 3px;
-    padding-left: 6px;
-    width: 35px;
-    margin-left: 10px;
-    border-color: rgb(131, 0, 0);
-    border-style: outset;
-    transition: all .2s;
-    outline: none !important;
-}
+/*.aniLikSel{*/
+/*    background-color: var(--red);*/
+/*    border-radius: 50px;*/
+/*    padding-top: 3px;*/
+/*    padding-left: 6px;*/
+/*    width: 35px;*/
+/*    margin-left: 10px;*/
+/*    border-color: rgb(131, 0, 0);*/
+/*    border-style: outset;*/
+/*    transition: all .2s;*/
+/*    outline: none !important;*/
+/*}*/
 .aniLikSel:hover{
     background-color: red;
 }

@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {Episode, EpisodeUser} from "../../types/Episode";
+import {EpisodeDTO, EpisodeUser} from "../../types/Episode";
 import {cdnUrl} from "../../const";
 import {quality} from "../../types/types";
 import './css/player.css'
@@ -14,16 +14,17 @@ import {Cue, VTTData} from "webvtt-parser";
 import PlayerPopup from "./components/PlayerPopup";
 import {handlePostSec} from "./functions/userFunctions";
 import globalContext, {GlobalContextType} from "../../GlobalContext";
+import {Anime} from "../../types/Anime.ts";
+import {SeasonDTO} from "../../types/Season.ts";
 
 interface props{
-    aniId:string;
-    seasonId:string;
-    ep:Episode;
+    anime:Anime;
+    episode:EpisodeDTO;
+    season:SeasonDTO;
     epUser?:EpisodeUser;
-    eps:Map<number, Episode>;
 }
 let count = 0;
-const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
+const NewPlayer:React.FC<props> = ({anime,season,episode,epUser}) => {
     const videoRef = React.useRef<HTMLVideoElement>(null);
     const context = useContext<GlobalContextType|undefined>(globalContext)!;
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -36,7 +37,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const [currentSpeed,setCurrentSpeed] = useState(1)
     const [muted,setMuted] = useState<boolean>(false);
     const [captionsActive, setCaptionsActive] = useState<boolean>(true);
-    const [selectedCaptions,setSelectedCaptions] = useState<string>(ep?.subtitlesTracks?.[0]??'por')
+    const [selectedCaptions,setSelectedCaptions] = useState<string>(episode.subtitlesTracks?.[0]??'por')
     const [isConfigOpen,setIsConfigOpen] = useState<boolean>(false);
     const [isControlsVisible,setIsControlsVisible] = useState<boolean>(false);
     const {
@@ -67,20 +68,22 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
 
 
     //quality functions
-    const qualitySources: { [key:number]: string } = ep.resolution.reduce((acc, resolution) => {
-        // Verifica se a resolução é uma das qualidades permitidas
-        acc[parseInt(resolution.split('x')[1])] = `${cdnUrl}/stream/${aniId}/${seasonId}/${ep.id}/${resolution.split('x')[1]}`;
-        // console.log(acc)
+    const qualitySources: Record<number, string> = episode.resolution.reduce((acc, resolution) => {
+        const parts = resolution.toUpperCase().split('X'); // ex: ["Q1920", "1080"]
+        const height = parseInt(parts[1], 10);
+        acc[height] = `${cdnUrl}/stream/${anime.id}/${season.id}/${episode.id}/${height}`;
         return acc;
-    }, {} as { [key :number]: string });
+    }, {} as Record<number,string>);
+
 
     useEffect(() => {
         if (videoRef.current) {
             const videoElement = videoRef.current;
-            const q = currentQuality
-            const newSource = qualitySources[q]; // Definir a fonte de acordo com a qualidade atual
+            const newSource = qualitySources[currentQuality]; // Definir a fonte de acordo com a qualidade atual
             const currentTimee = currentTime; // Armazenar o tempo atual do vídeo
             const isPlaying = !videoElement.paused; // Verifica se o vídeo está tocando
+
+            // console.log("episode", episode.resolution);
 
             // Atualiza a src diretamente
             videoElement.src = newSource;
@@ -106,7 +109,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         return()=>{
             window.removeEventListener('keydown',handleKeyDown)
         }
-    }, [currentQuality,ep]);
+    }, [currentQuality]);
 
     //handles
     let currentPostTime = 0;
@@ -242,7 +245,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                 const playbackQuality = videoRef.current.getVideoPlaybackQuality();
                 console.log(playbackQuality)
 
-                const availableResolutions = ep.resolution.map(res => parseInt(res.split('x')[1]));
+                const availableResolutions = episode.resolution.map(res => parseInt(res.split('x')[1]));
 
                 const droppedFrames = playbackQuality.droppedVideoFrames;
                 const totalFrames = playbackQuality.totalVideoFrames;
@@ -332,7 +335,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
     const handleSkipIntro = (e:React.MouseEvent<HTMLButtonElement>)=>{
         e.stopPropagation();
         if (videoRef.current) {
-            videoRef.current.currentTime = ep.openingEnd;
+            videoRef.current.currentTime = episode.openingEnd;
         } else {
             console.warn("Video element not available");
         }
@@ -345,8 +348,8 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
         }
     }
     const handlePause = (e: React.SyntheticEvent<HTMLVideoElement, Event>) =>{
-        if((e.currentTarget.currentTime / ep.duration)>.05){
-            handlePostSec(context.isLogged,e.currentTarget.currentTime,ep)
+        if((e.currentTarget.currentTime / episode.duration)>.05){
+            handlePostSec(context.isLogged,e.currentTarget.currentTime,episode)
         }
     }
 
@@ -411,7 +414,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
             <div className='video-wrapper' onClick={handleVideoWrapperClick}>
                 <video
                     src={qualitySources[currentQuality]}
-                    poster={`${cdnUrl}/epPoster/${aniId}/${seasonId}/${ep.id}`}
+                    poster={`${cdnUrl}/epPoster/${anime.id}/${season.id}/${episode.id}`}
                     muted={muted}
                     ref={videoRef}
                     onTimeUpdate={handleTimeUpdate}
@@ -428,8 +431,8 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                 isPlaying={isPlaying}
                 isLoading={isLoading}
                 togglePlayPause={togglePlayPause}
-                ep={ep}
-                eps={eps}
+                ep={episode}
+                eps={season.episodes}
                 currentTime={currentTime}
                 currentBuffer={currentBuffer}
                 handleSeek={handleSeek}
@@ -457,9 +460,9 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                 handleSkipIntro={handleSkipIntro}
             />
             <Captions
-                epId={ep.id}
-                aniId={ep.animeId}
-                seasonId={ep.seasonId}
+                epId={episode.id}
+                aniId={episode.animeId}
+                seasonId={episode.seasonId}
                 selectedCaptions={selectedCaptions}
                 currentCue={currentCue}
                 setCueData={setCueData}
@@ -470,7 +473,7 @@ const NewPlayer:React.FC<props> = ({aniId,seasonId,ep,epUser,eps}) => {
                 {isLoading?(
                         <FontAwesomeIcon icon={faSpinner} spinPulse size={'lg'}/>
                     ):(
-                        <FontAwesomeIcon icon={currentTime === ep.duration?faRepeat:!isPlaying?faPlay:faPause} />
+                        <FontAwesomeIcon icon={currentTime === episode.duration?faRepeat:!isPlaying?faPlay:faPause} />
                     )
                 }
             </button>

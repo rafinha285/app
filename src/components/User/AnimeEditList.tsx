@@ -15,10 +15,11 @@ interface props{
 }
 const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     const [ratingValue,setRatingValue] = useState<string>(ani?.rate.toString())
-    const [startDate,setStartDate] = useState<Date|undefined>(ani.start_date)
-    const [endDate,setEndDate] = useState<Date|undefined>(ani.finish_date)
+    const [startDate,setStartDate] = useState<Date|undefined>(ani.startDate)
+    const [endDate,setEndDate] = useState<Date|undefined>(ani.finishDate)
     const [status,setStatus] = useState<userAnimeState>(ani.status)
     const [priority,setPriority] = useState<priorityValue>(ani.priority)
+    const anime = ani.anime
     const context = useContext(GlobalContext)!
     console.log(ani)
     enum changeEnum{
@@ -78,7 +79,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     },[])
     const handleUpdateList = async() =>{
         let body = {
-            anime_id:ani.anime_id,
+            anime_id:ani.anime,
             start_date:startDate?isToday(new Date(startDate))?new Date():startDate:null,
             finish_date:endDate?isToday(new Date(endDate))?new Date():endDate:null,
             // rate:ratingValue,
@@ -86,7 +87,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
             priority,
         }
         if(!(ratingValue === undefined)){
-            await fetchUser(`/user/animelist/p/rating/${ani.anime_id}`,'POST',{rating:ratingValue})
+            await fetchUser(`/user/animelist/p/rating/${ani.anime}`,'POST',{rating:ratingValue})
         }
         await fetchUser('/user/animelist/patch/update/','PATCH',body)
         .then(async (res)=>{
@@ -99,7 +100,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
     //     currentSeason.total_episodes = parseInt(e.target.value)
     // }
     const handleDeleteList = async()=>{
-        let res = await fetchUser(`/user/animelist/delete/${ani.anime_id}`,'DELETE').then(r=>r.json())
+        let res = await fetchUser(`/user/animelist/delete/${anime.id}`,'DELETE').then(r=>r.json())
         alert(res.message);
         onClose()
         window.location.reload()
@@ -117,7 +118,7 @@ const AnimeEditList:React.FC<props> = ({onClose,ani})=>{
                     <button className="update-button" onClick={handleUpdateList}>Update Anime</button>
                     <button className="update-button" onClick={handleDeleteList}>Delete Anime</button>
                 </div>
-                <p>Editar Anime: {ani.name}</p>
+                <p>Editar Anime: {anime.name}</p>
                 <div className="status">
                     <p>Status: </p>
                     <select value={status} onChange={(e) => {

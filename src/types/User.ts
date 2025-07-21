@@ -1,31 +1,24 @@
-import { roles } from "./types";
+import {AnimeUser} from "./Anime.ts";
+import {UserRole} from "./types.ts";
 
 interface GoogleLogin{
     idToken:string;
     accessToken:string;
 }
+
+interface Role{
+    id:number;
+    name:UserRole
+}
+
 export interface User{
-    _id:string;
+    id:string;
     name:string;
+    email:string;
     surname:string
     username:string;
     birthDate:Date;
-    email:string;
-    role:roles[]
-    password:string;
-    salt:string;
-    totalanime:number;
-    totalanimewatching:number;
-    totalanimecompleted:number;
-    totalanimeonhold:number;
-    totalanimedropped:number;
-    totalanimeplantowatch:number;
-    totalmanga:number;
-    totalmangareading:number;
-    totalmangacompleted:number;
-    totalmangaonhold:number;
-    totalmangadropped:number;
-    totalmangaplantoread:number;
-    totalanimeliked:string[];
-    totalmangaliked:string[]
+    roles:Role[]
+    animelist: AnimeUser;
+    superuser:boolean;
 }

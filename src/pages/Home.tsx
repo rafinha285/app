@@ -13,7 +13,7 @@ const Home = () =>{
         console.log(context);
     })
     return(
-        <html lang="pt-BR">
+        <>
             <Helmet>
                 <title>Anime foda</title>
             </Helmet>
@@ -24,7 +24,7 @@ const Home = () =>{
                 {/* <AnimeLan manga={true}></AnimeLan> */}
                 <Footer></Footer>
             </body>
-        </html>
+        </>
     )
 }
 export default Home;

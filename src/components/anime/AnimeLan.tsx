@@ -19,18 +19,8 @@ const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
     const context = useContext(globalContext)!!
     const [Aniposters,AnisetPosters] = useState<JSX.Element[]>([])
     const [Manposters,MansetPosters] = useState<JSX.Element[]>([])
-    useEffect(()=>{
-        console.log("aaa")
-        let animes:Anime[]=[];
-        if(context.isLogged){
-            getFromApiWithToken<Anime[]>("/anime/all").then(res=>{
-                animes = res.data.data
-            })
-        }else{
-            getFromApi<Anime[]>("/anime/all").then(res=>{
-                animes = res.data.data
-            })
-        }
+
+    const createAnimePosters = (animes: Anime[]) =>{
         const posterList = animes.map((v,i)=>(
             <AnimePoster
                 anime={v}
@@ -38,6 +28,19 @@ const AnimeLan:React.FC<AnimeLanProps> = ({manga}) =>{
             />
         ));
         AnisetPosters(posterList)
+    }
+
+    useEffect(()=>{
+        console.log("aaa")
+        if(context.isLogged){
+            getFromApiWithToken<Anime[]>("/anime/all").then(res=>{
+                createAnimePosters(res.data.data);
+            })
+        }else{
+            getFromApi<Anime[]>("/anime/all").then(res=>{
+                createAnimePosters(res.data.data);
+            })
+        }
         // fetch(`${apiUrl}/g/anime/all`).then((res)=>res.json())
         // .then((data:ResponseType<Anime[]>)=>{
         //     console.log(data.data)

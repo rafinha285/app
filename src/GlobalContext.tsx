@@ -26,6 +26,7 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
             const refreshToken = localStorage.getItem("refreshToken");
             if(accessToken){
                 const userVerify = await getFromApiWithToken<null>("/user/verify");
+                console.log(userVerify)
                 setIsLogged(userVerify.data.success);
                 if(userVerify.data.success){
                     const user = await getFromApiWithToken<User>("/user/");
@@ -72,7 +73,8 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
         // fetchTest()
         // console.log(sessionStorage.getItem("token"))
         // setIsLogged(!!(sessionStorage.getItem("token"))); // Verifica se o token existe e define o estado de isLogged
-    }, [!(document.readyState === "complete")]);
+        //[!(document.readyState === "complete")]
+    }, []);
     if (loading) {
         return <div>Loading...</div>;  // Você pode trocar por um componente de loading customizado
     }

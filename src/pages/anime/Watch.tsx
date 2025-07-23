@@ -17,9 +17,9 @@ import NewPlayer from "../../components/player/NewPlayer.tsx";
 import Comments from "../../components/comments/Comments.tsx";
 
 type Params = {
-    animeId:string,
-    seasonId: string,
-    id: string,
+    animeId?:string,
+    seasonId?: string,
+    id?: string,
 }
 
 type Props = {
@@ -50,6 +50,13 @@ class Watch extends BasePage<Props, State> {
     }
 
     async componentDidMount() {
+        if(!this.match.animeId||!this.match.seasonId||!this.match.id){
+            this.setState({
+                err:true,
+                errReason:"Ids errados"
+            })
+            return
+        }
         const ani = await super.getAnime(this.match.animeId)
         if(!ani) return super.idNotFound("Anime")
         const season = ani.seasons.find(v=>v.id === this.match.seasonId)

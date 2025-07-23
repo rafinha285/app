@@ -58,24 +58,11 @@ export function userHasRole(user: User, role: UserRole): boolean {
 }
 
 export async function refreshToken() {
-    postToApiWithToken<null,string>("user/refresh",null)
-    // let response = await fetch(`${apiUrl}/p/user/refresh`, {
-    //     method: "POST",
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //         refreshToken: localStorage.getItem("refreshToken")
-    //     })
-    // })
-    // console.log(response)
-    // if (response.ok) {
-    //     let body: ResponseType<{
-    //         refreshToken: string,
-    //         accessToken: string,
-    //     }> = await response.json()
-    //     localStorage.setItem("accessToken", body.data.accessToken)
-    // }
+    const data = await postToApiWithToken<{refreshToken: string},string>("user/refresh",{refreshToken:localStorage.getItem("refreshToken")!!})
+    if(data.status !== 200){
+        return
+    }
+    localStorage.setItem("accessToken", data.data.data)
 }
 
 // export const handlePostSec = async (context:GlobalContextType, ep:Episode, sec: number) => {

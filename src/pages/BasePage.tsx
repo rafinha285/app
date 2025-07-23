@@ -5,31 +5,33 @@ import ResponseType from "../types/ResponseType.ts";
 import {Anime} from "../types/Anime.ts";
 import {getFromApi} from "../functions/requestFunctions.ts";
 
-type Props = {
+export type BaseProps = {
     params: Params
 }
 
-export type BaseState = {
+export interface BaseState {
     err:boolean,
-    errReason:string,
+    errReason:string|null,
 }
 
-abstract class BasePage<P extends Props, S extends BaseState> extends React.Component<P, S>{
+abstract class BasePage<P extends BaseProps, S extends BaseState> extends React.Component<P, S>{
 
-    public constructor(props: P, initialState: S) {
+    state!: S
+
+    public constructor(props: P) {
         super(props);
-        this.state = initialState;
     }
 
-    protected getError(){
-        return <h1>Erro ao carregar a pagina: {}</h1>
+    protected getError() {
+        return <h1>Erro ao carregar a página: {this.state.errReason}</h1>;
     }
 
-    protected idNotFound(type:string){
+    protected idNotFound(type: string) {
         this.setState({
+            ...this.state,
             err: true,
-            errReason:`${type} não encontrado`
-        })
+            errReason: `${type} não encontrado`,
+        });
     }
 
     protected async getAnime(id:string){

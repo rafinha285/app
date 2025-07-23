@@ -1,8 +1,7 @@
 import React, {createContext, ReactNode, useEffect, useState} from "react";
-import {useCookies} from "react-cookie";
 import {User} from "./types/User";
 import {getFromApiWithToken} from "./functions/requestFunctions";
-import {userHasRole} from "./functions/userFunctions.ts";
+import {userHasRole, refreshToken as refreshTokenFunc} from "./functions/userFunctions.ts";
 import {UserRole} from "./types/types.ts";
 
 export interface GlobalContextType {
@@ -19,33 +18,42 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
     const [isSuper, setIsSuper] = useState<boolean>(false)
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState<boolean>(true);
-    const [cookies,setCookies] = useCookies(['token']);
     // const token = getCookie('token');
     useEffect(() => {
         const getUser= async ()=>{
-            const accessToken = localStorage.getItem("accessToken");
-            const refreshToken = localStorage.getItem("refreshToken");
-            if(accessToken){
-                const userVerify = await getFromApiWithToken<null>("/user/verify");
-                // console.log(userVerify)
-                setIsLogged(userVerify.data.success);
-                if(userVerify.data.success){
-                    const user = await getFromApiWithToken<User>("/user/");
-                    // console.log(user);
-                    setUser(user.data.data)
-                    setIsAdmin(userHasRole(user.data.data,UserRole.ADMIN))
-                    setIsSuper(user.data.data.superuser)
-                    setLoading(false)
+            try {
+                const accessToken = localStorage.getItem("accessToken");
+                const refreshToken = localStorage.getItem("refreshToken");
+
+                if (accessToken) {
+                    const userVerify = await getFromApiWithToken<null>("/user/verify");
+                    setIsLogged(userVerify.data.success);
+
+                    if (userVerify.data.success) {
+                        const user = await getFromApiWithToken<User>("/user/");
+                        setUser(user.data.data);
+                        setIsAdmin(userHasRole(user.data.data, UserRole.ADMIN));
+                        setIsSuper(user.data.data.superuser);
+                    } else {
+                        removeAccessKey();
+                    }
+
+                } else if (refreshToken) {
+                    await refreshTokenFunc()
+                    const userVerify = await getFromApiWithToken<null>("/user/verify");
+                    setIsLogged(userVerify.data.success);
+
+                } else {
+                    setIsLogged(false);
+                    console.log("Erro ao carregar usuario");
                 }
-            }else if(refreshToken){
-                const userVerify = await getFromApiWithToken<null>("/user/verify");
-                setIsLogged(userVerify.data.success);
-            }else{
+            } catch (err) {
+                console.error("Erro ao verificar usuário", err);
                 setIsLogged(false);
-                setLoading(false)
-                console.log("Erro ao carregar usuario")
+                removeAccessKey();
+            } finally {
+                setLoading(false);
             }
-            // setLoading(false);
         }
         getUser()
         // const fetchTest = async() =>{
@@ -80,6 +88,10 @@ export const GlobalProvider:React.FC<{children:ReactNode}> = ({children}) =>{
         // setIsLogged(!!(sessionStorage.getItem("token"))); // Verifica se o token existe e define o estado de isLogged
         //[!(document.readyState === "complete")]
     }, []);
+    const removeAccessKey = ()=>{
+        localStorage.removeItem("accessToken");
+
+    }
     if (loading) {
         return <div>Loading...</div>;  // Você pode trocar por um componente de loading customizado
     }
